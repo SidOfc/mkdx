@@ -1,0 +1,130 @@
+*mdx.txt*                                           Mappings for markdown syntax
+*mdx*
+
+`Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
+`Version: 0.0.1`
+
+==============================================================================
+CONTENTS                                                          *mdx-contents*
+
+    1. Introduction
+    2. Variables
+        2.1. `g:mdx#map_prefix`
+        2.2. `g:mdx#map_keys`
+        2.3. `g:mdx#checkbox_toggles`
+    3. Mappings
+        3.1. Toggle checkbox forward
+        3.2. Toggle checkbox backward
+        3.3. Expand selection to link
+    4. Functions
+        4.1. `mdx#ToggleCheckbox`
+        4.2. `mdx#WrapLink`
+
+==============================================================================
+1. Introduction                                               *mdx-introduction*
+
+|mdx| is a small plugin that adds some basic functions to `markdown` files.
+Currently it can toggle checkboxes using a list of toggles configured by
+|mdx-checkbox-toggles| and it can expand a single line visual selection into a
+markdown link.
+
+This is my* first vim plugin and my first experience with vimL.
+Therefore, this plugin will probably have some rough edges, bug reports are
+welcome at https://github.com/sidofc/mdx/issues and PR's are welcome at
+https://github.com/sidofc/dotfiles/pulls
+
+==============================================================================
+2. Variables                                                     *mdx-variables*
+
+|mdx| has some configurable variables that you can define. Defaults are shown
+at the bottom of every setting section.
+
+==============================================================================
+2.1. `g:mdx#map_prefix`                                           *mdx-map-prefix*
+
+Set the prefix used by all mappings. It is not recommended to clear the prefix
+because some of the keys are already bound to other operations.
+
+    `let g:mdx#map_prefix = "<leader>"`
+
+==============================================================================
+2.2. `g:mdx#map_keys`                                               *mdx-map-keys*
+
+This option allows you to control wether the plugin should map keys or not.
+
+    `let g:mdx#map_keys = 1`
+
+==============================================================================
+2.3. `g:mdx#checkbox_toggles`                               *mdx-checkbox-toggles*
+
+This option allows you to specify different states to use for toggling
+checkboxes. Special characters must be escaped! The default list contains:
+
+    - `[ ]` inactive
+    - `[~]` active
+    - `[x]` completed
+    - `[!]` hold
+
+But that's just what works for me, modify as needed.
+
+    `let g:mdx#checkbox_toggles = [" ", "\\~", "x", "\\!"]`
+
+==============================================================================
+3. Mappings                                                       *mdx-mappings*
+
+These are the default mappings set by this plugin. Note that both
+|mdx-map-keys| and |mdx-map-prefix| control how they work.
+
+The convention `<MAP_PREFIX>` will be used in examples below to indicate the
+value of `g:mdx#map_prefix` (default: `"<leader>"`)
+
+==============================================================================
+3.1. Toggle checkbox forward                       *mdx-toggle-checkbox-forward*
+
+Toggles the next item in the `g:mdx#checkbox_toggles` list. Wraps around to
+the start if the end is reached.
+
+    `nnoremap <MAP_PREFIX>- :call mdx#ToggleCheckbox(0)<Cr>`
+
+==============================================================================
+3.2. Toggle checkbox backward                     *mdx-toggle-checkbox-backward*
+
+Toggles the previous item in the `g:mdx#checkbox_toggles` list. Wraps around to
+the end if the start is reached.
+
+    `nnoremap <MAP_PREFIX>= :call mdx#ToggleCheckbox(1)<Cr>`
+
+==============================================================================
+3.3. Expand selection to link                     *mdx-expand-selection-to-link*
+
+Wrap a `visual` selection in an empty markdown link.
+If we select the word "world" in "hello world" and turn it into a link, it
+would result in "hello [world]()". The cursor will be placed on the closing
+parentheses so a link can instantly be `i`nserted.
+
+==============================================================================
+4. Functions                                                     *mdx-functions*
+
+This is an overview of all the functions that |mdx| provides.
+
+==============================================================================
+4.1. `mdx#ToggleCheckbox(reverse)`                  *mdx-function-toggle-checkbox*
+
+`Argument: reverse`
+`Values:   1 | 0`
+
+This function works on the current line and toggles the first found checkbox
+(`[ ]`) to the next state in |mdx-checkbox-toggles|. Setting `reverse` to 1 will
+make the cycling of states go backwards.
+
+    `:call mdx#ToggleCheckbox(0)`
+
+==============================================================================
+4.1. `mdx#WrapLink()`                                     *mdx-function-wrap-link*
+
+This function works on the current line and wraps a visual selection in an
+empty markdown link.
+
+    `:call mdx#WrapLink()`
+
+vim:tw=78:sw=4:ft=help:norl:

@@ -28,7 +28,7 @@ Currently it can toggle checkboxes using a list of toggles configured by
 |mdx-checkbox-toggles| and it can expand a single line visual selection into a
 markdown link.
 
-This is my* first vim plugin and my first experience with vimL.
+This is my first vim plugin and my first experience with vimL.
 Therefore, this plugin will probably have some rough edges, bug reports are
 welcome at https://github.com/sidofc/mdx/issues and PR's are welcome at
 https://github.com/sidofc/dotfiles/pulls

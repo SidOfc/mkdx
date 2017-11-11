@@ -2,10 +2,11 @@
 *mdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.0.1`
+`Version: 0.0.2`
 
 ==============================================================================
 CONTENTS                                                          *mdx-contents*
+                                                                       *mdx-toc*
 
     1. Introduction
     2. Variables
@@ -19,12 +20,14 @@ CONTENTS                                                          *mdx-contents*
     4. Functions
         4.1. `mdx#ToggleCheckbox`
         4.2. `mdx#WrapLink`
+        4.3. `mdx#ToggleCheckboxList`
 
 ==============================================================================
 1. Introduction                                               *mdx-introduction*
 
 |mdx| is a small plugin that adds some basic functions to `markdown` files.
-Currently it can toggle checkboxes using a list of toggles configured by
+Currently it can toggle a single checkbox in {normal} mode or a list of
+checkboxes in {visual} mode using a list of toggles configured by
 |mdx-checkbox-toggles| and it can expand a single line visual selection into a
 markdown link.
 
@@ -40,22 +43,23 @@ https://github.com/sidofc/dotfiles/pulls
 at the bottom of every setting section.
 
 ==============================================================================
-2.1. `g:mdx#map_prefix`                                           *mdx-map-prefix*
+2.1. `g:mdx#map_prefix`                                  *mdx-variable-map-prefix*
 
 Set the prefix used by all mappings. It is not recommended to clear the prefix
-because some of the keys are already bound to other operations.
+because some of the keys are already mapped to other operations.
 
     `let g:mdx#map_prefix = "<leader>"`
 
 ==============================================================================
-2.2. `g:mdx#map_keys`                                               *mdx-map-keys*
+2.2. `g:mdx#map_keys`                                      *mdx-variable-map-keys*
 
 This option allows you to control wether the plugin should map keys or not.
+See the |mdx-mappings| section to see how each mapping works.
 
     `let g:mdx#map_keys = 1`
 
 ==============================================================================
-2.3. `g:mdx#checkbox_toggles`                               *mdx-checkbox-toggles*
+2.3. `g:mdx#checkbox_toggles`                      *mdx-variable-checkbox-toggles*
 
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
@@ -72,35 +76,44 @@ But that's just what works for me, modify as needed.
 ==============================================================================
 3. Mappings                                                       *mdx-mappings*
 
-These are the default mappings set by this plugin. Note that both
-|mdx-map-keys| and |mdx-map-prefix| control how they work.
+These are the default mappings set by this plugin. Both |mdx-map-keys| and
+|mdx-map-prefix| control how they work. You can always find what a key maps to
+directly below the help tag. Examples of how |mdx| internally maps operations
+are also provided.
 
 The convention `<MAP_PREFIX>` will be used in examples below to indicate the
 value of `g:mdx#map_prefix` (default: `"<leader>"`)
 
 ==============================================================================
-3.1. Toggle checkbox forward                       *mdx-toggle-checkbox-forward*
+3.1. Toggle checkbox forward               *mdx-mapping-toggle-checkbox-forward*
+                                                                 <MAP_PREFIX>-
 
 Toggles the next item in the `g:mdx#checkbox_toggles` list. Wraps around to
-the start if the end is reached.
+the start if the end is reached. Works in both {visual} and {normal} mode.
 
     `nnoremap <MAP_PREFIX>- :call mdx#ToggleCheckbox(0)<Cr>`
+    `vnoremap <MAP_PREFIX>- :call mdx#ToggleCheckboxList(0)<Cr>gv`
 
 ==============================================================================
-3.2. Toggle checkbox backward                     *mdx-toggle-checkbox-backward*
+3.2. Toggle checkbox backward             *mdx-mapping-toggle-checkbox-backward*
+                                                                 <MAP_PREFIX>=
 
 Toggles the previous item in the `g:mdx#checkbox_toggles` list. Wraps around to
-the end if the start is reached.
+the end if the start is reached. Works in both {visual} and {normal} mode.
 
     `nnoremap <MAP_PREFIX>= :call mdx#ToggleCheckbox(1)<Cr>`
+    `vnoremap <MAP_PREFIX>= :call mdx#ToggleCheckboxList(1)<Cr>gv`
 
 ==============================================================================
-3.3. Expand selection to link                     *mdx-expand-selection-to-link*
+3.3. Expand selection to link             *mdx-mapping-expand-selection-to-link*
+                                                                <MAP_PREFIX>ln
 
-Wrap a `visual` selection in an empty markdown link.
-If we select the word "world" in "hello world" and turn it into a link, it
-would result in "hello [world]()". The cursor will be placed on the closing
-parentheses so a link can instantly be `i`nserted.
+Wrap a {visual} selection in an empty markdown link.
+Select the word "world" in "hello world" and run the mapping, it
+results in "hello [world]()". The cursor will be placed on the closing
+parentheses so a link can instantly be {i}nserted.
+
+    `vnoremap <MAP_PREFIX>ln :call mdx#WrapLink()<Cr>`
 
 ==============================================================================
 4. Functions                                                     *mdx-functions*
@@ -110,6 +123,7 @@ This is an overview of all the functions that |mdx| provides.
 ==============================================================================
 4.1. `mdx#ToggleCheckbox(reverse)`                  *mdx-function-toggle-checkbox*
 
+`Mode:     normal`
 `Argument: reverse`
 `Values:   1 | 0`
 
@@ -117,14 +131,31 @@ This function works on the current line and toggles the first found checkbox
 (`[ ]`) to the next state in |mdx-checkbox-toggles|. Setting `reverse` to 1 will
 make the cycling of states go backwards.
 
-    `:call mdx#ToggleCheckbox(0)`
+    `:call mdx#ToggleCheckbox(reverse)`
 
 ==============================================================================
-4.1. `mdx#WrapLink()`                                     *mdx-function-wrap-link*
+4.2. `mdx#WrapLink()`                                     *mdx-function-wrap-link*
+
+`Mode:     visual`
 
 This function works on the current line and wraps a visual selection in an
 empty markdown link.
 
     `:call mdx#WrapLink()`
+
+==============================================================================
+4.3. `mdx#ToggleCheckboxList(reverse)`         *mdx-function-toggle-checkbox-list*
+
+`Mode:     visual`
+`Argument: reverse`
+`Values:   1 | 0`
+
+This function works on a {visual} selection and toggles the first checkbox
+(`[ ]`) on each line to the next state in |mdx-checkbox-toggles|.
+Setting `reverse` to 1 will make the cycling of states go backwards.
+Visual selection is maintained after the action is executed.
+
+    `:call mdx#ToggleCheckboxList(reverse)`
+
 
 vim:tw=78:sw=4:ft=help:norl:

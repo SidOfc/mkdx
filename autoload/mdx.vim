@@ -1,22 +1,35 @@
-fu! mdx#ToggleCheckbox(reverse)
-  let l:list    = deepcopy(g:mdx#checkbox_toggles)
-  let l:curline = getline('.')
-  let l:len     = len(l:list) - 1
+fu! mdx#ToggleCheckboxReplace(line, backwards)
+  let l:list = deepcopy(g:mdx#checkbox_toggles)
+  let l:line = a:line
+  let l:len  = len(l:list) - 1
 
-  if (a:reverse == 1)
+  if (a:backwards == 1)
     let l:list = reverse(l:list)
   endif
 
   for mrk in l:list
-    if (match(l:curline, "\\[" . mrk . "\\]") != -1)
-      let l:nidx    = index(l:list, mrk)
-      let l:nidx    = l:nidx >= l:len ? 0 : l:nidx + 1
-      let l:curline = substitute(l:curline, "\\[" . mrk . "\\]", "\\[" . l:list[l:nidx] . "\\]", "")
+    if (match(l:line, "\\[" . mrk . "\\]") != -1)
+      let l:nidx = index(l:list, mrk)
+      let l:nidx = l:nidx >= l:len ? 0 : l:nidx + 1
+      let l:line = substitute(l:line, "\\[" . mrk . "\\]", "\\[" . l:list[l:nidx] . "\\]", "")
       break
     endif
   endfor
 
-  call setline('.', l:curline)
+  return l:line
+endfu
+
+fu! mdx#ToggleCheckbox(reverse)
+  call setline('.', mdx#ToggleCheckboxReplace(getline('.'), a:reverse))
+endfu
+
+fu! mdx#ToggleCheckboxList(reverse)
+  let l:range_start = getpos("'<")[1]
+  let l:range_end   = getpos("'>")[1]
+
+  for linenum in range(l:range_start, l:range_end)
+    call setline(linenum, mdx#ToggleCheckboxReplace(getline(linenum), a:reverse))
+  endfor
 endfu
 
 fu! mdx#WrapLink()

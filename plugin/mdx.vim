@@ -17,6 +17,10 @@ endif
 if g:mdx#map_keys == 1
   exe "nnoremap " . g:mdx#map_prefix . "- :call mdx#ToggleCheckbox(0)<Cr>"
   exe "nnoremap " . g:mdx#map_prefix . "= :call mdx#ToggleCheckbox(1)<Cr>"
+
+  exe "vnoremap " . g:mdx#map_prefix . "- :call mdx#ToggleCheckboxList(0)<Cr>gv"
+  exe "vnoremap " . g:mdx#map_prefix . "= :call mdx#ToggleCheckboxList(1)<Cr>gv"
+
   exe "vnoremap " . g:mdx#map_prefix . "ln :call mdx#WrapLink()<Cr>"
 endif
 

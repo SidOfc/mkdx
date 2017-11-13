@@ -48,7 +48,7 @@ endfu
 fu! mkdx#ToggleHeader(increment)
   let l:line = getline('.')
 
-  if (match(l:line, '^#\{1,6\}\s') == -1)
+  if (match(l:line, '^' . g:mkdx:header_style . '\{1,6\}\s') == -1)
     return
   endif
 

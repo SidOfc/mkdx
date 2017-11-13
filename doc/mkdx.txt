@@ -1,49 +1,53 @@
-*mkdx.txt*                                           Mappings for markdown syntax
+*mkdx.txt*                                          Mappings for markdown syntax
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.0.2`
+`Version: 0.0.3`
 
 ==============================================================================
-CONTENTS                                                          *mkdx-contents*
-                                                                       *mkdx-toc*
-
+CONTENTS                                                         *mkdx-contents*
+                                                                      *mkdx-toc*
     1. Introduction
     2. Variables
         2.1. `g:mkdx#map_prefix`
         2.2. `g:mkdx#map_keys`
         2.3. `g:mkdx#checkbox_toggles`
+        2.4. `g:mkdx#header_style`
     3. Mappings
         3.1. Toggle checkbox forward
         3.2. Toggle checkbox backward
         3.3. Expand selection to link
+        3.4. Increment header level
+        3.5. Decrement header level
     4. Functions
         4.1. `mkdx#ToggleCheckbox`
         4.2. `mkdx#WrapLink`
         4.3. `mkdx#ToggleCheckboxList`
+        4.4. `mkdx#ToggleHeader`
 
 ==============================================================================
-1. Introduction                                               *mkdx-introduction*
+1. Introduction                                              *mkdx-introduction*
 
-|mkdx| is a small plugin that adds some basic functions to `markdown` files.
-Currently it can toggle a single checkbox in {normal} mode or a list of
-checkboxes in {visual} mode using a list of toggles configured by
-|mkdx-checkbox-toggles| and it can expand a single line visual selection into a
-markdown link.
+|mkdx| is a small plugin that adds some basic functions to markdown files.
+See |mkdx-variables| for settings, |mkdx-mappings| for keymaps and
+|mkdx-functions| for functions.
+
+This plugin is NOT a syntax highlighter, it merely adds some useful shortcuts
+that wrap functionality for markdown headers, checkboxes and links.
 
 This is my first vim plugin and my first experience with vimL.
-Therefore, this plugin will probably have some rough edges, bug reports are
-welcome at https://github.com/sidofc/mkdx/issues and PR's are welcome at
-https://github.com/sidofc/dotfiles/pulls
+Therefore, this plugin will probably have some rough edges, bug reports and
+feature requests are welcome at https://github.com/sidofc/mkdx/issues and PR's
+are welcome at https://github.com/sidofc/mkdx/pulls.
 
 ==============================================================================
-2. Variables                                                     *mkdx-variables*
+2. Variables                                                    *mkdx-variables*
 
 |mkdx| has some configurable variables that you can define. Defaults are shown
 at the bottom of every setting section.
 
 ==============================================================================
-2.1. `g:mkdx#map_prefix`                                  *mkdx-variable-map-prefix*
+2.1. `g:mkdx#map_prefix`                                *mkdx-variable-map-prefix*
 
 Set the prefix used by all mappings. It is not recommended to clear the prefix
 because some of the keys are already mapped to other operations.
@@ -51,7 +55,7 @@ because some of the keys are already mapped to other operations.
     `let g:mkdx#map_prefix = "<leader>"`
 
 ==============================================================================
-2.2. `g:mkdx#map_keys`                                      *mkdx-variable-map-keys*
+2.2. `g:mkdx#map_keys`                                    *mkdx-variable-map-keys*
 
 This option allows you to control wether the plugin should map keys or not.
 See the |mkdx-mappings| section to see how each mapping works.
@@ -59,7 +63,7 @@ See the |mkdx-mappings| section to see how each mapping works.
     `let g:mkdx#map_keys = 1`
 
 ==============================================================================
-2.3. `g:mkdx#checkbox_toggles`                      *mkdx-variable-checkbox-toggles*
+2.3. `g:mkdx#checkbox_toggles`                    *mkdx-variable-checkbox-toggles*
 
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
@@ -74,7 +78,16 @@ But that's just what works for me, modify as needed.
     `let g:mkdx#checkbox_toggles = [" ", "\\~", "x", "\\!"]`
 
 ==============================================================================
-3. Mappings                                                       *mkdx-mappings*
+2.4. `g:mkdx#header_style`                            *mkdx-variable-header-style*
+
+Header style to use when incrementing or decrementing header level.
+Any character is allowed here, it will also be used when matching header lines
+e.g. setting it to `@` matches `@@ Header` instead of `## Header`
+
+    `let g:mkdx#header_style = '#'`
+
+==============================================================================
+3. Mappings                                                      *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both |mkdx-map-keys| and
 |mkdx-map-prefix| control how they work. You can always find what a key maps to
@@ -85,7 +98,7 @@ The convention `<MAP_PREFIX>` will be used in examples below to indicate the
 value of `g:mkdx#map_prefix` (default: `"<leader>"`)
 
 ==============================================================================
-3.1. Toggle checkbox forward               *mkdx-mapping-toggle-checkbox-forward*
+3.1. Toggle checkbox forward              *mkdx-mapping-toggle-checkbox-forward*
                                                                  <MAP_PREFIX>-
 
 Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
@@ -95,7 +108,7 @@ the start if the end is reached. Works in both {visual} and {normal} mode.
     `vnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckboxList(0)<Cr>gv`
 
 ==============================================================================
-3.2. Toggle checkbox backward             *mkdx-mapping-toggle-checkbox-backward*
+3.2. Toggle checkbox backward            *mkdx-mapping-toggle-checkbox-backward*
                                                                  <MAP_PREFIX>=
 
 Toggles the previous item in the `g:mkdx#checkbox_toggles` list. Wraps around to
@@ -105,7 +118,7 @@ the end if the start is reached. Works in both {visual} and {normal} mode.
     `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckboxList(1)<Cr>gv`
 
 ==============================================================================
-3.3. Expand selection to link             *mkdx-mapping-expand-selection-to-link*
+3.3. Expand selection to link            *mkdx-mapping-expand-selection-to-link*
                                                                 <MAP_PREFIX>ln
 
 Wrap a {visual} selection in an empty markdown link.
@@ -116,12 +129,28 @@ parentheses so a link can instantly be {i}nserted.
     `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
 
 ==============================================================================
-4. Functions                                                     *mkdx-functions*
+3.4. Increment header level                *mkdx-mapping-increment-header-level*
+                                                                 <MAP_PREFIX>[
+
+Increments the header level by 1. Wraps around to h6 when promoting beyond h1.
+
+    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+
+==============================================================================
+3.5. Decrement header level                *mkdx-mapping-decrement-header-level*
+                                                                 <MAP_PREFIX>]
+
+Decrements the header level by 1. Wraps around to h1 when demoting beyond h6.
+
+    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+
+==============================================================================
+4. Functions                                                    *mkdx-functions*
 
 This is an overview of all the functions that |mkdx| provides.
 
 ==============================================================================
-4.1. `mkdx#ToggleCheckbox(reverse)`                  *mkdx-function-toggle-checkbox*
+4.1. `mkdx#ToggleCheckbox(reverse)`                *mkdx-function-toggle-checkbox*
 
 `Mode:     normal`
 `Argument: reverse`
@@ -134,17 +163,17 @@ make the cycling of states go backwards.
     `:call mkdx#ToggleCheckbox(reverse)`
 
 ==============================================================================
-4.2. `mkdx#WrapLink()`                                     *mkdx-function-wrap-link*
+4.2. `mkdx#WrapLink()`                                   *mkdx-function-wrap-link*
 
 `Mode:     visual`
 
-This function works on the current line and wraps a visual selection in an
+This function works on the current line and wraps a {visual} selection in an
 empty markdown link.
 
     `:call mkdx#WrapLink()`
 
 ==============================================================================
-4.3. `mkdx#ToggleCheckboxList(reverse)`         *mkdx-function-toggle-checkbox-list*
+4.3. `mkdx#ToggleCheckboxList(reverse)`       *mkdx-function-toggle-checkbox-list*
 
 `Mode:     visual`
 `Argument: reverse`
@@ -153,9 +182,35 @@ empty markdown link.
 This function works on a {visual} selection and toggles the first checkbox
 (`[ ]`) on each line to the next state in |mkdx-checkbox-toggles|.
 Setting `reverse` to 1 will make the cycling of states go backwards.
-Visual selection is maintained after the action is executed.
+{Visual} selection is maintained after the action is executed.
 
     `:call mkdx#ToggleCheckboxList(reverse)`
+
+==============================================================================
+4.1. `mkdx#ToggleHeader(increment)`                  *mkdx-function-toggle-header*
+
+`Mode:     normal`
+`Argument: increment`
+`Values:   1 | 0`
+
+This function works on the current line and increments or decrements the
+header level depending on {increment} value. This function wraps around both
+ways from h1-6 and h6-1.
+
+If {increment} is 1, the following transformations apply:
+
+    ## Hello `=>` # Hello
+    # Hello  `=>` ###### Hello
+
+if {increment} is 0, the following transformations apply:
+
+    # Hello     `=>` ## Hello
+    ##### Hello `=>` # Hello
+
+Finally, method signature below
+
+    `:call mkdx#ToggleHeader(increment)`
+
 
 
 vim:tw=78:sw=4:ft=help:norl:

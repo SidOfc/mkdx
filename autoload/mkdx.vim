@@ -8,10 +8,10 @@ fu! mkdx#ToggleCheckboxReplace(line, backwards)
   endif
 
   for mrk in l:list
-    if (match(l:line, "\\[" . mrk . "\\]") != -1)
+    if (match(l:line, '\[' . mrk . '\]') != -1)
       let l:nidx = index(l:list, mrk)
       let l:nidx = l:nidx >= l:len ? 0 : l:nidx + 1
-      let l:line = substitute(l:line, "\\[" . mrk . "\\]", "\\[" . l:list[l:nidx] . "\\]", "")
+      let l:line = substitute(l:line, '\[' . mrk . '\]', '\[' . l:list[l:nidx] . '\]', '')
       break
     endif
   endfor

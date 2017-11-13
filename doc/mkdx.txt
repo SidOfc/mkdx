@@ -75,7 +75,7 @@ checkboxes. Special characters must be escaped! The default list contains:
 
 But that's just what works for me, modify as needed.
 
-    `let g:mkdx#checkbox_toggles = [" ", "\\~", "x", "\\!"]`
+    `let g:mkdx#checkbox_toggles = [' ', '\\~', 'x', '\\!']`
 
 ==============================================================================
 2.4. `g:mkdx#header_style`                            *mkdx-variable-header-style*
@@ -104,8 +104,8 @@ value of `g:mkdx#map_prefix` (default: `"<leader>"`)
 Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
 the start if the end is reached. Works in both {visual} and {normal} mode.
 
-    `nnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckbox(0)<Cr>`
-    `vnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckboxList(0)<Cr>gv`
+    `nnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckbox(0)<Cr>`
+    `vnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckboxList(0)<Cr>gv`
 
 ==============================================================================
 3.2. Toggle checkbox backward            *mkdx-mapping-toggle-checkbox-backward*
@@ -114,8 +114,8 @@ the start if the end is reached. Works in both {visual} and {normal} mode.
 Toggles the previous item in the `g:mkdx#checkbox_toggles` list. Wraps around to
 the end if the start is reached. Works in both {visual} and {normal} mode.
 
-    `nnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox(1)<Cr>`
-    `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckboxList(1)<Cr>gv`
+    `nnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckbox(1)<Cr>`
+    `vnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckboxList(1)<Cr>gv`
 
 ==============================================================================
 3.3. Expand selection to link            *mkdx-mapping-expand-selection-to-link*
@@ -126,7 +126,7 @@ Select the word "world" in "hello world" and run the mapping, it
 results in "hello [world]()". The cursor will be placed on the closing
 parentheses so a link can instantly be {i}nserted.
 
-    `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
+    `vnoremap <silent> <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
 
 ==============================================================================
 3.4. Increment header level                *mkdx-mapping-increment-header-level*
@@ -134,7 +134,7 @@ parentheses so a link can instantly be {i}nserted.
 
 Increments the header level by 1. Wraps around to h6 when promoting beyond h1.
 
-    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+    `nnoremap <silent> <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
 
 ==============================================================================
 3.5. Decrement header level                *mkdx-mapping-decrement-header-level*
@@ -142,7 +142,7 @@ Increments the header level by 1. Wraps around to h6 when promoting beyond h1.
 
 Decrements the header level by 1. Wraps around to h1 when demoting beyond h6.
 
-    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+    `nnoremap <silent> <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
 
 ==============================================================================
 4. Functions                                                    *mkdx-functions*

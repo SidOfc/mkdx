@@ -1,3 +1,3 @@
-# mdx vim plugin
+# mkdx vim plugin
 
-I'll get to this soon enough, wrote a [help doc](doc/mdx.txt) first ^.^
+I'll get to this soon enough, wrote a [help doc](doc/mkdx.txt) first ^.^

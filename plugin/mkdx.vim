@@ -11,7 +11,7 @@ if !exists('g:mkdx#map_keys')
 endif
 
 if !exists('g:mkdx#checkbox_toggles')
-  let g:mkdx#checkbox_toggles = [" ", "\\~", "x", "\\!"]
+  let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
 endif
 
 if !exists('g:mkdx#header_style')
@@ -19,16 +19,16 @@ if !exists('g:mkdx#header_style')
 endif
 
 if g:mkdx#map_keys == 1
-  exe "nnoremap " . g:mkdx#map_prefix . "- :call mkdx#ToggleCheckbox(0)<Cr>"
-  exe "nnoremap " . g:mkdx#map_prefix . "= :call mkdx#ToggleCheckbox(1)<Cr>"
+  exe "nnoremap <silent> " . g:mkdx#map_prefix . "- :call mkdx#ToggleCheckbox(0)<Cr>"
+  exe "nnoremap <silent> " . g:mkdx#map_prefix . "= :call mkdx#ToggleCheckbox(1)<Cr>"
 
-  exe "nnoremap " . g:mkdx#map_prefix . "[ :call mkdx#ToggleHeader(1)<Cr>"
-  exe "nnoremap " . g:mkdx#map_prefix . "] :call mkdx#ToggleHeader(0)<Cr>"
+  exe "nnoremap <silent> " . g:mkdx#map_prefix . "[ :call mkdx#ToggleHeader(1)<Cr>"
+  exe "nnoremap <silent> " . g:mkdx#map_prefix . "] :call mkdx#ToggleHeader(0)<Cr>"
 
-  exe "vnoremap " . g:mkdx#map_prefix . "- :call mkdx#ToggleCheckboxList(0)<Cr>gv"
-  exe "vnoremap " . g:mkdx#map_prefix . "= :call mkdx#ToggleCheckboxList(1)<Cr>gv"
+  exe "vnoremap <silent> " . g:mkdx#map_prefix . "- :call mkdx#ToggleCheckboxList(0)<Cr>gv"
+  exe "vnoremap <silent> " . g:mkdx#map_prefix . "= :call mkdx#ToggleCheckboxList(1)<Cr>gv"
 
-  exe "vnoremap " . g:mkdx#map_prefix . "ln :call mkdx#WrapLink()<Cr>"
+  exe "vnoremap <silent> " . g:mkdx#map_prefix . "ln :call mkdx#WrapLink()<Cr>"
 endif
 
 let g:loaded_mkdx = 1

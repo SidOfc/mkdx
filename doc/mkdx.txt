@@ -187,7 +187,7 @@ Setting `reverse` to 1 will make the cycling of states go backwards.
     `:call mkdx#ToggleCheckboxList(reverse)`
 
 ==============================================================================
-4.1. `mkdx#ToggleHeader(increment)`                  *mkdx-function-toggle-header*
+4.4. `mkdx#ToggleHeader(increment)`                  *mkdx-function-toggle-header*
 
 `Mode:     normal`
 `Argument: increment`

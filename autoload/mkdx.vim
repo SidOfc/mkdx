@@ -44,3 +44,17 @@ fu! mkdx#WrapLink()
   call setline('.', l:b . "[" . l:s . "]()" . l:e)
   call cursor(line('.'), l:vend + 4)
 endfu
+
+fu! mkdx#ToggleHeader(increment)
+  let l:line = getline('.')
+
+  if (match(l:line, '^#\{1,6\}\s') == -1)
+    return
+  endif
+
+  let l:parts     = split(l:line, ' ')
+  let l:new_level = strlen(l:parts[0]) + (a:increment ? -1 : 1)
+  let l:new_level = l:new_level > 6 ? 1 : (l:new_level < 1 ? 6 : l:new_level)
+
+  call setline('.', repeat(g:mkdx#header_style, l:new_level) . ' ' . parts[1])
+endfu

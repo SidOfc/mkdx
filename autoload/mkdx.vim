@@ -37,7 +37,7 @@ fu! mkdx#WrapLink()
   let l:vstart = getpos("'<")[2] - 1
   let l:vend   = getpos("'>")[2]
 
-  let l:b = line[:(l:vstart - 1)]
+  let l:b = l:vstart - 1 < 0 ? '' : line[:(l:vstart - 1)]
   let l:s = line[l:vstart:(l:vend - 1)]
   let l:e = line[l:vend:]
 

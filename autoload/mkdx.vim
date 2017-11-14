@@ -24,10 +24,7 @@ fun! mkdx#ToggleCheckbox(reverse)
 endfun
 
 fun! mkdx#ToggleCheckboxList(reverse) range
-  let l:range_start = getpos("'<")[1]
-  let l:range_end   = getpos("'>")[1]
-
-  for linenum in range(l:range_start, l:range_end)
+  for linenum in range(a:firstline, a:lastline)
     call setline(linenum, mkdx#ToggleCheckboxReplace(getline(linenum), a:reverse))
   endfor
 endfun

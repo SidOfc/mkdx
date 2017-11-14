@@ -17,11 +17,11 @@ fun! mkdx#ToggleCheckboxReplace(line, backwards)
   endfor
 
   return l:line
-endfu
+endfun
 
 fun! mkdx#ToggleCheckbox(reverse)
   call setline('.', mkdx#ToggleCheckboxReplace(getline('.'), a:reverse))
-endfu
+endfun
 
 fun! mkdx#ToggleCheckboxList(reverse) range
   let l:range_start = getpos("'<")[1]
@@ -30,7 +30,7 @@ fun! mkdx#ToggleCheckboxList(reverse) range
   for linenum in range(l:range_start, l:range_end)
     call setline(linenum, mkdx#ToggleCheckboxReplace(getline(linenum), a:reverse))
   endfor
-endfu
+endfun
 
 fun! mkdx#WrapLink()
   let l:line   = getline('.')
@@ -43,7 +43,7 @@ fun! mkdx#WrapLink()
 
   call setline('.', l:b . "[" . l:s . "]()" . l:e)
   call cursor(line('.'), l:vend + 4)
-endfu
+endfun
 
 fun! mkdx#ToggleHeader(increment)
   let l:line = getline('.')
@@ -57,4 +57,4 @@ fun! mkdx#ToggleHeader(increment)
   let l:new_level = l:new_level > 6 ? 1 : (l:new_level < 1 ? 6 : l:new_level)
 
   call setline('.', repeat(g:mkdx#header_style, l:new_level) . ' ' . parts[1])
-endfu
+endfun

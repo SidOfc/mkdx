@@ -1,4 +1,4 @@
-fu! mkdx#ToggleCheckboxReplace(line, backwards)
+fun! mkdx#ToggleCheckboxReplace(line, backwards)
   let l:list = deepcopy(g:mkdx#checkbox_toggles)
   let l:line = a:line
   let l:len  = len(l:list) - 1
@@ -19,11 +19,11 @@ fu! mkdx#ToggleCheckboxReplace(line, backwards)
   return l:line
 endfu
 
-fu! mkdx#ToggleCheckbox(reverse)
+fun! mkdx#ToggleCheckbox(reverse)
   call setline('.', mkdx#ToggleCheckboxReplace(getline('.'), a:reverse))
 endfu
 
-fu! mkdx#ToggleCheckboxList(reverse)
+fun! mkdx#ToggleCheckboxList(reverse) range
   let l:range_start = getpos("'<")[1]
   let l:range_end   = getpos("'>")[1]
 
@@ -32,7 +32,7 @@ fu! mkdx#ToggleCheckboxList(reverse)
   endfor
 endfu
 
-fu! mkdx#WrapLink()
+fun! mkdx#WrapLink()
   let l:line   = getline('.')
   let l:vstart = getpos("'<")[2] - 1
   let l:vend   = getpos("'>")[2]
@@ -45,10 +45,10 @@ fu! mkdx#WrapLink()
   call cursor(line('.'), l:vend + 4)
 endfu
 
-fu! mkdx#ToggleHeader(increment)
+fun! mkdx#ToggleHeader(increment)
   let l:line = getline('.')
 
-  if (match(l:line, '^' . g:mkdx:header_style . '\{1,6\}\s') == -1)
+  if (match(l:line, '^' . g:mkdx#header_style . '\{1,6\}\s') == -1)
     return
   endif
 

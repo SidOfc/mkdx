@@ -21,13 +21,13 @@ fun! mkdx#ToggleCheckboxReplace(line, backwards)
   return l:line
 endfun
 
-fun! mkdx#ToggleCheckbox(reverse)
-  call setline('.', mkdx#ToggleCheckboxReplace(getline('.'), a:reverse))
+fun! mkdx#ToggleCheckbox(...)
+  call setline('.', mkdx#ToggleCheckboxReplace(getline('.'), get(a:000, 0, 0)))
 endfun
 
-fun! mkdx#ToggleCheckboxList(reverse) range
+fun! mkdx#ToggleCheckboxList(...) range
   for linenum in range(a:firstline, a:lastline)
-    call setline(linenum, mkdx#ToggleCheckboxReplace(getline(linenum), a:reverse))
+    call setline(linenum, mkdx#ToggleCheckboxReplace(getline(linenum), get(a:000, 0, 0)))
   endfor
 endfun
 
@@ -50,6 +50,8 @@ endfun
 
 fun! mkdx#ToggleHeader(increment)
   let l:line = getline('.')
+fun! mkdx#ToggleHeader(...)
+  let increment = get(a:000, 0, 0)
 
   if (match(l:line, '^' . g:mkdx#header_style . '\{1,6\}\s') == -1)
     return
@@ -58,6 +60,8 @@ fun! mkdx#ToggleHeader(increment)
   let l:parts     = split(l:line, ' ')
   let l:new_level = strlen(l:parts[0]) + (a:increment ? -1 : 1)
   let l:new_level = l:new_level > 6 ? 1 : (l:new_level < 1 ? 6 : l:new_level)
+  let new_level   = strlen(parts[0]) + (increment ? -1 : 1)
+  let l:new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
   call setline('.', repeat(g:mkdx#header_style, l:new_level) . ' ' . parts[1])
 endfun

@@ -1,3 +1,5 @@
+""""" CHECKBOX FUNCTIONS
+
 fun! mkdx#ToggleCheckboxReplace(line, backwards)
   let l:list = deepcopy(g:mkdx#checkbox_toggles)
   let l:line = a:line
@@ -29,6 +31,8 @@ fun! mkdx#ToggleCheckboxList(reverse) range
   endfor
 endfun
 
+""""" LINK FUNCTIONS
+
 fun! mkdx#WrapLink()
   let l:line   = getline('.')
   let l:vstart = getpos("'<")[2] - 1
@@ -41,6 +45,8 @@ fun! mkdx#WrapLink()
   call setline('.', l:b . "[" . l:s . "]()" . l:e)
   call cursor(line('.'), l:vend + 4)
 endfun
+
+""""" HEADER FUNCTIONS
 
 fun! mkdx#ToggleHeader(increment)
   let l:line = getline('.')

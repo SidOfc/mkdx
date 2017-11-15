@@ -58,8 +58,8 @@ fun! mkdx#ToggleHeader(...)
     return
   endif
 
-  let parts       = split(line, ' ')
-  let new_level   = strlen(parts[0]) + (increment ? -1 : 1)
+  let parts     = split(line, ' ')
+  let new_level = strlen(parts[0]) + (increment ? -1 : 1)
   let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
   call setline('.', repeat(g:mkdx#header_style, new_level) . ' ' . parts[1])
@@ -112,7 +112,7 @@ endfun
 
 fun! mkdx#InsertLine(line, position)
   let reg_val = @l
-  let @l = a:line
+  let @l      = a:line
 
   call cursor(a:position, 1)
   normal! A"lp

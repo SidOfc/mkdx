@@ -24,6 +24,10 @@ if !exists('g:mkdx#header_style')
   let g:mkdx#header_style = '#'
 endif
 
+if !exists('g:mkdx#table_divider')
+  let g:mkdx#table_divider = '|'
+endif
+
 if g:mkdx#map_keys == 1
   let s:gv = g:mkdx#checkbox_revis == 1 ? 'gv' : ''
 
@@ -37,5 +41,6 @@ if g:mkdx#map_keys == 1
   exe 'vnoremap <silent> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckboxList()<Cr>' . s:gv
 
   exe 'vnoremap <silent> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink()<Cr>'
-endif
 
+  exe 'vnoremap <silent> ' . g:mkdx#map_prefix . ', :call mkdx#Tableize()<Cr>'
+endif

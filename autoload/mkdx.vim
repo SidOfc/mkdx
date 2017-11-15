@@ -1,24 +1,24 @@
 """"" CHECKBOX FUNCTIONS
 
 fun! mkdx#ToggleCheckboxReplace(line, backwards)
-  let l:list = deepcopy(g:mkdx#checkbox_toggles)
-  let l:line = a:line
-  let l:len  = len(l:list) - 1
+  let listcpy = deepcopy(g:mkdx#checkbox_toggles)
+  let line    = a:line
+  let len     = len(listcpy) - 1
 
   if (a:backwards == 1)
-    let l:list = reverse(l:list)
+    let listcpy = reverse(listcpy)
   endif
 
-  for mrk in l:list
-    if (match(l:line, '\[' . mrk . '\]') != -1)
-      let l:nidx = index(l:list, mrk)
-      let l:nidx = l:nidx >= l:len ? 0 : l:nidx + 1
-      let l:line = substitute(l:line, '\[' . mrk . '\]', '\[' . l:list[l:nidx] . '\]', '')
+  for mrk in listcpy
+    if (match(line, '\[' . mrk . '\]') != -1)
+      let nidx = index(listcpy, mrk) + 1
+      let nidx = nidx > len ? 0 : nidx
+      let line = substitute(line, '\[' . mrk . '\]', '\[' . listcpy[nidx] . '\]', '')
       break
     endif
   endfor
 
-  return l:line
+  return line
 endfun
 
 fun! mkdx#ToggleCheckbox(...)
@@ -34,67 +34,101 @@ endfun
 """"" LINK FUNCTIONS
 
 fun! mkdx#WrapLink()
-  let l:line   = getline('.')
-  let l:vstart = getpos("'<")[2] - 1
-  let l:vend   = getpos("'>")[2]
+  let line   = getline('.')
+  let vstart = getpos("'<")[2] - 1
+  let vend   = getpos("'>")[2]
 
-  let l:b = l:vstart - 1 < 0 ? '' : line[:(l:vstart - 1)]
-  let l:s = line[l:vstart:(l:vend - 1)]
-  let l:e = line[l:vend:]
+  let b = vstart - 1 < 0 ? '' : line[:(vstart - 1)]
+  let s = line[vstart:(vend - 1)]
+  let e = line[vend:]
 
-  call setline('.', l:b . "[" . l:s . "]()" . l:e)
-  call cursor(line('.'), l:vend + 4)
+  call setline('.', b . "[" . s . "]()" . e)
+  call cursor(line('.'), vend + 4)
+
+  startinsert
 endfun
 
 """"" HEADER FUNCTIONS
 
-fun! mkdx#ToggleHeader(increment)
-  let l:line = getline('.')
 fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
+  let line = getline('.')
 
-  if (match(l:line, '^' . g:mkdx#header_style . '\{1,6\}\s') == -1)
+  if (match(line, '^' . g:mkdx#header_style . '\{1,6\}\s') == -1)
     return
   endif
 
-  let l:parts     = split(l:line, ' ')
-  let l:new_level = strlen(l:parts[0]) + (a:increment ? -1 : 1)
-  let l:new_level = l:new_level > 6 ? 1 : (l:new_level < 1 ? 6 : l:new_level)
+  let parts       = split(line, ' ')
   let new_level   = strlen(parts[0]) + (increment ? -1 : 1)
-  let l:new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
+  let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
-  call setline('.', repeat(g:mkdx#header_style, l:new_level) . ' ' . parts[1])
+  call setline('.', repeat(g:mkdx#header_style, new_level) . ' ' . parts[1])
 endfun
 
 """"" TABLE FUNCTIONS
 
 fun! mkdx#Tableize() range
-  let l:firstline = getline(a:firstline)
-  let l:first_delimiter_pos = match(l:firstline, '[,.\s]')
+  let next_nonblank       = nextnonblank(a:firstline)
+  let firstline           = getline(next_nonblank)
+  let first_delimiter_pos = match(firstline, '[,\t]')
 
-  if (l:first_delimiter_pos < 0)
+  if (first_delimiter_pos < 0)
     return
   endif
 
-  let l:delimiter = l:firstline[l:first_delimiter_pos]
-  let l:lines = getline(a:firstline, a:lastline)
-  let l:col_maxlen = {}
+  let delimiter  = firstline[first_delimiter_pos]
+  let lines      = getline(a:firstline, a:lastline)
+  let col_maxlen = {}
+  let linecount  = range(0, len(lines) - 1)
+  let line_delim = ' ' . g:mkdx#table_divider . ' '
 
-  for idx in range(0, a:lastline - a:firstline)
-    let l:lines[idx] = split(l:lines[idx], l:delimiter)
-    let l:linelen = len(l:lines[idx]) - 1
+  for idx in linecount
+    let lines[idx] = split(lines[idx], delimiter)
+    let linelen    = len(lines[idx]) - 1
 
-    if l:linelen >= 0
-      for column in range(0, len(l:lines[idx]) - 1)
-        let l:curr_word_max = strlen(l:lines[idx][column])
-        let l:last_col_max = get(l:col_maxlen, column, 0)
+    for column in range(0, len(lines[idx]) - 1)
+      let curr_word_max = strlen(lines[idx][column])
+      let last_col_max  = get(col_maxlen, column, 0)
 
-        if (l:curr_word_max > l:last_col_max)
-          let l:col_maxlen[column] = l:curr_word_max
-        endif
-      endfor
-    endif
+      if (curr_word_max > last_col_max)
+        let col_maxlen[column] = curr_word_max
+      endif
+    endfor
   endfor
 
-  echo l:col_maxlen
+  for linec in linecount
+    for colc in range(0, len(lines[linec]) - 1)
+      let lines[linec][colc] = mkdx#CenterString(lines[linec][colc], col_maxlen[colc])
+    endfor
+    let lines[linec] = join(lines[linec], line_delim)
+
+    call setline(a:firstline + linec, lines[linec])
+  endfor
+
+  call mkdx#InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)
+endfun
+
+""""" UTILITY FUNCTIONS
+
+fun! mkdx#InsertLine(line, position)
+  let reg_val = @l
+  let @l = a:line
+
+  call cursor(a:position, 1)
+  normal! A"lp
+
+  let @l = reg_val
+endfun
+
+fun! mkdx#CenterString(str, length)
+  let remaining = a:length - strlen(a:str)
+
+  if (remaining < 0)
+    return a:str[0:(a:length - 1)]
+  endif
+
+  let padleft  = repeat(' ', float2nr(floor(remaining / 2.0)))
+  let padright = repeat(' ', float2nr(ceil(remaining / 2.0)))
+
+  return padleft . a:str . padright
 endfun

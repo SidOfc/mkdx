@@ -1,5 +1,7 @@
 if exists('g:loaded_mkdx')
   finish
+else
+  let g:loaded_mkdx = 1
 endif
 
 if !exists('g:mkdx#map_prefix')
@@ -37,4 +39,3 @@ if g:mkdx#map_keys == 1
   exe 'vnoremap <silent> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink()<Cr>'
 endif
 
-let g:loaded_mkdx = 1

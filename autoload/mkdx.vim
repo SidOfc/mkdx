@@ -61,3 +61,36 @@ fun! mkdx#ToggleHeader(increment)
 
   call setline('.', repeat(g:mkdx#header_style, l:new_level) . ' ' . parts[1])
 endfun
+
+""""" TABLE FUNCTIONS
+
+fun! mkdx#Tableize() range
+  let l:firstline = getline(a:firstline)
+  let l:first_delimiter_pos = match(l:firstline, '[,.\s]')
+
+  if (l:first_delimiter_pos < 0)
+    return
+  endif
+
+  let l:delimiter = l:firstline[l:first_delimiter_pos]
+  let l:lines = getline(a:firstline, a:lastline)
+  let l:col_maxlen = {}
+
+  for idx in range(0, a:lastline - a:firstline)
+    let l:lines[idx] = split(l:lines[idx], l:delimiter)
+    let l:linelen = len(l:lines[idx]) - 1
+
+    if l:linelen >= 0
+      for column in range(0, len(l:lines[idx]) - 1)
+        let l:curr_word_max = strlen(l:lines[idx][column])
+        let l:last_col_max = get(l:col_maxlen, column, 0)
+
+        if (l:curr_word_max > l:last_col_max)
+          let l:col_maxlen[column] = l:curr_word_max
+        endif
+      endfor
+    endif
+  endfor
+
+  echo l:col_maxlen
+endfun

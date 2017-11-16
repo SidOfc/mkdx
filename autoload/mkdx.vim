@@ -102,7 +102,7 @@ fun! mkdx#Tableize() range
     endfor
     let lines[linec] = join(lines[linec], line_delim)
 
-    call setline(a:firstline + linec, lines[linec])
+    call setline(a:firstline + linec, substitute(lines[linec], '\s\+$', '', ''))
   endfor
 
   call mkdx#InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)

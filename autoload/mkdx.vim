@@ -106,6 +106,7 @@ fun! mkdx#Tableize() range
   endfor
 
   call mkdx#InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)
+  call cursor(a:lastline + 1, 1)
 endfun
 
 """"" UTILITY FUNCTIONS

@@ -83,7 +83,7 @@ fun! mkdx#Tableize() range
   let line_delim = ' ' . g:mkdx#table_divider . ' '
 
   for idx in linecount
-    let lines[idx] = split(lines[idx], delimiter)
+    let lines[idx] = split(lines[idx], delimiter, 1)
     let linelen    = len(lines[idx]) - 1
 
     for column in range(0, len(lines[idx]) - 1)

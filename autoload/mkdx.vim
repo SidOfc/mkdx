@@ -1,13 +1,10 @@
 """"" CHECKBOX FUNCTIONS
 
-fun! mkdx#ToggleCheckboxReplace(line, backwards)
+fun! mkdx#ToggleCheckbox(...)
   let listcpy = deepcopy(g:mkdx#checkbox_toggles)
-  let line    = a:line
+  let listcpy = get(a:000, 0, 0) == 1 ? reverse(listcpy) : listcpy
+  let line    = getline('.')
   let len     = len(listcpy) - 1
-
-  if (a:backwards == 1)
-    let listcpy = reverse(listcpy)
-  endif
 
   for mrk in listcpy
     if (match(line, '\[' . mrk . '\]') != -1)
@@ -18,17 +15,7 @@ fun! mkdx#ToggleCheckboxReplace(line, backwards)
     endif
   endfor
 
-  return line
-endfun
-
-fun! mkdx#ToggleCheckbox(...)
-  call setline('.', mkdx#ToggleCheckboxReplace(getline('.'), get(a:000, 0, 0)))
-endfun
-
-fun! mkdx#ToggleCheckboxList(...) range
-  for linenum in range(a:firstline, a:lastline)
-    call setline(linenum, mkdx#ToggleCheckboxReplace(getline(linenum), get(a:000, 0, 0)))
-  endfor
+  call setline('.', line)
 endfun
 
 """"" LINK FUNCTIONS
@@ -98,20 +85,20 @@ fun! mkdx#Tableize() range
 
   for linec in linecount
     for colc in range(0, len(lines[linec]) - 1)
-      let lines[linec][colc] = mkdx#CenterString(lines[linec][colc], col_maxlen[colc])
+      let lines[linec][colc] = s:CenterString(lines[linec][colc], col_maxlen[colc])
     endfor
     let lines[linec] = join(lines[linec], line_delim)
 
     call setline(a:firstline + linec, substitute(lines[linec], '\s\+$', '', ''))
   endfor
 
-  call mkdx#InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)
+  call s:InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 
 """"" UTILITY FUNCTIONS
 
-fun! mkdx#InsertLine(line, position)
+fun! s:InsertLine(line, position)
   let reg_val = @l
   let @l      = a:line
 
@@ -121,7 +108,7 @@ fun! mkdx#InsertLine(line, position)
   let @l = reg_val
 endfun
 
-fun! mkdx#CenterString(str, length)
+fun! s:CenterString(str, length)
   let remaining = a:length - strlen(a:str)
 
   if (remaining < 0)

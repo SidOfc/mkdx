@@ -8,6 +8,7 @@
 CONTENTS                                                         *mkdx-contents*
                                                                       *mkdx-toc*
     1. Introduction
+        1.1. Helptags
     2. Variables
         2.1. `g:mkdx#map_prefix`
         2.2. `g:mkdx#map_keys`
@@ -21,11 +22,10 @@ CONTENTS                                                         *mkdx-contents*
         3.3. Expand selection to link
         3.4. Increment header level
         3.5. Decrement header level
-        3.6. Convert CSV to markdown table
+        3.6. CSV to markdown table
     4. Functions
         4.1. mkdx#ToggleCheckbox()
         4.2. mkdx#WrapLink()
-        4.3. mkdx#ToggleCheckboxList()
         4.4. mkdx#ToggleHeader()
         4.5. mkdx#Tableize()
 
@@ -33,17 +33,48 @@ CONTENTS                                                         *mkdx-contents*
 1.                                                           *mkdx-introduction*
 Introduction
 
-|mkdx| is a small plugin that adds some basic functions to markdown files.
-See |mkdx-vars| for settings, |mkdx-mappings| for keymaps and
-|mkdx-functions| for functions.
-
-This plugin is NOT a syntax highlighter, it merely adds some useful shortcuts
-that wrap functionality for markdown headers, checkboxes and links.
+|mkdx| provides some useful mappings that will reduce the time you spend
+formatting your {markdown} files. The built-in functions allow you to
+toggle checkboxes and header levels, wrapping a selection in a markdown link,
+quoting text and converting CSV data to a markdown table.
 
 This is my first vim plugin and my first experience with vimL.
 Therefore, this plugin will probably have some rough edges, bug reports and
 feature requests are welcome at https://github.com/sidofc/mkdx/issues and PR's
 are welcome at https://github.com/sidofc/mkdx/pulls.
+
+==============================================================================
+1.1.                                                             *mkdx-helptags*
+Helptags
+
+The helptags are split into 3 types, |mdx-vars|, |mdx-mappings| and
+|mdx-functions|. These are the category tags. Within each
+See |mkdx-vars| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
+for functions. Below is a list of all helptags:
+
+- |mkdx.txt|, |mkdx|
+- |mkdx-contents|, |mkdx-toc|
+- |mkdx-introduction|
+- |mkdx-helptags|
+- |mkdx-vars|
+    - |mkdx-var-map-prefix|
+    - |mkdx-var-map-keys|
+    - |mkdx-var-checkbox-toggles|
+    - |mkdx-var-header-style|
+    - |mkdx-var-checkbox-revis|
+    - |mkdx-var-table-divider|
+- |mkdx-mappings|
+    - |mkdx-mapping-toggle-checkbox-forward|
+    - |mkdx-mapping-toggle-checkbox-backward|
+    - |mkdx-mapping-expand-selection-to-link|
+    - |mkdx-mapping-increment-header-level|
+    - |mkdx-mapping-decrement-header-level|
+    - |mkdx-mapping-csv-to-markdown-table|
+- |mkdx-functions|
+    - |mkdx-function-toggle-checkbox|
+    - |mkdx-function-wrap-link|
+    - |mkdx-toggle-header|
+    - |mkdx-tableize|
 
 ==============================================================================
 2.                                                                   *mkdx-vars*
@@ -120,7 +151,7 @@ Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
 the start if the end is reached. Works in both visual and normal mode.
 
     `nnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
-    `vnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckboxList(1)<Cr>`
+    `vnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
 
 ==============================================================================
 3.2.                                     *mkdx-mapping-toggle-checkbox-backward*
@@ -131,7 +162,7 @@ around to the end if the start is reached. Works in both visual and
 normal mode.
 
     `nnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
-    `vnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckboxList()<Cr>`
+    `vnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
 
 ==============================================================================
 3.3.                                     *mkdx-mapping-expand-selection-to-link*
@@ -178,10 +209,11 @@ This is an overview of all the functions that |mkdx| provides.
 4.1.                                             *mkdx-function-toggle-checkbox*
 mkdx#ToggleCheckbox([, {reverse}])
 
-This function works in |Normal-mode| and toggles the first checkbox (`[ ]`) on
-the current line to the next state in |mkdx-var-checkbox-toggles|.
-Cycling can be reversed by setting {increment} is 1. If {increment} is not
-supplied, |Number| 0 will be used by default.
+This function works in |Normal-mode| and |Visual-mode|.
+It toggles the first checkbox (`[ ]`) on the current line or every line in a
+selection to the next state in |mkdx-var-checkbox-toggles|. Cycling can be
+reversed by setting {increment} is 1. If {increment} is not supplied,
+|Number| 0 will be used by default.
 
 When {reverse} is 1:
 
@@ -198,29 +230,6 @@ mkdx#WrapLink()
 This function works in |Visual-mode|. Wraps the selected text in a link.
 
     Hello `=>` [Hello]()
-
-==============================================================================
-4.3.                                        *mkdx-function-toggle-checkbox-list*
-mkdx#ToggleCheckboxList([, {reverse}])
-
-This function works in |Visual-mode| and toggles the first checkbox (`[ ]`) on each
-line to the next state in |mkdx-var-checkbox-toggles|. If {reverse} is not
-supplied, |Number| 0 will be used by default. Visual selection is restored when
-|mkdx-var-checkbox-revis| is enabled.
-
-When {reverse} is 1:
-
-    [ ] `=>` [!]
-    [!] `=>` [x]
-    [x] `=>` [~]
-    [~] `=>` [ ]
-
-When {reverse} is 0 (default):
-
-    [ ] `=>` [~]
-    [~] `=>` [x]
-    [x] `=>` [!]
-    [!] `=>` [ ]
 
 ==============================================================================
 4.4.                                               *mkdx-function-toggle-header*
@@ -245,6 +254,8 @@ mkdx#Tableize()
 
 Convert a visual selection of CSV data to a markdown table.
 The first nonblank line in the selection will be used as header for the table.
+At the moment, alignment of columns is limited to centering only.
+
 Visually selecting the following text:
 
 `    Name,Age,Gender`

@@ -33,12 +33,11 @@ if g:mkdx#map_keys == 1
 
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckbox(1)<Cr>'
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckbox()<Cr>'
+  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckbox(1)<Cr>' . s:gv
+  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckbox()<Cr>' . s:gv
 
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '[ :call mkdx#ToggleHeader(1)<Cr>'
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '] :call mkdx#ToggleHeader()<Cr>'
-
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckboxList(1)<Cr>' . s:gv
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckboxList()<Cr>' . s:gv
 
   exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink()<Cr>'
 

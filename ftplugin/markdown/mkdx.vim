@@ -16,8 +16,8 @@ if !exists('g:mkdx#checkbox_toggles')
   let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
 endif
 
-if !exists('g:mkdx#checkbox_revis')
-  let g:mkdx#checkbox_revis = 1
+if !exists('g:mkdx#restore_visual')
+  let g:mkdx#restore_visual = 1
 endif
 
 if !exists('g:mkdx#header_style')
@@ -29,7 +29,7 @@ if !exists('g:mkdx#table_divider')
 endif
 
 if g:mkdx#map_keys == 1
-  let s:gv = g:mkdx#checkbox_revis == 1 ? 'gv' : ''
+  let s:gv = g:mkdx#restore_visual == 1 ? 'gv' : ''
 
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckbox(1)<Cr>'
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckbox()<Cr>'

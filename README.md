@@ -40,13 +40,13 @@ It can be overridden by setting it to a list of your choosing. Note that special
 let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
 ```
 
-### `g:mkdx#checkbox_revis`
+### `g:mkdx#restore_visual`
 
-This setting enables the restoration of the last visual selection after toggling a list of checkboxes:
+This setting enables the restoration of the last visual selection after performing an action in visual mode:
 
 ```viml
-" :h mkdx-var-checbox-revis
-let g:mkdx#checbox_revis = 1
+" :h mkdx-var-restore_visual
+let g:mkdx#restore_visual = 1
 ```
 
 ### `g:mkdx#header_style`
@@ -120,7 +120,7 @@ Toggle quotes on the current line or a visual selection with <kbd>\<PREFIX\></kb
 " :h mkdx-function-wrap-link
 ```
 
-Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd>+<kbd>n</kbd>
+Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd><kbd>n</kbd>
 
 ![mkdx wrap selection in link](doc/gifs/vim-mkdx-wrap-link.gif)
 

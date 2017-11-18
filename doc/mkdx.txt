@@ -14,7 +14,7 @@ CONTENTS                                                         *mkdx-contents*
         2.2. `g:mkdx#map_keys`
         2.3. `g:mkdx#checkbox_toggles`
         2.4. `g:mkdx#header_style`
-        2.5. `g:mkdx#checkbox_revis`
+        2.5. `g:mkdx#restore_visual`
         2.6. `g:mkdx#table_divider`
     3. Mappings
         3.1. Toggle checkbox forward
@@ -64,7 +64,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-map-keys|
     - |mkdx-var-checkbox-toggles|
     - |mkdx-var-header-style|
-    - |mkdx-var-checkbox-revis|
+    - |mkdx-var-restore_visual|
     - |mkdx-var-table-divider|
 - |mkdx-mappings|
     - |mkdx-mapping-toggle-checkbox-forward|
@@ -124,8 +124,8 @@ Any character is allowed here, it will also be used when matching header lines
 e.g. setting it to `@` matches `@@ Header` instead of `## Header`
 
 ==============================================================================
-2.5.                                                   *mkdx-var-checkbox-revis*
-`g:mkdx#checkbox_revis = 1`
+2.5.                                                   *mkdx-var-restore-visual*
+`g:mkdx#restore_visual = 1`
 
 This setting controls wether or not a visual mode mapping returns to visual
 mode after running the command. Setting it to 0 means you will not go back

@@ -39,6 +39,9 @@ if g:mkdx#map_keys == 1
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '[ :call mkdx#ToggleHeader(1)<Cr>'
   exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '] :call mkdx#ToggleHeader()<Cr>'
 
+  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . "' :call mkdx#ToggleQuote()<Cr>"
+  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . "' :call mkdx#ToggleQuote()<Cr>" . s:gv
+
   exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink()<Cr>'
 
   exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . ', :call mkdx#Tableize()<Cr>'

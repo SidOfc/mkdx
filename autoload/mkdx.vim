@@ -35,6 +35,18 @@ fun! mkdx#WrapLink()
   startinsert
 endfun
 
+""""" QUOTING FUNCTIONS
+
+fun! mkdx#ToggleQuote()
+  let line = getline('.')
+
+  if (match(line, '^> ') != -1)
+    call setline('.', substitute(line, '^> ', '', ''))
+  elseif (!empty(line))
+    call setline('.', '> ' . line)
+  endif
+endfun
+
 """"" HEADER FUNCTIONS
 
 fun! mkdx#ToggleHeader(...)

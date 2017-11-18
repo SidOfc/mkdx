@@ -23,11 +23,14 @@ CONTENTS                                                         *mkdx-contents*
         3.4. Increment header level
         3.5. Decrement header level
         3.6. CSV to markdown table
+        3.7. Toggle quote
     4. Functions
         4.1. mkdx#ToggleCheckbox()
         4.2. mkdx#WrapLink()
+        4.3. mkdx#ToggleQuote()
         4.4. mkdx#ToggleHeader()
         4.5. mkdx#Tableize()
+
 
 ==============================================================================
 1.                                                           *mkdx-introduction*
@@ -70,11 +73,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-increment-header-level|
     - |mkdx-mapping-decrement-header-level|
     - |mkdx-mapping-csv-to-markdown-table|
+    - |mkdx-mapping-toggle-quote|
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
     - |mkdx-function-wrap-link|
-    - |mkdx-toggle-header|
-    - |mkdx-tableize|
+    - |mkdx-function-toggle-quote|
+    - |mkdx-function-toggle-header|
+    - |mkdx-function-tableize|
 
 ==============================================================================
 2.                                                                   *mkdx-vars*
@@ -138,7 +143,7 @@ Mappings
 
 These are the default mappings set by this plugin. Both |mkdx-var-map-keys|
 and |mkdx-var-map-prefix| control how they work. You can always find what a
-key maps to directly below the help tag.
+key maps to directly below the help tag. All mappings are {<buffer>} local.
 
 The convention `<MAP_PREFIX>` will be used in examples below to indicate the
 value of `g:mkdx#map_prefix` (default: `"<leader>"`)
@@ -150,8 +155,8 @@ Toggle checkbox forward                                          <MAP_PREFIX>-
 Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
 the start if the end is reached. Works in both visual and normal mode.
 
-    `nnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
-    `vnoremap <silent> <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
+    `nnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
+    `vnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
 
 ==============================================================================
 3.2.                                     *mkdx-mapping-toggle-checkbox-backward*
@@ -161,8 +166,8 @@ Toggles the previous item in the |mkdx-var-checkbox-toggles| list. Wraps
 around to the end if the start is reached. Works in both visual and
 normal mode.
 
-    `nnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
-    `vnoremap <silent> <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
+    `nnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
+    `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
 
 ==============================================================================
 3.3.                                     *mkdx-mapping-expand-selection-to-link*
@@ -173,7 +178,7 @@ Select the word "world" in "hello world" and run the mapping, it
 results in "hello [world]()". The cursor will be placed between the
 parentheses in |Insert-mode|.
 
-    `vnoremap <silent> <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
+    `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
 
 ==============================================================================
 3.4.                                       *mkdx-mapping-increment-header-level*
@@ -181,7 +186,7 @@ Increment header level                                           <MAP_PREFIX>[
 
 Increments the header level by 1. Wraps around to h6 when promoting beyond h1.
 
-    `nnoremap <silent> <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
 
 ==============================================================================
 3.5.                                       *mkdx-mapping-decrement-header-level*
@@ -189,7 +194,7 @@ Decrement header level                                           <MAP_PREFIX>]
 
 Decrements the header level by 1. Wraps around to h1 when demoting beyond h6.
 
-    `nnoremap <silent> <MAP_PREFIX>[ :call mkdx#ToggleHeader()<Cr>`
+    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader()<Cr>`
 
 ==============================================================================
 3.6.                                        *mkdx-mapping-csv-to-markdown-table*
@@ -198,7 +203,17 @@ Convert CSV to markdown table                                    <MAP_PREFIX>,
 Converts a visual selection of CSV rows to a markdown table.
 See |mkdx-function-tableize| for more information.
 
-    `vnoremap <silent> <MAP_PREFIX>, :call mkdx#Tableize()<Cr>`
+    `vnoremap <MAP_PREFIX>, :call mkdx#Tableize()<Cr>`
+
+==============================================================================
+3.7.                                                 *mkdx-mapping-toggle-quote*
+Toggle quote                                                     <MAP_PREFIX>'
+
+Toggles a markdown quote on the current line or on every nonblank line in a
+visual selection.
+
+    `nnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
+    `vnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
 
 ==============================================================================
 4. Functions                                                    *mkdx-functions*
@@ -230,6 +245,17 @@ mkdx#WrapLink()
 This function works in |Visual-mode|. Wraps the selected text in a link.
 
     Hello `=>` [Hello]()
+
+==============================================================================
+4.3.                                                *mkdx-function-toggle-quote*
+mkdx#ToggleQuote()
+
+This function works in |Normal-mode| and |Visual-mode|. It toggles a markdown quote
+on a line, if a qoute mark (`>`) is present, it will be removed, otherwise it
+will be prepended.
+
+    This is an awesome quote!   `=>` > This is an awesome quote!
+    > This is an awesome quote! `=>` This is an awesome quote!
 
 ==============================================================================
 4.4.                                               *mkdx-function-toggle-header*

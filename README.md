@@ -26,7 +26,7 @@ more information.
 
 ### Toggling Quotes
 
-![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quotes.gif)
+![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quote.gif)
 
 ### Wrap selection in link
 

@@ -36,7 +36,7 @@ This setting defines the list of states to use when toggling a checkbox.
 It can be overridden by setting it to a list of your choosing. Note that special characters must be escaped!
 
 ```viml
-" :h mkdx-var-checbox-toggles
+" :h mkdx-var-checkbox-toggles
 let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
 ```
 
@@ -84,7 +84,7 @@ let g:mkdx#table_divider = '|'
 ```
 
 Checkboxes can be toggled using <kbd>\<PREFIX\></kbd>+<kbd>=</kbd> and <kbd>\<PREFIX\></kbd>+<kbd>-</kbd>.
-Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checbox_toggles`](#gmkdxcheckbox_toggles).
+Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
 
 ![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
 

@@ -33,21 +33,26 @@ if !exists('g:mkdx#table_divider')
 endif
 
 if g:mkdx#map_keys == 1
-  let s:gv = g:mkdx#restore_visual == 1 ? 'gv' : ''
+  let s:gv       = g:mkdx#restore_visual == 1 ? 'gv' : ''
+  let s:bindings = [
+        \ ['n', '-', ':call mkdx#ToggleCheckbox(1)<Cr>'],
+        \ ['n', '=', ':call mkdx#ToggleCheckbox()<Cr>'],
+        \ ['v', '-', ':call mkdx#ToggleCheckbox(1)<Cr>' . s:gv],
+        \ ['v', '=', ':call mkdx#ToggleCheckbox()<Cr>' . s:gv],
+        \ ['n', '[', ':call mkdx#ToggleHeader(1)<Cr>'],
+        \ ['n', ']', ':call mkdx#ToggleHeader()<Cr>'],
+        \ ['n', "'", ':call mkdx#ToggleQuote()<Cr>'],
+        \ ['v', "'", ':call mkdx#ToggleQuote()<Cr>' . s:gv],
+        \ ['n', 'ln', ':call mkdx#WrapLink()<Cr>'],
+        \ ['v', 'ln', ':call mkdx#WrapLink("v")<Cr>'],
+        \ ['v', ',', ':call mkdx#Tableize()<Cr>']
+        \ ]
 
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckbox(1)<Cr>'
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckbox()<Cr>'
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '- :call mkdx#ToggleCheckbox(1)<Cr>' . s:gv
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '= :call mkdx#ToggleCheckbox()<Cr>' . s:gv
+  for [mapmode, binding, funcstr] in s:bindings
+    let full_mapping = g:mkdx#map_prefix . binding
 
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '[ :call mkdx#ToggleHeader(1)<Cr>'
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . '] :call mkdx#ToggleHeader()<Cr>'
-
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . "' :call mkdx#ToggleQuote()<Cr>"
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . "' :call mkdx#ToggleQuote()<Cr>" . s:gv
-
-  exe 'nnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink()<Cr>'
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . 'ln :call mkdx#WrapLink("v")<Cr>'
-
-  exe 'vnoremap <buffer> <silent> <unique> ' . g:mkdx#map_prefix . ', :call mkdx#Tableize()<Cr>'
+    if mapcheck(full_mapping, mapmode) == ""
+      exe mapmode . 'noremap <buffer> <silent> <unique> ' . full_mapping . ' ' . funcstr
+    endif
+  endfor
 endif

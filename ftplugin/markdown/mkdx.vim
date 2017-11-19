@@ -24,6 +24,10 @@ if !exists('g:mkdx#header_style')
   let g:mkdx#header_style = '#'
 endif
 
+if !exists('g:mkdx#table_header_divider')
+  let g:mkdx#table_header_divider = '='
+endif
+
 if !exists('g:mkdx#table_divider')
   let g:mkdx#table_divider = '|'
 endif

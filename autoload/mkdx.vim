@@ -104,7 +104,7 @@ fun! mkdx#Tableize() range
     call setline(a:firstline + linec, substitute(lines[linec], '\s\+$', '', ''))
   endfor
 
-  call s:InsertLine(repeat('=', max(map(lines, 'strlen(v:val)'))), next_nonblank)
+  call s:InsertLine(repeat(g:mkdx#table_header_divider, max(map(lines, 'strlen(v:val)'))), next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 

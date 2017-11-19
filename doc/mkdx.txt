@@ -20,7 +20,7 @@ CONTENTS                                                         *mkdx-contents*
     Mappings
         Toggle checkbox forward
         Toggle checkbox backward
-        Expand selection to link
+        Wrap text in link
         Increment header level
         Decrement header level
         CSV to markdown table
@@ -169,7 +169,7 @@ normal mode. This function restores visual selection if
     `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
 
 ==============================================================================
-Expand selection to link                 *mkdx-mapping-expand-selection-to-link*
+Wrap text in link                               *mkdx-mapping-wrap-text-in-link*
                                                                 <MAP_PREFIX>ln
 
 Wrap the word under the cursor or a visual selection in an empty markdown link.

@@ -1,8 +1,9 @@
 """"" CHECKBOX FUNCTIONS
 
 fun! mkdx#ToggleCheckbox(...)
+  let reverse = get(a:000, 0, 0) == 1
   let listcpy = deepcopy(g:mkdx#checkbox_toggles)
-  let listcpy = get(a:000, 0, 0) == 1 ? reverse(listcpy) : listcpy
+  let listcpy = reverse ? reverse(listcpy) : listcpy
   let line    = getline('.')
   let len     = len(listcpy) - 1
 
@@ -16,6 +17,7 @@ fun! mkdx#ToggleCheckbox(...)
   endfor
 
   call setline('.', line)
+  silent! call repeat#set("\<Plug>(mkdx-checkbox-" . (reverse ? 'prev' : 'next') . ")")
 endfun
 
 """"" LINK FUNCTIONS
@@ -30,6 +32,7 @@ fun! mkdx#WrapLink(...)
   let @z = r
 
   startinsert
+  silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")
 endfun
 
 """"" QUOTING FUNCTIONS
@@ -42,6 +45,8 @@ fun! mkdx#ToggleQuote()
   elseif (!empty(line))
     call setline('.', '> ' . line)
   endif
+
+  silent! call repeat#set("\<Plug>(mkdx-toggle-quote)")
 endfun
 
 """"" HEADER FUNCTIONS
@@ -59,6 +64,7 @@ fun! mkdx#ToggleHeader(...)
   let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
   call setline('.', repeat(g:mkdx#header_style, new_level) . ' ' . parts[1])
+  silent! call repeat#set("\<Plug>(mkdx-" . (increment ? 'promote' : 'demote') . "-header)")
 endfun
 
 """"" TABLE FUNCTIONS

@@ -17,6 +17,15 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#restore_visual`
         `g:mkdx#table_divider`
         `g:mkdx#table_header_divider`
+    Plugs
+        <Plug>(mkdx-checkbox-next)
+        <Plug>(mkdx-checkbox-prev)
+        <Plug>(mkdx-promote-header)
+        <Plug>(mkdx-demote-header)
+        <Plug>(mkdx-toggle-quote)
+        <Plug>(mkdx-wrap-link-n)
+        <Plug>(mkdx-wrap-link-v)
+        <Plug>(mkdx-tableize)
     Mappings
         Toggle checkbox forward
         Toggle checkbox backward
@@ -66,6 +75,15 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-restore-visual|
     - |mkdx-var-table-header-divider|
     - |mkdx-var-table-divider|
+- |mkdx-plugs|
+    - |mkdx-plug-checkbox-next|
+    - |mkdx-plug-checkbox-prev|
+    - |mkdx-plug-promote-header|
+    - |mkdx-plug-demote-header|
+    - |mkdx-plug-toggle-quote|
+    - |mkdx-plug-mkdx-wrap-link-n|
+    - |mkdx-plug-mkdx-wrap-link-v|
+    - |mkdx-plug-mkdx-tableize|
 - |mkdx-mappings|
     - |mkdx-mapping-toggle-checkbox-forward|
     - |mkdx-mapping-toggle-checkbox-backward|
@@ -137,6 +155,51 @@ Change the default divider used in |mkdx-function-tableize|.
 Change the default header divider used in |mkdx-function-tableize|.
 
 ==============================================================================
+PLUGS                                                               *mkdx-plugs*
+
+When `g:mkdx#map_keys` is set to 0, the user can bind individual functions
+through <Plug> mappings. Every normal mode <Plug> is repeatable using
+{repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
+
+==============================================================================
+<Plug>(mkdx-checkbox-next)                             *mkdx-plug-checkbox-next*
+
+    `:call mkdx#ToggleCheckbox()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-checkbox-prev)                             *mkdx-plug-checkbox-prev*
+
+    `:call mkdx#ToggleCheckbox(1)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-promote-header)                           *mkdx-plug-promote-header*
+
+    `:<C-U>call mkdx#ToggleHeader(1)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-demote-header)                             *mkdx-plug-demote-header*
+
+    `:<C-U>call mkdx#ToggleHeader()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-quote)                               *mkdx-plug-toggle-quote*
+
+    `:call mkdx#ToggleQuote()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-wrap-link-n)                                 *mkdx-plug-wrap-link-n*
+
+    `:call mkdx#WrapLink()<Cr>`
+==============================================================================
+<Plug>(mkdx-wrap-link-v)                                 *mkdx-plug-wrap-link-v*
+
+    `:call mkdx#WrapLink('v')<Cr>`
+==============================================================================
+<Plug>(mkdx-tableize)                                       *mkdx-plug-tableize*
+
+    `:call mkdx#Tableize()<Cr>`
+
+==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both |mkdx-var-map-keys|
@@ -153,8 +216,8 @@ Toggle checkbox forward                   *mkdx-mapping-toggle-checkbox-forward*
 Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
 the start if the end is reached. Works in both visual and normal mode.
 
-    `nnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
-    `vnoremap <MAP_PREFIX>- :call mkdx#ToggleCheckbox(1)<Cr>`
+    `nmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
+    `vmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
 
 ==============================================================================
 Toggle checkbox backward                 *mkdx-mapping-toggle-checkbox-backward*
@@ -165,8 +228,8 @@ around to the end if the start is reached. Works in both visual and
 normal mode. This function restores visual selection if
 |mkdx-var-restore-visual| is set.
 
-    `nnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
-    `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
+    `nmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
+    `vmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
 
 ==============================================================================
 Wrap text in link                               *mkdx-mapping-wrap-text-in-link*
@@ -178,8 +241,8 @@ results in "hello [world]()". Likewise in normal mode, if you put the cursor
 on the word "world" and run the mapping, it will produce the same result.
 The cursor will be placed between the parentheses in |Insert-mode|.
 
-    `nnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
-    `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink('v')<Cr>`
+    `nmap <MAP_PREFIX>ln <Plug>(mkdx-wrap-link-n)`
+    `vmap <MAP_PREFIX>ln <Plug>(mkdx-wrap-link-v)`
 
 ==============================================================================
 Increment header level                     *mkdx-mapping-increment-header-level*
@@ -187,7 +250,7 @@ Increment header level                     *mkdx-mapping-increment-header-level*
 
 Increments the header level by 1. Wraps around to h6 when promoting beyond h1.
 
-    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader(1)<Cr>`
+    `nmap <MAP_PREFIX>[ <Plug>(mkdx-promote-header)`
 
 ==============================================================================
 Decrement header level                     *mkdx-mapping-decrement-header-level*
@@ -195,7 +258,7 @@ Decrement header level                     *mkdx-mapping-decrement-header-level*
 
 Decrements the header level by 1. Wraps around to h1 when demoting beyond h6.
 
-    `nnoremap <MAP_PREFIX>[ :call mkdx#ToggleHeader()<Cr>`
+    `nmap <MAP_PREFIX>[ <Plug>(mkdx-demote-header)`
 
 ==============================================================================
 Convert CSV to markdown table               *mkdx-mapping-csv-to-markdown-table*
@@ -204,7 +267,7 @@ Convert CSV to markdown table               *mkdx-mapping-csv-to-markdown-table*
 Converts a visual selection of CSV rows to a markdown table.
 See |mkdx-function-tableize| for more information.
 
-    `vnoremap <MAP_PREFIX>, :call mkdx#Tableize()<Cr>`
+    `vmap <MAP_PREFIX>, <Plug>(mkdx-tableize)`
 
 ==============================================================================
 Toggle quote                                         *mkdx-mapping-toggle-quote*
@@ -214,8 +277,8 @@ Toggles a markdown quote on the current line or on every nonblank line in a
 visual selection. This function restores visual selection if
 |mkdx-var-restore-visual| is set.
 
-    `nnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
-    `vnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
+    `nmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
+    `vmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -284,7 +347,6 @@ When {increment} is 0 (default):
 
 ==============================================================================
 mkdx#Tableize()                                         *mkdx-function-tableize*
-
 
 Convert a visual selection of CSV data to a markdown table.
 The first nonblank line in the selection will be used as header for the table.

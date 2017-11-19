@@ -32,27 +32,36 @@ if !exists('g:mkdx#table_divider')
   let g:mkdx#table_divider = '|'
 endif
 
+noremap <silent> <Plug>(mkdx-checkbox-next)  :call mkdx#ToggleCheckbox()<Cr>
+noremap <silent> <Plug>(mkdx-checkbox-prev)  :call mkdx#ToggleCheckbox(1)<Cr>
+noremap <silent> <Plug>(mkdx-toggle-quote)   :call mkdx#ToggleQuote()<Cr>
+noremap <silent> <Plug>(mkdx-demote-header)  :<C-U>call mkdx#ToggleHeader()<Cr>
+noremap <silent> <Plug>(mkdx-promote-header) :<C-U>call mkdx#ToggleHeader(1)<Cr>
+noremap <silent> <Plug>(mkdx-wrap-link-n)    :<C-U>call mkdx#WrapLink()<Cr>
+noremap <silent> <Plug>(mkdx-wrap-link-v)    :<C-U>call mkdx#WrapLink('v')<Cr>
+noremap <silent> <Plug>(mkdx-tableize)       :call mkdx#Tableize()<Cr>
+
 if g:mkdx#map_keys == 1
   let s:gv       = g:mkdx#restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
-        \ ['n', '-', ':call mkdx#ToggleCheckbox(1)<Cr>'],
-        \ ['n', '=', ':call mkdx#ToggleCheckbox()<Cr>'],
-        \ ['v', '-', ':call mkdx#ToggleCheckbox(1)<Cr>' . s:gv],
-        \ ['v', '=', ':call mkdx#ToggleCheckbox()<Cr>' . s:gv],
-        \ ['n', '[', ':call mkdx#ToggleHeader(1)<Cr>'],
-        \ ['n', ']', ':call mkdx#ToggleHeader()<Cr>'],
-        \ ['n', "'", ':call mkdx#ToggleQuote()<Cr>'],
-        \ ['v', "'", ':call mkdx#ToggleQuote()<Cr>' . s:gv],
-        \ ['n', 'ln', ':call mkdx#WrapLink()<Cr>'],
-        \ ['v', 'ln', ':call mkdx#WrapLink("v")<Cr>'],
-        \ ['v', ',', ':call mkdx#Tableize()<Cr>']
+        \ ['n', '-', '<Plug>(mkdx-checkbox-prev)'],
+        \ ['n', '=', '<Plug>(mkdx-checkbox-next)'],
+        \ ['v', '-', '<Plug>(mkdx-checkbox-prev)' . s:gv],
+        \ ['v', '=', '<Plug>(mkdx-checkbox-next)' . s:gv],
+        \ ['n', '[', '<Plug>(mkdx-promote-header)'],
+        \ ['n', ']', '<Plug>(mkdx-demote-header)'],
+        \ ['n', "'", '<Plug>(mkdx-toggle-quote)'],
+        \ ['v', "'", '<Plug>(mkdx-toggle-quote)' . s:gv],
+        \ ['n', 'ln', '<Plug>(mkdx-wrap-link-n)'],
+        \ ['v', 'ln', '<Plug>(mkdx-wrap-link-v)'],
+        \ ['v', ',', '<Plug>(mkdx-tableize)']
         \ ]
 
   for [mapmode, binding, funcstr] in s:bindings
     let full_mapping = g:mkdx#map_prefix . binding
 
     if mapcheck(full_mapping, mapmode) == ""
-      exe mapmode . 'noremap <buffer> <silent> <unique> ' . full_mapping . ' ' . funcstr
+      exe mapmode . 'map <buffer> <silent> <unique> ' . full_mapping . ' ' . funcstr
     endif
   endfor
 endif

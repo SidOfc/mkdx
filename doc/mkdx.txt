@@ -162,7 +162,8 @@ Toggle checkbox backward                 *mkdx-mapping-toggle-checkbox-backward*
 
 Toggles the previous item in the |mkdx-var-checkbox-toggles| list. Wraps
 around to the end if the start is reached. Works in both visual and
-normal mode.
+normal mode. This function restores visual selection if
+|mkdx-var-restore-visual| is set.
 
     `nnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
     `vnoremap <MAP_PREFIX>= :call mkdx#ToggleCheckbox()<Cr>`
@@ -171,12 +172,14 @@ normal mode.
 Expand selection to link                 *mkdx-mapping-expand-selection-to-link*
                                                                 <MAP_PREFIX>ln
 
-Wrap a visual selection in an empty markdown link.
+Wrap the word under the cursor or a visual selection in an empty markdown link.
 Select the word "world" in "hello world" and run the mapping, it
-results in "hello [world]()". The cursor will be placed between the
-parentheses in |Insert-mode|.
+results in "hello [world]()". Likewise in normal mode, if you put the cursor
+on the word "world" and run the mapping, it will produce the same result.
+The cursor will be placed between the parentheses in |Insert-mode|.
 
-    `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
+    `nnoremap <MAP_PREFIX>ln :call mkdx#WrapLink()<Cr>`
+    `vnoremap <MAP_PREFIX>ln :call mkdx#WrapLink('v')<Cr>`
 
 ==============================================================================
 Increment header level                     *mkdx-mapping-increment-header-level*
@@ -208,7 +211,8 @@ Toggle quote                                         *mkdx-mapping-toggle-quote*
                                                                  <MAP_PREFIX>'
 
 Toggles a markdown quote on the current line or on every nonblank line in a
-visual selection.
+visual selection. This function restores visual selection if
+|mkdx-var-restore-visual| is set.
 
     `nnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
     `vnoremap <MAP_PREFIX>' :call mkdx#ToggleQuote()<Cr>`
@@ -236,9 +240,18 @@ When {reverse} is 0:
     [ ] `=>` [~]
 
 ==============================================================================
-mkdx#WrapLink()                                        *mkdx-function-wrap-link*
+mkdx#WrapLink([, {mode}])                              *mkdx-function-wrap-link*
 
-This function works in |Visual-mode|. Wraps the selected text in a link.
+This function works in |Normal-mode| and |Visual-mode|.
+The optional {mode} parameter defines how the the text must be handled.
+This function stores deleted text in a register (which is restored
+afterwards), wraps it and pastes the register back at cursor position.
+To delete the correct text to wrap, a mode must be supplied for any mode other
+than normal. This will influence the `normal!` commands executed to delete
+text. e.g. for visual mode it will do a `gv` before deleting into a register.
+
+In normal mode, this function wraps the word under the cursor in a link.
+In visual mode, it will wrap the entire visual selection in a link.
 
     Hello `=>` [Hello]()
 

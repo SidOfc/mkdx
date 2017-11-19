@@ -45,7 +45,7 @@ let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
 This setting enables the restoration of the last visual selection after performing an action in visual mode:
 
 ```viml
-" :h mkdx-var-restore_visual
+" :h mkdx-var-restore-visual
 let g:mkdx#restore_visual = 1
 ```
 
@@ -126,7 +126,9 @@ Toggle quotes on the current line or a visual selection with <kbd>\<PREFIX\></kb
 
 ![mkdx wrap selection in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
-Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd><kbd>n</kbd>
+Wrap the word under the cursor or visually selected text in an empty markdown link
+with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
+cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the cursor.
 
 ```viml
 " :h mkdx-mapping-expand-selection-to-link

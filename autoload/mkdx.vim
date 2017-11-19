@@ -20,17 +20,14 @@ endfun
 
 """"" LINK FUNCTIONS
 
-fun! mkdx#WrapLink()
-  let line   = getline('.')
-  let vstart = getpos("'<")[2] - 1
-  let vend   = getpos("'>")[2]
+fun! mkdx#WrapLink(...)
+  let m  = get(a:000, 0, 'n')
+  let r  = @z
 
-  let b = vstart - 1 < 0 ? '' : line[:(vstart - 1)]
-  let s = line[vstart:(vend - 1)]
-  let e = line[vend:]
-
-  call setline('.', b . "[" . s . "]()" . e)
-  call cursor(line('.'), vend + 4)
+  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
+  let @z = '[' . @z . ']()'
+  normal! "zP
+  let @z = r
 
   startinsert
 endfun

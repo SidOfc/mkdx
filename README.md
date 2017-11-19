@@ -23,7 +23,7 @@ more information.
   - [Toggling checkboxes](#toggling-checkboxes)
   - [Toggling headers](#toggling-headers)
   - [Toggling Quotes](#toggling-quotes)
-  - [Wrap text in link](#wrap-in-link)
+  - [Wrap text in link](#wrap-text-in-link)
   - [Convert CSV to table](#convert-csv-to-table)
 
 ## Variables

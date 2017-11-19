@@ -8,6 +8,24 @@ _header levels_ and _quotes_ in addition to _wrapping text in a link_ and
 _converting CSV data to a markdown table_. Visit `:h mkdx` or `:h mkdx-helptags` for
 more information.
 
+## Table of Contents
+
+- [Table of contents](#table-of-contents)
+- [Variables](#variables)
+  - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)
+  - [`g:mkdx#map_keys`](#gmkdxmap_keys)
+  - [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles)
+  - [`g:mkdx#restore_visual`](#gmkdxrestore_visual)
+  - [`g:mkdx#header_style`](#gmkdxheader_style)
+  - [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider)
+  - [`g:mkdx#table_divider`](#gmkdxtable_divider)
+- [Examples and Mappings](#examples-and-mappings)
+  - [Toggling checkboxes](#toggling-checkboxes)
+  - [Toggling headers](#toggling-headers)
+  - [Toggling Quotes](#toggling-quotes)
+  - [Wrap text in link](#wrap-in-link)
+  - [Convert CSV to table](#convert-csv-to-table)
+
 ## Variables
 
 ### `g:mkdx#map_prefix`
@@ -24,6 +42,7 @@ let g:mkdx#map_prefix = '<leader>'
 ### `g:mkdx#map_keys`
 
 If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
+**Note** that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
 
 ```viml
 " :h mkdx-var-map-keys
@@ -78,11 +97,9 @@ let g:mkdx#table_divider = '|'
 
 ## Examples and Mappings
 
-- [Toggling checkboxes](#toggling-checkboxes)
-- [Toggling headers](#toggling-headers)
-- [Toggling Quotes](#toggling-quotes)
-- [Wrap text in link](#wrap-in-link)
-- [Convert CSV to table](#convert-csv-to-table)
+Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
+The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
+In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
 
 ### Toggling Checkboxes
 

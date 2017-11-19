@@ -63,13 +63,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-map-keys|
     - |mkdx-var-checkbox-toggles|
     - |mkdx-var-header-style|
-    - |mkdx-var-restore_visual|
-    - |mkdx-var-table-divider|
+    - |mkdx-var-restore-visual|
     - |mkdx-var-table-header-divider|
+    - |mkdx-var-table-divider|
 - |mkdx-mappings|
     - |mkdx-mapping-toggle-checkbox-forward|
     - |mkdx-mapping-toggle-checkbox-backward|
-    - |mkdx-mapping-expand-selection-to-link|
+    - |mkdx-mapping-wrap-text-in-link|
     - |mkdx-mapping-increment-header-level|
     - |mkdx-mapping-decrement-header-level|
     - |mkdx-mapping-csv-to-markdown-table|

@@ -23,7 +23,7 @@ let g:mkdx#map_prefix = '<leader>'
 
 ### `g:mkdx#map_keys`
 
-If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`:
+If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
 
 ```viml
 " :h mkdx-var-map-keys
@@ -56,6 +56,15 @@ If you want to use a different style for markdown headings (h1, h2, etc...).
 ```viml
 " :h mkdx-var-header-style
 let g:mkdx#header_style = '#'
+```
+
+### `g:mkdx#table_header_divider`
+
+You can change the separator used for table headings in markdown tables.
+
+```viml
+" :h mkdx-var-table-header-divider
+let g:mkdx#table_header_divider = '='
 ```
 
 ### `g:mkdx#table_divider`
@@ -130,7 +139,8 @@ Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>
 
 Convert visually selected CSV rows to a markdown table with <kbd>\<PREFIX\></kbd>+<kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.
-The separator can be changed with [`g:mkdx#table_divider`](#gmkdxtable_divider).
+The divider (`|`) as well as the header divider can be changed with [`g:mkdx#table_divider`](#gmkdxtable_divider)
+and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider).
 
 ```viml
 " :h mkdx-mapping-csv-to-markdown-table

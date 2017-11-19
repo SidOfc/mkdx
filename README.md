@@ -1,5 +1,4 @@
 # mkdx.vim
----
 
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a

@@ -50,6 +50,9 @@ formatting your {markdown} files. The built-in functions allow you to
 toggle checkboxes and header levels, wrapping a selection in a markdown link,
 quoting text and converting CSV data to a markdown table.
 
+mappings also support the {repeat.vim} plugin by Tim Pope. Every normal mode
+mapping can be repeated using the `.` command.
+
 This is my first vim plugin and my first experience with vimL.
 Therefore, this plugin will probably have some rough edges, bug reports and
 feature requests are welcome at https://github.com/sidofc/mkdx/issues and PR's

@@ -7,6 +7,9 @@ _header levels_ and _quotes_ in addition to _wrapping text in a link_ and
 _converting CSV data to a markdown table_. Visit `:h mkdx` or `:h mkdx-helptags` for
 more information.
 
+This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
+Every _normal_ mode mapping can be repeated with the `.` command.
+
 ## Table of Contents
 
 - [Table of contents](#table-of-contents)

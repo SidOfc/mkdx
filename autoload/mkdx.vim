@@ -53,12 +53,12 @@ fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
   let line = getline('.')
 
-  if (match(line, '^' . g:mkdx#header_style . '\{1,6\}\s') == -1)
+  if (match(line, '^' . g:mkdx#header_style . '\{1,6\} ') == -1)
     return
   endif
 
-  let parts     = split(line, ' ')
-  let new_level = strlen(parts[0]) + (increment ? -1 : 1)
+  let parts     = split(line, '^' . g:mkdx#header_style . '\{1,6\} \zs')
+  let new_level = strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
   let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
   call setline('.', repeat(g:mkdx#header_style, new_level) . ' ' . parts[1])

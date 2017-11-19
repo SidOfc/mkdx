@@ -13,7 +13,7 @@ more information.
 ### `g:mkdx#map_prefix`
 
 All mappings are prefixed with a single prefix key.
-If a mapping contains <kbd>\<\PREFIX></kbd> key, it is the value of this variable.
+If a mapping contains <kbd>\<PREFIX\></kbd> key, it is the value of this variable.
 If you do not like the default (`<leader>`) you can override it:
 
 ```viml
@@ -77,18 +77,24 @@ let g:mkdx#table_divider = '|'
 
 ### Toggling Checkboxes
 
+![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
+
+Checkboxes can be toggled using <kbd>\<PREFIX\></kbd>+<kbd>=</kbd> and <kbd>\<PREFIX\></kbd>+<kbd>-</kbd>.
+Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
+
 ```viml
 " :h mkdx-mapping-toggle-checkbox-forward
 " :h mkdx-mapping-toggle-checkbox-backward
 " :h mkdx-function-toggle-checkbox
 ```
 
-Checkboxes can be toggled using <kbd>\<PREFIX\></kbd>+<kbd>=</kbd> and <kbd>\<PREFIX\></kbd>+<kbd>-</kbd>.
-Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
-
-![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
-
 ### Toggling Headers
+
+![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
+
+Increment or decrement a heading with <kbd>\<PREFIX\></kbd>+<kbd>[</kbd> and <kbd>\<PREFIX\></kbd>+<kbd>]</kbd>.
+These mappings cycle backward and forward between h1 and h6, wrapping around both ends.
+The header character can be changed using [`g:mkdx#header_style`](#gmkdxheader_style).
 
 ```viml
 " :h mkdx-mapping-increment-header-level
@@ -96,43 +102,37 @@ Toggling a checkbox means going to the previous or next mark in the list of [`g:
 " :h mkdx-function-toggle-header
 ```
 
-Increment or decrement a heading with <kbd>\<PREFIX\></kbd>+<kbd>[</kbd> and <kbd>\<PREFIX\></kbd>+<kbd>]</kbd>.
-These mappings cycle backward and forward between h1 and h6, wrapping around both ends.
-The header character can be changed using [`g:mkdx#header_style`](#gmkdxheader_style).
-
-![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
-
 ### Toggling Quotes
+
+![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quote.gif)
+
+Toggle quotes on the current line or a visual selection with <kbd>\<PREFIX\></kbd>+<kbd>'</kbd>.
 
 ```viml
 " :h mkdx-mapping-toggle-quote
 " :h mkdx-function-toggle-quote
 ```
 
-Toggle quotes on the current line or a visual selection with <kbd>\<PREFIX\></kbd>+<kbd>'</kbd>.
-
-![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quote.gif)
-
 ### Wrap selection in link
+
+![mkdx wrap selection in link](doc/gifs/vim-mkdx-wrap-link.gif)
+
+Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd><kbd>n</kbd>
 
 ```viml
 " :h mkdx-mapping-expand-selection-to-link
 " :h mkdx-function-wrap-link
 ```
 
-Wrap visually selected text in an empty markdown link with <kbd>\<PREFIX\></kbd>+<kbd>l</kbd><kbd>n</kbd>
-
-![mkdx wrap selection in link](doc/gifs/vim-mkdx-wrap-link.gif)
-
 ### Convert CSV to table
 
-```viml
-" :h mkdx-mapping-csv-to-markdown-table
-" :h mkdx-function-tableize
-```
+![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize.gif)
 
 Convert visually selected CSV rows to a markdown table with <kbd>\<PREFIX\></kbd>+<kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.
 The separator can be changed with [`g:mkdx#table_divider`](#gmkdxtable_divider).
 
-![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize.gif)
+```viml
+" :h mkdx-mapping-csv-to-markdown-table
+" :h mkdx-function-tableize
+```

@@ -26,10 +26,10 @@ fun! mkdx#WrapLink(...)
   let m  = get(a:000, 0, 'n')
   let r  = @z
 
-  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
-  let @z = '[' . @z . ']()'
+  exe     'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
+  let     @z = '[' . @z . ']()'
   normal! "zP
-  let @z = r
+  let     @z = r
 
   startinsert
   silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")
@@ -53,7 +53,7 @@ endfun
 
 fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
-  let line = getline('.')
+  let line      = getline('.')
 
   if (match(line, '^' . g:mkdx#header_style . '\{1,6\} ') == -1)
     return
@@ -109,6 +109,52 @@ fun! mkdx#Tableize() range
 
   call s:InsertLine(repeat(g:mkdx#table_header_divider, max(map(lines, 'strlen(v:val)'))), next_nonblank)
   call cursor(a:lastline + 1, 1)
+endfun
+
+""""" AUTOLIST FUNCTIONS
+
+" FIXME: Work in progress on list autocompletion
+
+fun! mkdx#SmartEnter()
+  let [lnum, cnum]  = getpos('.')[1:2]
+  let line  = getline('.')
+  let atend = cnum >= strlen(line)
+  let parts = split(line, ' ')
+  let clvl  = len(split(get(parts, 0, ''), '\.'))
+  let len   = len(parts)
+  let cmd   = "normal! " . (len == 1 ? "0DD" : "a\<cr>")
+  let cmd  .= atend && len > 1 ? s:NextListToken(parts[0], clvl) : ""
+
+  if clvl && len > 1
+    let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
+    let npat  = '\([0-9.]\+ \)'
+
+    while (nextnonblank(lnum) == lnum)
+      let lnum   += 1
+      let tmp     = getline(lnum)
+      let tident  = strlen(get(matchlist(tmp, '^\( \+\)'), 0, ''))
+
+      if tident < ident | break | endif
+      call setline(lnum, substitute(tmp, '^\( \{' . ident . ',}\)' . npat, '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
+    endwhile
+  endif
+
+  exe cmd
+  if atend | startinsert! | else | startinsert | endif
+endfun
+
+fun! s:NextListToken(str, ...)
+  if (index(g:mkdx#list_ids, a:str) > -1)  | return a:str . ' ' | endif
+  if (match(a:str, '[0-9. ]\+') == -1)     | return ''          | endif
+
+  let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
+  let clvl       = get(a:000, 0, 1)
+  let llvl       = len(parts)
+  let idx        = (clvl == llvl ? llvl : clvl) - 1
+
+  let parts[idx] = str2nr(parts[idx]) + 1
+
+  return join(parts, '.') . '. '
 endfun
 
 """"" UTILITY FUNCTIONS

@@ -113,9 +113,7 @@ endfun
 
 """"" AUTOLIST FUNCTIONS
 
-" FIXME: Work in progress on list autocompletion
-
-fun! mkdx#SmartEnter()
+fun! mkdx#EnterHandler()
   let [lnum, cnum]  = getpos('.')[1:2]
   let line  = getline('.')
   let atend = cnum >= strlen(line)

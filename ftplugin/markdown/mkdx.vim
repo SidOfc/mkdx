@@ -6,18 +6,18 @@ if !exists('g:mkdx#restore_visual')       | let g:mkdx#restore_visual = 1       
 if !exists('g:mkdx#header_style')         | let g:mkdx#header_style = '#'                        | endif
 if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '='                | endif
 if !exists('g:mkdx#table_divider')        | let g:mkdx#table_divider = '|'                       | endif
-if !exists('g:mkdx#smart_enter')          | let g:mkdx#smart_enter = 1                           | endif
+if !exists('g:mkdx#enhance_enter')        | let g:mkdx#enhance_enter = 1                         | endif
 if !exists('g:mkdx#list_ids')             | let g:mkdx#list_ids = ['-', '*', '>']                | endif
 
-noremap <silent> <Plug>(mkdx-checkbox-next)  :call mkdx#ToggleCheckbox()<Cr>
-noremap <silent> <Plug>(mkdx-checkbox-prev)  :call mkdx#ToggleCheckbox(1)<Cr>
-noremap <silent> <Plug>(mkdx-toggle-quote)   :call mkdx#ToggleQuote()<Cr>
-noremap <silent> <Plug>(mkdx-demote-header)  :<C-U>call mkdx#ToggleHeader()<Cr>
-noremap <silent> <Plug>(mkdx-promote-header) :<C-U>call mkdx#ToggleHeader(1)<Cr>
-noremap <silent> <Plug>(mkdx-wrap-link-n)    :<C-U>call mkdx#WrapLink()<Cr>
-noremap <silent> <Plug>(mkdx-wrap-link-v)    :<C-U>call mkdx#WrapLink('v')<Cr>
-noremap <silent> <Plug>(mkdx-tableize)       :call mkdx#Tableize()<Cr>
-noremap <silent> <Plug>(mkdx-smart-enter-i)  :call mkdx#SmartEnter()<Cr>
+noremap <silent> <Plug>(mkdx-checkbox-next)   :call mkdx#ToggleCheckbox()<Cr>
+noremap <silent> <Plug>(mkdx-checkbox-prev)   :call mkdx#ToggleCheckbox(1)<Cr>
+noremap <silent> <Plug>(mkdx-toggle-quote)    :call mkdx#ToggleQuote()<Cr>
+noremap <silent> <Plug>(mkdx-demote-header)   :<C-U>call mkdx#ToggleHeader()<Cr>
+noremap <silent> <Plug>(mkdx-promote-header)  :<C-U>call mkdx#ToggleHeader(1)<Cr>
+noremap <silent> <Plug>(mkdx-wrap-link-n)     :<C-U>call mkdx#WrapLink()<Cr>
+noremap <silent> <Plug>(mkdx-wrap-link-v)     :<C-U>call mkdx#WrapLink('v')<Cr>
+noremap <silent> <Plug>(mkdx-tableize)        :call mkdx#Tableize()<Cr>
+noremap <silent> <Plug>(mkdx-enhance-enter-i) :call mkdx#EnterHandler()<Cr>
 
 if g:mkdx#map_keys == 1
   let s:gv       = g:mkdx#restore_visual == 1 ? 'gv' : ''
@@ -34,12 +34,12 @@ if g:mkdx#map_keys == 1
         \ ['v', 'ln', '<Plug>(mkdx-wrap-link-v)'],
         \ ['v', ',', '<Plug>(mkdx-tableize)']]
 
-  if (g:mkdx#smart_enter)
+  if (g:mkdx#enhance_enter)
     if (exists('g:loaded_endwise') && g:loaded_endwise)
       iunmap <Cr>
     endif
 
-    imap <buffer><silent><unique> <Cr> <Esc><Plug>(mkdx-smart-enter-i)
+    imap <buffer><silent><unique> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
   endif
 
   for [mapmode, binding, expr] in s:bindings

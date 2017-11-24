@@ -133,7 +133,10 @@ fun! mkdx#EnterHandler()
       let tident  = strlen(get(matchlist(tmp, '^\( \+\)'), 0, ''))
 
       if tident < ident | break | endif
-      call setline(lnum, substitute(tmp, '^\( \{' . ident . ',}\)' . npat, '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
+      call setline(lnum,
+        \ substitute(tmp,
+        \            '^\( \{' . ident . ',}\)' . npat,
+        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
     endwhile
   endif
 

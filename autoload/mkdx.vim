@@ -117,13 +117,14 @@ fun! mkdx#EnterHandler()
   let [lnum, cnum]  = getpos('.')[1:2]
   let line  = getline('.')
   let atend = cnum >= strlen(line)
-  let parts = split(line, ' ')
-  let clvl  = len(split(get(parts, 0, ''), '\.'))
+  let parts = split(substitute(line, ' \+$', '', 'g'), ' ')
+  let part1 = get(parts, 0, '')
+  let clvl  = len(split(part1, '\.'))
   let len   = len(parts)
-  let cmd   = "normal! " . (len == 1 ? "0DD" : "a\<cr>")
-  let cmd  .= atend && len > 1 ? s:NextListToken(parts[0], clvl) : ""
+  let cmd   = "normal! " . (((len == 1) && s:IsListToken(part1)) ? "0DD" : "a\<cr>")
+  let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl) : ""
 
-  if clvl && len > 1
+  if atend && (strlen(get(matchlist(line, '^\( \+[0-9.]\)'), 0, '')) > 0) && (len > 1)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
     let npat  = '\([0-9.]\+ \)'
 
@@ -142,6 +143,10 @@ fun! mkdx#EnterHandler()
 
   exe cmd
   if atend | startinsert! | else | startinsert | endif
+endfun
+
+fun! s:IsListToken(str)
+  return (index(g:mkdx#list_ids, a:str) > -1) || (match(a:str, '^[0-9.]\+$') > -1)
 endfun
 
 fun! s:NextListToken(str, ...)

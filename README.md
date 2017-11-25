@@ -194,7 +194,7 @@ cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the curs
 
 ### Convert CSV to table
 
-![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize.gif)
+![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.

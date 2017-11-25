@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.0.5`
+`Version: 0.0.6`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -17,6 +17,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#restore_visual`
         `g:mkdx#table_divider`
         `g:mkdx#table_header_divider`
+        `g:mkdx#enhance_enter`
+        `g:mkdx#list_tokens`
     Plugs
         <Plug>(mkdx-checkbox-next)
         <Plug>(mkdx-checkbox-prev)
@@ -26,6 +28,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-wrap-link-n)
         <Plug>(mkdx-wrap-link-v)
         <Plug>(mkdx-tableize)
+        <Plug>(mkdx-enhance-enter-i)
     Mappings
         Toggle checkbox forward
         Toggle checkbox backward
@@ -40,6 +43,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleQuote()
         mkdx#ToggleHeader()
         mkdx#Tableize()
+        mkdx#EnterHandler()
 
 
 ==============================================================================
@@ -78,6 +82,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-restore-visual|
     - |mkdx-var-table-header-divider|
     - |mkdx-var-table-divider|
+    - |mkdx-var-enhance_enter|
+    - |mkdx-var-list_tokens|
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
     - |mkdx-plug-checkbox-prev|
@@ -87,6 +93,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-wrap-link-n|
     - |mkdx-plug-mkdx-wrap-link-v|
     - |mkdx-plug-mkdx-tableize|
+    - |mkdx-plug-mkdx-enhance-enter-i|
 - |mkdx-mappings|
     - |mkdx-mapping-toggle-checkbox-forward|
     - |mkdx-mapping-toggle-checkbox-backward|
@@ -101,6 +108,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-quote|
     - |mkdx-function-toggle-header|
     - |mkdx-function-tableize|
+    - |mkdx-function-enter-handler|
 
 ==============================================================================
 VARIABLES                                                            *mkdx-vars*
@@ -158,6 +166,19 @@ Change the default divider used in |mkdx-function-tableize|.
 Change the default header divider used in |mkdx-function-tableize|.
 
 ==============================================================================
+`g:mkdx#enhance_enter = 1`                                *mkdx-var-enhance-enter*
+
+When pressing <enter> in insert mode, this handles appending of new list items
+in lists. See |mkdx-var-list-tokens| for a list of supported list tokens.
+Examples can be found at |mkdx-function-enter-handler|.
+
+==============================================================================
+`g:mkdx#list_tokens = ['-', '*', '>']`                      *mkdx-var-list-tokens*
+
+This list identifies which tokens at the start of a string are identified as a
+"list token". See |mkdx-function-enter-handler| for examples.
+
+==============================================================================
 PLUGS                                                               *mkdx-plugs*
 
 When `g:mkdx#map_keys` is set to 0, the user can bind individual functions
@@ -193,14 +214,21 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 <Plug>(mkdx-wrap-link-n)                                 *mkdx-plug-wrap-link-n*
 
     `:call mkdx#WrapLink()<Cr>`
+
 ==============================================================================
 <Plug>(mkdx-wrap-link-v)                                 *mkdx-plug-wrap-link-v*
 
     `:call mkdx#WrapLink('v')<Cr>`
+
 ==============================================================================
 <Plug>(mkdx-tableize)                                       *mkdx-plug-tableize*
 
     `:call mkdx#Tableize()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-enhance-enter-i)                         *mkdx-plug-enhance-enter-i*
+
+    `:call mkdx#EnterHandler()<Cr>`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
@@ -369,5 +397,73 @@ Will produce this table:
 `       John    | 23  |  Male`
 `    Catherline | 44  | Female`
 `      Manny    | 22  |  Male`
+
+==============================================================================
+mkdx#EnterHandler()                                *mkdx-function-enter-handler*
+
+This function detects when you are in a list, when pressing <enter> in insert
+mode it will append a new list item. The following are detected as list items:
+
+- Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
+- Any token present in |mkdx-var-list-tokens|
+
+This function respects indent level when appending a new item.
+When you add a new list item and press <enter> again (e.g. pressing <enter>
+twice after an existing list item) the list item and any indentation will be
+removed.
+
+If the list delimiter isn't a numeric sequence, all that happens is that a new
+line will be appended at the same indent level and the delimiter and a space
+appended.
+
+    `* list item`
+    `* list item <= <enter>`
+    `* |         <= cursor`
+    `* list item`
+    `* list item`
+
+Numeric list items also work as expected, all numbers will be incremented
+correctly even in nested lists (of any depth).
+
+    `1. list item`
+    `2. list item <= <enter>`
+    `3. |         <= cursor`
+    `4. list item`
+    `5. list item`
+
+Nested list:
+
+    `1. list item`
+    `2. list item <= <enter>`
+    `3. |         <= cursor`
+    `4. list item`
+        `4.1. list item`
+        `4.2. list item`
+    `5. list item`
+
+Deep nested list:
+
+    `1. list item`
+    `2. list item <= <enter>`
+    `3. |         <= cursor`
+    `4. list item`
+        `4.1. list item`
+            `4.1.1. list item`
+            `4.1.2. list item`
+        `4.2. list item`
+    `5. list item`
+
+Deep nested list with second level enter:
+
+    `1. list item`
+    `2. list item`
+    `4. list item`
+        `4.2. list item <= <enter>`
+        `4.2. |         <= cursor`
+        `4.3. list item`
+            `4.3.1. list item`
+            `4.3.2. list item`
+        `4.4. list item`
+    `5. list item`
 
 vim:tw=78:sw=4:ft=help:norl:

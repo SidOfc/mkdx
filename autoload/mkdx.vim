@@ -124,7 +124,7 @@ fun! mkdx#EnterHandler()
   let cmd   = "normal! " . (((len == 1) && s:IsListToken(part1)) ? "0DD" : "a\<cr>")
   let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl) : ""
 
-  if atend && (strlen(get(matchlist(line, '^\( \+[0-9.]\)'), 0, '')) > 0) && (len > 1)
+  if atend && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0) && (len > 1)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
     let npat  = '\([0-9.]\+ \)'
 

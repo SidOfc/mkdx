@@ -120,10 +120,12 @@ fun! mkdx#EnterHandler()
   let atend = cnum >= strlen(line)
   let parts = split(substitute(line, ' \+$', '', 'g'), ' ')
   let part1 = get(parts, 0, '')
+  let cbx   = (get(parts, 1, '') == '[') && (get(parts, 2, '') == ']')
+  if (match(get(parts, 1, ''), '\[.\]') > -1) | let cbx = 1 | endif
   let clvl  = len(split(part1, '\.'))
   let len   = len(parts)
   let cmd   = "normal! " . (((len == 1) && s:IsListToken(part1)) ? "0DD" : "a\<cr>")
-  let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl) : ""
+  let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl, cbx) : ""
 
   if atend && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0) && (len > 1)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
@@ -138,7 +140,7 @@ fun! mkdx#EnterHandler()
       call setline(lnum,
         \ substitute(tmp,
         \            '^\( \{' . ident . ',}\)' . npat,
-        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
+        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ', ' . cbx . ')', ''))
     endwhile
   endif
 
@@ -151,8 +153,9 @@ fun! s:IsListToken(str)
 endfun
 
 fun! s:NextListToken(str, ...)
-  if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . ' ' | endif
-  if (match(a:str, '[0-9. ]\+') == -1)     | return ''          | endif
+  let suffix = get(a:000, 1, 0) ? ' [ ] ' : ' '
+  if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . suffix | endif
+  if (match(a:str, '[0-9. ]\+') == -1)        | return ''             | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
   let clvl       = get(a:000, 0, 1)
@@ -161,7 +164,7 @@ fun! s:NextListToken(str, ...)
 
   let parts[idx] = str2nr(parts[idx]) + 1
 
-  return join(parts, '.') . '. '
+  return join(parts, '.') . '.' . suffix
 endfun
 
 """"" UTILITY FUNCTIONS

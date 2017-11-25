@@ -2,13 +2,14 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.0.6`
+`Version: 0.0.7`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
                                                                       *mkdx-toc*
     Introduction
         Helptags
+
     Variables
         `g:mkdx#map_prefix`
         `g:mkdx#map_keys`
@@ -19,6 +20,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#table_header_divider`
         `g:mkdx#enhance_enter`
         `g:mkdx#list_tokens`
+
     Plugs
         <Plug>(mkdx-checkbox-next)
         <Plug>(mkdx-checkbox-prev)
@@ -29,6 +31,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-wrap-link-v)
         <Plug>(mkdx-tableize)
         <Plug>(mkdx-enhance-enter-i)
+
     Mappings
         Insert fenced code block
         Insert <kbd> shortcut
@@ -39,6 +42,7 @@ CONTENTS                                                         *mkdx-contents*
         Decrement header level
         CSV to markdown table
         Toggle quote
+
     Functions
         mkdx#ToggleCheckbox()
         mkdx#WrapLink()
@@ -437,6 +441,18 @@ This function respects indent level when appending a new item.
 When you add a new list item and press <enter> again (e.g. pressing <enter>
 twice after an existing list item) the list item and any indentation will be
 removed.
+
+In {any} case, if a checkbox is encountered directly after a list token
+(separated by space), the newly appended list item will contain an empty
+checkbox.
+
+    `1. [ ] list item <= <enter>`
+    `2. [ ] |         <= cursor`
+    `3. [ ] list item`
+
+The requirement here is that the checkbox is properly formatted, there has to
+be atleast 1 space between the list token and opening `[`. a space or ony of
+the |mkdx-var-checkbox-toggles| between `[` and `]`.
 
 If the list delimiter isn't a numeric sequence, all that happens is that a new
 line will be appended at the same indent level and the delimiter and a space

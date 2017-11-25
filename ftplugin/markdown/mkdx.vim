@@ -7,7 +7,7 @@ if !exists('g:mkdx#header_style')         | let g:mkdx#header_style = '#'       
 if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '='                | endif
 if !exists('g:mkdx#table_divider')        | let g:mkdx#table_divider = '|'                       | endif
 if !exists('g:mkdx#enhance_enter')        | let g:mkdx#enhance_enter = 1                         | endif
-if !exists('g:mkdx#list_ids')             | let g:mkdx#list_ids = ['-', '*', '>']                | endif
+if !exists('g:mkdx#list_tokens')          | let g:mkdx#list_tokens = ['-', '*', '>']             | endif
 
 noremap <silent> <Plug>(mkdx-checkbox-next)   :call mkdx#ToggleCheckbox()<Cr>
 noremap <silent> <Plug>(mkdx-checkbox-prev)   :call mkdx#ToggleCheckbox(1)<Cr>

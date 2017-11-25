@@ -146,11 +146,11 @@ fun! mkdx#EnterHandler()
 endfun
 
 fun! s:IsListToken(str)
-  return (index(g:mkdx#list_ids, a:str) > -1) || (match(a:str, '^[0-9.]\+$') > -1)
+  return (index(g:mkdx#list_tokens, a:str) > -1) || (match(a:str, '^[0-9.]\+$') > -1)
 endfun
 
 fun! s:NextListToken(str, ...)
-  if (index(g:mkdx#list_ids, a:str) > -1)  | return a:str . ' ' | endif
+  if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . ' ' | endif
   if (match(a:str, '[0-9. ]\+') == -1)     | return ''          | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')

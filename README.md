@@ -21,7 +21,10 @@ Every _normal_ mode mapping can be repeated with the `.` command.
   - [`g:mkdx#header_style`](#gmkdxheader_style)
   - [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider)
   - [`g:mkdx#table_divider`](#gmkdxtable_divider)
+  - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
+  - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
 - [Examples and Mappings](#examples-and-mappings)
+  - [List items](#list-items)
   - [Toggling checkboxes](#toggling-checkboxes)
   - [Toggling headers](#toggling-headers)
   - [Toggling Quotes](#toggling-quotes)
@@ -117,6 +120,14 @@ Since numbers are handled differently, they are not included in this list but th
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
+### List items
+
+When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list tokens will be inserted when
+editing a markdown list.
+
+|Unordered|Numbered|
+|![mkdx unordered list](doc/gifs/vim-mkdx-unordered-list.gif)|![mkdx numbered list](doc/gifs/vim-mkdx-numbered-list.gif)|
 
 ### Toggling Checkboxes
 

@@ -127,6 +127,7 @@ When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list
 editing a markdown list.
 
 |Unordered|Numbered|
+|---------|--------|
 |![mkdx unordered list](doc/gifs/vim-mkdx-unordered-list.gif)|![mkdx numbered list](doc/gifs/vim-mkdx-numbered-list.gif)|
 
 ### Toggling Checkboxes

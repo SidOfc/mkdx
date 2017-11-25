@@ -115,6 +115,11 @@ let g:mkdx#enhance_enter = 1
 Used by [`g:mkdx#enhance_enter`](#gmkdxenhance_enter). This is the list of tokens that are supported by default.
 Since numbers are handled differently, they are not included in this list but they are supported.
 
+```viml
+" :h mkdx-var-list-tokens
+let g:mkdx#list_tokens = ['-', '*', '>']
+```
+
 ## Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).

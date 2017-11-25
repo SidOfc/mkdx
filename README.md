@@ -137,7 +137,7 @@ editing a markdown list.
 
 ```viml
 " :h mkdx-var-enhance-enter
-" :h mkdx-function-enter-handler
+" :h mkdx-var-list-tokens
 " :h mkdx-function-enter-handler
 ```
 

@@ -135,7 +135,18 @@ In case a mapping that this plugin provides doesn't work, please check if you ha
 |![mkdx fenced codeblock backticks](doc/gifs/vim-mkdx-fenced-backtick.gif)|![mkdx fenced codeblock tilde](doc/gifs/vim-mkdx-fenced-squiggly.gif)|
 
 As seen in the gifs, entering either 3 consecutive `` ` `` or `~` characters in _insert_ mode will complete the block
-and put the cursor at the end of the opening fence to allow adding a language.
+and put the cursor at the end of the opening fence to allow adding a language. The behaviour is controlled
+by [`g:mkdx#map_keys`](#gmkdxmap_keys) and like other mappings, it is only mapped if no mapping exists.
+
+**Note** that if you want to copy the _{rhs}_ of this mapping in a mapping in your vimrc, you will need to replace
+`<C-o>` with a literal `^o` character. In vim, this can be achieved by pressing <kbd>ctrl</kbd>+<kbd>v</kbd> followed
+by <kbd>ctrl</kbd>+<kbd>o</kbd>.
+
+```viml
+" :h mkdx-mapping-insert-fenced-code-block
+  inoremap <buffer><silent><unique> ~~~ ~~~<Enter>~~~<C-o>k<C-o>A
+  inoremap <buffer><silent><unique> ``` ```<Enter>```<C-o>k<C-o>A
+```
 
 ### Insert `<kbd></kbd>` shortcut
 
@@ -151,6 +162,7 @@ it is only mapped if no mapping exists.
 by <kbd>ctrl</kbd>+<kbd>o</kbd>.
 
 ```viml
+" :h mkdx-mapping-insert-kbd-shortcut
 imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>5h
 ```
 

@@ -6,6 +6,7 @@ markdown **filetype**. Functions are included to handle lists, checkboxes, fence
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
 of CSV data to a markdown table. Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
+A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
 Every _normal_ mode mapping can be repeated with the `.` command.
 

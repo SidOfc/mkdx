@@ -42,6 +42,10 @@ if g:mkdx#map_keys == 1
     imap <buffer><silent><unique> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
   endif
 
+  if mapcheck('<<tab>', 'i') == ""
+    imap <buffer><silent><unique> <<Tab> <kbd></kbd>5h
+  endif
+
   for [mapmode, binding, expr] in s:bindings
     let full_mapping = g:mkdx#map_prefix . binding
 

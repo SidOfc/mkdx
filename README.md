@@ -24,6 +24,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
   - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
   - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
 - [Examples and Mappings](#examples-and-mappings)
+  - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
   - [List items](#list-items)
   - [Toggling checkboxes](#toggling-checkboxes)
   - [Toggling headers](#toggling-headers)
@@ -125,6 +126,23 @@ let g:mkdx#list_tokens = ['-', '*', '>']
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
+### Insert `<kbd></kbd>` shortcut
+
+![mkdx insert keyboard shortcut](doc/gifs/vim-mkdx-insert-kbd.gif)
+
+This mapping works in _insert_ mode by pressing <kbd>\<</kbd>+<kbd>tab</kbd>.
+This mapping is just a regular `imap` that inserts `<kbd></kbd>` and puts your cursor in the tag afterwards.
+The behaviour is controlled by [`g:mkdx#map_keys`](#gmkdxmap_keys) and like other mappings,
+it is only mapped if no mapping exists.
+
+**Note** that if you want to copy the _{rhs}_ of this mapping in a mapping in your vimrc, you will need to replace
+`<C-o>` with a literal `^o` character. In vim, this can be achieved by pressing <kbd>ctrl</kbd>+<kbd>v</kbd> followed
+by <kbd>ctrl</kbd>+<kbd>o</kbd>.
+
+```viml
+imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>5h
+```
 
 ### List items
 

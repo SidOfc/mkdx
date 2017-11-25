@@ -96,6 +96,21 @@ You can also change the separator used in markdown tables.
 " :h mkdx-var-table-divider
 let g:mkdx#table_divider = '|'
 ```
+### `g:mkdx#enhance_enter`
+
+This setting enables auto-appending list items when you are editing a markdown list.
+When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
+or just do a regular enter. unordered lists and numbered lists are both handled correctly.
+
+```viml
+" :h mkdx-var-enhance-enter
+let g:mkdx#enhance_enter = 1
+```
+
+### `g:mkdx#list_tokens`
+
+Used by [`g:mkdx#enhance_enter`](#gmkdxenhance_enter). This is the list of tokens that are supported by default.
+Since numbers are handled differently, they are not included in this list but they are supported.
 
 ## Examples and Mappings
 

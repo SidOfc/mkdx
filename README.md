@@ -123,12 +123,12 @@ In case a mapping that this plugin provides doesn't work, please check if you ha
 
 ### List items
 
-When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list tokens will be inserted when
-editing a markdown list.
-
 |Unordered|Numbered|
 |---------|--------|
 |![mkdx unordered list](doc/gifs/vim-mkdx-unordered-list.gif)|![mkdx numbered list](doc/gifs/vim-mkdx-numbered-list.gif)|
+
+When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list tokens will be inserted when
+editing a markdown list.
 
 ### Toggling Checkboxes
 

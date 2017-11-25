@@ -51,18 +51,20 @@ CONTENTS                                                         *mkdx-contents*
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
 
-|mkdx| provides some useful mappings that will reduce the time you spend
-formatting your {markdown} files. The built-in functions allow you to
-toggle checkboxes and header levels, wrapping a selection in a markdown link,
-quoting text and converting CSV data to a markdown table.
+mkdx.vim is a `markdown` plugin that aims to reduce the time you spend
+formatting your markdown documents. It does this by adding some configurable
+mappings for files with a markdown {filetype}. Functions are included to
+handle lists, checkboxes, fenced code blocks, shortcuts, headers and links.
+In addition to that, this plugin provides a mapping to convert a selection of
+CSV data to a markdown table. See the the {README.md} for gifs :)
 
-mappings also support the {repeat.vim} plugin by Tim Pope. Every normal mode
-mapping can be repeated using the `.` command.
+This plugin is also compatible with
+{repeat.vim}(https://github.com/tpope/vim-repeat) by Tim Pope.
+Every _normal_ mode mapping can be repeated with the `.` command.
 
-This is my first vim plugin and my first experience with vimL.
-Therefore, this plugin will probably have some rough edges, bug reports and
-feature requests are welcome at https://github.com/sidofc/mkdx/issues and PR's
-are welcome at https://github.com/sidofc/mkdx/pulls.
+Bug reports and feature requests are welcome at
+https://github.com/sidofc/mkdx/issues and PR's are welcome at
+https://github.com/sidofc/mkdx/pulls.
 
 ==============================================================================
 HELPTAGS                                                         *mkdx-helptags*

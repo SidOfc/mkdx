@@ -88,7 +88,7 @@ You can change the separator used for table headings in markdown tables.
 
 ```viml
 " :h mkdx-var-table-header-divider
-let g:mkdx#table_header_divider = '='
+let g:mkdx#table_header_divider = '-'
 ```
 
 ### `g:mkdx#table_divider`

@@ -4,7 +4,7 @@ if !exists('g:mkdx#map_keys')             | let g:mkdx#map_keys = 1             
 if !exists('g:mkdx#checkbox_toggles')     | let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!'] | endif
 if !exists('g:mkdx#restore_visual')       | let g:mkdx#restore_visual = 1                        | endif
 if !exists('g:mkdx#header_style')         | let g:mkdx#header_style = '#'                        | endif
-if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '='                | endif
+if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '-'                | endif
 if !exists('g:mkdx#table_divider')        | let g:mkdx#table_divider = '|'                       | endif
 if !exists('g:mkdx#enhance_enter')        | let g:mkdx#enhance_enter = 1                         | endif
 if !exists('g:mkdx#list_tokens')          | let g:mkdx#list_tokens = ['-', '*', '>']             | endif

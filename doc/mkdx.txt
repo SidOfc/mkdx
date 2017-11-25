@@ -161,7 +161,7 @@ into visual mode.
 Change the default divider used in |mkdx-function-tableize|.
 
 ==============================================================================
-`g:mkdx#table_header_divider = '='`                *mkdx-var-table-header-divider*
+`g:mkdx#table_header_divider = '-'`                *mkdx-var-table-header-divider*
 
 Change the default header divider used in |mkdx-function-tableize|.
 

@@ -74,15 +74,14 @@ fun! mkdx#Tableize() range
   let firstline           = getline(next_nonblank)
   let first_delimiter_pos = match(firstline, '[,\t]')
 
-  if (first_delimiter_pos < 0)
-    return
-  endif
+  if (first_delimiter_pos < 0) | return | endif
 
-  let delimiter  = firstline[first_delimiter_pos]
-  let lines      = getline(a:firstline, a:lastline)
-  let col_maxlen = {}
-  let linecount  = range(0, len(lines) - 1)
-  let line_delim = ' ' . g:mkdx#table_divider . ' '
+  let delimiter    = firstline[first_delimiter_pos]
+  let lines        = getline(a:firstline, a:lastline)
+  let col_maxlen   = {}
+  let linecount    = range(0, len(lines) - 1)
+  let line_delim   = ' ' . g:mkdx#table_divider . ' '
+  let line_h_delim = g:mkdx#table_header_divider .  g:mkdx#table_divider . g:mkdx#table_header_divider
 
   for idx in linecount
     let lines[idx] = split(lines[idx], delimiter, 1)
@@ -92,26 +91,28 @@ fun! mkdx#Tableize() range
       let curr_word_max = strlen(lines[idx][column])
       let last_col_max  = get(col_maxlen, column, 0)
 
-      if (curr_word_max > last_col_max)
-        let col_maxlen[column] = curr_word_max
-      endif
+      if (curr_word_max > last_col_max) | let col_maxlen[column] = curr_word_max | endif
     endfor
   endfor
 
   for linec in linecount
-    for colc in range(0, len(lines[linec]) - 1)
-      let lines[linec][colc] = s:CenterString(lines[linec][colc], col_maxlen[colc])
-    endfor
-    let lines[linec] = join(lines[linec], line_delim)
+    if !empty(filter(lines[linec], '!empty(v:val)'))
+      for colc in range(0, len(lines[linec]) - 1)
+        let lines[linec][colc] = s:CenterString(lines[linec][colc], col_maxlen[colc])
+      endfor
+      let lines[linec] = join(lines[linec], line_delim)
 
-    call setline(a:firstline + linec, substitute(lines[linec], '\s\+$', '', ''))
+      call setline(a:firstline + linec, line_delim[1:2] . lines[linec] . line_delim[0:1])
+    endif
   endfor
 
-  call s:InsertLine(repeat(g:mkdx#table_header_divider, max(map(lines, 'strlen(v:val)'))), next_nonblank)
+  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#table_header_divider, v:val)'), line_h_delim)
+
+  call s:InsertLine(line_h_delim[1:2] . hline . line_h_delim[0:1], next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 
-""""" AUTOLIST FUNCTIONS
+""""" ENTER FUNCTIONS
 
 fun! mkdx#EnterHandler()
   let [lnum, cnum]  = getpos('.')[1:2]

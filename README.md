@@ -130,6 +130,12 @@ In case a mapping that this plugin provides doesn't work, please check if you ha
 When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list tokens will be inserted when
 editing a markdown list.
 
+```viml
+" :h mkdx-var-enhance-enter
+" :h mkdx-function-enter-handler
+" :h mkdx-function-enter-handler
+```
+
 ### Toggling Checkboxes
 
 ![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)

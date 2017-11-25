@@ -24,6 +24,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
   - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
   - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
 - [Examples and Mappings](#examples-and-mappings)
+  - [Insert fenced code block](#insert-fenced-code-block)
   - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
   - [List items](#list-items)
   - [Toggling checkboxes](#toggling-checkboxes)
@@ -126,6 +127,15 @@ let g:mkdx#list_tokens = ['-', '*', '>']
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
+### Insert fenced code block
+
+|Backtick|Tilde|
+|--------|-----|
+|![mkdx fenced codeblock backticks](doc/gifs/vim-mkdx-fenced-backtick.gif)|![mkdx fenced codeblock tilde](doc/gifs/vim-mkdx-fenced-squiggly.gif)|
+
+As seen in the gifs, entering either 3 consecutive `` ` `` or `~` characters in _insert_ mode will complete the block
+and put the cursor at the end of the opening fence to allow adding a language.
 
 ### Insert `<kbd></kbd>` shortcut
 

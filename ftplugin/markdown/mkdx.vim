@@ -22,17 +22,20 @@ noremap <silent> <Plug>(mkdx-enhance-enter-i) :call mkdx#EnterHandler()<Cr>
 if g:mkdx#map_keys == 1
   let s:gv       = g:mkdx#restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
-        \ ['n', '-', '<Plug>(mkdx-checkbox-prev)'],
-        \ ['n', '=', '<Plug>(mkdx-checkbox-next)'],
-        \ ['v', '-', '<Plug>(mkdx-checkbox-prev)' . s:gv],
-        \ ['v', '=', '<Plug>(mkdx-checkbox-next)' . s:gv],
-        \ ['n', '[', '<Plug>(mkdx-promote-header)'],
-        \ ['n', ']', '<Plug>(mkdx-demote-header)'],
-        \ ['n', "'", '<Plug>(mkdx-toggle-quote)'],
-        \ ['v', "'", '<Plug>(mkdx-toggle-quote)' . s:gv],
-        \ ['n', 'ln', '<Plug>(mkdx-wrap-link-n)'],
-        \ ['v', 'ln', '<Plug>(mkdx-wrap-link-v)'],
-        \ ['v', ',', '<Plug>(mkdx-tableize)']]
+        \ [1, 'n',     '-',      '<Plug>(mkdx-checkbox-prev)'],
+        \ [1, 'n',     '=',      '<Plug>(mkdx-checkbox-next)'],
+        \ [1, 'v',     '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv],
+        \ [1, 'v',     '=',      '<Plug>(mkdx-checkbox-next)' . s:gv],
+        \ [1, 'n',     '[',      '<Plug>(mkdx-promote-header)'],
+        \ [1, 'n',     ']',      '<Plug>(mkdx-demote-header)'],
+        \ [1, 'n',     "'",      '<Plug>(mkdx-toggle-quote)'],
+        \ [1, 'v',     "'",      '<Plug>(mkdx-toggle-quote)' . s:gv],
+        \ [1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
+        \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
+        \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
+        \ [0, 'i',     '<<tab>', '<kbd></kbd>5h'],
+        \ [0, 'inore', '```',    '``````kA'],
+        \ [0, 'inore', '~~~',    '~~~~~~kA']]
 
   if (g:mkdx#enhance_enter)
     if (exists('g:loaded_endwise') && g:loaded_endwise)
@@ -42,12 +45,8 @@ if g:mkdx#map_keys == 1
     imap <buffer><silent><unique> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
   endif
 
-  if mapcheck('<<tab>', 'i') == ""
-    imap <buffer><silent><unique> <<Tab> <kbd></kbd>5h
-  endif
-
-  for [mapmode, binding, expr] in s:bindings
-    let full_mapping = g:mkdx#map_prefix . binding
+  for [prefix, mapmode, binding, expr] in s:bindings
+    let full_mapping = (prefix ? g:mkdx#map_prefix : '') . binding
 
     if mapcheck(full_mapping, mapmode) == ""
       exe mapmode . 'map <buffer><silent><unique> ' . full_mapping . ' ' . expr

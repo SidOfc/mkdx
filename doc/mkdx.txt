@@ -30,6 +30,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-tableize)
         <Plug>(mkdx-enhance-enter-i)
     Mappings
+        Insert fenced code block
         Insert <kbd> shortcut
         Toggle checkbox forward
         Toggle checkbox backward
@@ -96,6 +97,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-tableize|
     - |mkdx-plug-mkdx-enhance-enter-i|
 - |mkdx-mappings|
+    - |mkdx-mapping-insert-fenced-code-block|
     - |mkdx-mapping-insert-kbd-shortcut|
     - |mkdx-mapping-toggle-checkbox-forward|
     - |mkdx-mapping-toggle-checkbox-backward|
@@ -241,6 +243,16 @@ key maps to directly below the help tag. All mappings are {<buffer>} local.
 
 The convention `<MAP_PREFIX>` will be used in examples below to indicate the
 value of `g:mkdx#map_prefix` (default: `"<leader>"`)
+
+==============================================================================
+Insert fenced code block                 *mkdx-mapping-insert-fenced-code-block*
+                                                                    ~~~ or ```
+
+This mapping works in insert mode by typing ``` or ~~~. The block will be
+autocompleted and the cursor will be put at the end of the opening fence to
+specify the language.
+
+    `inoremap <buffer><silent><unique> ~~~ ~~~<Enter>~~~<C-o>k<C-o>A`
 
 ==============================================================================
 Insert <kbd> shortcut                         *mkdx-mapping-insert-kbd-shortcut*

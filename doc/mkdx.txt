@@ -20,6 +20,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#table_header_divider`
         `g:mkdx#enhance_enter`
         `g:mkdx#list_tokens`
+        `g:mkdx#fence_style`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -91,8 +92,10 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-restore-visual|
     - |mkdx-var-table-header-divider|
     - |mkdx-var-table-divider|
-    - |mkdx-var-enhance_enter|
-    - |mkdx-var-list_tokens|
+    - |mkdx-var-enhance-enter|
+    - |mkdx-var-list-tokens|
+    - |mkdx-var-fence-style|
+
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
     - |mkdx-plug-checkbox-prev|
@@ -103,6 +106,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-wrap-link-v|
     - |mkdx-plug-mkdx-tableize|
     - |mkdx-plug-mkdx-enhance-enter-i|
+
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
     - |mkdx-mapping-insert-kbd-shortcut|
@@ -114,6 +118,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-csv-to-markdown-table|
     - |mkdx-mapping-toggle-quote|
     - |mkdx-mapping-list-items|
+
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
     - |mkdx-function-wrap-link|

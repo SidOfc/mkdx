@@ -24,6 +24,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
   - [`g:mkdx#table_divider`](#gmkdxtable_divider)
   - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
   - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
+  - [`g:mkdx#fence_style`](#gmkdxfence_style)
 - [Examples and Mappings](#examples-and-mappings)
   - [Insert fenced code block](#insert-fenced-code-block)
   - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -161,6 +162,20 @@ Since numbers are handled differently, they are not included in this list but th
 let g:mkdx#list_tokens = ['-', '*', '>']
 ```
 
+### `g:mkdx#fence_style`
+
+Defines the fencing style to use when [inserting a fenced code block](#insert-fenced-code-block).
+By default it is set to an empty string, in which case typing tildes will result in a fenced code block
+using tildes and typing backticks results in a code block using backticks.
+
+This value can be set to a `` ` `` or a `~` character. When set, the same style will always be used for
+fenced code blocks.
+
+```viml
+" :h mkdx-var-fence-style
+let g:mkdx#fence_style = ''
+```
+
 ## Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
@@ -176,6 +191,9 @@ In case a mapping that this plugin provides doesn't work, please check if you ha
 As seen in the gifs, entering either 3 consecutive `` ` `` or `~` characters in _insert_ mode will complete the block
 and put the cursor at the end of the opening fence to allow adding a language. The behaviour is controlled
 by [`g:mkdx#map_keys`](#gmkdxmap_keys) and like other mappings, it is only mapped if no mapping exists.
+
+Fence style can be controlled using [`g:mkdx#fence_style`](#gmkdxfence_style). This allows you to use one style
+for both `` ` `` and `~` blocks.
 
 **Note** that if you want to copy the _{rhs}_ of this mapping in a mapping in your vimrc, you will need to replace
 `<C-o>` with a literal `^o` character. In vim, this can be achieved by pressing <kbd>ctrl</kbd>+<kbd>v</kbd> followed

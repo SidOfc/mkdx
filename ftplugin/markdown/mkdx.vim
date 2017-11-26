@@ -8,6 +8,7 @@ if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '-
 if !exists('g:mkdx#table_divider')        | let g:mkdx#table_divider = '|'                       | endif
 if !exists('g:mkdx#enhance_enter')        | let g:mkdx#enhance_enter = 1                         | endif
 if !exists('g:mkdx#list_tokens')          | let g:mkdx#list_tokens = ['-', '*', '>']             | endif
+if !exists('g:mkdx#fence_style')          | let g:mkdx#fence_style = ''                          | endif
 
 noremap <silent> <Plug>(mkdx-checkbox-next)   :call mkdx#ToggleCheckbox()<Cr>
 noremap <silent> <Plug>(mkdx-checkbox-prev)   :call mkdx#ToggleCheckbox(1)<Cr>
@@ -20,6 +21,9 @@ noremap <silent> <Plug>(mkdx-tableize)        :call mkdx#Tableize()<Cr>
 noremap <silent> <Plug>(mkdx-enhance-enter-i) :call mkdx#EnterHandler()<Cr>
 
 if g:mkdx#map_keys == 1
+  let s:fstyle   = g:mkdx#fence_style == '~' ? '~~~' : (g:mkdx#fence_style == '`' ? '```' : '')
+  let s:fbtick   = empty(s:fstyle) ? '```' : s:fstyle
+  let s:ftilde   = empty(s:fstyle) ? '~~~' : s:fstyle
   let s:gv       = g:mkdx#restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
         \ [1, 'n',     '-',      '<Plug>(mkdx-checkbox-prev)'],
@@ -34,8 +38,8 @@ if g:mkdx#map_keys == 1
         \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
         \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
         \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
-        \ [0, 'inore', '```',    '``````kA'],
-        \ [0, 'inore', '~~~',    '~~~~~~kA'],
+        \ [0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA'],
+        \ [0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA'],
         \ [0, 'n',     'o',      'A<Cr>']]
 
   if (g:mkdx#enhance_enter)

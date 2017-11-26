@@ -33,9 +33,10 @@ if g:mkdx#map_keys == 1
         \ [1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
         \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
         \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
-        \ [0, 'i',     '<<tab>', '<kbd></kbd>5h'],
+        \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
         \ [0, 'inore', '```',    '``````kA'],
-        \ [0, 'inore', '~~~',    '~~~~~~kA']]
+        \ [0, 'inore', '~~~',    '~~~~~~kA'],
+        \ [0, 'n',     'o',      'A<Cr>']]
 
   if (g:mkdx#enhance_enter)
     if (exists('g:loaded_endwise') && g:loaded_endwise)

@@ -163,7 +163,7 @@ by <kbd>ctrl</kbd>+<kbd>o</kbd>.
 
 ```viml
 " :h mkdx-mapping-insert-kbd-shortcut
-imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>5h
+imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>2h<C-o>cit
 ```
 
 ### List items
@@ -173,8 +173,9 @@ imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>5h
 |![mkdx unordered list](doc/gifs/vim-mkdx-unordered-list.gif)|![mkdx numbered list](doc/gifs/vim-mkdx-numbered-list.gif)|
 
 When [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) is set (default on), new list tokens will be inserted when
-editing a markdown list. Additionally, if the list item contains a checkbox (`[ ]` - any state possible) that will also
-be appended to the newly inserted item.
+editing a markdown list. This happens on any <kbd>enter</kbd> in _insert_ mode or <kbd>o</kbd> in normal mode.
+Additionally, if the list item contains a checkbox (`[ ]` - any state possible) that will also be appended to
+the newly inserted item.
 
 ```viml
 " :h mkdx-var-enhance-enter

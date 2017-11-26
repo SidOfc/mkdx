@@ -42,6 +42,7 @@ CONTENTS                                                         *mkdx-contents*
         Decrement header level
         CSV to markdown table
         Toggle quote
+        List items
 
     Functions
         mkdx#ToggleCheckbox()
@@ -112,6 +113,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-decrement-header-level|
     - |mkdx-mapping-csv-to-markdown-table|
     - |mkdx-mapping-toggle-quote|
+    - |mkdx-mapping-list-items|
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
     - |mkdx-function-wrap-link|
@@ -268,7 +270,7 @@ This mapping works in insert mode by inserting `<` and pressing <Tab>
 afterwards. A <kbd> tag will be inserted and the cursor will be moved inside
 the tag while staying in insert mode.
 
-    `imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>5h`
+    `imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>2h<C-o>cit`
 
 ==============================================================================
 Toggle checkbox forward                   *mkdx-mapping-toggle-checkbox-forward*
@@ -340,6 +342,20 @@ visual selection. This function restores visual selection if
 
     `nmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
     `vmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
+
+==============================================================================
+List items                                             *mkdx-mapping-list-items*
+                                                                    `o` and <Cr>
+
+When editing a list in markdown, pressing either <enter> in normal mode or `o`
+in insert mode will insert a new list item below the current item. All items
+following the newly added item are incremented accordingly. The following
+patterns are identified as list tokens:
+
+- Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
+- Any token present in |mkdx-var-list-tokens|
+
+For examples, see |mkdx-function-enter-handler|.
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -432,7 +448,8 @@ Will produce this table:
 mkdx#EnterHandler()                                *mkdx-function-enter-handler*
 
 This function detects when you are in a list, when pressing <enter> in insert
-mode it will append a new list item. The following are detected as list items:
+mode or `o` in normal mode. It will append a new list item. The following are
+detected as list items:
 
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
 - Any token present in |mkdx-var-list-tokens|

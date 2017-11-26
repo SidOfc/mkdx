@@ -55,9 +55,7 @@ fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
   let line      = getline('.')
 
-  if (match(line, '^' . g:mkdx#header_style . '\{1,6\} ') == -1)
-    return
-  endif
+  if (match(line, '^' . g:mkdx#header_style . '\{1,6\} ') == -1) |  return | endif
 
   let parts     = split(line, '^' . g:mkdx#header_style . '\{1,6\} \zs')
   let new_level = strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
@@ -117,19 +115,18 @@ endfun
 fun! mkdx#EnterHandler()
   let [lnum, cnum]  = getpos('.')[1:2]
   let line  = getline('.')
-  let atend = cnum >= strlen(line)
   let parts = split(substitute(line, ' \+$', '', 'g'), ' ')
   let part1 = get(parts, 0, '')
   let cbx   = (get(parts, 1, '') == '[') && (get(parts, 2, '') == ']')
   if (match(get(parts, 1, ''), '\[.\]') > -1) | let cbx = 1 | endif
   let clvl  = len(split(part1, '\.'))
+  let atend = cnum >= strlen(line)
   let len   = len(parts)
   let cmd   = "normal! " . (((len == 1) && s:IsListToken(part1)) ? "0DD" : "a\<cr>")
   let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl, cbx) : ""
 
   if atend && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0) && (len > 1)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
-    let npat  = '\([0-9.]\+ \)'
 
     while (nextnonblank(lnum) == lnum)
       let lnum   += 1
@@ -139,8 +136,8 @@ fun! mkdx#EnterHandler()
       if tident < ident | break | endif
       call setline(lnum,
         \ substitute(tmp,
-        \            '^\( \{' . ident . ',}\)' . npat,
-        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ', ' . cbx . ')', ''))
+        \            '^\( \{' . ident . ',}\)\([0-9.]\+ \)',
+        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
     endwhile
   endif
 

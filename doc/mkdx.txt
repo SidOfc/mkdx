@@ -199,6 +199,17 @@ This list identifies which tokens at the start of a string are identified as a
 "list token". See |mkdx-function-enter-handler| for examples.
 
 ==============================================================================
+`g:mkdx#fence_style = ''`                                   *mkdx-var-fence-style*
+
+This setting allows you to override the fence style that is used when typing
+three backticks or tilde characters. By default it is empty which means that
+the typed key defines the fence style (so tildes are used when typing tildes,
+ditto for backticks).
+
+The fence style can be set to '~' or '`'. This will cause both tildes and
+backticks to use the same style.
+
+==============================================================================
 PLUGS                                                               *mkdx-plugs*
 
 When `g:mkdx#map_keys` is set to 0, the user can bind individual functions

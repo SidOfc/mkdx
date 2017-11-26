@@ -184,6 +184,9 @@ When pressing <enter> in insert mode, this handles appending of new list items
 in lists. See |mkdx-var-list-tokens| for a list of supported list tokens.
 Examples can be found at |mkdx-function-enter-handler|.
 
+If endwise.vim (https://github.com/tpope/vim-endwise) is installed and this
+setting is enabled, the mapping that endwise sets will be unmapped.
+
 ==============================================================================
 `g:mkdx#list_tokens = ['-', '*', '>']`                      *mkdx-var-list-tokens*
 

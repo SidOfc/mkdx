@@ -13,6 +13,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
 ## Table of Contents
 
 - [Table of contents](#table-of-contents)
+- [Install](#install)
 - [Variables](#variables)
   - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)
   - [`g:mkdx#map_keys`](#gmkdxmap_keys)
@@ -33,6 +34,41 @@ Every _normal_ mode mapping can be repeated with the `.` command.
   - [Wrap text in link](#wrap-text-in-link)
   - [Convert CSV to table](#convert-csv-to-table)
 
+## Install
+
+This plugin should work in _vim_ as well as _nvim_, no clue about _gvim_ but since this plugin only manipulates
+text and is written in vimL, it will probably work there too. To install, use a plugin manager of choice like
+[Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen).
+
+**[Vundle](https://github.com/VundleVim/Vundle.vim)**
+```viml
+Plugin 'SidOfc/mkdx'
+
+:so $MYVIMRC
+:PluginInstall
+```
+
+**[NeoBundle](https://github.com/Shougo/neobundle.vim)**
+```viml
+NeoBundle 'SidOfc/mkdx'
+
+:so $MYVIMRC
+:NeoBundleInstall
+```
+
+**[vim-plug](https://github.com/junegunn/vim-plug)**
+```viml
+Plug 'SidOfc/mkdx'
+
+:so $MYVIMRC
+:PlugInstall
+```
+
+**[Pathogen](https://github.com/tpope/vim-pathogen)**
+```sh
+cd ~/.vim/bundle
+git glone https://github.com/SidOfc/mkdx
+```
 ## Variables
 
 ### `g:mkdx#map_prefix`
@@ -107,6 +143,9 @@ This setting enables auto-appending list items when you are editing a markdown l
 When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
 or just do a regular enter. unordered lists and numbered lists are both handled correctly.
 
+If [endwise.vim](https://github.com/tpope/vim-endwise) is installed and this setting is enabled,
+the mapping that endwise sets will be unmapped.
+
 ```viml
 " :h mkdx-var-enhance-enter
 let g:mkdx#enhance_enter = 1
@@ -178,6 +217,7 @@ Additionally, if the list item contains a checkbox (`[ ]` - any state possible) 
 the newly inserted item.
 
 ```viml
+" :h mkdx-mapping-list-items
 " :h mkdx-var-enhance-enter
 " :h mkdx-var-list-tokens
 " :h mkdx-function-enter-handler

@@ -188,3 +188,37 @@ fun! s:CenterString(str, length)
 
   return padleft . a:str . padright
 endfun
+
+""""" TOC FUNCTIONS
+
+fun! mkdx#GenerateTOC()
+  let contents = []
+  let curspos  = getpos('.')[1]
+  let skip     = 0
+
+  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+    let line  = getline(lnum)
+    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
+    let lvl   = strlen(get(matchlist(line, '^#\{1,6}'), 0, ''))
+
+    if (!skip && lvl > 0)
+      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . '- ' . s:HeaderToListItem(line))
+    endif
+  endfor
+
+  let c = curspos - 1
+  for item in contents
+    call append(c, item)
+    let c += 1
+  endfor
+
+  call cursor(curspos, 1)
+endfun
+
+fun! s:HeaderToListItem(header)
+  let text = substitute(a:header, '^[ #]\+\| \+$', '', 'g')
+  let hash = '#' . join(split(substitute(tolower(a:header), '[^0-9a-z_\- ]\+', '', 'g')), '-')
+
+  return '[' . text . '](' . hash . ')'
+endfun
+

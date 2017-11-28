@@ -124,10 +124,9 @@ fun! mkdx#EnterHandler()
   let atend = cnum >= strlen(line)
   let len   = len(parts)
   let ewcb  = (len == (mtchd ? 2 : 3)) && (cbx == 1)
-  let cmd   = "normal! " . ((((len == 1) && s:IsListToken(part1)) || ewcb) ? "0DD" : "a\<cr>")
-  let cmd  .= (!ewcb && atend && len > 1) ? s:NextListToken(part1, clvl, cbx) : ""
+  let rmv   = ((len == 1) && s:IsListToken(part1)) || ewcb
 
-  if atend && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0) && (len > 1)
+  if atend && !rmv && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
 
     while (nextnonblank(lnum) == lnum)
@@ -143,7 +142,7 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe cmd
+  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(part1, clvl, cbx) : ''))
   if atend | startinsert! | else | startinsert | endif
 endfun
 
@@ -237,6 +236,7 @@ fun! mkdx#GenerateTOC()
   let header   = ''
   let prevlvl  = 1
   let skip     = 0
+  let headers  = {'toc': 1}
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     let line = getline(lnum)
@@ -249,7 +249,12 @@ fun! mkdx#GenerateTOC()
         call insert(contents, header)
         call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . '- ' . s:HeaderToListItem(header))
       endif
-      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . '- ' . s:HeaderToListItem(line))
+
+      let hsh = s:HeaderToHash(line)
+      let c   = get(headers, hsh, 0)
+      if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
+
+      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . '- ' . s:HeaderToListItem(line, c > 0 ? '-' . c : ''))
       let prevlvl = lvl
     endif
   endfor
@@ -264,11 +269,15 @@ fun! mkdx#GenerateTOC()
   normal! Ak
 endfun
 
-fun! s:HeaderToListItem(header)
-  let text = substitute(a:header, '^[ #]\+\| \+$', '', 'g')
-  let text = substitute(text, '\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
-  let hash = '#' . join(split(substitute(tolower(text), '[^0-9a-z_\- ]\+', '', 'g')), '-')
+fun! s:HeaderToListItem(header, ...)
+  return '[' . s:CleanHeader(a:header) . '](#' . s:HeaderToHash(a:header) . get(a:000, 0, '') . ')'
+endfun
 
-  return '[' . text . '](' . hash . ')'
+fun! s:CleanHeader(header)
+  return substitute(substitute(a:header, '^[ #]\+\| \+$', '', 'g'), '\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
+endfun
+
+fun! s:HeaderToHash(header)
+  return join(split(substitute(tolower(s:CleanHeader(a:header)), '[^0-9a-z_\- ]\+', '', 'g')), '-')
 endfun
 

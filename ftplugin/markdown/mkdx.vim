@@ -40,7 +40,7 @@ if g:mkdx#map_keys == 1
         \ [1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
         \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
         \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
-        \ [1, 'n',     'i',      '<Plug>(mkdx-generate-toc)'],
+        \ [1, 'n',     'i',      '<Plug>(mkdx-gen-or-upd-toc)'],
         \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
         \ [0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA'],
         \ [0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA'],

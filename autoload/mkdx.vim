@@ -191,6 +191,44 @@ endfun
 
 """"" TOC FUNCTIONS
 
+let s:toc_re         = '^' . g:mkdx#header_style . '\{1,6}'
+let s:toc_heading_re = s:toc_re . ' \+TOC'
+let s:toc_codeblk_re = '^\(\`\`\`\|\~\~\~\)'
+
+fun! mkdx#GenerateOrUpdateTOC()
+  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+    if (match(getline(lnum), s:toc_heading_re) > -1)
+      call mkdx#UpdateTOC()
+      return
+    endif
+  endfor
+
+  call mkdx#GenerateTOC()
+endfun
+
+fun! mkdx#UpdateTOC()
+  let startc = -1
+  let nnb   = -1
+  let cpos  = getpos('.')[1:2]
+
+  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+    if (match(getline(lnum), s:toc_heading_re) > -1)
+      let startc = lnum
+      break
+    endif
+  endfor
+
+  if (startc)
+    let endc = startc + (nextnonblank(startc + 1) - startc)
+    while nextnonblank(endc) == endc |  let endc += 1 | endwhile
+    let endc -= 1
+  endif
+
+  echom startc . ' ' . endc
+  exe 'normal! :' . startc . ',' . endc . 'd'
+  call mkdx#GenerateTOC()
+endfun
+
 fun! mkdx#GenerateTOC()
   let contents = []
   let curspos  = getpos('.')[1]
@@ -199,13 +237,13 @@ fun! mkdx#GenerateTOC()
   let skip     = 0
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    let line  = getline(lnum)
-    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
-    let lvl   = strlen(get(matchlist(line, '^#\{1,6}'), 0, ''))
+    let line = getline(lnum)
+    if (match(line, s:toc_codeblk_re) > -1) | let skip = !skip | endif
+    let lvl  = strlen(get(matchlist(line, s:toc_re), 0, ''))
 
     if (!skip && lvl > 0)
       if (empty(header) && lnum > curspos)
-        let header = repeat('#', prevlvl) . ' TOC'
+        let header = repeat(g:mkdx#header_style, prevlvl) . ' TOC'
         call insert(contents, header)
         call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . '- ' . s:HeaderToListItem(header))
       endif
@@ -226,7 +264,8 @@ endfun
 
 fun! s:HeaderToListItem(header)
   let text = substitute(a:header, '^[ #]\+\| \+$', '', 'g')
-  let hash = '#' . join(split(substitute(tolower(a:header), '[^0-9a-z_\- ]\+', '', 'g')), '-')
+  let text = substitute(text, '\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
+  let hash = '#' . join(split(substitute(tolower(text), '[^0-9a-z_\- ]\+', '', 'g')), '-')
 
   return '[' . text . '](' . hash . ')'
 endfun

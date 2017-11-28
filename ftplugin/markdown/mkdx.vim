@@ -20,6 +20,8 @@ noremap <silent> <Plug>(mkdx-wrap-link-v)     :<C-U>call mkdx#WrapLink('v')<Cr>
 noremap <silent> <Plug>(mkdx-tableize)        :call mkdx#Tableize()<Cr>
 noremap <silent> <Plug>(mkdx-enhance-enter-i) :call mkdx#EnterHandler()<Cr>
 noremap <silent> <Plug>(mkdx-generate-toc)    :call mkdx#GenerateTOC()<Cr>
+noremap <silent> <Plug>(mkdx-update-toc)      :call mkdx#UpdateTOC()<Cr>
+noremap <silent> <Plug>(mkdx-gen-or-upd-toc)  :call mkdx#GenerateOrUpdateTOC()<Cr>
 
 if g:mkdx#map_keys == 1
   let s:fstyle   = g:mkdx#fence_style == '~' ? '~~~' : (g:mkdx#fence_style == '`' ? '```' : '')
@@ -45,11 +47,7 @@ if g:mkdx#map_keys == 1
         \ [0, 'n',     'o',      'A<Cr>']]
 
   if (g:mkdx#enhance_enter)
-    if (exists('g:loaded_endwise') && g:loaded_endwise)
-      iunmap <Cr>
-    endif
-
-    imap <buffer><silent><unique> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
+    imap <buffer><silent> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
   endif
 
   for [prefix, mapmode, binding, expr] in s:bindings

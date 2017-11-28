@@ -145,9 +145,6 @@ This setting enables auto-appending list items when you are editing a markdown l
 When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
 or just do a regular enter. unordered lists and numbered lists are both handled correctly.
 
-If [endwise.vim](https://github.com/tpope/vim-endwise) is installed and this setting is enabled,
-the mapping that endwise sets will be unmapped.
-
 ```viml
 " :h mkdx-var-enhance-enter
 let g:mkdx#enhance_enter = 1

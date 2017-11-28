@@ -118,12 +118,14 @@ fun! mkdx#EnterHandler()
   let parts = split(substitute(line, ' \+$', '', 'g'), ' ')
   let part1 = get(parts, 0, '')
   let cbx   = (get(parts, 1, '') == '[') && (get(parts, 2, '') == ']')
-  if (match(get(parts, 1, ''), '\[.\]') > -1) | let cbx = 1 | endif
+  let mtchd = (match(get(parts, 1, ''), '\[.\]') > -1)
+  let cbx   = mtchd ? 1 : cbx
   let clvl  = len(split(part1, '\.'))
   let atend = cnum >= strlen(line)
   let len   = len(parts)
-  let cmd   = "normal! " . (((len == 1) && s:IsListToken(part1)) ? "0DD" : "a\<cr>")
-  let cmd  .= (atend && len > 1) ? s:NextListToken(part1, clvl, cbx) : ""
+  let ewcb  = (len == (mtchd ? 2 : 3)) && (cbx == 1)
+  let cmd   = "normal! " . ((((len == 1) && s:IsListToken(part1)) || ewcb) ? "0DD" : "a\<cr>")
+  let cmd  .= (!ewcb && atend && len > 1) ? s:NextListToken(part1, clvl, cbx) : ""
 
   if atend && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0) && (len > 1)
     let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))

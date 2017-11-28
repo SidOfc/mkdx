@@ -194,6 +194,8 @@ endfun
 fun! mkdx#GenerateTOC()
   let contents = []
   let curspos  = getpos('.')[1]
+  let header   = ''
+  let prevlvl  = 1
   let skip     = 0
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
@@ -202,7 +204,13 @@ fun! mkdx#GenerateTOC()
     let lvl   = strlen(get(matchlist(line, '^#\{1,6}'), 0, ''))
 
     if (!skip && lvl > 0)
+      if (empty(header) && lnum > curspos)
+        let header = repeat('#', prevlvl) . ' TOC'
+        call insert(contents, header)
+        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . '- ' . s:HeaderToListItem(header))
+      endif
       call add(contents, repeat(repeat(' ', &sw), lvl - 1) . '- ' . s:HeaderToListItem(line))
+      let prevlvl = lvl
     endif
   endfor
 
@@ -213,6 +221,7 @@ fun! mkdx#GenerateTOC()
   endfor
 
   call cursor(curspos, 1)
+  normal! Ak
 endfun
 
 fun! s:HeaderToListItem(header)

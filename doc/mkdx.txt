@@ -21,6 +21,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#enhance_enter`
         `g:mkdx#list_tokens`
         `g:mkdx#fence_style`
+        `g:mkdx#toc_text`
+        `g:mkdx#toc_list_token`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -32,6 +34,9 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-wrap-link-v)
         <Plug>(mkdx-tableize)
         <Plug>(mkdx-enhance-enter-i)
+        <Plug>(mkdx-generate-toc)
+        <Plug>(mkdx-update-toc)
+        <Plug>(mkdx-gen-or-upd-toc)
 
     Mappings
         Insert fenced code block
@@ -44,6 +49,7 @@ CONTENTS                                                         *mkdx-contents*
         CSV to markdown table
         Toggle quote
         List items
+        Generate or update table of contents
 
     Functions
         mkdx#ToggleCheckbox()
@@ -52,6 +58,9 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleHeader()
         mkdx#Tableize()
         mkdx#EnterHandler()
+        mkdx#GenerateTOC()
+        mkdx#UpdateTOC()
+        mkdx#GenerateOrUpdateTOC()
 
 
 ==============================================================================
@@ -95,6 +104,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-enhance-enter|
     - |mkdx-var-list-tokens|
     - |mkdx-var-fence-style|
+    - |mkdx-var-toc-text|
+    - |mkdx-var-toc-list-token|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -106,6 +117,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-wrap-link-v|
     - |mkdx-plug-mkdx-tableize|
     - |mkdx-plug-mkdx-enhance-enter-i|
+    - |mkdx-plug-mkdx-generate-toc|
+    - |mkdx-plug-mkdx-update-toc|
+    - |mkdx-plug-mkdx-gen-or-update-toc|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -118,6 +132,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-csv-to-markdown-table|
     - |mkdx-mapping-toggle-quote|
     - |mkdx-mapping-list-items|
+    - |mkdx-mapping-generate-or-update-toc|
 
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
@@ -126,6 +141,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-header|
     - |mkdx-function-tableize|
     - |mkdx-function-enter-handler|
+    - |mkdx-function-generate-toc|
+    - |mkdx-function-update-toc|
+    - |mkdx-function-generate-or-update-toc|
 
 ==============================================================================
 VARIABLES                                                            *mkdx-vars*
@@ -147,7 +165,7 @@ This option allows you to control wether the plugin should map keys or not.
 See the |mkdx-mappings| section to see how each mapping works.
 
 ==============================================================================
-`g:mkdx#checkbox_toggles = [' ', '\\~', 'x', '\\!']`   *mkdx-var-checkbox-toggles*
+`g:mkdx#checkbox_toggles = [' ', '\\~', 'x']       `   *mkdx-var-checkbox-toggles*
 
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
@@ -155,7 +173,6 @@ checkboxes. Special characters must be escaped! The default list contains:
     - `[ ]` inactive
     - `[~]` active
     - `[x]` completed
-    - `[!]` hold
 
 
 ==============================================================================
@@ -205,6 +222,16 @@ ditto for backticks).
 
 The fence style can be set to '~' or '`'. This will cause both tildes and
 backticks to use the same style.
+
+==============================================================================
+`g:mkdx#toc_text = 'TOC'`                                      *mkdx-var-toc-text*
+
+Define the heading text to use in the table of contents.
+
+==============================================================================
+`g:mkdx#toc_list_token = '-'`                            *mkdx-var-toc-list-token*
+
+Define the list style to use when generating a table of contents.
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*
@@ -257,6 +284,21 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 <Plug>(mkdx-enhance-enter-i)                         *mkdx-plug-enhance-enter-i*
 
     `:call mkdx#EnterHandler()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-generate-toc)                               *mkdx-plug-generate-toc*
+
+    `:call mkdx#GenerateTOC()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-update-toc)                                   *mkdx-plug-update-toc*
+
+    `:call mkdx#UpdateTOC()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-gen-or-upd-toc-toc)                   *mkdx-plug-gen-or-upd-toc-toc*
+
+    `:call mkdx#GenerateOrUpdateTOC()<Cr>`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
@@ -372,6 +414,14 @@ patterns are identified as list tokens:
 - Any token present in |mkdx-var-list-tokens|
 
 For examples, see |mkdx-function-enter-handler|.
+
+==============================================================================
+Generate or update table of contents       *mkdx-mapping-generate-or-update-toc*
+                                                                 <MAP_PREFIX>i
+
+This function does one of two things based on wether a table of contents is
+already present. If it exists, the current table of contents will be updated.
+If it doesn't exist yet, a table of contents will be inserted at current line.
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -540,5 +590,37 @@ Deep nested list with second level enter:
             `4.3.2. list item`
         `4.4. list item`
     `5. list item`
+
+==============================================================================
+mkdx#GenerateTOC()                                  *mkdx-function-generate-toc*
+
+Insert a table of contents under the cursor. All headings are indented
+usimg |sw| setting multiplied by their header minus one. This means that h1
+tags aren't indented. The header line is customizable through
+|mkdx-var-toc-text|. If |mkdx-var-header-style| is changed, this function will
+use the new value accordingly.
+
+List items are generated with a dash (-) character by default. This can be
+changed with |mkdx-var-toc-list-token|.
+
+==============================================================================
+mkdx#UpdateTOC()                                      *mkdx-function-update-toc*
+
+This function checks to see if a table of content exists in the document. If
+it finds it, the toc will be removed and regenerated using
+|mkdx-function-generate-toc|. If a TOC isn't found, nothing will happen.
+
+A heading is detected using the following regular expression:
+
+`    '^' . g:mkdx#header_style . '\{1,6} \+' . g:mkdx#toc_text`
+    `'^#\{1,6} \+TOC'` <= default pattern
+
+==============================================================================
+mkdx#GenerateOrUpdateTOC()                *mkdx-function-generate-or-update-toc*
+
+Like |mkdx-function-update-toc|, this function checks to see wether a table of
+content exists. Based on the result it will either call
+|mkdx-function-update-toc| if it exists, or |mkdx-function-generate-toc| if it
+doesn't exist yet.
 
 vim:tw=78:sw=4:ft=help:norl:

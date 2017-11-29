@@ -193,7 +193,7 @@ endfun
 """"" TOC FUNCTIONS
 
 let s:toc_re         = '^' . g:mkdx#header_style . '\{1,6}'
-let s:toc_heading_re = s:toc_re . ' \+TOC'
+let s:toc_heading_re = s:toc_re . ' \+' . g:mkdx#toc_text
 let s:toc_codeblk_re = '^\(\`\`\`\|\~\~\~\)'
 
 fun! mkdx#GenerateOrUpdateTOC()
@@ -236,7 +236,8 @@ fun! mkdx#GenerateTOC()
   let header   = ''
   let prevlvl  = 1
   let skip     = 0
-  let headers  = {'toc': 1}
+  let headers  = {}
+  let headers[s:HeaderToHash(g:mkdx#toc_text)] = 1
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     let line = getline(lnum)
@@ -245,16 +246,17 @@ fun! mkdx#GenerateTOC()
 
     if (!skip && lvl > 0)
       if (empty(header) && lnum > curspos)
-        let header = repeat(g:mkdx#header_style, prevlvl) . ' TOC'
+        let header = repeat(g:mkdx#header_style, prevlvl) . ' ' . g:mkdx#toc_text
         call insert(contents, header)
-        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . '- ' . s:HeaderToListItem(header))
+        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#toc_list_token . ' ' . s:HeaderToListItem(header))
       endif
 
       let hsh = s:HeaderToHash(line)
       let c   = get(headers, hsh, 0)
       if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
+      let li  = s:HeaderToListItem(line, c > 0 ? '-' . c : '')
 
-      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . '- ' . s:HeaderToListItem(line, c > 0 ? '-' . c : ''))
+      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#toc_list_token . ' ' . li)
       let prevlvl = lvl
     endif
   endfor
@@ -278,6 +280,6 @@ fun! s:CleanHeader(header)
 endfun
 
 fun! s:HeaderToHash(header)
-  return join(split(substitute(tolower(s:CleanHeader(a:header)), '[^0-9a-z_\- ]\+', '', 'g')), '-')
+  return substitute(substitute(tolower(s:CleanHeader(a:header)), '[^0-9a-z_\- ]\+', '', 'g'), ' ', '-', 'g')
 endfun
 

@@ -10,7 +10,7 @@ A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/s
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
 Every _normal_ mode mapping can be repeated with the `.` command.
 
-## Table of Contents
+## TOC
 
 - [mkdx.vim](#mkdxvim)
   - [Table of Contents](#table-of-contents)
@@ -26,6 +26,8 @@ Every _normal_ mode mapping can be repeated with the `.` command.
     - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
     - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
     - [`g:mkdx#fence_style`](#gmkdxfence_style)
+    - [`g:mkdx#toc_text`](#gmkdxtoc_text)
+    - [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)
   - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -35,6 +37,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
     - [Toggling Quotes](#toggling-quotes)
     - [Wrap text in link](#wrap-text-in-link)
     - [Convert CSV to table](#convert-csv-to-table)
+    - [Generate or update TOC](#generate-or-update-toc)
 
 ## Install
 
@@ -71,6 +74,7 @@ Plug 'SidOfc/mkdx'
 cd ~/.vim/bundle
 git glone https://github.com/SidOfc/mkdx
 ```
+
 ## Variables
 
 ### `g:mkdx#map_prefix`
@@ -101,7 +105,7 @@ It can be overridden by setting it to a list of your choosing. Note that special
 
 ```viml
 " :h mkdx-var-checkbox-toggles
-let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!']
+let g:mkdx#checkbox_toggles = [' ', '\~', 'x']
 ```
 
 ### `g:mkdx#restore_visual`
@@ -172,6 +176,24 @@ fenced code blocks.
 ```viml
 " :h mkdx-var-fence-style
 let g:mkdx#fence_style = ''
+```
+
+### `g:mkdx#toc_text`
+
+Defines the text to use for the table of contents header itself.
+
+```viml
+" :h mkdx-var-toc-text
+let g:mkdx#toc_text = 'TOC'
+```
+
+### `g:mkdx#toc_list_token`
+
+To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a different value.
+
+```viml
+" :h mkdx-var-toc-list-token
+let g:mkdx#toc_list_token = '-'
 ```
 
 ## Examples and Mappings
@@ -302,4 +324,16 @@ and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider).
 ```viml
 " :h mkdx-mapping-csv-to-markdown-table
 " :h mkdx-function-tableize
+```
+
+### Generate or update TOC
+
+Press <kbd>[\<PREFIX\>](#gmkdx_map_prefix)</kbd><kbd>i</kbd> to insert a table of contents
+at cursor position if one does not exist. If it exists, it will be updated in place.
+
+```viml
+" :h mkdx-mapping-generate-or-update-toc
+" :h mkdx-function-generate-toc
+" :h mkdx-function-update-toc
+" :h mkdx-function-generate-or-update-toc
 ```

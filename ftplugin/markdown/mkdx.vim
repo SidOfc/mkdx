@@ -1,7 +1,7 @@
 if exists('g:loaded_mkdx')                | finish | else | let g:loaded_mkdx = 1                | endif
 if !exists('g:mkdx#map_prefix')           | let g:mkdx#map_prefix = '<leader>'                   | endif
 if !exists('g:mkdx#map_keys')             | let g:mkdx#map_keys = 1                              | endif
-if !exists('g:mkdx#checkbox_toggles')     | let g:mkdx#checkbox_toggles = [' ', '\~', 'x', '\!'] | endif
+if !exists('g:mkdx#checkbox_toggles')     | let g:mkdx#checkbox_toggles = [' ', '\~', 'x']       | endif
 if !exists('g:mkdx#restore_visual')       | let g:mkdx#restore_visual = 1                        | endif
 if !exists('g:mkdx#header_style')         | let g:mkdx#header_style = '#'                        | endif
 if !exists('g:mkdx#table_header_divider') | let g:mkdx#table_header_divider = '-'                | endif
@@ -9,6 +9,8 @@ if !exists('g:mkdx#table_divider')        | let g:mkdx#table_divider = '|'      
 if !exists('g:mkdx#enhance_enter')        | let g:mkdx#enhance_enter = 1                         | endif
 if !exists('g:mkdx#list_tokens')          | let g:mkdx#list_tokens = ['-', '*', '>']             | endif
 if !exists('g:mkdx#fence_style')          | let g:mkdx#fence_style = ''                          | endif
+if !exists('g:mkdx#toc_text')             | let g:mkdx#toc_text = 'TOC'                          | endif
+if !exists('g:mkdx#toc_list_token')       | let g:mkdx#toc_list_token = '-'                      | endif
 
 noremap <silent> <Plug>(mkdx-checkbox-next)   :call mkdx#ToggleCheckbox()<Cr>
 noremap <silent> <Plug>(mkdx-checkbox-prev)   :call mkdx#ToggleCheckbox(1)<Cr>

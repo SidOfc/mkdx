@@ -10,10 +10,10 @@ A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/s
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
 Every _normal_ mode mapping can be repeated with the `.` command.
 
-## TOC
+# TOC
 
 - [mkdx.vim](#mkdxvim)
-  - [Table of Contents](#table-of-contents)
+- [TOC](#toc)
   - [Install](#install)
   - [Variables](#variables)
     - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)

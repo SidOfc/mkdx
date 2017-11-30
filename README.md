@@ -328,8 +328,13 @@ and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider).
 
 ### Generate or update TOC
 
+![mkdx generate or update table of contents](doc/gifs/vim-mkdx-gen-or-upd-toc.gif)
+
 Press <kbd>[\<PREFIX\>](#gmkdx_map_prefix)</kbd><kbd>i</kbd> to insert a table of contents
-at cursor position if one does not exist. If it exists, it will be updated in place.
+at cursor position if one does not exist, otherwise updates the existing TOC.
+the text used in the heading can be changed using [`g:mkdx#toc_text`](#gmkdxtoc_text) and the
+list style can be changed using [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token).
+Stuff inside fenced code blocks is excluded too.
 
 ```viml
 " :h mkdx-mapping-generate-or-update-toc

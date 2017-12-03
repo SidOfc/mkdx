@@ -105,7 +105,7 @@ It can be overridden by setting it to a list of your choosing. Note that special
 
 ```viml
 " :h mkdx-var-checkbox-toggles
-let g:mkdx#checkbox_toggles = [' ', '\~', 'x']
+let g:mkdx#checkbox_toggles = [' ', '-', 'x']
 ```
 
 ### `g:mkdx#restore_visual`

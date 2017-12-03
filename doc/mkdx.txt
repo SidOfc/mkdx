@@ -165,13 +165,13 @@ This option allows you to control wether the plugin should map keys or not.
 See the |mkdx-mappings| section to see how each mapping works.
 
 ==============================================================================
-`g:mkdx#checkbox_toggles = [' ', '\\~', 'x']       `   *mkdx-var-checkbox-toggles*
+`g:mkdx#checkbox_toggles = [' ', '-', 'x']         `   *mkdx-var-checkbox-toggles*
 
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
 
     - `[ ]` inactive
-    - `[~]` active
+    - `[-]` active
     - `[x]` completed
 
 

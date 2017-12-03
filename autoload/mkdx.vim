@@ -17,6 +17,7 @@ fun! mkdx#ToggleCheckbox(...)
   endfor
 
   call setline('.', line)
+  if (g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
   silent! call repeat#set("\<Plug>(mkdx-checkbox-" . (reverse ? 'prev' : 'next') . ")")
 endfun
 
@@ -283,3 +284,90 @@ fun! s:HeaderToHash(header)
   return substitute(substitute(tolower(s:CleanHeader(a:header)), '[^0-9a-z_\- ]\+', '', 'g'), ' ', '-', 'g')
 endfun
 
+""""" TASK CHECKER FUNCTIONS
+
+fun! s:TaskItem(linenum)
+  let line  = getline(a:linenum)
+  let token = get(matchlist(line, '\[\(.\)\]'), 1, '')
+  let ident = indent(a:linenum)
+
+  return [token, (ident == 0 ? ident : ident / &sw), line]
+endfun
+
+fun! s:TasksToCheck(linenum)
+  let [lnum, cnum]      = getpos(a:linenum)[1:2]
+  let current           = s:TaskItem(lnum)
+  let [ctkn, cind, cln] = current
+  let startc            = lnum
+  let items             = []
+
+  while (prevnonblank(startc) == startc)
+    let indent = s:TaskItem(startc)[1]
+    if (indent == 0) | break  | endif
+    let startc -= 1
+  endwhile
+
+  if (cind == -1) | return | endif
+
+  while (nextnonblank(startc) == startc)
+    let [token, indent, line] = s:TaskItem(startc)
+    if ((startc < lnum) || (indent != 0))
+      call add(items, [startc, token, indent, line])
+      let startc += 1
+    else
+      break
+    endif
+  endwhile
+
+  return [extend([lnum], current), items]
+endfun
+
+fun! s:UpdateTaskList(...)
+  let linenum               = get(a:000, 0, '.')
+  let [target, tasks]       = s:TasksToCheck(linenum)
+  let [tlnum, ttk, tdpt, _] = target
+  let tasksilen             = len(tasks) - 1
+  let [incompl, compl]      = g:mkdx#checkbox_toggles[-2:-1]
+  let empty                 = g:mkdx#checkbox_toggles[0]
+  let tasks_lnums           = map(deepcopy(tasks), 'get(v:val, 0, -1)')
+
+  if (tdpt > 0)
+    let nextupd = tdpt - 1
+
+    for [lnum, token, depth, line] in reverse(deepcopy(tasks))
+      if ((lnum < tlnum) && (depth == nextupd))
+        let nextupd  -= 1
+        let substats  = []
+        let parentidx = index(tasks_lnums, lnum)
+
+        for ii in range(parentidx + 1, tasksilen)
+          let next_task  = tasks[ii]
+          let depth_diff = abs(next_task[2] - depth)
+
+          if (depth_diff == 0) | break                            | endif
+          if (depth_diff == 1) | call add(substats, next_task[1]) | endif
+        endfor
+
+        let completed = index(map(deepcopy(substats), 'v:val != "' . compl . '"'), 1) == -1
+        let unstarted = index(map(deepcopy(substats), 'v:val != "' . empty . '"'), 1) == -1
+
+        let new_token     = completed ? compl : (unstarted ? empty : incompl)
+        let new_line      = substitute(line, '\[' . token . '\]', '\[' . new_token . '\]', '')
+        let tasks[parentidx][1] = new_token
+        let tasks[parentidx][3] = new_line
+
+        call setline(lnum, new_line)
+        if (nextupd < 0) | break | endif
+      endif
+    endfor
+
+    if g:mkdx#checklist_update_tree == 2
+      for [lnum, token, depth, line] in tasks
+        if (lnum > tlnum)
+          if (depth == tdpt) | break | endif
+          if (depth > tdpt) | call setline(lnum, substitute(line, '\[\(.\)\]', '\[' . ttk . '\]', '')) | endif
+        endif
+      endfor
+    endif
+  endif
+endfun

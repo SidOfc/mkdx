@@ -14,6 +14,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#map_prefix`
         `g:mkdx#map_keys`
         `g:mkdx#checkbox_toggles`
+        `g:mkdx#checklist_update_tree`
         `g:mkdx#header_style`
         `g:mkdx#restore_visual`
         `g:mkdx#table_divider`
@@ -174,6 +175,27 @@ checkboxes. Special characters must be escaped! The default list contains:
     - `[-]` active
     - `[x]` completed
 
+Note:
+
+There must be at least a minimum of 3 checkbox states. They are used by the
+checklist toggler which updates the state of parent tasks automatically.
+This is done by using one state that represents inactive status
+(`g:mkdx#checkbox_toggles[0]`), another one for incomplete
+(`g:mkdx#checkbox_toggles[-2]`) and finally, complete
+(`g:mkdx#checkbox_toggles[-1]`). This is required because it needs to work
+according to user provided toggles list.
+
+==============================================================================
+`g:mkdx#checklist_update_tree = 2`                *mkdx-var-checklist-update-tree*
+
+With this setting on, checkboxes that are toggled within checklists (lists of
+checkboxes) cause parent and child list items to be updated automatically.
+The states from |mkdx-var-checkbox-toggles| are used to check and update the
+statusses of any parents. Children are force updated to the same token of
+their parent.
+
+To disable this behaviour entirely, set this value to 0. If you do not want
+children to be updated, set this value to 1 instead.
 
 ==============================================================================
 `g:mkdx#header_style = '#'`                                *mkdx-var-header-style*
@@ -334,8 +356,14 @@ the tag while staying in insert mode.
 Toggle checkbox forward                   *mkdx-mapping-toggle-checkbox-forward*
                                                                  <MAP_PREFIX>-
 
-Toggles the next item in the `g:mkdx#checkbox_toggles` list. Wraps around to
-the start if the end is reached. Works in both visual and normal mode.
+Toggles the next item in the |mkdx-var-checkbox-toggles| list. Wraps
+around to the start if the end is reached. Works in both visual and
+normal mode. This function restores visual selection if
+|mkdx-var-restore-visual| is set.
+
+When toggling an item which is nested in a list, the parent and child list
+items will be updated as well. Automatic updating of checkboxes
+can be disabled setting |mkdx-var-checklist-update-tree|.
 
     `nmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
     `vmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
@@ -348,6 +376,10 @@ Toggles the previous item in the |mkdx-var-checkbox-toggles| list. Wraps
 around to the end if the start is reached. Works in both visual and
 normal mode. This function restores visual selection if
 |mkdx-var-restore-visual| is set.
+
+When toggling an item which is nested in a list, the parent and child list
+items will be updated as well. Automatic updating of checkboxes
+can be disabled setting |mkdx-var-checklist-update-tree|.
 
     `nmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
     `vmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
@@ -439,11 +471,45 @@ reversed by setting {increment} is 1. If {increment} is not supplied,
 
 When {reverse} is 1:
 
-    [ ] `=>` [!]
+    [ ] `=>` [x]
 
 When {reverse} is 0:
 
-    [ ] `=>` [~]
+    [ ] `=>` [-]
+
+Parent and child checklist items are also updated accordingly. This is done by
+traversing up from the item under the cursor and updating every higher level
+parent depending on its children statusses. Imagine you checked the box at
+`toggled` to incomplete (`-`), the following would happen:
+
+    - [ ] item 1
+    - [-] item 2             `<= update next direct parent of parent`
+        - [ ] item 2.1
+        - [ ] item 2.2
+            - [ ] item 2.2.1
+            - [ ] item 2.2.2
+        - [-] item 2.3       `<= update direct parent`
+            - [-] item 2.3.1 `<= toggled`
+            - [ ] item 2.3.2
+    - [ ] item 3
+
+If instead, an item higher in the list was toggled:
+
+    - [ ] item 1
+    - [-] item 2                   `<= update direct parent`
+        - [ ] item 2.1
+        - [ ] item 2.2
+            - [ ] item 2.2.1
+            - [ ] item 2.2.2
+        - [x] item 2.3             `<= toggled`
+            - [x] item 2.3.1       `<= update child`
+                - [x] item 2.3.1.1 `<= update child`
+                - [x] item 2.3.1.2 `<= update child`
+            - [x] item 2.3.2       `<= update child`
+    - [ ] item 3
+
+All children are always updated to the same token of the toggled item. This
+behaviour can be changed or disabled with |mkdx-var-checklist-update-tree|.
 
 ==============================================================================
 mkdx#WrapLink([, {mode}])                              *mkdx-function-wrap-link*

@@ -1,24 +1,28 @@
 # mkdx.vim
 
+**If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**
+
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
-markdown **filetype**. Functions are included to handle lists, checkboxes, fenced code blocks,
+markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
 of CSV data to a markdown table. Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
-Every _normal_ mode mapping can be repeated with the `.` command.
+Every _normal_ mode mapping can be repeated with the `.` command. Below you will find configurable
+settings and examples with default mappings.
 
 # TOC
 
 - [mkdx.vim](#mkdxvim)
 - [TOC](#toc)
-  - [Install](#install)
-  - [Variables](#variables)
+- [Install](#install)
+- [Variables](#variables)
     - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)
     - [`g:mkdx#map_keys`](#gmkdxmap_keys)
     - [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles)
+    - [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree)
     - [`g:mkdx#restore_visual`](#gmkdxrestore_visual)
     - [`g:mkdx#header_style`](#gmkdxheader_style)
     - [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider)
@@ -28,7 +32,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
     - [`g:mkdx#fence_style`](#gmkdxfence_style)
     - [`g:mkdx#toc_text`](#gmkdxtoc_text)
     - [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)
-  - [Examples and Mappings](#examples-and-mappings)
+- [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
     - [List items](#list-items)
@@ -39,7 +43,7 @@ Every _normal_ mode mapping can be repeated with the `.` command.
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
 
-## Install
+# Install
 
 This plugin should work in _vim_ as well as _nvim_, no clue about _gvim_ but since this plugin only manipulates
 text and is written in vimL, it will probably work there too. To install, use a plugin manager of choice like
@@ -75,9 +79,9 @@ cd ~/.vim/bundle
 git glone https://github.com/SidOfc/mkdx
 ```
 
-## Variables
+# Variables
 
-### `g:mkdx#map_prefix`
+## `g:mkdx#map_prefix`
 
 All mappings are prefixed with a single prefix key.
 If a mapping contains <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd> key, it is the value of this variable.
@@ -88,7 +92,7 @@ If you do not like the default (`<leader>`) you can override it:
 let g:mkdx#map_prefix = '<leader>'
 ```
 
-### `g:mkdx#map_keys`
+## `g:mkdx#map_keys`
 
 If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
 **Note** that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
@@ -98,17 +102,34 @@ If you'd rather full control over what is mapped, you can opt-out all together b
 let g:mkdx#map_keys = 1
 ```
 
-### `g:mkdx#checkbox_toggles`
+## `g:mkdx#checkbox_toggles`
 
 This setting defines the list of states to use when toggling a checkbox.
 It can be overridden by setting it to a list of your choosing. Note that special characters must be escaped!
+Also, the list of toggles **must** contain at the very least, 3 items!
+The reason for this is that [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree) uses these
+to be able to work with a user supplied list of toggles.
 
 ```viml
 " :h mkdx-var-checkbox-toggles
 let g:mkdx#checkbox_toggles = [' ', '-', 'x']
 ```
 
-### `g:mkdx#restore_visual`
+## `g:mkdx#checklist_update_tree`
+
+With this setting on, checkboxes that are toggled within checklists (lists of checkboxes) cause parent and child list items
+to be updated automatically. The states from [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles) are used to check and
+update the statusses of any parents. Children are force updated to the same token of their parent.
+
+To disable this behaviour entirely, set this value to 0. If you do not want
+children to be updated, set this value to 1 instead.
+
+```viml
+" :h mkdx-var-checklist-update-tree
+let g:mkdx#checklist_update_tree = 2
+```
+
+## `g:mkdx#restore_visual`
 
 This setting enables the restoration of the last visual selection after performing an action in visual mode:
 
@@ -117,7 +138,7 @@ This setting enables the restoration of the last visual selection after performi
 let g:mkdx#restore_visual = 1
 ```
 
-### `g:mkdx#header_style`
+## `g:mkdx#header_style`
 
 If you want to use a different style for markdown headings (h1, h2, etc...).
 
@@ -126,7 +147,7 @@ If you want to use a different style for markdown headings (h1, h2, etc...).
 let g:mkdx#header_style = '#'
 ```
 
-### `g:mkdx#table_header_divider`
+## `g:mkdx#table_header_divider`
 
 You can change the separator used for table headings in markdown tables.
 
@@ -135,7 +156,7 @@ You can change the separator used for table headings in markdown tables.
 let g:mkdx#table_header_divider = '-'
 ```
 
-### `g:mkdx#table_divider`
+## `g:mkdx#table_divider`
 
 You can also change the separator used in markdown tables.
 
@@ -143,7 +164,7 @@ You can also change the separator used in markdown tables.
 " :h mkdx-var-table-divider
 let g:mkdx#table_divider = '|'
 ```
-### `g:mkdx#enhance_enter`
+## `g:mkdx#enhance_enter`
 
 This setting enables auto-appending list items when you are editing a markdown list.
 When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
@@ -154,7 +175,7 @@ or just do a regular enter. unordered lists and numbered lists are both handled 
 let g:mkdx#enhance_enter = 1
 ```
 
-### `g:mkdx#list_tokens`
+## `g:mkdx#list_tokens`
 
 Used by [`g:mkdx#enhance_enter`](#gmkdxenhance_enter). This is the list of tokens that are supported by default.
 Since numbers are handled differently, they are not included in this list but they are supported.
@@ -164,7 +185,7 @@ Since numbers are handled differently, they are not included in this list but th
 let g:mkdx#list_tokens = ['-', '*', '>']
 ```
 
-### `g:mkdx#fence_style`
+## `g:mkdx#fence_style`
 
 Defines the fencing style to use when [inserting a fenced code block](#insert-fenced-code-block).
 By default it is set to an empty string, in which case typing tildes will result in a fenced code block
@@ -178,7 +199,7 @@ fenced code blocks.
 let g:mkdx#fence_style = ''
 ```
 
-### `g:mkdx#toc_text`
+## `g:mkdx#toc_text`
 
 Defines the text to use for the table of contents header itself.
 
@@ -187,7 +208,7 @@ Defines the text to use for the table of contents header itself.
 let g:mkdx#toc_text = 'TOC'
 ```
 
-### `g:mkdx#toc_list_token`
+## `g:mkdx#toc_list_token`
 
 To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a different value.
 
@@ -196,13 +217,13 @@ To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a diffe
 let g:mkdx#toc_list_token = '-'
 ```
 
-## Examples and Mappings
+# Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
 
-### Insert fenced code block
+## Insert fenced code block
 
 |Backtick|Tilde|
 |--------|-----|
@@ -225,7 +246,7 @@ by <kbd>ctrl</kbd>+<kbd>o</kbd>.
   inoremap <buffer><silent><unique> ``` ```<Enter>```<C-o>k<C-o>A
 ```
 
-### Insert `<kbd></kbd>` shortcut
+## Insert `<kbd></kbd>` shortcut
 
 ![mkdx insert keyboard shortcut](doc/gifs/vim-mkdx-insert-kbd.gif)
 
@@ -243,7 +264,7 @@ by <kbd>ctrl</kbd>+<kbd>o</kbd>.
 imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>2h<C-o>cit
 ```
 
-### List items
+## List items
 
 |Unordered|Numbered|
 |---------|--------|
@@ -261,12 +282,18 @@ the newly inserted item.
 " :h mkdx-function-enter-handler
 ```
 
-### Toggling Checkboxes
+## Toggling Checkboxes
 
-![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
+|Examples|
+|--------|
+|![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)|
+|![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater.gif)|
 
 Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>.
 Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
+When toggling an item which is nested in a list, the parent and child list items will be updated as well.
+Automatic updating of checkboxes can be disabled by setting [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree).
+All manipulations work fine in visual as well as normal mode.
 
 ```viml
 " :h mkdx-mapping-toggle-checkbox-forward
@@ -274,7 +301,7 @@ Toggling a checkbox means going to the previous or next mark in the list of [`g:
 " :h mkdx-function-toggle-checkbox
 ```
 
-### Toggling Headers
+## Toggling Headers
 
 ![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
 
@@ -288,7 +315,7 @@ The header character can be changed using [`g:mkdx#header_style`](#gmkdxheader_s
 " :h mkdx-function-toggle-header
 ```
 
-### Toggling Quotes
+## Toggling Quotes
 
 ![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quote.gif)
 
@@ -299,7 +326,7 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 " :h mkdx-function-toggle-quote
 ```
 
-### Wrap text in link
+## Wrap text in link
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
@@ -312,7 +339,7 @@ cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the curs
 " :h mkdx-function-wrap-link
 ```
 
-### Convert CSV to table
+## Convert CSV to table
 
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
@@ -326,7 +353,7 @@ and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider).
 " :h mkdx-function-tableize
 ```
 
-### Generate or update TOC
+## Generate or update TOC
 
 ![mkdx generate or update table of contents](doc/gifs/vim-mkdx-gen-or-upd-toc.gif)
 

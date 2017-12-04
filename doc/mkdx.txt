@@ -511,6 +511,12 @@ If instead, an item higher in the list was toggled:
 All children are always updated to the same token of the toggled item. This
 behaviour can be changed or disabled with |mkdx-var-checklist-update-tree|.
 
+Note:
+
+that if your list contains malformed indentation (.g. 'sw' is set to 4
+but one item is indented by 3 spaces), toggling such item will not properly
+update all parents in the tree.
+
 ==============================================================================
 mkdx#WrapLink([, {mode}])                              *mkdx-function-wrap-link*
 

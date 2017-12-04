@@ -293,6 +293,9 @@ When toggling an item which is nested in a list, the parent and child list items
 Automatic updating of checkboxes can be disabled by setting [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree).
 All manipulations work fine in visual as well as normal mode.
 
+**Note:** if the indentation in the list is malformed, this action might produce unexpected results (checkboxes may be skipped).
+In this case, _undo_ the action, fix the indentation and redo the action for the proper effect. The indentation size is taken from `&shiftwidth` variable.
+
 ```viml
 " :h mkdx-mapping-toggle-checkbox-forward
 " :h mkdx-mapping-toggle-checkbox-backward

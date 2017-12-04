@@ -128,16 +128,14 @@ fun! mkdx#EnterHandler()
   let rmv   = ((len == 1) && s:IsListToken(part1)) || ewcb
 
   if atend && !rmv && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0)
-    let ident = strlen(get(matchlist(line, '^\( \+\)'), 0, ''))
+    let ident = indent(lnum)
 
     while (nextnonblank(lnum) == lnum)
-      let lnum   += 1
-      let tmp     = getline(lnum)
-      let tident  = strlen(get(matchlist(tmp, '^\( \+\)'), 0, ''))
+      let lnum += 1
 
-      if tident < ident | break | endif
+      if indent(lnum) < ident | break | endif
       call setline(lnum,
-        \ substitute(tmp,
+        \ substitute(getline(lnum),
         \            '^\( \{' . ident . ',}\)\([0-9.]\+ \)',
         \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
     endwhile

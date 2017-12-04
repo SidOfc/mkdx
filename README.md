@@ -119,10 +119,8 @@ let g:mkdx#checkbox_toggles = [' ', '-', 'x']
 
 With this setting on, checkboxes that are toggled within checklists (lists of checkboxes) cause parent and child list items
 to be updated automatically. The states from [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles) are used to check and
-update the statusses of any parents. Children are force updated to the same token of their parent.
-
-To disable this behaviour entirely, set this value to 0. If you do not want
-children to be updated, set this value to 1 instead.
+update the statusses of any parents. Children are force updated to the same token of their parent. To disable this behaviour
+entirely, set this value to 0. If you do not want children to be updated, set this value to 1 instead.
 
 ```viml
 " :h mkdx-var-checklist-update-tree

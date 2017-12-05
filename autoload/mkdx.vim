@@ -84,7 +84,6 @@ fun! mkdx#Tableize() range
 
   for idx in linecount
     let lines[idx] = split(lines[idx], delimiter, 1)
-    let linelen    = len(lines[idx]) - 1
 
     for column in range(0, len(lines[idx]) - 1)
       let curr_word_max = strlen(lines[idx][column])
@@ -96,12 +95,8 @@ fun! mkdx#Tableize() range
 
   for linec in linecount
     if !empty(filter(lines[linec], '!empty(v:val)'))
-      for colc in range(0, len(lines[linec]) - 1)
-        let lines[linec][colc] = s:CenterString(lines[linec][colc], col_maxlen[colc])
-      endfor
-      let lines[linec] = join(lines[linec], line_delim)
-
-      call setline(a:firstline + linec, line_delim[1:2] . lines[linec] . line_delim[0:1])
+      call setline(a:firstline + linec,
+        \ line_delim[1:2] . join(map(lines[linec], 's:CenterString(v:val, col_maxlen[v:key])'), line_delim) . line_delim[0:1])
     endif
   endfor
 
@@ -112,6 +107,8 @@ fun! mkdx#Tableize() range
 endfun
 
 """"" ENTER FUNCTIONS
+
+let s:number_re = '^ \{-}[0-9.]\+'
 
 fun! mkdx#EnterHandler()
   let [lnum, cnum]  = getpos('.')[1:2]
@@ -146,13 +143,13 @@ fun! mkdx#EnterHandler()
 endfun
 
 fun! s:IsListToken(str)
-  return (index(g:mkdx#list_tokens, a:str) > -1) || (match(a:str, '^[0-9.]\+$') > -1)
+  return (index(g:mkdx#list_tokens, a:str) > -1) || (match(a:str, s:number_re) > -1)
 endfun
 
 fun! s:NextListToken(str, ...)
   let suffix = get(a:000, 1, 0) ? ' [ ] ' : ' '
   if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . suffix | endif
-  if (match(a:str, '[0-9. ]\+') == -1)        | return ''             | endif
+  if (match(a:str, s:number_re) == -1)        | return ''             | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
   let clvl       = get(a:000, 0, 1)
@@ -167,13 +164,13 @@ endfun
 """"" UTILITY FUNCTIONS
 
 fun! s:InsertLine(line, position)
-  let reg_val = @l
-  let @l      = a:line
+  let _z = @z
+  let @z = a:line
 
   call cursor(a:position, 1)
-  normal! A"lp
+  normal! A"zp
 
-  let @l = reg_val
+  let @z = _z
 endfun
 
 fun! s:CenterString(str, length)
@@ -301,7 +298,7 @@ fun! s:TasksToCheck(linenum)
 
   while (prevnonblank(startc) == startc)
     let indent = s:TaskItem(startc)[1]
-    if (indent == 0) | break  | endif
+    if (indent == 0) | break | endif
     let startc -= 1
   endwhile
 

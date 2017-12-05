@@ -282,12 +282,11 @@ endfun
 """"" TASK CHECKER FUNCTIONS
 
 fun! s:TaskItem(linenum)
-  let line  = getline(a:linenum)
-  let token = get(matchlist(line, '\[\(.\)\]'), 1, '')
-  let ident = indent(a:linenum)
-  let rem   = ident % &sw
-
-  if (rem != 0) | let ident -= (rem - &sw) | endif
+  let line   = getline(a:linenum)
+  let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')
+  let ident  = indent(a:linenum)
+  let rem    = ident % &sw
+  let ident -= rem - (rem > &sw / 2 ? &sw : 0)
 
   return [token, (ident == 0 ? ident : ident / &sw), line]
 endfun

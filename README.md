@@ -32,6 +32,7 @@ settings and examples with default mappings.
     - [`g:mkdx#fence_style`](#gmkdxfence_style)
     - [`g:mkdx#toc_text`](#gmkdxtoc_text)
     - [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)
+    - [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent)
 - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -215,6 +216,19 @@ To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a diffe
 let g:mkdx#toc_list_token = '-'
 ```
 
+## `g:mkdx#handle_malformed_indent`
+
+This setting defines behaviour to use when working with improperly indented
+markdown lists. At the moment it works for checklist items that do not have an
+`indent()` which is divisible by `shiftwidth`. In which case the indent will
+be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
+will be rounded down to the previous indent.
+
+~~~viml
+" :h mkdx-var-handle-malformed-indent
+let g:mkdx#handle_malformed_indent = 1
+~~~
+
 # Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
@@ -293,8 +307,13 @@ When toggling an item which is nested in a list, the parent and child list items
 Automatic updating of checkboxes can be disabled by setting [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree).
 All manipulations work fine in visual as well as normal mode.
 
-**Note:** if the indentation in the list is malformed, this action might produce unexpected results (checkboxes may be skipped).
-In this case, _undo_ the action, fix the indentation and redo the action for the proper effect. The indentation size is taken from `&shiftwidth` variable.
+A file might not always be indented correctly, the solution to this is [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent).
+This setting is enabled by default, it rounds invalid (indentation not divisible by `:h shiftwidth`) either up or down
+to the nearest heading level.
+
+| off | on |
+|:---:|:--:|
+|![mkdx toggle checkbox malformed off](doc/gifs/vim-mkdx-checklist-malformed-off.gif)|![mkdx toggle checkbox malformed on](doc/gifs/vim-mkdx-checklist-malformed-on.gif)|
 
 ```viml
 " :h mkdx-mapping-toggle-checkbox-forward

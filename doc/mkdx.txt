@@ -24,6 +24,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#fence_style`
         `g:mkdx#toc_text`
         `g:mkdx#toc_list_token`
+        `g:mkdx#handle_malformed_indent`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -107,6 +108,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-fence-style|
     - |mkdx-var-toc-text|
     - |mkdx-var-toc-list-token|
+    - |mkdx-var-handle-malformed-indent|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -254,6 +256,32 @@ Define the heading text to use in the table of contents.
 `g:mkdx#toc_list_token = '-'`                            *mkdx-var-toc-list-token*
 
 Define the list style to use when generating a table of contents.
+
+==============================================================================
+`g:mkdx#handle_malformed_indent = 1`            *mkdx-var-handle-malformed-indent*
+
+This setting defines behaviour to use when working with improperly indented
+markdown files. At the moment it works for checklist items that do not have an
+|indent()| which is divisible by 'shiftwidth'. In which case the indent will
+be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
+will be rounded down to the previous indent.
+
+In the following example, the second item belongs under "hello" but the
+indentation is incorrect (imagine we're using a 'shiftwidth' of 4).
+
+If the third line is toggled without `g:mkdx#handle_malformed_indent` set to
+1, the malformed item will be incremented instead of the "hello" item.
+
+
+    - [ ] hello
+       - [-] hai     `<= should not have been updated`
+         - [-] again `<= toggled`
+
+With this setting on, the correct item will actually be checked:
+
+    - [-] hello      `<= updated correctly`
+       - [ ] hai
+         - [-] again `<= toggled`
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*
@@ -510,12 +538,7 @@ If instead, an item higher in the list was toggled:
 
 All children are always updated to the same token of the toggled item. This
 behaviour can be changed or disabled with |mkdx-var-checklist-update-tree|.
-
-Note:
-
-that if your list contains malformed indentation (.g. 'sw' is set to 4
-but one item is indented by 3 spaces), toggling such item will not properly
-update all parents in the tree.
+If your list isn't properly updated, see |mkdx-var-handle-malformed-indent|.
 
 ==============================================================================
 mkdx#WrapLink([, {mode}])                              *mkdx-function-wrap-link*

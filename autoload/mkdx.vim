@@ -286,7 +286,7 @@ fun! s:TaskItem(linenum)
   let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')
   let ident  = indent(a:linenum)
   let rem    = ident % &sw
-  let ident -= rem - (rem > &sw / 2 ? &sw : 0)
+  let ident -= g:mkdx#handle_malformed_indent ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
 
   return [token, (ident == 0 ? ident : ident / &sw), line]
 endfun

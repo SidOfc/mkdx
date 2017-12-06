@@ -309,7 +309,9 @@ All manipulations work fine in visual as well as normal mode.
 
 A file might not always be indented correctly, the solution to this is [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent).
 This setting is enabled by default, it rounds invalid (indentation not divisible by `:h shiftwidth`) either up or down
-to the nearest heading level.
+to the nearest heading level. In the examples below, the `shiftwidth` is set to `4`. The second item is indented by `3` spaces and the
+third item is indented by `5` spaces. since `3` is closer to `4` than `0`, it will become `4`. In the case of `5`, it's closer to `4` than `8`
+and will also become `4`.
 
 | off | on |
 |:---:|:--:|

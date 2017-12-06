@@ -347,9 +347,9 @@ fun! s:UpdateTaskList(...)
 
         let completed = index(map(deepcopy(substats), 'v:val != "' . compl . '"'), 1) == -1
         let unstarted = index(map(deepcopy(substats), 'v:val != "' . empty . '"'), 1) == -1
+        let new_token = completed ? compl : (unstarted ? empty : incompl)
+        let new_line  = substitute(line, '\[' . token . '\]', '\[' . new_token . '\]', '')
 
-        let new_token     = completed ? compl : (unstarted ? empty : incompl)
-        let new_line      = substitute(line, '\[' . token . '\]', '\[' . new_token . '\]', '')
         let tasks[parentidx][1] = new_token
         let tasks[parentidx][3] = new_line
 

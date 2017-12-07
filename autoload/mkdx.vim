@@ -259,11 +259,12 @@ fun! mkdx#EnterHandler()
   let line         = getline(lnum)
   let parts        = split(substitute(line, ' \+$', '', 'g'), ' ')
   let [p0, p1]     = [get(parts, 0, ''), get(parts, 1, '')]
-  let cbx          = (match(p1, s:checkbox_re) > -1) || ((p1 == '[') && (get(parts, 2, '') == ']'))
+  let nonemptycb   = match(p1, s:checkbox_re) > -1
+  let cbx          = nonemptycb || ((p1 == '[') && (get(parts, 2, '') == ']'))
   let clvl         = len(split(p0, '\.'))
   let atend        = cnum >= strlen(line)
   let len          = len(parts)
-  let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (cbx ? 2 : 3)) && (cbx == 1)
+  let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (nonemptycb ? 2 : 3)) && (cbx == 1)
 
   if atend && !rmv && (strlen(get(matchlist(line, s:list_number_re), 0, '')) > 0)
     let ident = indent(lnum)

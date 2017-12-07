@@ -265,10 +265,9 @@ fun! mkdx#EnterHandler()
   let atend        = cnum >= strlen(line)
   let len          = len(parts)
   let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (nonemptycb ? 2 : 3)) && (cbx == 1)
+  let ident        = indent(lnum)
 
   if atend && !rmv && (strlen(get(matchlist(line, s:list_number_re), 0, '')) > 0)
-    let ident = indent(lnum)
-
     while (nextnonblank(lnum) == lnum)
       let lnum += 1
 
@@ -281,6 +280,7 @@ fun! mkdx#EnterHandler()
   endif
 
   exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
+  if (!rmv && cbx && g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
   if atend | startinsert! | else | startinsert | endif
 endfun
 

@@ -111,18 +111,15 @@ endfun
 let s:number_re = '^ \{-}[0-9.]\+'
 
 fun! mkdx#EnterHandler()
-  let [lnum, cnum]  = getpos('.')[1:2]
-  let line  = getline('.')
-  let parts = split(substitute(line, ' \+$', '', 'g'), ' ')
-  let part1 = get(parts, 0, '')
-  let cbx   = (get(parts, 1, '') == '[') && (get(parts, 2, '') == ']')
-  let mtchd = (match(get(parts, 1, ''), '\[.\]') > -1)
-  let cbx   = mtchd ? 1 : cbx
-  let clvl  = len(split(part1, '\.'))
-  let atend = cnum >= strlen(line)
-  let len   = len(parts)
-  let ewcb  = (len == (mtchd ? 2 : 3)) && (cbx == 1)
-  let rmv   = ((len == 1) && s:IsListToken(part1)) || ewcb
+  let [lnum, cnum] = getpos('.')[1:2]
+  let line         = getline(lnum)
+  let parts        = split(substitute(line, ' \+$', '', 'g'), ' ')
+  let [p0, p1]     = [get(parts, 0, ''), get(parts, 1, '')]
+  let cbx          = (match(p1, '\[.\]') > -1) || ((p1 == '[') && (get(parts, 2, '') == ']'))
+  let clvl         = len(split(p0, '\.'))
+  let atend        = cnum >= strlen(line)
+  let len          = len(parts)
+  let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (mtchd ? 2 : 3)) && (cbx == 1)
 
   if atend && !rmv && (strlen(get(matchlist(line, '^\( \{-}[0-9.]\)'), 0, '')) > 0)
     let ident = indent(lnum)
@@ -138,7 +135,7 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(part1, clvl, cbx) : ''))
+  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
   if atend | startinsert! | else | startinsert | endif
 endfun
 

@@ -25,6 +25,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#toc_text`
         `g:mkdx#toc_list_token`
         `g:mkdx#handle_malformed_indent`
+        `g:mkdx#link_as_img_pat`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -109,6 +110,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-toc-text|
     - |mkdx-var-toc-list-token|
     - |mkdx-var-handle-malformed-indent|
+    - |mkdx-var-link-as-img-pat|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -282,6 +284,14 @@ With this setting on, the correct item will actually be checked:
     - [-] hello      `<= updated correctly`
        - [ ] hai
          - [-] again `<= toggled`
+
+==============================================================================
+`g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif' `       *mkdx-var-link-as-img-pat*
+
+Defines the extensions to search for when identifying the type of link that
+|mkdx-function-wrap-link| will generate. Setting it to an empty string
+disables image wrapping and a regular empty markdown link will be generated
+instead.
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*
@@ -555,6 +565,15 @@ In normal mode, this function wraps the word under the cursor in a link.
 In visual mode, it will wrap the entire visual selection in a link.
 
     Hello `=>` [Hello]()
+
+If a visual selection ends in an image extension (`.png` for example), an
+image link will be created instead.
+
+    nyancat.png `=>` ![nyancat.png](nyancat.png)
+
+In this case, the cursor is placed just after the opening `(`. This allows you
+to prepend a URL / path. To disable link wrapping, see:
+|mkdx-var-link-as-img-pat|
 
 ==============================================================================
 mkdx#ToggleQuote()                                  *mkdx-function-toggle-quote*

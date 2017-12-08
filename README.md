@@ -33,6 +33,7 @@ settings and examples with default mappings.
     - [`g:mkdx#toc_text`](#gmkdxtoc_text)
     - [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)
     - [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent)
+    - [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)
 - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -229,6 +230,17 @@ will be rounded down to the previous indent.
 let g:mkdx#handle_malformed_indent = 1
 ~~~
 
+## `g:mkdx#link_as_img_pat`
+
+Defines the extensions to search for when identifying the type of link that
+will be generated when [wrapping text in a link](#wrap-text-in-link). Setting it to an empty string
+disables image wrapping and a regular empty markdown link will be used instead.
+
+~~~viml
+" :h mkdx-var-link-as-img-pat
+let g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif'
+~~~
+
 # Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
@@ -355,6 +367,9 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 Wrap the word under the cursor or a visual selection in an empty markdown link
 with <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
 cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the cursor.
+
+If what you're wrapping is an image (only works with visual selections at the moment), an image link will be created
+instead. To disable this behaviour, see: [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat).
 
 ```viml
 " :h mkdx-mapping-expand-selection-to-link

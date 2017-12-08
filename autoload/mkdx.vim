@@ -19,7 +19,7 @@ fun! s:HeaderToListItem(header, ...)
 endfun
 
 fun! s:CleanHeader(header)
-  return substitute(substitute(a:header, '^[ #]\+\| \+$', '', 'g'), '\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
+  return substitute(substitute(a:header, '^[ #]\+\| \+$', '', 'g'), '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
 endfun
 
 fun! s:HeaderToHash(header)
@@ -180,13 +180,18 @@ fun! mkdx#ToggleCheckbox(...)
 endfun
 
 fun! mkdx#WrapLink(...)
+  let c  = getpos('.')[2]
   let m  = get(a:000, 0, 'n')
   let r  = @z
 
-  exe     'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
-  let     @z = '[' . @z . ']()'
-  normal! "zP
-  let     @z = r
+  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
+
+  let img = !empty(g:mkdx#link_as_img_pat) && match(get(split(@z, '\.'), -1, ''), g:mkdx#link_as_img_pat) > -1
+  let @z  = (c == 1 ? '' : ' ') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
+
+  normal! "zPT(
+
+  let @z = r
 
   startinsert
   silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")

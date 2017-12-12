@@ -1,4 +1,4 @@
-if exists('g:loaded_mkdx')                   | finish | else | let g:loaded_mkdx = 1              | endif
+if exists('b:did_ftplugin')                  | finish | else | let b:did_ftplugin = 1             | endif
 if !exists('g:mkdx#map_prefix')              | let g:mkdx#map_prefix = '<leader>'                 | endif
 if !exists('g:mkdx#map_keys')                | let g:mkdx#map_keys = 1                            | endif
 if !exists('g:mkdx#checkbox_toggles')        | let g:mkdx#checkbox_toggles = [' ', '-', 'x']      | endif
@@ -59,7 +59,7 @@ if g:mkdx#map_keys == 1
     let full_mapping = (prefix ? g:mkdx#map_prefix : '') . binding
 
     if mapcheck(full_mapping, mapmode) == ""
-      exe mapmode . 'map <buffer><silent><unique> ' . full_mapping . ' ' . expr
+      exe mapmode . 'map <buffer><silent> ' . full_mapping . ' ' . expr
     endif
   endfor
 endif

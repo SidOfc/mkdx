@@ -383,7 +383,8 @@ instead. To disable this behaviour, see: [`g:mkdx#link_as_img_pat`](#gmkdxlink_a
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.
 The divider (`|`) as well as the header divider can be changed with [`g:mkdx#table_divider`](#gmkdxtable_divider)
-and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider).
+and [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider). Currently, this is only a very simple function.
+It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).
 
 ```viml
 " :h mkdx-mapping-csv-to-markdown-table

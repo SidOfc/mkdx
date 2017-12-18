@@ -26,6 +26,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#toc_list_token`
         `g:mkdx#handle_malformed_indent`
         `g:mkdx#link_as_img_pat`
+        `g:mkdx#italic_token`
+        `g:mkdx#bold_token`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -40,13 +42,25 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-generate-toc)
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
+        <Plug>(mkdx-text-bold-n)
+        <Plug>(mkdx-text-bold-v)
+        <Plug>(mkdx-text-italic-n)
+        <Plug>(mkdx-text-italic-v)
+        <Plug>(mkdx-text-strike-n)
+        <Plug>(mkdx-text-strike-v)
+        <Plug>(mkdx-text-inline-code-n)
+        <Plug>(mkdx-text-inline-code-v)
 
     Mappings
         Insert fenced code block
-        Insert <kbd> shortcut
+        Insert `<kbd />` shortcut
         Toggle checkbox forward
         Toggle checkbox backward
         Wrap text in link
+        Wrap text in bold
+        Wrap text in italic
+        Wrap text in `<strike />` tag
+        Wrap text in backticks
         Increment header level
         Decrement header level
         CSV to markdown table
@@ -111,6 +125,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-toc-list-token|
     - |mkdx-var-handle-malformed-indent|
     - |mkdx-var-link-as-img-pat|
+    - |mkdx-var-italic-token|
+    - |mkdx-var-bold-token|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -125,6 +141,16 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-generate-toc|
     - |mkdx-plug-mkdx-update-toc|
     - |mkdx-plug-mkdx-gen-or-update-toc|
+    - |mkdx-plug-wrap-text-in-link-n|
+    - |mkdx-plug-wrap-text-in-link-v|
+    - |mkdx-plug-wrap-text-in-bold-n|
+    - |mkdx-plug-wrap-text-in-bold-v|
+    - |mkdx-plug-wrap-text-in-italic-n|
+    - |mkdx-plug-wrap-text-in-italic-v|
+    - |mkdx-plug-wrap-text-in-strike-tag-n|
+    - |mkdx-plug-wrap-text-in-strike-tag-v|
+    - |mkdx-plug-wrap-text-in-backticks-n|
+    - |mkdx-plug-wrap-text-in-backticks-v|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -132,6 +158,10 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-checkbox-forward|
     - |mkdx-mapping-toggle-checkbox-backward|
     - |mkdx-mapping-wrap-text-in-link|
+    - |mkdx-mapping-wrap-text-in-bold|
+    - |mkdx-mapping-wrap-text-in-italic|
+    - |mkdx-mapping-wrap-text-in-strike-tag|
+    - |mkdx-mapping-wrap-text-in-backticks|
     - |mkdx-mapping-increment-header-level|
     - |mkdx-mapping-decrement-header-level|
     - |mkdx-mapping-csv-to-markdown-table|
@@ -149,6 +179,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-generate-toc|
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
+    - |mkdx-function-wrap-text|
 
 ==============================================================================
 VARIABLES                                                            *mkdx-vars*
@@ -294,6 +325,18 @@ disables image wrapping and a regular empty markdown link will be generated
 instead.
 
 ==============================================================================
+`g:mkdx#italic_token = '*'`                                *mkdx-var-italic-token*
+
+Token used by |mkdx-plug-text-italic-n| and |mkdx-plug-text-italic-v| to wrap
+text in italic style.
+
+==============================================================================
+`g:mkdx#bold_token = '**'`                                 *mkdx-var-italic-token*
+
+Token used by |mkdx-plug-text-bold-n| and |mkdx-plug-text-bold-v| to wrap
+text in bold style.
+
+==============================================================================
 PLUGS                                                               *mkdx-plugs*
 
 When `g:mkdx#map_keys` is set to 0, the user can bind individual functions
@@ -359,6 +402,50 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 <Plug>(mkdx-gen-or-upd-toc-toc)                   *mkdx-plug-gen-or-upd-toc-toc*
 
     `:call mkdx#GenerateOrUpdateTOC()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
+
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#bold_token, g:mkdx#bold_token,`
+                           `\ 'mkdx-text-bold-n')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-bold-v)                                 *mkdx-plug-text-bold-v*
+
+    `:<C-U>call mkdx#WrapText('v', g:mkdx#bold_token, g:mkdx#bold_token)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-italic-n)                             *mkdx-plug-text-italic-n*
+
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#italic_token, g:mkdx#italic_token,`
+                           `\ 'mkdx-text-italic-n')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-italic-v)                             *mkdx-plug-text-italic-v*
+
+    `:<C-U>call mkdx#WrapText('v', g:mkdx#italic_token,`
+                           `\ g:mkdx#italic_token)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-strike-n)                             *mkdx-plug-text-strike-n*
+
+    `:<C-U>call mkdx#WrapText('n', '<strike>', '</strike>',`
+                            `\ 'mkdx-text-strike-n')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-strike-v)                             *mkdx-plug-text-strike-v*
+
+    `:<C-U>call mkdx#WrapText('v', '<strike>', '</strike>')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-text-inline-code-n)                   *mkdx-plug-text-inline-code-n*
+
+    :<C-U>call mkdx#WrapText('n', '`', '`', 'mkdx-text-inline-code-n')<Cr>
+
+==============================================================================
+<Plug>(mkdx-text-inline-code-v)                   *mkdx-plug-text-inline-code-v*
+
+    :<C-U>call mkdx#WrapText('v', '`', '`')<Cr>
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
@@ -434,6 +521,42 @@ The cursor will be placed between the parentheses in |Insert-mode|.
 
     `nmap <MAP_PREFIX>ln <Plug>(mkdx-wrap-link-n)`
     `vmap <MAP_PREFIX>ln <Plug>(mkdx-wrap-link-v)`
+
+==============================================================================
+Wrap text in bold                               *mkdx-mapping-wrap-text-in-bold*
+
+Wrap the word under the cursor or a visual selection in bold. By default
+`**` is used for bolding text, this can be changed with |mkdx-var-bold-token|.
+
+    `nmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-n)`
+    `vmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-v)`
+
+==============================================================================
+Wrap text in italic                           *mkdx-mapping-wrap-text-in-italic*
+
+Wrap the word under the cursor or a visual selection in italic. By default
+`*` is used for italicizing text, this can be changed with |mkdx-var-italic-token|.
+
+    `nmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-n)`
+    `vmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-v)`
+
+==============================================================================
+Wrap text in strike-tag                   *mkdx-mapping-wrap-text-in-strike-tag*
+
+Wrap the word under the cursor or a visual selection in a `<strike></strike>`
+tag.
+
+    `nmap <MAP_PREFIX>s <Plug>(mkdx-text-strike-tag-n)`
+    `vmap <MAP_PREFIX>s <Plug>(mkdx-text-strike-tag-v)`
+
+==============================================================================
+Wrap text in backticks                     *mkdx-mapping-wrap-text-in-backticks*
+
+Wrap the word under the cursor or a visual selection in backticks (e.g. as
+inline code block).
+
+    nmap <MAP_PREFIX>` <Plug>(mkdx-text-italic-n)
+    vmap <MAP_PREFIX>` <Plug>(mkdx-text-italic-v)
 
 ==============================================================================
 Increment header level                     *mkdx-mapping-increment-header-level*
@@ -736,5 +859,45 @@ Like |mkdx-function-update-toc|, this function checks to see wether a table of
 content exists. Based on the result it will either call
 |mkdx-function-update-toc| if it exists, or |mkdx-function-generate-toc| if it
 doesn't exist yet.
+
+==============================================================================
+mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*
+
+Wrap text in {start} and {end} delimiters.
+
+The argument {mode} can be supplied to control what is selected.
+When set to string `n`, the word under the cursor will be wrapped. When set to
+`v`, the visual selection will be wrapped. If {mode} is omitted, it will
+default to using `n`.
+
+The {start} argument defines the string to use at the start of the target to
+wrap. When omitted, it is set to an empty string.
+
+The {end} argument defines the string to use at the end of the target to wrap.
+When omitted, the value of {start} is used.
+
+The final argument {repeat} can be used to enable repeat support for
+repeat.vim. This requires you to setup a <Plug>(custom-plug) mapping. You
+would then supply the name of your plug as value for {repeat}. In this case it
+would be `custom-plug`.
+
+Note: If you are considering to repeat a visual mode command, this will work
+still but in this case it will repeat on the previously selected text.
+
+A mapping that wraps text in '*' symbols:
+
+    `" non repeatable`
+    `nnoremap <space>b :<C-U>call mkdx#WrapText('n', '*')<Cr>`
+
+    `" repeatable`
+    `noremap <silent> <Plug>(custom-wrap)`
+                    `\ :<C-U>call mkdx#WrapText('n', '*', '*', 'custom-wrap')`
+
+    `" now map the named <Plug> mapping to an actual key combination`
+    `au FileType markdown nmap <buffer> <space>b <Plug>(custom-wrap)`
+
+A non-repeatable mapping with a different ending:
+
+    `nnoremap <space>p :<C-U>call mkdx#WrapText('n', '<p>', '</p>')<Cr>`
 
 vim:tw=78:sw=4:ft=help:norl:

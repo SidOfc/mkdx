@@ -34,6 +34,8 @@ settings and examples with default mappings.
     - [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)
     - [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent)
     - [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)
+    - [`g:mkdx#italic_token`](#gmkdxitalic_token)
+    - [`g:mkdx#bold_token`](#gmkdxbold_token)
 - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -41,7 +43,9 @@ settings and examples with default mappings.
     - [Toggling Checkboxes](#toggling-checkboxes)
     - [Toggling Headers](#toggling-headers)
     - [Toggling Quotes](#toggling-quotes)
-    - [Wrap text in link](#wrap-text-in-link)
+    - [Wrapping text](#wrapping-text)
+        - [As a link](#as-a-link)
+        - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
 
@@ -241,6 +245,26 @@ disables image wrapping and a regular empty markdown link will be used instead.
 let g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif'
 ~~~
 
+## `g:mkdx#italic_token`
+
+This token is used for italicizing the current word under the cursor or a visual selection of text.
+See [Styling text](#styling-text) for more details.
+
+~~~viml
+" :h mkdx-var-italic-token
+let g:mkdx#italic_token = '*'
+~~~
+
+## `g:mkdx#bold_token`
+
+This token is used for bolding the current word under the cursor or a visual selection of text.
+See [Styling text](#styling-text) for more details.
+
+~~~viml
+" :h mkdx-var-bold-token
+let g:mkdx#bold_token = '**'
+~~~
+
 # Examples and Mappings
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
@@ -308,10 +332,10 @@ the newly inserted item.
 
 ## Toggling Checkboxes
 
-|Examples|
-|--------|
-|![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)|
-|![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater.gif)|
+**Single checkbox:**
+![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
+**Checkbox in checklist:**
+![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater.gif)
 
 Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>.
 Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
@@ -360,7 +384,9 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 " :h mkdx-function-toggle-quote
 ```
 
-## Wrap text in link
+## Wrapping text
+
+### As a link
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
@@ -375,6 +401,22 @@ instead. To disable this behaviour, see: [`g:mkdx#link_as_img_pat`](#gmkdxlink_a
 " :h mkdx-mapping-expand-selection-to-link
 " :h mkdx-function-wrap-link
 ```
+
+### As bold / italic / inline-code / strikethrough
+
+**Normal mode:**
+![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
+**Visual mode:**
+![mkdx wrap text in bold / italic / inline-code / strikethrough visual](doc/gifs/vim-mkdx-wrap-text-visual.gif)
+
+Wrap the word (anywhere) under the cursor or a visual selection using the following mappings:
+
+- <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd> => *italic*
+- <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd> => **bold**
+- <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd> => `inline code`
+- <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd> => <strike>strikethrough</strike>
+
+As with all other mappings, all the *normal* mode mappings are repeatable.
 
 ## Convert CSV to table
 

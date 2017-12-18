@@ -318,7 +318,6 @@ fun! mkdx#UpdateTOC()
     let endc -= 1
   endif
 
-  echom startc . ' ' . endc
   exe 'normal! :' . startc . ',' . endc . 'd'
   call mkdx#GenerateTOC()
   call setpos('.', cpos)

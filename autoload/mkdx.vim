@@ -179,6 +179,23 @@ fun! mkdx#ToggleCheckbox(...)
   silent! call repeat#set("\<Plug>(mkdx-checkbox-" . (reverse ? 'prev' : 'next') . ")")
 endfun
 
+fun! mkdx#WrapText(...)
+  let m  = get(a:000, 0, 'n')
+  let w  = get(a:000, 1, '')
+  let x  = get(a:000, 2, w)
+  let a  = get(a:000, 3, '')
+  let r  = @z
+  let ln = getline('.')
+
+  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
+  let oz = @z
+  let @z = w . @z . x
+  exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
+  let @z = r
+
+  if a != '' | silent! call repeat#set("\<Plug>(" . a . ")") | endif
+endfun
+
 fun! mkdx#WrapLink(...)
   let ln = getline('.')
   let m  = get(a:000, 0, 'n')

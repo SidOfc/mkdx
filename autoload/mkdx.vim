@@ -180,14 +180,14 @@ fun! mkdx#ToggleCheckbox(...)
 endfun
 
 fun! mkdx#WrapLink(...)
-  let c  = getpos('.')[2]
+  let ln = getline('.')
   let m  = get(a:000, 0, 'n')
   let r  = @z
 
   exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
 
   let img = !empty(g:mkdx#link_as_img_pat) && match(get(split(@z, '\.'), -1, ''), g:mkdx#link_as_img_pat) > -1
-  let @z  = (c == 1 ? '' : ' ') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
+  let @z  = (match(ln, (@z . '$')) > -1 ? ' ' : '') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
 
   normal! "zPT(
 

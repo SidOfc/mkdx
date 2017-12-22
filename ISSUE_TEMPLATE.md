@@ -2,7 +2,7 @@ Hello there, thanks for reporting an issue!
 This template will help you fill out all the needed information, simply replace the [TEMPLATE]
 data with actual information and fill out the checkboxes and you're good to go :)
 Of course, feel free to add extended information as well, you're not limited to this template alone.
-Also, please take the time to add the BUG label to the issue, thanks in advane!
+Also, please take the time to add the BUG label to the issue, thanks in advance!
 When you're done, don't forget to re-read and remove dummy texts like this paragraph.
 
 [ISUE TITLE]

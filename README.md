@@ -17,7 +17,6 @@ settings and examples with default mappings.
 
 - [mkdx.vim](#mkdxvim)
 - [TOC](#toc)
-- [What's next?](#whats-next)
 - [Install](#install)
 - [Variables](#variables)
     - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)
@@ -49,14 +48,8 @@ settings and examples with default mappings.
         - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
-- [Want to help?](#want-to-help)
-
-# What's next?
-
-Currently, as you can also probably see from the table of contents, there are a **lot** of customizeable settings.
-For the next update, I would like to introduce a single setting that takes a hash of options instead.
-The currently existing variables will then be used as fallback before a default is used for a given option for backwards compatibility.
-I also want to  [squash some bugs](#want-to-help), I simply **know** that (atleast) some are in the code!
+- [What's next?](#whats-next)
+- [Contributing](#contributing)
 
 # Install
 
@@ -458,7 +451,14 @@ Stuff inside fenced code blocks is excluded too.
 " :h mkdx-function-update-toc
 " :h mkdx-function-generate-or-update-toc
 ```
-# Want to help?
 
-In case you've found a <kbd>[bug](issues/new)</kbd> or if you've got a <kbd>[feature-request](issues/new)</kbd>,
-feel free to add a new issue, if you've found AND fixed something, [pull requests](pull/new/master) are very welcome too :)
+# What's next?
+
+Currently, as you can also probably see from the table of contents, there are a **lot** of customizeable settings.
+For the next update, I would like to introduce a single setting that takes a hash of options instead.
+The currently existing variables will then be used as fallback before a default is used for a given option for backwards compatibility.
+I also want to  [squash some bugs](#want-to-help), I simply **know** that (atleast) some are in the code!
+
+# Contributing
+
+Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRIBUTING.md) file for more information!

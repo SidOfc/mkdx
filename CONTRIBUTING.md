@@ -1,13 +1,16 @@
 Contributing
 ===
 
-:zap: Thank you for taking the time to contribute!
+:zap: Thank you for taking the time to contribute!<br />
 Contributing to mkdx is very easy, no matter what you would like to do :)
 
 # TOC
 
 - [TOC](#toc)
+- [Code of Conduct](#code-of-conduct)
 - [Opening an issue](#opening-an-issue)
+- [Requesting a feature](#requesting-a-feature)
+- [Sending pull requests](#sending-pull-requests)
 
 # Code of Conduct
 

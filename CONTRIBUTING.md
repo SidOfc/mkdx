@@ -20,13 +20,13 @@ send me [an email](mailto:sidneyliebrand@gmail.com) and it will be looked into A
 
 # Opening an issue
 
-When you've found something that doesn't work, visit the [issues](issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug) page to check wether no such issue already exists.
+When you've found something that doesn't work, visit the [issues](https://github.com/SidOfc/mkdx/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug) page to check wether no such issue already exists.
 If your issue doesn't exist, open a new [issue](issues/new) and add the "bug" label.
 There is already some template information there but you can (and probably should) add more context / information as required.
 
 # Requesting a feature
 
-Think you've got a good idea for mkdx? Visit the [issues](issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Afeature-request) page
+Think you've got a good idea for mkdx? Visit the [issues](https://github.com/SidOfc/mkdx/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Afeature-request) page
 and check to see if someone didn't already beat you to it :)
 If your feature isn't requested yet, open a new [issue](issues/new) and add the label "feature-request".
 The template is mostly useful for bugs since it requires some information about the issuer's computer and a reproducible example.

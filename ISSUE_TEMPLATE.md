@@ -5,9 +5,6 @@ Of course, feel free to add extended information as well, you're not limited to 
 Also, please take the time to add the BUG label to the issue, thanks in advance!
 When you're done, don't forget to re-read and remove dummy texts like this paragraph.
 
-[ISUE TITLE]
-===
-
 **OS type**:
 
 - [ ] Unix

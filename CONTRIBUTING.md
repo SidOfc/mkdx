@@ -36,7 +36,9 @@ and an "after" snippet of what (s)he wishes to accomplish.
 
 # Sending pull requests
 
+- [Fork this repository](https://help.github.com/articles/fork-a-repo/).
+- Apply your patch, commit and push back to your fork.
 - Open a new GitHub pull request with your patch.
-- Make sure that the description includes the problem scenario and the solution, include any relevant issue number.
-- That's it, send your patch!
+- Make sure that the description includes the problem scenario and the solution, include any issue numbers.
+- That's it, send the PR!
 

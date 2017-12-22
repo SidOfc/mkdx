@@ -192,7 +192,9 @@ fun! mkdx#WrapText(...)
   exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
   let @z = r
 
-  if a != '' | silent! call repeat#set("\<Plug>(" . a . ")") | endif
+  if (a != '')
+    silent! call repeat#set("\<Plug>(" . a . ")")
+  endif
 endfun
 
 fun! mkdx#WrapLink(...)

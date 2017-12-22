@@ -128,8 +128,7 @@ fun! s:NextListToken(str, ...)
   let llvl       = len(parts)
   let idx        = (clvl == llvl ? llvl : clvl) - 1
 
-  let parts[idx] = str2nr(parts[idx]) + 1
-
+  if (len(parts) > idx) | let parts[idx] = str2nr(parts[idx]) + 1 | endif
   return join(parts, '.') . '.' . suffix
 endfun
 
@@ -301,7 +300,7 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . get(matchlist(line, '^ \+'), 0, '') . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
+  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
   if (!rmv && cbx && g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
   if atend | startinsert! | else | startinsert | endif
 endfun

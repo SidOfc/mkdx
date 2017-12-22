@@ -1,9 +1,12 @@
-Hello there, thanks for reporting an issue!
-This template will help you fill out all the needed information, simply replace the [TEMPLATE]
-data with actual information and fill out the checkboxes and you're good to go :)
-Of course, feel free to add extended information as well, you're not limited to this template alone.
-Also, please take the time to add the BUG label to the issue, thanks in advance!
-When you're done, don't forget to re-read and remove dummy texts like this paragraph.
+Hello there, thanks for reporting an issue or requesting a feature!
+If you want to add a feature, you won't need this template. Just provide a clear
+description of what you want and include an example of how this works in practice.
+
+If you're opening a bug report,this template will help you fill out all the needed information,
+simply replace the [TEMPLATE] data with actual information, fill out the checkboxes and include any
+information you find useful and you're good to go! Please take the time to add the appropiate
+labels to the issue / request (bug for issues, feature-request for features, question for other questions),
+thanks in advance! When you're done, don't forget to re-read and remove dummy texts like this paragraph.
 
 **OS type**:
 
@@ -15,6 +18,7 @@ When you're done, don't forget to re-read and remove dummy texts like this parag
 
 - [ ] vim
 - [ ] neovim
+- [ ] Other ([SPECIFY])
 
 **Vim version**:
 

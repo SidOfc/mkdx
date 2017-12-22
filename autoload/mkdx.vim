@@ -120,8 +120,8 @@ endfun
 
 fun! s:NextListToken(str, ...)
   let suffix = get(a:000, 1, 0) ? ' [ ] ' : ' '
-  if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . suffix | endif
-  if (match(a:str, s:list_number_re) == -1)        | return ''             | endif
+  if (index(g:mkdx#list_tokens, a:str) > -1) | return a:str . suffix | endif
+  if (match(a:str, s:list_number_re) == -1)  | return ''             | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
   let clvl       = get(a:000, 0, 1)

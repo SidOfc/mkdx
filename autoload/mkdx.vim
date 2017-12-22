@@ -120,16 +120,15 @@ endfun
 
 fun! s:NextListToken(str, ...)
   let suffix = get(a:000, 1, 0) ? ' [ ] ' : ' '
-  if (index(g:mkdx#list_tokens, a:str) > -1)  | return a:str . suffix | endif
-  if (match(a:str, s:list_number_re) == -1)        | return ''             | endif
+  if (index(g:mkdx#list_tokens, a:str) > -1) | return a:str . suffix | endif
+  if (match(a:str, s:list_number_re) == -1)  | return ''             | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
   let clvl       = get(a:000, 0, 1)
   let llvl       = len(parts)
   let idx        = (clvl == llvl ? llvl : clvl) - 1
 
-  let parts[idx] = str2nr(parts[idx]) + 1
-
+  if (len(parts) > idx) | let parts[idx] = str2nr(parts[idx]) + 1 | endif
   return join(parts, '.') . '.' . suffix
 endfun
 
@@ -301,7 +300,7 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . get(matchlist(line, '^ \+'), 0, '') . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
+  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
   if (!rmv && cbx && g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
   if atend | startinsert! | else | startinsert | endif
 endfun

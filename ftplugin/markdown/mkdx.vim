@@ -62,7 +62,6 @@ if g:mkdx#map_keys == 1
         \ [1, 'v',     'b',      '<Plug>(mkdx-text-bold-v)'],
         \ [1, 'v',     '`',      '<Plug>(mkdx-text-inline-code-v)'],
         \ [1, 'v',     's',      '<Plug>(mkdx-text-strike-v)'],
-        \ [1, 'v',     '/',      '<Plug>(mkdx-text-italic-v)'],
         \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
         \ [1, 'n',     'i',      '<Plug>(mkdx-gen-or-upd-toc)'],
         \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],

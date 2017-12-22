@@ -461,4 +461,4 @@ I also want to  [squash some bugs](#want-to-help), I simply **know** that (atlea
 
 # Contributing
 
-Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRIBUTING.md) file for more information!
+Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRIBUTING.md) file for more information.

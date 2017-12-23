@@ -236,7 +236,7 @@ fun! mkdx#ToggleChecklist()
   silent! call repeat#set("\<Plug>(mkdx-toggle-checklist)")
 endfun
 
-fun! mkdx#ToggleCheckbox()
+fun! mkdx#ToggleCheckboxTask()
   call setline('.', s:ToggleTokenAtStart(getline('.'), '\[.\]', '[' . g:mkdx#checkbox_initial_state . ']'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox)")
 endfun

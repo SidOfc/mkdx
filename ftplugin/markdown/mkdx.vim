@@ -22,7 +22,7 @@ if !exists('g:mkdx#checkbox_initial_state')  | let g:mkdx#checkbox_initial_state
 noremap <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckbox()<Cr>
 noremap <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckbox(1)<Cr>
 noremap <silent> <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
-noremap <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckbox()<Cr>
+noremap <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckboxTask()<Cr>
 noremap <silent> <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>
 noremap <silent> <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr>
 noremap <silent> <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>

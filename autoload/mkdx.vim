@@ -227,7 +227,7 @@ fun! s:ToggleTokenAtStart(line, token, ...)
 endfun
 
 fun! mkdx#ToggleList()
-  call setline('.', s:ToggleTokenAtStart(getline('.'), '-', '-'))
+  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token, g:mkdx#list_token))
   silent! call repeat#set("\<Plug>(mkdx-toggle-list)")
 endfun
 

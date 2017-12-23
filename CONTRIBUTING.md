@@ -42,3 +42,24 @@ and an "after" snippet of what (s)he wishes to accomplish.
 - Make sure that the description includes the problem scenario and the solution, include any issue numbers.
 - That's it, send the PR!
 
+# Testing changes
+
+It can happen that an issue cannot be reproduced on my machine in which case I might ask if you are willing to test
+a specific branch and confirm wether the issue is fixed. There are some simple steps you can follow to go through this process easily.
+I promise it will not mess up your plugin manager in any way, you'll basically checkout the branch, test the feature and revert to master
+so that the plugin can be updated normally. Or well, you could choose to stay on the feature branch if you choose :)
+
+So imagine there is an issue with checkboxes and a remote branch `bug/checkbox-not-toggled-correctly`.
+You would first have to navigate to the installation directory of `mkdx`, this directory is typically located inside `~/.vim` and called
+either `bundle` for Vundle users or `plugged` for vim-plug users for instance. Within these folders, you will find all your installed plugins.
+The folder name you are looking for will be `mkdx` so in the end, your path will look something like this (with vim-plug): `~/.vim/plugged/mkdx`.
+
+    $ cd ~/.vim/plugged/mkdx
+    $ git pull origin bug/checkbox-not-toggled-correctly
+    $ git checkout bug/checkbox-not-toggled-correctly
+
+Now, when you open Vim, you can test to see if the functionality works correctly. Once confirmed you can revert back to master
+using the following commands:
+
+    $ cd ~/.vim/plugged/mkdx
+    $ git checkout master

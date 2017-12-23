@@ -10,12 +10,13 @@ if !exists('g:mkdx#table_divider')           | let g:mkdx#table_divider = '|'   
 if !exists('g:mkdx#enhance_enter')           | let g:mkdx#enhance_enter = 1                       | endif
 if !exists('g:mkdx#list_tokens')             | let g:mkdx#list_tokens = ['-', '*', '>']           | endif
 if !exists('g:mkdx#fence_style')             | let g:mkdx#fence_style = ''                        | endif
-if !exists('g:mkdx#toc_text')                | let g:mkdx#toc_text = 'TOC'                        | endif
-if !exists('g:mkdx#toc_list_token')          | let g:mkdx#toc_list_token = '-'                    | endif
 if !exists('g:mkdx#handle_malformed_indent') | let g:mkdx#handle_malformed_indent = 1             | endif
 if !exists('g:mkdx#link_as_img_pat')         | let g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif' | endif
 if !exists('g:mkdx#bold_token')              | let g:mkdx#bold_token = '**'                       | endif
 if !exists('g:mkdx#italic_token')            | let g:mkdx#italic_token = '*'                      | endif
+if !exists('g:mkdx#list_token')              | let g:mkdx#list_token = '-'                        | endif
+if !exists('g:mkdx#toc_list_token')          | let g:mkdx#toc_list_token = g:mkdx#list_token      | endif
+if !exists('g:mkdx#toc_text')                | let g:mkdx#toc_text = 'TOC'                        | endif
 if !exists('g:mkdx#checkbox_initial_state')  | let g:mkdx#checkbox_initial_state = ' '            | endif
 
 noremap <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckbox()<Cr>

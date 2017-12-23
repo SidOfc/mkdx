@@ -16,10 +16,14 @@ if !exists('g:mkdx#handle_malformed_indent') | let g:mkdx#handle_malformed_inden
 if !exists('g:mkdx#link_as_img_pat')         | let g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif' | endif
 if !exists('g:mkdx#bold_token')              | let g:mkdx#bold_token = '**'                       | endif
 if !exists('g:mkdx#italic_token')            | let g:mkdx#italic_token = '*'                      | endif
+if !exists('g:mkdx#checkbox_initial_state')  | let g:mkdx#checkbox_initial_state = ' '            | endif
 
 noremap <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckbox()<Cr>
 noremap <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckbox(1)<Cr>
 noremap <silent> <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
+noremap <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckbox()<Cr>
+noremap <silent> <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>
+noremap <silent> <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr>
 noremap <silent> <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>
 noremap <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)<Cr>
 noremap <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
@@ -52,6 +56,12 @@ if g:mkdx#map_keys == 1
         \ [1, 'n',     ']',      '<Plug>(mkdx-demote-header)'],
         \ [1, 'n',     "'",      '<Plug>(mkdx-toggle-quote)'],
         \ [1, 'v',     "'",      '<Plug>(mkdx-toggle-quote)' . s:gv],
+        \ [1, 'n',     "t",      '<Plug>(mkdx-toggle-checkbox)'],
+        \ [1, 'v',     "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv],
+        \ [1, 'n',     "lt",     '<Plug>(mkdx-toggle-checklist)'],
+        \ [1, 'v',     "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv],
+        \ [1, 'n',     "ll",     '<Plug>(mkdx-toggle-list)'],
+        \ [1, 'v',     "ll",     '<Plug>(mkdx-toggle-list)' . s:gv],
         \ [1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
         \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
         \ [1, 'n',     '/',      '<Plug>(mkdx-text-italic-n)'],

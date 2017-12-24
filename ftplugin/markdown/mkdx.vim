@@ -77,7 +77,7 @@ if g:mkdx#map_keys == 1
     let full_mapping = (prefix ? g:mkdx#map_prefix : '') . binding
     let plug_mapping = get(matchlist(binding, '<Plug>([^)]\+)'), 0, -1)
 
-    if (mapcheck(full_mapping, mapmode) == "") || (plug_mapping && !hasmapto(plug_mapping))
+    if (mapcheck(full_mapping, mapmode) == "") && (!plug_mapping || !hasmapto(plug_mapping))
       exe mapmode . 'map <buffer> ' . full_mapping . ' ' . expr
     endif
   endfor

@@ -36,6 +36,7 @@ settings and examples with default mappings.
     - [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)
     - [`g:mkdx#italic_token`](#gmkdxitalic_token)
     - [`g:mkdx#bold_token`](#gmkdxbold_token)
+- [Unmapping functionality](#unmapping-functionality)
 - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -265,6 +266,48 @@ See [Styling text](#styling-text) for more details.
 ~~~viml
 " :h mkdx-var-bold-token
 let g:mkdx#bold_token = '**'
+~~~
+
+# Unmapping functionality
+
+In case some functionality gets in your way, you can unmap a specific function quite easily.
+There are two different methods we can use to prevent mkdx from creating (well, 2 for _almost_) any mapping:
+
+**Unmapping by mapping**
+
+If you want to unmap specific functionality, you'll have to define a mapping for it.
+This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
+it will still get mapped to other markdown buffers. To disable any map, first find it here: `:h mkdx-mappings`.
+
+Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>).
+In your _.vimrc_, add the following:
+
+~~~viml
+" this will disable toggling checkbox next in normal mode.
+nmap <leader>=
+
+" this will disable toggling checkbox next in visual mode.
+vmap <leader>=
+~~~
+
+The mappings are checked using the value of [`g:mkdx#map_prefix`](#gmkdxmap_prefix) so you may need to check its value first
+by running the following: `:echo g:mkdx#map_prefix`. A better way to prevent mkdx from mapping keys is by remapping \<Plug> mappings.
+Also, the <kbd>ENTER</kbd> mapping for insert mode cannot be unmapped using this method. This is because any plugin can provide a more
+"global" <kbd>ENTER</kbd> mapping (for completing function / if statements for instance) for this functionality (like endwise.vim).
+But, there is of course, still a way to stop mkdx from mapping to <kbd>ENTER</kbd> (and **all** other mappings) in the next section.
+
+**Unmapping by \<Plug>**
+
+If you don't know what a \<Plug> is, it is a builtin tool for plugin authors to provide a more
+"clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).
+All of the functions of mkdx are mapped using \<Plug> mappings.
+To disable a \<Plug> mapping, first find it here: `:h mkdx-plugs`.
+
+Say you want to disable the behaviour when you press <kbd>ENTER</kbd> in a markdown file.
+The corresponding \<Plug> is called `<Plug>(mkdx-enhance-enter-i)`. To disable it, add the following to your _.vimrc_:
+
+~~~viml
+map <Plug> <Plug>(mkdx-enhance-enter-i)
 ~~~
 
 # Examples and Mappings

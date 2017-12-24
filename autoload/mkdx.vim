@@ -1,6 +1,5 @@
 """"" SCRIPT VARS
 
-
 let s:csv_split_re   = '[,\t]'
 let s:checkbox_re    = '\[\(.\)\]'
 let s:list_number_re = '^\( \{-}[0-9.]\+\)'
@@ -302,7 +301,7 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe "normal! " . (rmv ? "0DD" : "a\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
+  exe "normal! " . (rmv ? "0DD" : (cnum == 1 ? 'i' : 'a') . "\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
   if (!rmv && cbx && g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
   if atend | startinsert! | else | startinsert | endif
 endfun

@@ -214,15 +214,34 @@ fun! mkdx#WrapLink(...)
   silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")
 endfun
 
-fun! mkdx#ToggleQuote()
-  let line = getline('.')
+fun! s:ToggleTokenAtStart(line, token, ...)
+  let line   = a:line
+  let tok_re = '^' . a:token . ' '
 
-  if (match(line, '^> ') != -1)
-    call setline('.', substitute(line, '^> ', '', ''))
+  if (match(line, tok_re) > -1)
+    return substitute(line, tok_re, '', '')
   elseif (!empty(line))
-    call setline('.', '> ' . line)
+    return get(a:000, 0, a:token) . ' ' . line
   endif
+endfun
 
+fun! mkdx#ToggleList()
+  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token, g:mkdx#list_token))
+  silent! call repeat#set("\<Plug>(mkdx-toggle-list)")
+endfun
+
+fun! mkdx#ToggleChecklist()
+  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token . ' \[.\]', g:mkdx#list_token . ' [' . g:mkdx#checkbox_initial_state . ']'))
+  silent! call repeat#set("\<Plug>(mkdx-toggle-checklist)")
+endfun
+
+fun! mkdx#ToggleCheckboxTask()
+  call setline('.', s:ToggleTokenAtStart(getline('.'), '\[.\]', '[' . g:mkdx#checkbox_initial_state . ']'))
+  silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox)")
+endfun
+
+fun! mkdx#ToggleQuote()
+  call setline('.', s:ToggleTokenAtStart(getline('.'), '>'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-quote)")
 endfun
 

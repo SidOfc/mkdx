@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.3.0`
+`Version: 0.4.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -28,6 +28,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#link_as_img_pat`
         `g:mkdx#italic_token`
         `g:mkdx#bold_token`
+        `g:mkdx#list_token`
+        `g:mkdx#checkbox_initial_state`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -50,6 +52,9 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-text-strike-v)
         <Plug>(mkdx-text-inline-code-n)
         <Plug>(mkdx-text-inline-code-v)
+        <Plug>(mkdx-toggle-checkbox)
+        <Plug>(mkdx-toggle-checklist)
+        <Plug>(mkdx-toggle-list)
 
     Mappings
         Insert fenced code block
@@ -67,6 +72,9 @@ CONTENTS                                                         *mkdx-contents*
         Toggle quote
         List items
         Generate or update table of contents
+        Toggle checkbox
+        Toggle checklist
+        Toggle list
 
     Functions
         mkdx#ToggleCheckbox()
@@ -78,6 +86,9 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#GenerateTOC()
         mkdx#UpdateTOC()
         mkdx#GenerateOrUpdateTOC()
+        mkdx#ToggleCheckboxTask()
+        mkdx#ToggleChecklist()
+        mkdx#ToggleList()
 
 
 ==============================================================================
@@ -127,6 +138,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-var-link-as-img-pat|
     - |mkdx-var-italic-token|
     - |mkdx-var-bold-token|
+    - |mkdx-var-list-token|
+    - |mkdx-var-checkbox-initial-state|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -151,6 +164,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-wrap-text-in-strike-tag-v|
     - |mkdx-plug-wrap-text-in-backticks-n|
     - |mkdx-plug-wrap-text-in-backticks-v|
+    - |mkdx-plug-toggle-checkbox|
+    - |mkdx-plug-toggle-checklist|
+    - |mkdx-plug-toggle-list|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -168,6 +184,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-quote|
     - |mkdx-mapping-list-items|
     - |mkdx-mapping-generate-or-update-toc|
+    - |mkdx-mapping-toggle-checkbox|
+    - |mkdx-mapping-toggle-checklist|
+    - |mkdx-mapping-toggle-list|
 
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
@@ -180,6 +199,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
     - |mkdx-function-wrap-text|
+    - |mkdx-function-toggle-checkbox-task|
+    - |mkdx-function-toggle-checklist|
+    - |mkdx-function-toggle-list|
 
 ==============================================================================
 VARIABLES                                                            *mkdx-vars*
@@ -286,9 +308,11 @@ backticks to use the same style.
 Define the heading text to use in the table of contents.
 
 ==============================================================================
-`g:mkdx#toc_list_token = '-'`                            *mkdx-var-toc-list-token*
+`g:mkdx#toc_list_token = g:mkdx#list_token`              *mkdx-var-toc-list-token*
 
-Define the list style to use when generating a table of contents.
+Define the list style to use when generating a table of contents. It is set to
+the value of |mkdx-var-list-token| by default. This is a newer setting that
+you can find below.
 
 ==============================================================================
 `g:mkdx#handle_malformed_indent = 1`            *mkdx-var-handle-malformed-indent*
@@ -331,10 +355,23 @@ Token used by |mkdx-plug-text-italic-n| and |mkdx-plug-text-italic-v| to wrap
 text in italic style.
 
 ==============================================================================
-`g:mkdx#bold_token = '**'`                                 *mkdx-var-italic-token*
+`g:mkdx#bold_token = '**'`                                   *mkdx-var-bold-token*
 
 Token used by |mkdx-plug-text-bold-n| and |mkdx-plug-text-bold-v| to wrap
 text in bold style.
+
+==============================================================================
+`g:mkdx#list_token = '-'`                                    *mkdx-var-list-token*
+
+This token defines what list markers should be inserted when toggling list /
+checklist items. It is also used by default in |mkdx-var-toc-list-token|.
+
+==============================================================================
+`g:mkdx#checkbox_initial_state = ' '`            *mkdx-var-checkbox-initial-state*
+
+When toggling between checkbox/checklist lines, using
+|mkdx-mapping-toggle-checkbox| or |mkdx-mapping-toggle-checklist| this defines
+what the default value of each inserted checkbox should be.
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*
@@ -446,6 +483,20 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 <Plug>(mkdx-text-inline-code-v)                   *mkdx-plug-text-inline-code-v*
 
     :<C-U>call mkdx#WrapText('v', '`', '`')<Cr>
+
+==============================================================================
+<Plug>(mkdx-toggle-checkbox)                         *mkdx-plug-toggle-checkbox*
+
+    `:call mkdx#ToggleCheckboxTask()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-checklist)                       *mkdx-plug-toggle-checklist*
+
+    `:call mkdx#ToggleChecklist()<Cr>`
+==============================================================================
+<Plug>(mkdx-toggle-list)                                 *mkdx-plug-toggle-list*
+
+    `:call mkdx#ToggleList()<Cr>`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
@@ -634,6 +685,79 @@ Generate or update table of contents       *mkdx-mapping-generate-or-update-toc*
 This function does one of two things based on wether a table of contents is
 already present. If it exists, the current table of contents will be updated.
 If it doesn't exist yet, a table of contents will be inserted at current line.
+
+==============================================================================
+Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
+                                                                 <MAP_PREFIX>t
+
+Toggles between a regular line and a line with a checkbox in normal and visual
+mode. In normal mode, the line under the cursor will be toggled. In visual
+mode, every line in the visual selection will be toggled. A default state for
+the inserted checkboxes can be set with |mkdx-var-checkbox-initial-state|.
+
+In normal mode, the current line will be toggled (each line below represents a
+different example):
+
+    `this is a line`     => `[ ] this is a line`
+    `[ ] this is a line` => `this is a line`
+    `[-] this is a line` => `this is a line`
+    `[x] this is a line` => `this is a line`
+
+In visual mode, the selected lines will be affected. Imagine having a visual
+selection on lines 3 and 4 in the following text:
+
+    `this is some text`
+    `this is some more text`
+    `this should be a task item`
+    `this should also be a task item`
+
+Pressing the mapping <MAP_PREFIX>t will turn it into this:
+
+    `this is some text`
+    `this is some more text`
+    `[ ] this should be a task item`
+    `[ ] this should also be a task item`
+
+==============================================================================
+Toggle checklist                                 *mkdx-mapping-toggle-checklist*
+                                                                <MAP_PREFIX>lt
+
+This one is nearly identical to |mkdx-mapping-toggle-checkbox| but instead,
+this one also prepends a list token (and a space) before the checkbox which
+can be set using: |mkdx-var-list-token|. The |mkdx-var-checkbox-initial-state|
+variable will also be respected here.
+
+The same example from above (each line is a different example):
+
+    `this is a line`       => `- [ ] this is a line`
+    `- [ ] this is a line` => `this is a line`
+    `- [-] this is a line` => `this is a line`
+    `- [x] this is a line` => `this is a line`
+
+==============================================================================
+Toggle list                                           *mkdx-mapping-toggle-list*
+                                                                <MAP_PREFIX>ll
+
+This mapping toggles between a regular line and a list item. In normal mode,
+the current line is affected. In visual mode, every line in the visual
+selection is affected.
+
+In normal mode:
+
+    `this is a line` => `- this is a line`
+
+    `- this is a line` => `this is a line`
+
+In visual mode:
+
+    `this is a line`          `- this is a line`
+    `this is another line` => `- this is another line`
+    `blah blah more lines`    `- blah blah more lines`
+
+    `- this is a line`          `this is a line`
+    `- this is another line` => `this is another line`
+    `- blah blah more lines`    `blah blah more lines`
+
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -918,5 +1042,25 @@ A mapping that wraps text in '*' symbols:
 A non-repeatable mapping with a different ending:
 
     `nnoremap <space>p :<C-U>call mkdx#WrapText('n', '<p>', '</p>')<Cr>`
+
+==============================================================================
+mkdx#ToggleCheckboxTask()                   *mkdx-function-toggle-checkbox-task*
+
+This function will prepend a checkbox on the current line, or every line in a
+visual selection. The checkbox can have a default state defined by:
+|mkdx-var-checkbox-initial-state|.
+
+==============================================================================
+mkdx#ToggleChecklist()                          *mkdx-function-toggle-checklist*
+
+Like |mkdx-function-toggle-checkbox-task|, but prepends a list token
+(and a space) in addition to the checkbox on the current line, or every line in a
+visual selection. The list token used is defined by |mkdx-var-list-token|.
+
+==============================================================================
+mkdx#ToggleList()                                    *mkdx-function-toggle-list*
+
+This function will prepend a list token on the current line, or every line in
+a visual selection. The token can be specified using |mkdx-var-list-token|.
 
 vim:tw=78:sw=4:ft=help:norl:

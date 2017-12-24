@@ -69,14 +69,15 @@ if g:mkdx#map_keys == 1
         \ [0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA'],
         \ [0, 'n',     'o',      'A<Cr>']]
 
-  if (g:mkdx#enhance_enter)
+  if (g:mkdx#enhance_enter && !hasmapto('<Plug>(mkdx-enhance-enter-i)'))
     imap <buffer><silent> <Cr> <Esc><Plug>(mkdx-enhance-enter-i)
   endif
 
   for [prefix, mapmode, binding, expr] in s:bindings
     let full_mapping = (prefix ? g:mkdx#map_prefix : '') . binding
+    let plug_mapping = get(matchlist(binding, '<Plug>([^)]\+)'), 0, -1)
 
-    if mapcheck(full_mapping, mapmode) == ""
+    if (mapcheck(full_mapping, mapmode) == "") || (plug_mapping && !hasmapto(plug_mapping))
       exe mapmode . 'map <buffer> ' . full_mapping . ' ' . expr
     endif
   endfor

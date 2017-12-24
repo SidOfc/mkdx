@@ -284,10 +284,10 @@ In your _.vimrc_, add the following:
 
 ~~~viml
 " this will disable toggling checkbox next in normal mode.
-nmap <leader>=
+nmap <leader>= <Nop>
 
 " this will disable toggling checkbox next in visual mode.
-vmap <leader>=
+vmap <leader>= <Nop>
 ~~~
 
 The mappings are checked using the value of [`g:mkdx#map_prefix`](#gmkdxmap_prefix) so you may need to check its value first

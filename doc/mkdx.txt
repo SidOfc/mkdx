@@ -457,6 +457,25 @@ key maps to directly below the help tag. All mappings are {<buffer>} local.
 The convention `<MAP_PREFIX>` will be used in examples below to indicate the
 value of `g:mkdx#map_prefix` (default: `"<leader>"`)
 
+Before mkdx creates a specific mapping, it first checks wether any mapping
+already exists. If it does, it will not map the functionality.
+
+If you want to unmap a key entirely, you can simply map it to `<Nop>` after
+which it won't do anything anymore:
+
+    `nmap <leader>= <Nop>`
+    `vmap <leader>= <Nop>`
+
+Will disable |mkdx-plug-checkbox-next| in normal and visual mode.
+A better way in general, to prevent mkdx from setting an option is by
+remapping it's <Plug>, this will take care of both scenario's with one mapping
+and it is easier to understand "what" you unmapped, e.g:
+
+    `map <Plug> <Plug>(mkdx-checkbox-next)`
+
+will result in the same as using regular `nmap` and `vmap`. For an overview of
+available <Plug> mappings that can be disabled, visit: |mkdx-plugs|.
+
 ==============================================================================
 Insert fenced code block                 *mkdx-mapping-insert-fenced-code-block*
                                                                     ~~~ or ```

@@ -232,7 +232,7 @@ fun! mkdx#ToggleList()
 endfun
 
 fun! mkdx#ToggleChecklist()
-  call setline('.', s:ToggleTokenAtStart(getline('.'), '- \[.\]', '- [' . g:mkdx#checkbox_initial_state . ']'))
+  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token . ' \[.\]', g:mkdx#list_token . ' [' . g:mkdx#checkbox_initial_state . ']'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-checklist)")
 endfun
 

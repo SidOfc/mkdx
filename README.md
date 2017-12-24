@@ -297,42 +297,31 @@ let g:mkdx#checkbox_initial_state = ' '
 
 # Mappings
 
-The below list contains all mappings that mkdx creates by default.
+The below list contains all mappings that mkdx creates by default.<br />
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
-|description|mode|mapping|Execute|
+|description|modes|mapping|Execute|
 |----|----|-------|-------|
-|Checkbox prev|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
-|Checkbox next|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
-|Checkbox next|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
-|Checkbox prev|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
 |Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
 |Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
-|Toggle quote|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
-|Toggle quote|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
-|Toggle checkbox|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
-|Toggle checkbox|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
-|Toggle checklist|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
-|Toggle checklist|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
-|Toggle list|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
-|Toggle list|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
-|Wrap link|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-n)`|
-|Wrap link|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-v)`|
-|Italicize|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-n)`|
-|Italicize|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-v)`|
-|Bolden|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-n)`|
-|Bolden|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-v)`|
-|Inline code|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-n)`|
-|Inline code|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-v)`|
-|Strikethrough|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-n)`|
-|Strikethrough|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-v)`|
+|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
+|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
+|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
+|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
+|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-n)`|
+|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-n)`|
+|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-n)`|
+|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-n)`|
+|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-n)`|
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
-|Fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
-|Fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
-|kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
-|Enter handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enhance-enter-i)`|
-|O handler|normal|<kbd>o</kbd>|`A<CR>`|
+|Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
+|Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
+|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
+|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enhance-enter-i)`|
+|<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`A<CR>`|
 
 # Unmapping functionality
 

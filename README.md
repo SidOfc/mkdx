@@ -36,11 +36,17 @@ settings and examples with default mappings.
     - [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)
     - [`g:mkdx#italic_token`](#gmkdxitalic_token)
     - [`g:mkdx#bold_token`](#gmkdxbold_token)
+    - [`g:mkdx#list_token`](#gmkdxlist_token)
+    - [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state)
 - [Examples and Mappings](#examples-and-mappings)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
     - [List items](#list-items)
-    - [Toggling Checkboxes](#toggling-checkboxes)
+    - [Toggling lists, checklists or checkboxes](#toggling-lists-checklists-or-checkboxes)
+        - [Checkboxes](#checkboxes)
+        - [Lists](#lists)
+        - [Checklists](#checklists)
+    - [Checking Checkboxes / Checklists](#checking-checkboxes--checklists)
     - [Toggling Headers](#toggling-headers)
     - [Toggling Quotes](#toggling-quotes)
     - [Wrapping text](#wrapping-text)
@@ -220,7 +226,7 @@ To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a diffe
 
 ```viml
 " :h mkdx-var-toc-list-token
-let g:mkdx#toc_list_token = '-'
+let g:mkdx#toc_list_token = g:mkdx#list_token
 ```
 
 ## `g:mkdx#handle_malformed_indent`
@@ -265,6 +271,26 @@ See [Styling text](#styling-text) for more details.
 ~~~viml
 " :h mkdx-var-bold-token
 let g:mkdx#bold_token = '**'
+~~~
+
+## `g:mkdx#list_token`
+
+This token defines what list markers should be inserted when toggling list /
+checklist items. It is also used by default in [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token).
+
+~~~viml
+" :h mkdx-var-list-token
+let g:mkdx#list_token = '-'
+~~~
+
+## `g:mkdx#checkbox_initial_state`
+
+When toggling between checkbox/checklist lines, this defines
+what the default value of each inserted checkbox should be.
+
+~~~viml
+" :h mkdx-var-checkbox-initial-state
+let g:mkdx#checkbox_initial_state = ' '
 ~~~
 
 # Examples and Mappings
@@ -332,22 +358,52 @@ the newly inserted item.
 " :h mkdx-function-enter-handler
 ```
 
-## Toggling Checkboxes
+## Toggling lists, checklists or checkboxes
+
+In both normal and visual mode, lines can be toggled back and forth between either checkbox items,
+checklist items, or regular list items. In normal mode, the current line will be toggled.
+In visual mode, every line in the visual selection will be toggled.
+
+### Checkboxes
+
+![mkdx toggle checkbox line](doc/gifs/vim-mkdx-toggle-checkbox-line.gif)
+
+Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>t</kbd>.
+This will cause a checkbox to be prepended before the line if it doesn't exist.
+The checkbox will be removed instead, if it exists. The initial state can be defined using [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state).
+
+### Lists
+
+![mkdx toggle list line](doc/gifs/vim-mkdx-toggle-list-line.gif)
+
+Lists can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ll</kbd>.
+This will cause a [list token](#gmkdxlist_token) to be inserted. When present, it will be removed.
+
+### Checklists
+
+![mkdx toggle checklist line](doc/gifs/vim-mkdx-toggle-checklist-line.gif)
+
+Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>lt</kbd>.
+This will cause a [list token](#gmkdxlist_token) followed by a checkbox to be prepended before the line if it doesn't exist.
+If it is already present, it will be removed. Like [Checkboxes](#checkboxes), the initial state of the checkbox can be defined using: [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state).
+
+
+## Checking Checkboxes / Checklists
 
 **Single checkbox:**
 ![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
 **Checkbox in checklist:**
 ![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater.gif)
 
-Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>.
-Toggling a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
-When toggling an item which is nested in a list, the parent and child list items will be updated as well.
+Checkboxes can be checked using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>.
+checking a checkbox means going to the previous or next mark in the list of [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles).
+When checking an item which is nested in a list, the parent and child list items will be updated as well.
 Automatic updating of checkboxes can be disabled by setting [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree).
 All manipulations work fine in visual as well as normal mode.
 
 A file might not always be indented correctly, the solution to this is [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent).
 This setting is enabled by default, it rounds invalid (indentation not divisible by `:h shiftwidth`) either up or down
-to the nearest heading level. In the examples below, the `shiftwidth` is set to `4`. The second item is indented by `3` spaces and the
+to the nearest indentation level. In the examples below, the `shiftwidth` is set to `4`. The second item is indented by `3` spaces and the
 third item is indented by `5` spaces. since `3` is closer to `4` than `0`, it will become `4`. In the case of `5`, it's closer to `4` than `8`
 and will also become `4`.
 

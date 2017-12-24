@@ -319,8 +319,7 @@ endfun
 
 fun! mkdx#UpdateTOC()
   let startc = -1
-  let nnb   = -1
-  let cpos  = getpos('.')
+  let nnb    = -1
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), s:toc_heading_re) > -1)
@@ -337,7 +336,7 @@ fun! mkdx#UpdateTOC()
 
   exe 'normal! :' . startc . ',' . endc . 'd'
   call mkdx#GenerateTOC()
-  call setpos('.', cpos)
+  normal! ``
 endfun
 
 fun! mkdx#GenerateTOC()

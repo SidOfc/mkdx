@@ -36,8 +36,9 @@ settings and examples with default mappings.
     - [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)
     - [`g:mkdx#italic_token`](#gmkdxitalic_token)
     - [`g:mkdx#bold_token`](#gmkdxbold_token)
+- [Mappings](#mappings)
 - [Unmapping functionality](#unmapping-functionality)
-- [Examples and Mappings](#examples-and-mappings)
+- [Examples](#examples)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
     - [List items](#list-items)
@@ -268,6 +269,39 @@ See [Styling text](#styling-text) for more details.
 let g:mkdx#bold_token = '**'
 ~~~
 
+# Mappings
+
+The below list contains all mappings (and secondary mappings, if any) that mkdx creates by default.
+To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
+
+|mode|mapping|Execute|
+|----|---------|----|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-n)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-v)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-n)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-v)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-n)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-v)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-n)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-v)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-n)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-v)`|
+|visual|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
+|normal|<kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
+|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
+|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
+|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
+|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enhance-enter-i)`|
+|normal|<kbd>o</kbd>|`A<CR>`|
+
 # Unmapping functionality
 
 In case some functionality gets in your way, you can unmap a specific function quite easily.
@@ -277,7 +311,7 @@ There are two different methods we can use to prevent mkdx from creating (well, 
 
 If you want to unmap specific functionality, you'll have to define a mapping for it.
 This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
-it will still get mapped to other markdown buffers. To disable any map, first find it here: `:h mkdx-mappings`.
+it will still get mapped to other markdown buffers. To disable any map, first find it [here](#mappings) or at: `:h mkdx-mappings`.
 
 Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>=</kbd>).
 In your _.vimrc_, add the following:
@@ -301,7 +335,7 @@ But, there is of course, still a way to stop mkdx from mapping to <kbd>ENTER</kb
 If you don't know what a \<Plug> is, it is a builtin tool for plugin authors to provide a more
 "clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).
 All of the functions of mkdx are mapped using \<Plug> mappings.
-To disable a \<Plug> mapping, first find it here: `:h mkdx-plugs`.
+To disable a \<Plug> mapping, first find it [here](#mappings) or at: `:h mkdx-plugs`.
 
 Say you want to disable the behaviour when you press <kbd>ENTER</kbd> in a markdown file.
 The corresponding \<Plug> is called `<Plug>(mkdx-enhance-enter-i)`. To disable it, add the following to your _.vimrc_:
@@ -310,7 +344,7 @@ The corresponding \<Plug> is called `<Plug>(mkdx-enhance-enter-i)`. To disable i
 map <Plug> <Plug>(mkdx-enhance-enter-i)
 ~~~
 
-# Examples and Mappings
+# Examples
 
 Mappings can be turned off all together with [`g:mkdx#map_keys`](#gmkdxmap_keys).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.

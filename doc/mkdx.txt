@@ -77,7 +77,7 @@ CONTENTS                                                         *mkdx-contents*
         Toggle list
 
     Functions
-        mkdx#ToggleCheckbox()
+        mkdx#ToggleCheckboxState()
         mkdx#WrapLink()
         mkdx#ToggleQuote()
         mkdx#ToggleHeader()
@@ -383,12 +383,12 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 ==============================================================================
 <Plug>(mkdx-checkbox-next)                             *mkdx-plug-checkbox-next*
 
-    `:call mkdx#ToggleCheckbox()<Cr>`
+    `:call mkdx#ToggleCheckboxState()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-checkbox-prev)                             *mkdx-plug-checkbox-prev*
 
-    `:call mkdx#ToggleCheckbox(1)<Cr>`
+    `:call mkdx#ToggleCheckboxState(1)<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-promote-header)                           *mkdx-plug-promote-header*
@@ -765,7 +765,7 @@ FUNCTIONS                                                       *mkdx-functions*
 This is an overview of all the functions that |mkdx| provides.
 
 ==============================================================================
-mkdx#ToggleCheckbox([, {reverse}])               *mkdx-function-toggle-checkbox*
+mkdx#ToggleCheckboxState([, {reverse}])          *mkdx-function-toggle-checkbox*
 
 This function works in |Normal-mode| and |Visual-mode|.
 It toggles the first checkbox (`[ ]`) on the current line or every line in a
@@ -830,12 +830,12 @@ text. e.g. for visual mode it will do a `gv` before deleting into a register.
 In normal mode, this function wraps the word under the cursor in a link.
 In visual mode, it will wrap the entire visual selection in a link.
 
-    Hello `=>` [Hello]()
+    Hello ` => ` [Hello]()
 
 If a visual selection ends in an image extension (`.png` for example), an
 image link will be created instead.
 
-    nyancat.png `=>` ![nyancat.png](nyancat.png)
+    nyancat.png ` =>`  ![nyancat.png](nyancat.png)
 
 In this case, the cursor is placed just after the opening `(`. This allows you
 to prepend a URL / path. To disable link wrapping, see:
@@ -848,8 +848,8 @@ This function works in |Normal-mode| and |Visual-mode|. It toggles a markdown qu
 on a line, if a qoute mark (`>`) is present, it will be removed, otherwise it
 will be prepended.
 
-    This is an awesome quote!   `=>` > This is an awesome quote!
-    > This is an awesome quote! `=>` This is an awesome quote!
+    This is an awesome quote!   ` => ` > This is an awesome quote!
+    > This is an awesome quote! ` => ` This is an awesome quote!
 
 ==============================================================================
 mkdx#ToggleHeader([, {increment}])                 *mkdx-function-toggle-header*
@@ -860,13 +860,13 @@ This function wraps around both ways: h1 to h6 and h6 to h1.
 
 When {increment} is 1:
 
-    ## Hello    `=>` # Hello
-    # Hello     `=>` ###### Hello
+    ## Hello    ` => ` # Hello
+    # Hello     ` => ` ###### Hello
 
 When {increment} is 0 (default):
 
-    # Hello     `=>` ## Hello
-    ##### Hello `=>` # Hello
+    # Hello     ` => ` ## Hello
+    ##### Hello ` => ` # Hello
 
 ==============================================================================
 mkdx#Tableize()                                         *mkdx-function-tableize*
@@ -1046,21 +1046,79 @@ A non-repeatable mapping with a different ending:
 ==============================================================================
 mkdx#ToggleCheckboxTask()                   *mkdx-function-toggle-checkbox-task*
 
-This function will prepend a checkbox on the current line, or every line in a
+This function will toggle a checkbox on the current line, or every line in a
 visual selection. The checkbox can have a default state defined by:
-|mkdx-var-checkbox-initial-state|.
+|mkdx-var-checkbox-initial-state|. Any leading whitespace is preserved.
+This function recognizes lists defined by any of |mkdx-var-list-tokens| and
+checklists and will execute the following actions:
+
+If the current line is a list item that does not contain a checkbox, the
+checkbox is inserted after the list token. Otherwise, the checkbox is removed
+
+    - list item       `     => ` - [ ] checklist item
+    * list item       `     => ` * [ ] checklist item
+    1. list item      `     => ` 1. [ ] checklist item
+
+    - [ ] checklist item  ` => ` - list item
+    * [ ] checklist item  ` => ` * list item
+    1. [ ] checklist item ` => ` 1. list item
+
+Otherwise a checkbox is toggled normally:
+
+    this is a line `     => ` [ ] this is a task
+    [ ] this is a task ` => ` this is a line
 
 ==============================================================================
 mkdx#ToggleChecklist()                          *mkdx-function-toggle-checklist*
 
-Like |mkdx-function-toggle-checkbox-task|, but prepends a list token
+Like |mkdx-function-toggle-checkbox-task|, but toggles a list token
 (and a space) in addition to the checkbox on the current line, or every line in a
-visual selection. The list token used is defined by |mkdx-var-list-token|.
+visual selection. The list token used is defined by |mkdx-var-list-token|. Any
+leading whitespace is preserved. This function recognizes lists defined
+by any of |mkdx-var-list-tokens| and will execute the following actions:
+
+If the current line is a list item, a checkbox will be added as seen in
+|mkdx-function-toggle-checkbox-task|:
+
+    - list item       `     => ` - [ ] checklist item
+    * list item       `     => ` * [ ] checklist item
+    1. list item      `     => ` 1. [ ] checklist item
+
+In addition to that, non-list items are transformed into checklist items.
+Checkbox state is preserved:
+
+    a line  `        => ` - [ ] a line
+    [ ] a checkbox ` => ` - [ ] a checkbox
+    [x] marked      `=>`  - [x] marked
+
+Otherwise, toggling between a regular line and a checklist item will be
+performed, when toggling back and forth, the state of the checkbox is lost
+and |mkdx-var-checkbox-initial-state| is used instead:
+
+    - [x] checklist item  `=>` checklist item
+    checklist item        `=>` - [ ] checklist item
 
 ==============================================================================
 mkdx#ToggleList()                                    *mkdx-function-toggle-list*
 
-This function will prepend a list token on the current line, or every line in
-a visual selection. The token can be specified using |mkdx-var-list-token|.
+This function will toggle a list token on the current line, or every line in
+a visual selection. The token can be specified using |mkdx-var-list-token|.Any
+leading whitespace is preserved. This function also recognizes regular tasks
+and checklist items (defined with |mkdx-var-list-tokens|) and will
+execute the following actions:
+
+If the current line is a regular task, a list token is prepended. If a list
+token is already present, it is removed. The state of the checkbox is also
+preserved:
+
+    [ ] task `              => ` - [ ] checklist item
+    - [ ] checklist item  ` => ` [ ] task
+    * [ ] checklist item  ` => ` [ ] task
+    1. [ ] checklist item ` => ` [ ] task
+
+Otherwise, a list marker is toggled as normal
+
+    list item `   => ` - list item
+    - list item ` => ` list item
 
 vim:tw=78:sw=4:ft=help:norl:

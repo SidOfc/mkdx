@@ -444,6 +444,18 @@ Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>t
 This will cause a checkbox to be prepended before the line if it doesn't exist.
 The checkbox will be removed instead, if it exists. The initial state can be defined using [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state).
 
+When toggling a checkbox in a list or checklist, the checkbox will be added / removed accordingly:
+
+~~~
+- list item           => - [ ] list item
+- [ ] checklist item  => - checklist item
+* [ ] checklist item  => * checklist item
+1. [ ] checklist item => 1. checklist item
+~~~
+
+**Note:** the list / checklist support has been added in version *0.4.1*. Prior to that,
+the checkbox would be inserted at the start of the line instead of after the list token.
+
 ~~~viml
 " :h mkdx-mapping-toggle-checkbox
 " :h mkdx-function-toggle-checkbox-task
@@ -455,6 +467,18 @@ The checkbox will be removed instead, if it exists. The initial state can be def
 
 Lists can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>ll</kbd>.
 This will cause a [list token](#gmkdxlist_token) to be inserted. When present, it will be removed.
+
+When toggling a checkbox or a checklist item, the list token will be added / removed accordingly:
+
+~~~
+[ ] checkbox item     => - [ ] checkbox item
+- [ ] checklist item  => - checklist item
+* [ ] checklist item  => * checklist item
+1. [ ] checklist item => 1. checklist item
+~~~
+
+**Note:** the checklist support has been added in version *0.4.1*. Prior to that,
+tokens other than [`g:mkdx#list_token`](#gmkdxlist_token) weren't toggled.
 
 ~~~viml
 " :h mkdx-mapping-toggle-list
@@ -468,6 +492,25 @@ This will cause a [list token](#gmkdxlist_token) to be inserted. When present, i
 Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxmap_prefix)</kbd>+<kbd>lt</kbd>.
 This will cause a [list token](#gmkdxlist_token) followed by a checkbox to be prepended before the line if it doesn't exist.
 If it is already present, it will be removed. Like [Checkboxes](#checkboxes), the initial state of the checkbox can be defined using: [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state).
+
+If the current line or selection is one or multiple list items, a checkbox with state of [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state) will be added:
+
+~~~
+- list item  => - [ ] list item
+* list item  => * [ ] list item
+1. list item => 1. [ ] list item
+~~~
+
+If the current line or selection is one or multiple checkboxes, a [`g:mkdx#list_token`](#gmkdxlist_token) will be added.
+Any state the checkbox is in will be preserved:
+
+~~~
+[ ] list item  => - [ ] list item
+[x] list item  => - [x] list item
+~~~
+
+**note:** the list item / checkbox support has been added in version *0.4.1*. Prior to that,
+toggling checklists only performed a check to see if a checklist item was present or not.
 
 ~~~viml
 " :h mkdx-mapping-toggle-checklist

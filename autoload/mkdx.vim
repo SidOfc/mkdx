@@ -225,18 +225,74 @@ fun! s:ToggleTokenAtStart(line, token, ...)
   endif
 endfun
 
+fun! s:ToggleLineType(line, type)
+  if (empty(a:line)) | return a:line | endif
+
+  let li_re = '\([0-9.]\+\|[' . join(g:mkdx#list_tokens, '') . ']\)'
+
+  if (a:type == 'list')
+    " if a:line is a list item, remove the list marker and return
+    if (match(a:line, '^ *' . li_re) > -1)
+      return substitute(a:line, '^\( *\)' . li_re . ' *', '\1', '')
+    endif
+    " if a:line isn't a list item, turn it into one
+    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#list_token . ' ', '')
+  elseif (a:type == 'checklist')
+    " if a:line is a checklist item, remove the checklist marker and return
+    if (match(a:line, '^ *' . li_re . ' \[.\]') > -1)
+      return substitute(a:line, '^\( *\)' . li_re . ' \[.\] *', '\1', '')
+    endif
+
+    " if a:line is a checkbox, replace it with g:mkdx#list_token followed
+    " by a space and the checkbox with checkbox state intact
+    if (match(a:line, '^ *\[.\]') > -1)
+      return substitute(a:line, '^\( *\)\[\(.\)\]', '\1' . g:mkdx#list_token . ' [\2]', '')
+    endif
+
+    " if a:line is a regular list item, replace it with the respective list
+    " token and a checkbox with state of g:mkdx#checkbox_initial_state
+    if (match(a:line, '^ *' . li_re) > -1)
+      return substitute(a:line, '^\( *\)' . li_re, '\1\2 [' . g:mkdx#checkbox_initial_state . ']', '')
+    endif
+
+    " if it isn't one of the above, turn it into a checklist item
+    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#list_token . ' [' . g:mkdx#checkbox_initial_state . '] ', '')
+  elseif (a:type == 'checkbox')
+    " if a:line is a checkbox, remove the checkbox and return
+    if (match(a:line, '^ *\[.\]') > -1) | return substitute(a:line, '^\( *\)\[.\] *', '\1', '') | endif
+
+    " if a:line is a checklist item, remove the checkbox and return
+    if (match(a:line, '^ *' . li_re . ' \[.\]') > -1)
+      return substitute(a:line, '^\( *\)' . li_re . ' \(\[.\]\)', '\1\2', '')
+    endif
+
+    " if a:line is a list item, add a checkbox with a state of g:mkdx#checkbox_initial_state
+    if (match(a:line, '^ *' . li_re) > -1)
+      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#checkbox_initial_state . ']', '')
+    endif
+    " otherwise, if it isn't a checkbox item, turn it into one
+    return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#checkbox_initial_state . '] ', '')
+  elseif (a:type == 'off')
+    " if a:line is either a list, checklist or checkbox item, remove the
+    " marking while maintaining whitespace
+    return substitute(a:line, '^\( *\)\(' . li_re . ' \?\)\?\(\[.\]\)\? *', '\1', '')
+  endif
+
+  return a:line
+endfun
+
 fun! mkdx#ToggleList()
-  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token, g:mkdx#list_token))
+  call setline('.', s:ToggleLineType(getline('.'), 'list'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-list)")
 endfun
 
 fun! mkdx#ToggleChecklist()
-  call setline('.', s:ToggleTokenAtStart(getline('.'), g:mkdx#list_token . ' \[.\]', g:mkdx#list_token . ' [' . g:mkdx#checkbox_initial_state . ']'))
+  call setline('.', s:ToggleLineType(getline('.'), 'checklist'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-checklist)")
 endfun
 
 fun! mkdx#ToggleCheckboxTask()
-  call setline('.', s:ToggleTokenAtStart(getline('.'), '\[.\]', '[' . g:mkdx#checkbox_initial_state . ']'))
+  call setline('.', s:ToggleLineType(getline('.'), 'checkbox'))
   silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox)")
 endfun
 

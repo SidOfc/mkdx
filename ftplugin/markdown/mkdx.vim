@@ -19,8 +19,8 @@ if !exists('g:mkdx#toc_list_token')          | let g:mkdx#toc_list_token = g:mkd
 if !exists('g:mkdx#toc_text')                | let g:mkdx#toc_text = 'TOC'                        | endif
 if !exists('g:mkdx#checkbox_initial_state')  | let g:mkdx#checkbox_initial_state = ' '            | endif
 
-noremap <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckbox()<Cr>
-noremap <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckbox(1)<Cr>
+noremap <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
+noremap <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>
 noremap <silent> <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
 noremap <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckboxTask()<Cr>
 noremap <silent> <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>

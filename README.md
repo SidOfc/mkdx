@@ -1,4 +1,4 @@
-# mkdx.vim
+# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)]() [![GitHub stars](https://img.shields.io/github/stars/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
 **If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**
 

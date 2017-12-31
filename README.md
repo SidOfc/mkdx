@@ -1,4 +1,4 @@
-# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)]() [![GitHub stars](https://img.shields.io/github/stars/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
+# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub stars](https://img.shields.io/github/stars/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
 **If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**
 
@@ -6,7 +6,17 @@ mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formattin
 markdown documents. It does this by adding some configurable mappings for files with a
 markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
-of CSV data to a markdown table. Visit `:h mkdx` or `:h mkdx-helptags` for more information.
+of CSV data to a markdown table. And even then, there is more... visit `:h mkdx` or `:h mkdx-helptags` for more information.
+
+My inspiration for this plugin largely came from Emacs' Org mode. One of my colleagues at work uses Org mode,
+whenever he's working on his checklists, it seems to require little to no effort to toggle checkboxes within nested lists.
+Org mode does two (probably many more) things very well, it gives you a place to put notes, and you can work on those notes very efficiently with mappings.
+This plugin aims to be a solution for the latter as for the former, different plugins can be installed.
+All the markdown plugins for Vim that I've tried basically serve a different purpose, most provide better syntax highlighting
+and some add other handy functions / mappings. This is my "markdown utility kit". One which I hope to improve in ways that I alone couldn't imagine :)
+It includes all the tools I need to be able to quickly and efficiently update, write and edit markdown files.
+The markdown flavor will be similar to what you would see in GFM by default, but is not strictly enforced.
+A lot of the "G" in "GFM" can be replaced with your own flavors instead. See: [`:h mkdx-settings`](#gmkdxsettings).
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
@@ -15,7 +25,7 @@ settings and examples with default mappings.
 
 # TOC
 
-- [mkdx.vim](#mkdxvim)
+- [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Install](#install)
 - [Variables](#variables)
@@ -57,7 +67,7 @@ settings and examples with default mappings.
         - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
-- [What's next?](#whats-next)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
 # Install
@@ -725,7 +735,17 @@ Stuff inside fenced code blocks is excluded too.
 " :h mkdx-function-generate-or-update-toc
 ```
 
-# What's next?
+# Roadmap
+
+This roadmap is here to give you an idea of what's next, When features are suggested and are going to be implemented
+or new bugs are found they will show up in this list. This list isn't a queue, sometimes the order of tasks will change.
+This is because some tasks such as "Write tests" might take a while to complete in comparison to implementing a certain feature or fixing a bug for example.
+
+- [x] Refactor settings into single variable while backwards compatible
+- [x] Improve line type toggles to better handle list / checklists
+- [ ] Add a github Wiki
+- [ ] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
+- [ ] Write tests
 
 Currently, as you can also probably see from the table of contents, there are a **lot** of customizeable settings.
 For the next update, I would like to introduce a single setting that takes a hash of options instead.

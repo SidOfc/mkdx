@@ -19,6 +19,7 @@ settings and examples with default mappings.
 - [TOC](#toc)
 - [Install](#install)
 - [Variables](#variables)
+    - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#map_prefix`](#gmkdxmap_prefix)
     - [`g:mkdx#map_keys`](#gmkdxmap_keys)
     - [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles)
@@ -97,6 +98,74 @@ git glone https://github.com/SidOfc/mkdx
 
 # Variables
 
+## `g:mkdx#settings`
+
+This variable replaces all other `g:mkdx#` variables with a single setting.
+This is the default layout:
+
+~~~viml
+let g:mkdx#settings = {
+      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
+      \ 'restore_visual':          1,
+      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },
+      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
+      \ 'tokens':                  { 'enter': ['-', '*', '>'],
+      \                              'bold': '**', 'italic': '*',
+      \                              'list': '-', 'fence': '',
+      \                              'header': '#' },
+      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
+      \                              'update_tree': 2,
+      \                              'initial_state': ' ' },
+      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
+      \ 'table':                   { 'divider': '|',
+      \                              'header_divider': '-' }
+    \ }
+~~~
+
+To overwrite a setting, simply write it as seen above:
+
+~~~viml
+let g:mkdx#settings = { 'enter': { 'enable': 0 } }
+~~~
+
+Will disable the [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) setting.
+For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
+This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
+So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
+a `g:mkdx#settings` variable.
+
+Settings are only merged with the defaults and the `g:mkdx#` variables **once** during initial loading
+of the plugin. Internally, mkdx uses `g:mkdx#settings` so if you want to overwrite a setting while editing:
+
+~~~viml
+:let g:mkdx#settings = { 'enter': { 'enable': 0 } }
+~~~
+
+The below table will show you which `g:mkdx#` variable is mapped to which `g:mkdx#settings` setting:
+
+|                 setting                 |           variable             |      default value      |
+|-----------------------------------------|--------------------------------|-------------------------|
+| g:mkdx#settings.map.prefix              | g:mkdx#map_prefix              | `'<leader>'`            |
+| g:mkdx#settings.map.enable              | g:mkdx#map_keys                | `1`                     |
+| g:mkdx#settings.checkbox.toggles        | g:mkdx#checkbox_toggles        | `[' ', '-', 'x']`       |
+| g:mkdx#settings.checkbox.update_tree    | g:mkdx#checklist_update_tree   | `2`                     |
+| g:mkdx#settings.restore_visual          | g:mkdx#restore_visual          | `1`                     |
+| g:mkdx#settings.tokens.header           | g:mkdx#header_style            | `'#'`                   |
+| g:mkdx#settings.table.header_divider    | g:mkdx#table_header_divider    | `'-'`                   |
+| g:mkdx#settings.table.divider           | g:mkdx#table_divider           | `'|'`                   |
+| g:mkdx#settings.enter.enable            | g:mkdx#enhance_enter           | `1`                     |
+| g:mkdx#settings.enter.o                 |                                | `1`                     |
+| g:mkdx#settings.tokens.enter            | g:mkdx#list_tokens             | `['-', '*', '>']`       |
+| g:mkdx#settings.tokens.fence            | g:mkdx#fence_style             | `''`                    |
+| g:mkdx#settings.enter.malformed         | g:mkdx#handle_malformed_indent | `1`                     |
+| g:mkdx#settings.image_extension_pattern | g:mkdx#link_as_img_pat         | `'a\?png\|jp\?eg\|gif'` |
+| g:mkdx#settings.tokens.bold             | g:mkdx#bold_token              | `'**'`                  |
+| g:mkdx#settings.tokens.italic           | g:mkdx#italic_token            | `'*'`                   |
+| g:mkdx#settings.tokens.list             | g:mkdx#list_token              | `'-'`                   |
+| g:mkdx#settings.toc.list_token          | g:mkdx#toc_list_token          | `'-'`                   |
+| g:mkdx#settings.toc.text                | g:mkdx#toc_text                | `'TOC'`                 |
+| g:mkdx#settings.checkbox.initial_state  | g:mkdx#checkbox_initial_state  | `' '`                   |
+
 ## `g:mkdx#map_prefix`
 
 All mappings are prefixed with a single prefix key.
@@ -106,6 +175,7 @@ If you do not like the default (`<leader>`) you can override it:
 ```viml
 " :h mkdx-var-map-prefix
 let g:mkdx#map_prefix = '<leader>'
+let g:mkdx#settings = { 'map': { 'prefix': '<leader>' } }
 ```
 
 ## `g:mkdx#map_keys`
@@ -116,6 +186,7 @@ If you'd rather full control over what is mapped, you can opt-out all together b
 ```viml
 " :h mkdx-var-map-keys
 let g:mkdx#map_keys = 1
+let g:mkdx#settings = { 'map': { 'keys': 1 } }
 ```
 
 ## `g:mkdx#checkbox_toggles`
@@ -129,6 +200,7 @@ to be able to work with a user supplied list of toggles.
 ```viml
 " :h mkdx-var-checkbox-toggles
 let g:mkdx#checkbox_toggles = [' ', '-', 'x']
+let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', '-', 'x'] } }
 ```
 
 ## `g:mkdx#checklist_update_tree`
@@ -141,6 +213,7 @@ entirely, set this value to `0`. If you do not want children to be updated, set 
 ```viml
 " :h mkdx-var-checklist-update-tree
 let g:mkdx#checklist_update_tree = 2
+let g:mkdx#settings = { 'checkbox': { 'update_tree': 2 } }
 ```
 
 ## `g:mkdx#restore_visual`
@@ -150,6 +223,7 @@ This setting enables the restoration of the last visual selection after performi
 ```viml
 " :h mkdx-var-restore-visual
 let g:mkdx#restore_visual = 1
+let g:mkdx#settings = { 'restore_visual': 1 }
 ```
 
 ## `g:mkdx#header_style`
@@ -159,6 +233,7 @@ If you want to use a different style for markdown headings (h1, h2, etc...).
 ```viml
 " :h mkdx-var-header-style
 let g:mkdx#header_style = '#'
+let g:mkdx#settings = { 'tokens': { 'header': '#' } }
 ```
 
 ## `g:mkdx#table_header_divider`
@@ -168,6 +243,7 @@ You can change the separator used for table headings in markdown tables.
 ```viml
 " :h mkdx-var-table-header-divider
 let g:mkdx#table_header_divider = '-'
+let g:mkdx#settings = { 'table': { 'header_divider': '-' } }
 ```
 
 ## `g:mkdx#table_divider`
@@ -177,6 +253,7 @@ You can also change the separator used in markdown tables.
 ```viml
 " :h mkdx-var-table-divider
 let g:mkdx#table_divider = '|'
+let g:mkdx#settings = { 'table': { 'divider': '|' } }
 ```
 ## `g:mkdx#enhance_enter`
 
@@ -187,6 +264,7 @@ or just do a regular enter. unordered lists and numbered lists are both handled 
 ```viml
 " :h mkdx-var-enhance-enter
 let g:mkdx#enhance_enter = 1
+let g:mkdx#settings = { 'enter': { 'enable': 1 } }
 ```
 
 ## `g:mkdx#list_tokens`
@@ -197,6 +275,7 @@ Since numbers are handled differently, they are not included in this list but th
 ```viml
 " :h mkdx-var-list-tokens
 let g:mkdx#list_tokens = ['-', '*', '>']
+let g:mkdx#settings = { 'tokens': { 'enter': ['-', '*', '>'] } }
 ```
 
 ## `g:mkdx#fence_style`
@@ -211,6 +290,7 @@ fenced code blocks.
 ```viml
 " :h mkdx-var-fence-style
 let g:mkdx#fence_style = ''
+let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 ```
 
 ## `g:mkdx#toc_text`
@@ -220,6 +300,7 @@ Defines the text to use for the table of contents header itself.
 ```viml
 " :h mkdx-var-toc-text
 let g:mkdx#toc_text = 'TOC'
+let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
 ```
 
 ## `g:mkdx#toc_list_token`
@@ -229,6 +310,7 @@ To change the list token used in the TOC, set `g:mkdx#toc_list_token` to a diffe
 ```viml
 " :h mkdx-var-toc-list-token
 let g:mkdx#toc_list_token = g:mkdx#list_token
+let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
 ```
 
 ## `g:mkdx#handle_malformed_indent`
@@ -242,6 +324,7 @@ will be rounded down to the previous indent.
 ~~~viml
 " :h mkdx-var-handle-malformed-indent
 let g:mkdx#handle_malformed_indent = 1
+let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
 ~~~
 
 ## `g:mkdx#link_as_img_pat`
@@ -253,6 +336,7 @@ disables image wrapping and a regular empty markdown link will be used instead.
 ~~~viml
 " :h mkdx-var-link-as-img-pat
 let g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif'
+let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
 ~~~
 
 ## `g:mkdx#italic_token`
@@ -263,6 +347,7 @@ See [Styling text](#styling-text) for more details.
 ~~~viml
 " :h mkdx-var-italic-token
 let g:mkdx#italic_token = '*'
+let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ~~~
 
 ## `g:mkdx#bold_token`
@@ -273,6 +358,7 @@ See [Styling text](#styling-text) for more details.
 ~~~viml
 " :h mkdx-var-bold-token
 let g:mkdx#bold_token = '**'
+let g:mkdx#settings = { 'tokens': { 'italic': '**' } }
 ~~~
 
 ## `g:mkdx#list_token`
@@ -283,6 +369,7 @@ checklist items. It is also used by default in [`g:mkdx#toc_list_token`](#gmkdxt
 ~~~viml
 " :h mkdx-var-list-token
 let g:mkdx#list_token = '-'
+let g:mkdx#settings = { 'tokens': { 'list': '-' } }
 ~~~
 
 ## `g:mkdx#checkbox_initial_state`
@@ -293,6 +380,7 @@ what the default value of each inserted checkbox should be.
 ~~~viml
 " :h mkdx-var-checkbox-initial-state
 let g:mkdx#checkbox_initial_state = ' '
+let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
 ~~~
 
 # Mappings
@@ -320,7 +408,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
 |Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
-|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enhance-enter-i)`|
+|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-O>:call mkdx#EnterHandler()<Cr>`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`A<CR>`|
 
 # Unmapping functionality
@@ -358,11 +446,11 @@ If you don't know what a \<Plug> is, it is a builtin tool for plugin authors to 
 All of the functions of mkdx are mapped using \<Plug> mappings.
 To disable a \<Plug> mapping, first find it [here](#mappings) or at: `:h mkdx-plugs`.
 
-Say you want to disable the behaviour when you press <kbd>ENTER</kbd> in a markdown file.
-The corresponding \<Plug> is called `<Plug>(mkdx-enhance-enter-i)`. To disable it, add the following to your _.vimrc_:
+Say you want to disable the behaviour for toggling the next checkbox state.
+The corresponding \<Plug> is called `<Plug>(mkdx-checkbox-next)`. To disable it, add the following to your _.vimrc_:
 
 ~~~viml
-map <Plug> <Plug>(mkdx-enhance-enter-i)
+map <Plug> <Plug>(mkdx-checkbox-next)
 ~~~
 
 # Examples

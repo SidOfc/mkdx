@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.4.0`
+`Version: 0.4.2`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -11,6 +11,7 @@ CONTENTS                                                         *mkdx-contents*
         Helptags
 
     Variables
+        `g:mkdx#settings`
         `g:mkdx#map_prefix`
         `g:mkdx#map_keys`
         `g:mkdx#checkbox_toggles`
@@ -40,7 +41,6 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-wrap-link-n)
         <Plug>(mkdx-wrap-link-v)
         <Plug>(mkdx-tableize)
-        <Plug>(mkdx-enhance-enter-i)
         <Plug>(mkdx-generate-toc)
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
@@ -122,6 +122,7 @@ for functions. Below is a list of all helptags:
 - |mkdx-introduction|
 - |mkdx-helptags|
 - |mkdx-vars|
+    - |mkdx-var-settings|
     - |mkdx-var-map-prefix|
     - |mkdx-var-map-keys|
     - |mkdx-var-checkbox-toggles|
@@ -150,7 +151,6 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-wrap-link-n|
     - |mkdx-plug-mkdx-wrap-link-v|
     - |mkdx-plug-mkdx-tableize|
-    - |mkdx-plug-mkdx-enhance-enter-i|
     - |mkdx-plug-mkdx-generate-toc|
     - |mkdx-plug-mkdx-update-toc|
     - |mkdx-plug-mkdx-gen-or-update-toc|
@@ -210,8 +210,69 @@ VARIABLES                                                            *mkdx-vars*
 at the bottom of every setting section.
 
 ==============================================================================
-`g:mkdx#map_prefix = '<leader>'`                             *mkdx-var-map-prefix*
+`g:mkdx#settings = { ... }`                                    *mkdx-var-settings*
 
+All the `g:` variables can now be set in a single variable.
+This is the default layout:
+
+    `let g:mkdx#settings = {`
+    `      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',`
+    `      \ 'restore_visual':          1,`
+    `      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },`
+    `      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },`
+    `      \ 'tokens':                  { 'enter': ['-', '*', '>'],`
+     `     \                              'bold': '**', 'italic': '*',`
+    `      \                              'list': '-', 'fence': '',`
+        `  \                              'header': '#' },`
+    `      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],`
+        `  \                              'update_tree': 2,`
+        `  \                              'initial_state': ' ' },`
+    `      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },`
+    `      \ 'table':                   { 'divider': '|',`
+         ` \                              'header_divider': '-' }`
+    `    \ }`
+
+To overwrite a setting, simply write it as seen above:
+
+    `let g:mkdx#settings = { 'enter': { 'enable': 0 } }`
+
+Don't worry about overwriting `g:mkdx#settings`, it will be merged with the
+defaults to fill in any missing keys.
+
+To maintain backwards compatibility with all of the `g:` settings, mkdx first
+checks if a `g:` setting exists and overwrites the defaults with them, so
+setting `g:mkdx#enhance_enter = 0` will have the same effect.
+
+If both a `g:` setting and a `g:mkdx#settings = { ... }` value are found, the
+value defined in the settings hash will end up being used, e.g. the
+`g:mkdx#settings` variable takes precedence.
+
+Below a table of `g:` variable to settings:
+
+let s:defaults.map.prefix              `=>` g:mkdx#map_prefix
+let s:defaults.map.enable              `=>` g:mkdx#map_keys
+let s:defaults.checkbox.toggles        `=>` g:mkdx#checkbox_toggles
+let s:defaults.checkbox.update_tree    `=>` g:mkdx#checklist_update_tree
+let s:defaults.restore_visual          `=>` g:mkdx#restore_visual
+let s:defaults.tokens.header           `=>` g:mkdx#header_style
+let s:defaults.table.header_divider    `=>` g:mkdx#table_header_divider
+let s:defaults.table.divider           `=>` g:mkdx#table_divider
+let s:defaults.enter.enable            `=>` g:mkdx#enhance_enter
+let s:defaults.enter.o                 `=>`
+let s:defaults.tokens.enter            `=>` g:mkdx#list_tokens
+let s:defaults.tokens.fence            `=>` g:mkdx#fence_style
+let s:defaults.enter.malformed         `=>` g:mkdx#handle_malformed_indent
+let s:defaults.image_extension_pattern `=>` g:mkdx#link_as_img_pat
+let s:defaults.tokens.bold             `=>` g:mkdx#bold_token
+let s:defaults.tokens.italic           `=>` g:mkdx#italic_token
+let s:defaults.tokens.list             `=>` g:mkdx#list_token
+let s:defaults.toc.list_token          `=>` g:mkdx#toc_list_token
+let s:defaults.toc.text                `=>` g:mkdx#toc_text
+let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
+
+
+==============================================================================
+`g:mkdx#map_prefix = '<leader>'`                             *mkdx-var-map-prefix*
 
 Set the prefix used by all mappings. It is not recommended to clear the prefix
 because some of the keys are already mapped to other operations.
@@ -419,11 +480,6 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 <Plug>(mkdx-tableize)                                       *mkdx-plug-tableize*
 
     `:call mkdx#Tableize()<Cr>`
-
-==============================================================================
-<Plug>(mkdx-enhance-enter-i)                         *mkdx-plug-enhance-enter-i*
-
-    `:call mkdx#EnterHandler()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-generate-toc)                               *mkdx-plug-generate-toc*

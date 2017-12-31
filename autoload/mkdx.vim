@@ -3,13 +3,13 @@
 let s:csv_split_re   = '[,\t]'
 let s:checkbox_re    = '\[\(.\)\]'
 let s:list_number_re = '^\( \{-}[0-9.]\+\)'
-let s:header_re      = '^' . g:mkdx#header_style . '\{1,6\} '
-let s:toc_re         = '^' . g:mkdx#header_style . '\{1,6}'
-let s:toc_heading_re = s:toc_re . ' \+' . g:mkdx#toc_text
+let s:header_re      = '^' . g:mkdx#settings.tokens.header . '\{1,6\} '
+let s:toc_re         = '^' . g:mkdx#settings.tokens.header . '\{1,6}'
+let s:toc_heading_re = s:toc_re . ' \+' . g:mkdx#settings.toc.text
 let s:toc_codeblk_re = '^\(\`\`\`\|\~\~\~\)'
 
-let s:line_delim   = ' ' . g:mkdx#table_divider . ' '
-let s:line_h_delim = g:mkdx#table_header_divider .  g:mkdx#table_divider . g:mkdx#table_header_divider
+let s:line_delim   = ' ' . g:mkdx#settings.table.divider . ' '
+let s:line_h_delim = g:mkdx#settings.table.header_divider .  g:mkdx#settings.table.divider . g:mkdx#settings.table.header_divider
 
 """"" SCRIPT FUNCTIONS
 
@@ -30,7 +30,7 @@ fun! s:TaskItem(linenum)
   let token  = get(matchlist(line, s:checkbox_re), 1, '')
   let ident  = indent(a:linenum)
   let rem    = ident % &sw
-  let ident -= g:mkdx#handle_malformed_indent ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
+  let ident -= g:mkdx#settings.enter.malformed ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
 
   return [token, (ident == 0 ? ident : ident / &sw), line]
 endfun
@@ -68,8 +68,8 @@ fun! s:UpdateTaskList(...)
   let [target, tasks]       = s:TasksToCheck(linenum)
   let [tlnum, ttk, tdpt, _] = target
   let tasksilen             = len(tasks) - 1
-  let [incompl, compl]      = g:mkdx#checkbox_toggles[-2:-1]
-  let empty                 = g:mkdx#checkbox_toggles[0]
+  let [incompl, compl]      = g:mkdx#settings.checkbox.toggles[-2:-1]
+  let empty                 = g:mkdx#settings.checkbox.toggles[0]
   let tasks_lnums           = map(deepcopy(tasks), 'get(v:val, 0, -1)')
 
   if (tdpt > 0)
@@ -102,7 +102,7 @@ fun! s:UpdateTaskList(...)
       endif
     endfor
 
-    if g:mkdx#checklist_update_tree == 2
+    if g:mkdx#settings.checkbox.update_tree == 2
       for [lnum, token, depth, line] in tasks
         if (lnum > tlnum)
           if (depth == tdpt) | break | endif
@@ -111,24 +111,6 @@ fun! s:UpdateTaskList(...)
       endfor
     endif
   endif
-endfun
-
-fun! s:IsListToken(str)
-  return (index(g:mkdx#list_tokens, a:str) > -1) || (match(a:str, s:list_number_re) > -1)
-endfun
-
-fun! s:NextListToken(str, ...)
-  let suffix = get(a:000, 1, 0) ? ' [ ] ' : ' '
-  if (index(g:mkdx#list_tokens, a:str) > -1) | return a:str . suffix | endif
-  if (match(a:str, s:list_number_re) == -1)  | return ''             | endif
-
-  let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
-  let clvl       = get(a:000, 0, 1)
-  let llvl       = len(parts)
-  let idx        = (clvl == llvl ? llvl : clvl) - 1
-
-  if (len(parts) > idx) | let parts[idx] = str2nr(parts[idx]) + 1 | endif
-  return join(parts, '.') . '.' . suffix
 endfun
 
 fun! s:InsertLine(line, position)
@@ -156,9 +138,9 @@ endfun
 
 """"" MAIN FUNCTIONALITY
 
-fun! mkdx#ToggleCheckbox(...)
+fun! mkdx#ToggleCheckboxState(...)
   let reverse = get(a:000, 0, 0) == 1
-  let listcpy = deepcopy(g:mkdx#checkbox_toggles)
+  let listcpy = deepcopy(g:mkdx#settings.checkbox.toggles)
   let listcpy = reverse ? reverse(listcpy) : listcpy
   let line    = getline('.')
   let len     = len(listcpy) - 1
@@ -173,7 +155,7 @@ fun! mkdx#ToggleCheckbox(...)
   endfor
 
   call setline('.', line)
-  if (g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
+  if (g:mkdx#settings.checkbox.update_tree != 0) | call s:UpdateTaskList() | endif
   silent! call repeat#set("\<Plug>(mkdx-checkbox-" . (reverse ? 'prev' : 'next') . ")")
 endfun
 
@@ -203,7 +185,7 @@ fun! mkdx#WrapLink(...)
 
   exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
 
-  let img = !empty(g:mkdx#link_as_img_pat) && match(get(split(@z, '\.'), -1, ''), g:mkdx#link_as_img_pat) > -1
+  let img = !empty(g:mkdx#settings.image_extension_pattern) && match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
   let @z  = (match(ln, (@z . '$')) > -1 ? ' ' : '') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
 
   normal! "zPT(
@@ -228,7 +210,7 @@ endfun
 fun! s:ToggleLineType(line, type)
   if (empty(a:line)) | return a:line | endif
 
-  let li_re = '\([0-9.]\+\|[' . join(g:mkdx#list_tokens, '') . ']\)'
+  let li_re = '\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)'
 
   if (a:type == 'list')
     " if a:line is a list item, remove the list marker and return
@@ -236,27 +218,27 @@ fun! s:ToggleLineType(line, type)
       return substitute(a:line, '^\( *\)' . li_re . ' *', '\1', '')
     endif
     " if a:line isn't a list item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#list_token . ' ', '')
+    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', '')
   elseif (a:type == 'checklist')
     " if a:line is a checklist item, remove the checklist marker and return
     if (match(a:line, '^ *' . li_re . ' \[.\]') > -1)
       return substitute(a:line, '^\( *\)' . li_re . ' \[.\] *', '\1', '')
     endif
 
-    " if a:line is a checkbox, replace it with g:mkdx#list_token followed
+    " if a:line is a checkbox, replace it with g:mkdx#settings.tokens.list followed
     " by a space and the checkbox with checkbox state intact
     if (match(a:line, '^ *\[.\]') > -1)
-      return substitute(a:line, '^\( *\)\[\(.\)\]', '\1' . g:mkdx#list_token . ' [\2]', '')
+      return substitute(a:line, '^\( *\)\[\(.\)\]', '\1' . g:mkdx#settings.tokens.list . ' [\2]', '')
     endif
 
     " if a:line is a regular list item, replace it with the respective list
-    " token and a checkbox with state of g:mkdx#checkbox_initial_state
+    " token and a checkbox with state of g:mkdx#settings.checkbox.initial_state
     if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re, '\1\2 [' . g:mkdx#checkbox_initial_state . ']', '')
+      return substitute(a:line, '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
     endif
 
     " if it isn't one of the above, turn it into a checklist item
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#list_token . ' [' . g:mkdx#checkbox_initial_state . '] ', '')
+    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' [' . g:mkdx#settings.checkbox.initial_state . '] ', '')
   elseif (a:type == 'checkbox')
     " if a:line is a checkbox, remove the checkbox and return
     if (match(a:line, '^ *\[.\]') > -1) | return substitute(a:line, '^\( *\)\[.\] *', '\1', '') | endif
@@ -266,12 +248,12 @@ fun! s:ToggleLineType(line, type)
       return substitute(a:line, '^\( *\)' . li_re . ' \(\[.\]\)', '\1\2', '')
     endif
 
-    " if a:line is a list item, add a checkbox with a state of g:mkdx#checkbox_initial_state
+    " if a:line is a list item, add a checkbox with a state of g:mkdx#settings.checkbox.initial_state
     if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#checkbox_initial_state . ']', '')
+      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
     endif
     " otherwise, if it isn't a checkbox item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#checkbox_initial_state . '] ', '')
+    return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#settings.checkbox.initial_state . '] ', '')
   elseif (a:type == 'off')
     " if a:line is either a list, checklist or checkbox item, remove the
     " marking while maintaining whitespace
@@ -311,7 +293,7 @@ fun! mkdx#ToggleHeader(...)
   let new_level = strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
   let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
-  call setline('.', repeat(g:mkdx#header_style, new_level) . ' ' . parts[1])
+  call setline('.', repeat(g:mkdx#settings.tokens.header, new_level) . ' ' . parts[1])
   silent! call repeat#set("\<Plug>(mkdx-" . (increment ? 'promote' : 'demote') . "-header)")
 endfun
 
@@ -345,10 +327,33 @@ fun! mkdx#Tableize() range
     endif
   endfor
 
-  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#table_header_divider, v:val)'), s:line_h_delim)
+  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#settings.table.header_divider, v:val)'), s:line_h_delim)
 
   call s:InsertLine(s:line_h_delim[1:2] . hline . s:line_h_delim[0:1], next_nonblank)
   call cursor(a:lastline + 1, 1)
+endfun
+
+fun! s:IsListToken(str)
+  return (index(g:mkdx#settings.tokens.enter, a:str) > -1) || (match(a:str, s:list_number_re) > -1) || (match(a:str, '^ *' . s:checkbox_re) > -1)
+endfun
+
+fun! mkdx#islt(str)
+  return s:IsListToken(a:str)
+endfun
+
+fun! s:NextListToken(str, ...)
+  let sufval = get(a:000, 1, 0)
+  let suffix = sufval == 1 ? ' [ ] ' : ' '
+  if (index(g:mkdx#settings.tokens.enter, a:str) > -1) | return a:str . suffix | endif
+  if (match(a:str, s:list_number_re) == -1)            | return ''             | endif
+
+  let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
+  let clvl       = get(a:000, 0, 1)
+  let llvl       = len(parts)
+  let idx        = (clvl == llvl ? llvl : clvl) - 1
+
+  if (len(parts) > idx) | let parts[idx] = str2nr(parts[idx]) + 1 | endif
+  return join(parts, '.') . '.' . suffix
 endfun
 
 fun! mkdx#EnterHandler()
@@ -356,6 +361,7 @@ fun! mkdx#EnterHandler()
   let line         = getline(lnum)
   let parts        = split(substitute(line, ' \+$', '', 'g'), ' ')
   let [p0, p1]     = [get(parts, 0, ''), get(parts, 1, '')]
+  let p0cb         = (p0 == '[' && p1 == ']') || match(p0, '^ *' . s:checkbox_re) > -1
   let nonemptycb   = match(p1, s:checkbox_re) > -1
   let cbx          = nonemptycb || ((p1 == '[') && (get(parts, 2, '') == ']'))
   let clvl         = len(split(p0, '\.'))
@@ -376,8 +382,8 @@ fun! mkdx#EnterHandler()
     endwhile
   endif
 
-  exe "normal! " . (rmv ? "0DD" : (cnum == 1 ? 'i' : 'a') . "\<cr>" . (atend ? s:NextListToken(p0, clvl, cbx) : ''))
-  if (!rmv && cbx && g:mkdx#checklist_update_tree != 0) | call s:UpdateTaskList() | endif
+  exe "normal! " . (rmv ? "0DD" : (virtcol('.') == 1 ? 'i' : 'a') . "\<cr>" . (atend ? (p0cb ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : s:NextListToken(p0, clvl, cbx)) : ''))
+  if (!rmv && cbx && g:mkdx#settings.checkbox.update_tree != 0) | call s:UpdateTaskList() | endif
   if atend | startinsert! | else | startinsert | endif
 endfun
 
@@ -421,7 +427,7 @@ fun! mkdx#GenerateTOC()
   let prevlvl  = 1
   let skip     = 0
   let headers  = {}
-  let headers[s:HeaderToHash(g:mkdx#toc_text)] = 1
+  let headers[s:HeaderToHash(g:mkdx#settings.toc.text)] = 1
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     let line = getline(lnum)
@@ -430,9 +436,9 @@ fun! mkdx#GenerateTOC()
 
     if (!skip && lvl > 0)
       if (empty(header) && lnum > curspos)
-        let header = repeat(g:mkdx#header_style, prevlvl) . ' ' . g:mkdx#toc_text
+        let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
         call insert(contents, header)
-        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#toc_list_token . ' ' . s:HeaderToListItem(header))
+        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:HeaderToListItem(header))
       endif
 
       let hsh = s:HeaderToHash(line)
@@ -440,7 +446,7 @@ fun! mkdx#GenerateTOC()
       if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
       let li  = s:HeaderToListItem(line, c > 0 ? '-' . c : '')
 
-      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#toc_list_token . ' ' . li)
+      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#settings.toc.list_token . ' ' . li)
       let prevlvl = lvl
     endif
   endfor

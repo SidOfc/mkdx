@@ -14,11 +14,13 @@ let s:line_h_delim = g:mkdx#settings.table.header_divider .  g:mkdx#settings.tab
 """"" SCRIPT FUNCTIONS
 
 fun! s:HeaderToListItem(header, ...)
-  return '[' . s:CleanHeader(a:header) . '](#' . s:HeaderToHash(a:header) . get(a:000, 0, '') . ')'
+  return '[' . substitute(s:CleanHeader(a:header), ' \+$', '', 'g') . '](#' . s:HeaderToHash(a:header) . get(a:000, 0, '') . ')'
 endfun
 
 fun! s:CleanHeader(header)
-  return substitute(substitute(a:header, '^[ #]\+\| \+$', '', 'g'), '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
+  let h = substitute(a:header, '^[ #]\+\| \+$', '', 'g')
+  let h = substitute(h, '\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g')
+  return substitute(h, '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
 endfun
 
 fun! s:HeaderToHash(header)

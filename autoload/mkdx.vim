@@ -1,16 +1,3 @@
-""""" SCRIPT VARS
-
-let s:csv_split_re   = '[,\t]'
-let s:checkbox_re    = '\[\(.\)\]'
-let s:list_number_re = '^\( \{-}[0-9.]\+\)'
-let s:header_re      = '^' . g:mkdx#settings.tokens.header . '\{1,6\} '
-let s:toc_re         = '^' . g:mkdx#settings.tokens.header . '\{1,6}'
-let s:toc_heading_re = s:toc_re . ' \+' . g:mkdx#settings.toc.text
-let s:toc_codeblk_re = '^\(\`\`\`\|\~\~\~\)'
-
-let s:line_delim   = ' ' . g:mkdx#settings.table.divider . ' '
-let s:line_h_delim = g:mkdx#settings.table.header_divider .  g:mkdx#settings.table.divider . g:mkdx#settings.table.header_divider
-
 """"" SCRIPT FUNCTIONS
 
 fun! s:HeaderToListItem(header, ...)
@@ -29,7 +16,7 @@ endfun
 
 fun! s:TaskItem(linenum)
   let line   = getline(a:linenum)
-  let token  = get(matchlist(line, s:checkbox_re), 1, '')
+  let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')
   let ident  = indent(a:linenum)
   let rem    = ident % &sw
   let ident -= g:mkdx#settings.enter.malformed ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
@@ -108,7 +95,7 @@ fun! s:UpdateTaskList(...)
       for [lnum, token, depth, line] in tasks
         if (lnum > tlnum)
           if (depth == tdpt) | break | endif
-          if (depth > tdpt) | call setline(lnum, substitute(line, s:checkbox_re, '\[' . ttk . '\]', '')) | endif
+          if (depth > tdpt) | call setline(lnum, substitute(line,  '\[.\]', '\[' . ttk . '\]', '')) | endif
         endif
       endfor
     endif
@@ -289,9 +276,9 @@ fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
   let line      = getline('.')
 
-  if (match(line, s:header_re) == -1) |  return | endif
+  if (match(line, '^' . g:mkdx#settings.tokens.header . '\{1,6} ') == -1) |  return | endif
 
-  let parts     = split(line, s:header_re . '\zs')
+  let parts     = split(line, '^' . g:mkdx#settings.tokens.header . '\{1,6} \zs')
   let new_level = strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
   let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
 
@@ -302,7 +289,7 @@ endfun
 fun! mkdx#Tableize() range
   let next_nonblank       = nextnonblank(a:firstline)
   let firstline           = getline(next_nonblank)
-  let first_delimiter_pos = match(firstline, s:csv_split_re)
+  let first_delimiter_pos = match(firstline, '[,\t]')
 
   if (first_delimiter_pos < 0) | return | endif
 
@@ -322,32 +309,31 @@ fun! mkdx#Tableize() range
     endfor
   endfor
 
+  let ld  = ' ' . g:mkdx#settings.table.divider . ' '
+  let lhd = g:mkdx#settings.table.header_divider .  g:mkdx#settings.table.divider . g:mkdx#settings.table.header_divider
+
   for linec in linecount
     if !empty(filter(lines[linec], '!empty(v:val)'))
       call setline(a:firstline + linec,
-        \ s:line_delim[1:2] . join(map(lines[linec], 's:CenterString(v:val, col_maxlen[v:key])'), s:line_delim) . s:line_delim[0:1])
+        \ ld[1:2] . join(map(lines[linec], 's:CenterString(v:val, col_maxlen[v:key])'), ld) . ld[0:1])
     endif
   endfor
 
-  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#settings.table.header_divider, v:val)'), s:line_h_delim)
+  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#settings.table.header_divider, v:val)'), lhd)
 
-  call s:InsertLine(s:line_h_delim[1:2] . hline . s:line_h_delim[0:1], next_nonblank)
+  call s:InsertLine(lhd[1:2] . hline . lhd[0:1], next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 
 fun! s:IsListToken(str)
-  return (index(g:mkdx#settings.tokens.enter, a:str) > -1) || (match(a:str, s:list_number_re) > -1) || (match(a:str, '^ *' . s:checkbox_re) > -1)
-endfun
-
-fun! mkdx#islt(str)
-  return s:IsListToken(a:str)
+  return (index(g:mkdx#settings.tokens.enter, a:str) > -1) || (match(a:str, '^ *[0-9.]\+') > -1) || (match(a:str, '^ *\[.\]') > -1)
 endfun
 
 fun! s:NextListToken(str, ...)
   let sufval = get(a:000, 1, 0)
   let suffix = sufval == 1 ? ' [ ] ' : ' '
   if (index(g:mkdx#settings.tokens.enter, a:str) > -1) | return a:str . suffix | endif
-  if (match(a:str, s:list_number_re) == -1)            | return ''             | endif
+  if (match(a:str,  '^ *[0-9.]\+') == -1)          | return ''             | endif
 
   let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
   let clvl       = get(a:000, 0, 1)
@@ -363,8 +349,8 @@ fun! mkdx#EnterHandler()
   let line         = getline(lnum)
   let parts        = split(substitute(line, ' \+$', '', 'g'), ' ')
   let [p0, p1]     = [get(parts, 0, ''), get(parts, 1, '')]
-  let p0cb         = (p0 == '[' && p1 == ']') || match(p0, '^ *' . s:checkbox_re) > -1
-  let nonemptycb   = match(p1, s:checkbox_re) > -1
+  let p0cb         = (p0 == '[' && p1 == ']') || match(p0, '^ *\[.\]') > -1
+  let nonemptycb   = match(p1, '^ *\[.\]') > -1
   let cbx          = nonemptycb || ((p1 == '[') && (get(parts, 2, '') == ']'))
   let clvl         = len(split(p0, '\.'))
   let atend        = cnum >= strlen(line)
@@ -372,7 +358,7 @@ fun! mkdx#EnterHandler()
   let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (nonemptycb ? 2 : 3)) && (cbx == 1)
   let ident        = indent(lnum)
 
-  if atend && !rmv && (strlen(get(matchlist(line, s:list_number_re), 0, '')) > 0)
+  if atend && !rmv && (strlen(get(matchlist(line,  '^\( *[0-9.]\+\)'), 0, '')) > 0)
     while (nextnonblank(lnum) == lnum)
       let lnum += 1
 
@@ -391,7 +377,7 @@ endfun
 
 fun! mkdx#GenerateOrUpdateTOC()
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    if (match(getline(lnum), s:toc_heading_re) > -1)
+    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
       call mkdx#UpdateTOC()
       return
     endif
@@ -405,7 +391,7 @@ fun! mkdx#UpdateTOC()
   let nnb    = -1
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    if (match(getline(lnum), s:toc_heading_re) > -1)
+    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
       let startc = lnum
       break
     endif
@@ -433,8 +419,8 @@ fun! mkdx#GenerateTOC()
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     let line = getline(lnum)
-    if (match(line, s:toc_codeblk_re) > -1) | let skip = !skip | endif
-    let lvl  = strlen(get(matchlist(line, s:toc_re), 0, ''))
+    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
+    let lvl  = strlen(get(matchlist(line, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
 
     if (!skip && lvl > 0)
       if (empty(header) && lnum > curspos)

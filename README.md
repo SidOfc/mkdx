@@ -16,7 +16,7 @@ All the markdown plugins for Vim that I've tried basically serve a different pur
 and some add other handy functions / mappings. This is my definition of a "markdown utility kit". One which I hope to improve in ways that I alone couldn't imagine :)
 It includes all the tools needed to be able to quickly and efficiently update, write and edit markdown files.
 The markdown flavor will be similar to what you would see in GFM by default, but is not strictly enforced.
-A lot of the "G" in "GFM" can be replaced with your own flavors instead. See: [`:h mkdx-settings`](#gmkdxsettings).
+A lot of the "G" in "GFM" can be replaced with your own flavors instead. See: [`:h mkdx-var-settings`](#gmkdxsettings).
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.

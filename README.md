@@ -760,14 +760,10 @@ This is because some tasks such as "Write tests" might take a while to complete 
 
 - [x] Refactor settings into single variable while backwards compatible
 - [x] Improve line type toggles to better handle list / checklists
-- [ ] Add a github Wiki
+- [ ] Document settings instead of variables in README and mkdx.txt
 - [ ] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
 - [ ] Write tests
-
-Currently, as you can also probably see from the table of contents, there are a **lot** of customizeable settings.
-For the next update, I would like to introduce a single setting that takes a hash of options instead.
-The currently existing variables will then be used as fallback before a default is used for a given option for backwards compatibility.
-I also want to  [squash some bugs](#want-to-help), I simply **know** that (atleast) some are in the code!
+- [ ] Add a github Wiki
 
 # Contributing
 

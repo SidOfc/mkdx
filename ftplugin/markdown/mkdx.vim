@@ -113,7 +113,7 @@ if g:mkdx#settings.map.enable == 1
         \ ]
 
   if (g:mkdx#settings.enter.enable)
-    imap <buffer><silent> <Cr> <C-O>:call mkdx#EnterHandler()<Cr>
+    imap <buffer><silent> <Cr> <C-R>=mkdx#EnterHandler()<Cr>
 
     if (g:mkdx#settings.enter.o)
       nmap <buffer><silent> o A<Cr>

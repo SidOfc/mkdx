@@ -54,6 +54,7 @@ endfun
 
 fun! s:UpdateTaskList(...)
   let linenum               = get(a:000, 0, '.')
+  let force_status          = get(a:000, 1, -1)
   let [target, tasks]       = s:TasksToCheck(linenum)
   let [tlnum, ttk, tdpt, _] = target
   let tasksilen             = len(tasks) - 1
@@ -81,6 +82,11 @@ fun! s:UpdateTaskList(...)
         let completed = index(map(deepcopy(substats), 'v:val != "' . compl . '"'), 1) == -1
         let unstarted = index(map(deepcopy(substats), 'v:val != "' . empty . '"'), 1) == -1
         let new_token = completed ? compl : (unstarted ? empty : incompl)
+        if (force_status > -1 && !unstarted)
+          if (force_status == 0) | let new_token = empty   | endif
+          if (force_status == 1) | let new_token = incompl | endif
+          if (force_status > 1)  | let new_token = compl   | endif
+        endif
         let new_line  = substitute(line, '\[' . token . '\]', '\[' . new_token . '\]', '')
 
         let tasks[parentidx][1] = new_token
@@ -91,7 +97,7 @@ fun! s:UpdateTaskList(...)
       endif
     endfor
 
-    if g:mkdx#settings.checkbox.update_tree == 2
+    if (force_status < 0 && g:mkdx#settings.checkbox.update_tree == 2)
       for [lnum, token, depth, line] in tasks
         if (lnum > tlnum)
           if (depth == tdpt) | break | endif
@@ -325,54 +331,54 @@ fun! mkdx#Tableize() range
   call cursor(a:lastline + 1, 1)
 endfun
 
-fun! s:IsListToken(str)
-  return (index(g:mkdx#settings.tokens.enter, a:str) > -1) || (match(a:str, '^ *[0-9.]\+') > -1) || (match(a:str, '^ *\[.\]') > -1)
-endfun
+fun! s:NextListNumber(current, depth)
+  let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
+  let tdot  = match(curr, '\.$') > -1
+  let parts = split(curr, '\.')
 
-fun! s:NextListToken(str, ...)
-  let sufval = get(a:000, 1, 0)
-  let suffix = sufval == 1 ? ' [ ] ' : ' '
-  if (index(g:mkdx#settings.tokens.enter, a:str) > -1) | return a:str . suffix | endif
-  if (match(a:str,  '^ *[0-9.]\+') == -1)          | return ''             | endif
-
-  let parts      = split(substitute(a:str, '^ \+\| \+$', '', 'g'), '\.')
-  let clvl       = get(a:000, 0, 1)
-  let llvl       = len(parts)
-  let idx        = (clvl == llvl ? llvl : clvl) - 1
-
-  if (len(parts) > idx) | let parts[idx] = str2nr(parts[idx]) + 1 | endif
-  return join(parts, '.') . '.' . suffix
+  if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + 1 | endif
+  return join(parts, '.') . (tdot ? '.' : '')
 endfun
 
 fun! mkdx#EnterHandler()
-  let [lnum, cnum] = getpos('.')[1:2]
-  let line         = getline(lnum)
-  let parts        = split(substitute(line, ' \+$', '', 'g'), ' ')
-  let [p0, p1]     = [get(parts, 0, ''), get(parts, 1, '')]
-  let p0cb         = (p0 == '[' && p1 == ']') || match(p0, '^ *\[.\]') > -1
-  let nonemptycb   = match(p1, '^ *\[.\]') > -1
-  let cbx          = nonemptycb || ((p1 == '[') && (get(parts, 2, '') == ']'))
-  let clvl         = len(split(p0, '\.'))
-  let atend        = cnum >= strlen(line)
-  let len          = len(parts)
-  let rmv          = ((len == 1) && s:IsListToken(p0)) || (len == (nonemptycb ? 2 : 3)) && (cbx == 1)
-  let ident        = indent(lnum)
+  let lnum    = line('.')
+  let cnum    = virtcol('.')
+  let line    = getline(lnum)
 
-  if atend && !rmv && (strlen(get(matchlist(line,  '^\( *[0-9.]\+\)'), 0, '')) > 0)
-    while (nextnonblank(lnum) == lnum)
-      let lnum += 1
+  if (!empty(line))
+    let len     = strlen(line)
+    let at_end  = cnum > len
+    let sp_pat  = '^ *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\?\|\[.\]\)'
+    let results = matchlist(line, sp_pat)
+    let t       = results[2]
+    let tcb     = match(results[1], '^ *\[.\] *') > -1
+    let cb      = match(results[3], ' *\[.\] *') > -1
+    let special = !empty(t)
+    let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
+    let incr    = len(split(get(matchlist(line, '^ *\([0-9.]\+\)'), 1, ''), '\.')) - 1
 
-      if indent(lnum) < ident | break | endif
-      call setline(lnum,
-        \ substitute(getline(lnum),
-        \            '^\( \{' . ident . ',}\)\([0-9.]\+ \)',
-        \            '\=submatch(1) . s:NextListToken(submatch(2), ' . clvl . ')', ''))
-    endwhile
+    if (at_end && !remove && match(line, '^ *[0-9.]\+') > -1)
+      let min_indent = indent(lnum)
+
+      while (nextnonblank(lnum) == lnum)
+        let lnum += 1
+
+        if (indent(lnum) < min_indent) | break | endif
+        call setline(lnum,
+          \ substitute(getline(lnum),
+          \            '^\( \{' . min_indent . ',}\)\([0-9.]\+\)',
+          \            '\=submatch(1) . s:NextListNumber(submatch(2), ' . incr . ')', ''))
+      endwhile
+    endif
+
+    echom t ' ' . cb . ' ' tcb
+
+    if (remove) | call setline('.', '') | endif
+    if ((cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && !remove && at_end) | call s:UpdateTaskList('.', 1) | endif
+    return remove ? "" : "\n" . (!at_end ? '' : (tcb ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : (match(t, '[0-9.]\+') > -1 ? s:NextListNumber(t, incr > -1 ? incr : 0) : t) . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')))
   endif
 
-  exe "normal! " . (rmv ? "0DD" : (virtcol('.') == 1 ? 'i' : 'a') . "\<cr>" . (atend ? (p0cb ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : s:NextListToken(p0, clvl, cbx)) : ''))
-  if (!rmv && cbx && g:mkdx#settings.checkbox.update_tree != 0) | call s:UpdateTaskList() | endif
-  if atend | startinsert! | else | startinsert | endif
+  return "\n"
 endfun
 
 fun! mkdx#GenerateOrUpdateTOC()

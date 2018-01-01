@@ -10,27 +10,27 @@ CONTENTS                                                         *mkdx-contents*
     Introduction
         Helptags
 
-    Variables
-        `g:mkdx#settings`
-        `g:mkdx#map_prefix`
-        `g:mkdx#map_keys`
-        `g:mkdx#checkbox_toggles`
-        `g:mkdx#checklist_update_tree`
-        `g:mkdx#header_style`
-        `g:mkdx#restore_visual`
-        `g:mkdx#table_divider`
-        `g:mkdx#table_header_divider`
-        `g:mkdx#enhance_enter`
-        `g:mkdx#list_tokens`
-        `g:mkdx#fence_style`
-        `g:mkdx#toc_text`
-        `g:mkdx#toc_list_token`
-        `g:mkdx#handle_malformed_indent`
-        `g:mkdx#link_as_img_pat`
-        `g:mkdx#italic_token`
-        `g:mkdx#bold_token`
-        `g:mkdx#list_token`
-        `g:mkdx#checkbox_initial_state`
+    `g:mkdx#settings`
+        `g:mkdx#settings.image_extension_pattern`
+        `g:mkdx#settings.restore_visual`
+        `g:mkdx#settings.map.prefix`
+        `g:mkdx#settings.map.enable`
+        `g:mkdx#settings.checkbox.toggles`
+        `g:mkdx#settings.checkbox.update_tree`
+        `g:mkdx#settings.checkbox.initial_state`
+        `g:mkdx#settings.tokens.header`
+        `g:mkdx#settings.tokens.enter`
+        `g:mkdx#settings.tokens.fence`
+        `g:mkdx#settings.tokens.italic`
+        `g:mkdx#settings.tokens.bold`
+        `g:mkdx#settings.tokens.list`
+        `g:mkdx#settings.table.header_divider`
+        `g:mkdx#settings.table.divider`
+        `g:mkdx#settings.enter.enable`
+        `g:mkdx#settings.enter.o`
+        `g:mkdx#settings.enter.malformed`
+        `g:mkdx#settings.toc.text`
+        `g:mkdx#settings.toc.list_token`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -112,35 +112,37 @@ https://github.com/sidofc/mkdx/pulls.
 ==============================================================================
 HELPTAGS                                                         *mkdx-helptags*
 
-The helptags are split into 3 types, |mdx-vars|, |mdx-mappings| and
+The helptags are split into 3 types, |mdx-settings|, |mdx-mappings| and
 |mdx-functions|. These are the category tags. Within each
-See |mkdx-vars| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
+See |mkdx-settings| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
 for functions. Below is a list of all helptags:
 
 - |mkdx.txt|, |mkdx|
 - |mkdx-contents|, |mkdx-toc|
 - |mkdx-introduction|
 - |mkdx-helptags|
-- |mkdx-vars|
-    - |mkdx-var-settings|
-    - |mkdx-var-map-prefix|
-    - |mkdx-var-map-keys|
-    - |mkdx-var-checkbox-toggles|
-    - |mkdx-var-header-style|
-    - |mkdx-var-restore-visual|
-    - |mkdx-var-table-header-divider|
-    - |mkdx-var-table-divider|
-    - |mkdx-var-enhance-enter|
-    - |mkdx-var-list-tokens|
-    - |mkdx-var-fence-style|
-    - |mkdx-var-toc-text|
-    - |mkdx-var-toc-list-token|
-    - |mkdx-var-handle-malformed-indent|
-    - |mkdx-var-link-as-img-pat|
-    - |mkdx-var-italic-token|
-    - |mkdx-var-bold-token|
-    - |mkdx-var-list-token|
-    - |mkdx-var-checkbox-initial-state|
+
+- |mkdx-settings|
+    - |mkdx-setting-image-extension-pattern|
+    - |mkdx-setting-restore-visual|
+    - |mkdx-setting-map-prefix|
+    - |mkdx-setting-map-enable|
+    - |mkdx-setting-checkbox-toggles|
+    - |mkdx-setting-checkbox-update-tree|
+    - |mkdx-setting-checkbox-initial-state|
+    - |mkdx-setting-tokens-header|
+    - |mkdx-setting-tokens-enter|
+    - |mkdx-setting-tokens-fence|
+    - |mkdx-setting-tokens-italic|
+    - |mkdx-setting-tokens-bold|
+    - |mkdx-setting-tokens-list|
+    - |mkdx-setting-table-header-divider|
+    - |mkdx-setting-table-divider|
+    - |mkdx-setting-enter-enable|
+    - |mkdx-setting-enter-o|
+    - |mkdx-setting-enter-malformed|
+    - |mkdx-setting-toc-text|
+    - |mkdx-setting-toc-list-token|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -204,16 +206,10 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-list|
 
 ==============================================================================
-VARIABLES                                                            *mkdx-vars*
+`g:mkdx#settings = { ... }`                                        *mkdx-settings*
 
-|mkdx| has some configurable vars that you can define. Defaults are shown
-at the bottom of every setting section.
-
-==============================================================================
-`g:mkdx#settings = { ... }`                                    *mkdx-var-settings*
-
-All the `g:` variables can now be set in a single variable.
-This is the default layout:
+|mkdx| has some configurable settings that you can define. Defaults are shown
+at the bottom of every setting section. The default settings hash:
 
     `let g:mkdx#settings = {`
     `      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',`
@@ -236,18 +232,22 @@ To overwrite a setting, simply write it as seen above:
 
     `let g:mkdx#settings = { 'enter': { 'enable': 0 } }`
 
+To overwrite a setting after initialization:
+
+    `:let g:mkdx#settings.enter.enable = 0`
+
 Don't worry about overwriting `g:mkdx#settings`, it will be merged with the
 defaults to fill in any missing keys.
 
 To maintain backwards compatibility with all of the `g:` settings, mkdx first
 checks if a `g:` setting exists and overwrites the defaults with them, so
-setting `g:mkdx#enhance_enter = 0` will have the same effect.
+setting `g:mkdx#settings.enter.enable = 0` will have the same effect.
 
 If both a `g:` setting and a `g:mkdx#settings = { ... }` value are found, the
 value defined in the settings hash will end up being used, e.g. the
 `g:mkdx#settings` variable takes precedence.
 
-Below a table of `g:` variable to settings:
+Below a mapping of settings to global variables:
 
 let s:defaults.map.prefix              `=>` g:mkdx#map_prefix
 let s:defaults.map.enable              `=>` g:mkdx#map_keys
@@ -270,21 +270,37 @@ let s:defaults.toc.list_token          `=>` g:mkdx#toc_list_token
 let s:defaults.toc.text                `=>` g:mkdx#toc_text
 let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
 
+==============================================================================
+`g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
+    `\ 'a\?png\|jpe\?g\|gif'`
+
+Defines the extensions to search for when identifying the type of link that
+|mkdx-function-wrap-link| will generate. Setting it to an empty string
+disables image wrapping and a regular empty markdown link will be generated
+instead.
 
 ==============================================================================
-`g:mkdx#map_prefix = '<leader>'`                             *mkdx-var-map-prefix*
+`g:mkdx#settings.restore_visual = 1`                 *mkdx-setting-restore-visual*
+
+This setting controls wether or not a visual mode mapping returns to visual
+mode after running the command. Setting it to 0 means you will not go back
+into visual mode.
+
+==============================================================================
+`g:mkdx#settings.map.prefix = '<leader>'`                *mkdx-setting-map-prefix*
 
 Set the prefix used by all mappings. It is not recommended to clear the prefix
 because some of the keys are already mapped to other operations.
 
 ==============================================================================
-`g:mkdx#map_keys = 1`                                          *mkdx-var-map-keys*
+`g:mkdx#settings.map.enable = 1`                         *mkdx-setting-map-enable*
 
 This option allows you to control wether the plugin should map keys or not.
 See the |mkdx-mappings| section to see how each mapping works.
 
 ==============================================================================
-`g:mkdx#checkbox_toggles = [' ', '-', 'x']         `   *mkdx-var-checkbox-toggles*
+`g:mkdx#settings.checkbox.toggles =              ` *mkdx-setting-checkbox-toggles*
+    `\ [' ', '-', 'x']`
 
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
@@ -298,17 +314,17 @@ Note:
 There must be at least a minimum of 3 checkbox states. They are used by the
 checklist toggler which updates the state of parent tasks automatically.
 This is done by using one state that represents inactive status
-(`g:mkdx#checkbox_toggles[0]`), another one for incomplete
-(`g:mkdx#checkbox_toggles[-2]`) and finally, complete
-(`g:mkdx#checkbox_toggles[-1]`). This is required because it needs to work
+(`g:mkdx#settings.checkbox.toggles[0]`), another one for incomplete
+(`g:mkdx#settings.checkbox.toggles[-2]`) and finally, complete
+(`g:mkdx#settings.checkbox.toggles[-1]`). This is required because it needs to work
 according to user provided toggles list.
 
 ==============================================================================
-`g:mkdx#checklist_update_tree = 2`                *mkdx-var-checklist-update-tree*
+`g:mkdx#settings.checkbox.update_tree = 2`     *mkdx-setting-checkbox-update-tree*
 
 With this setting on, checkboxes that are toggled within checklists (lists of
 checkboxes) cause parent and child list items to be updated automatically.
-The states from |mkdx-var-checkbox-toggles| are used to check and update the
+The states from |mkdx-setting-checkbox-toggles| are used to check and update the
 statusses of any parents. Children are force updated to the same token of
 their parent.
 
@@ -316,44 +332,28 @@ To disable this behaviour entirely, set this value to 0. If you do not want
 children to be updated, set this value to 1 instead.
 
 ==============================================================================
-`g:mkdx#header_style = '#'`                                *mkdx-var-header-style*
+`g:mkdx#settings.checkbox.initial_state =`   *mkdx-setting-checkbox-initial-state*
+    `\ ' '`
+
+When toggling between checkbox/checklist lines, using
+|mkdx-mapping-toggle-checkbox| or |mkdx-mapping-toggle-checklist| this defines
+what the default value of each inserted checkbox should be.
+
+==============================================================================
+`g:mkdx#settings.tokens.header = '#'`                 *mkdx-setting-tokens-header*
 
 Header style to use when incrementing or decrementing header level.
 Any character is allowed here, it will also be used when matching header lines
 e.g. setting it to `@` matches `@@ Header` instead of `## Header`
 
 ==============================================================================
-`g:mkdx#restore_visual = 1`                              *mkdx-var-restore-visual*
-
-This setting controls wether or not a visual mode mapping returns to visual
-mode after running the command. Setting it to 0 means you will not go back
-into visual mode.
-
-==============================================================================
-`g:mkdx#table_divider = '|'`                              *mkdx-var-table-divider*
-
-Change the default divider used in |mkdx-function-tableize|.
-
-==============================================================================
-`g:mkdx#table_header_divider = '-'`                *mkdx-var-table-header-divider*
-
-Change the default header divider used in |mkdx-function-tableize|.
-
-==============================================================================
-`g:mkdx#enhance_enter = 1`                                *mkdx-var-enhance-enter*
-
-When pressing <enter> in insert mode, this handles appending of new list items
-in lists. See |mkdx-var-list-tokens| for a list of supported list tokens.
-Examples can be found at |mkdx-function-enter-handler|.
-
-==============================================================================
-`g:mkdx#list_tokens = ['-', '*', '>']`                      *mkdx-var-list-tokens*
+`g:mkdx#settings.tokens.enter = ['-', '*', '>']`       *mkdx-setting-tokens-enter*
 
 This list identifies which tokens at the start of a string are identified as a
 "list token". See |mkdx-function-enter-handler| for examples.
 
 ==============================================================================
-`g:mkdx#fence_style = ''`                                   *mkdx-var-fence-style*
+`g:mkdx#settings.tokens.fence = ''`                    *mkdx-setting-tokens-fence*
 
 This setting allows you to override the fence style that is used when typing
 three backticks or tilde characters. By default it is empty which means that
@@ -364,19 +364,48 @@ The fence style can be set to '~' or '`'. This will cause both tildes and
 backticks to use the same style.
 
 ==============================================================================
-`g:mkdx#toc_text = 'TOC'`                                      *mkdx-var-toc-text*
+`g:mkdx#settings.tokens.italic = '*'`                 *mkdx-setting-tokens-italic*
 
-Define the heading text to use in the table of contents.
-
-==============================================================================
-`g:mkdx#toc_list_token = g:mkdx#list_token`              *mkdx-var-toc-list-token*
-
-Define the list style to use when generating a table of contents. It is set to
-the value of |mkdx-var-list-token| by default. This is a newer setting that
-you can find below.
+Token used by |mkdx-plug-text-italic-n| and |mkdx-plug-text-italic-v| to wrap
+text in italic style.
 
 ==============================================================================
-`g:mkdx#handle_malformed_indent = 1`            *mkdx-var-handle-malformed-indent*
+`g:mkdx#settings.tokens.bold = '**'`                    *mkdx-setting-tokens-bold*
+
+Token used by |mkdx-plug-text-bold-n| and |mkdx-plug-text-bold-v| to wrap
+text in bold style.
+
+==============================================================================
+`g:mkdx#settings.tokens.list = '-'`                     *mkdx-setting-tokens-list*
+
+This token defines what list markers should be inserted when toggling list /
+checklist items. It is also used by default in |mkdx-setting-toc-list-token|.
+
+==============================================================================
+`g:mkdx#settings.table.header_divider = '-'`   *mkdx-setting-table-header-divider*
+
+Change the default header divider used in |mkdx-function-tableize|.
+
+==============================================================================
+`g:mkdx#settings.table.divider = '|'`                 *mkdx-setting-table-divider*
+
+Change the default divider used in |mkdx-function-tableize|.
+
+==============================================================================
+`g:mkdx#settings.enter.enable = 1`                     *mkdx-setting-enter-enable*
+
+When pressing <enter> in insert mode, this handles appending of new list items
+in lists. See |mkdx-setting-tokens-list| for a list of supported list tokens.
+Examples can be found at |mkdx-function-enter-handler|.
+
+==============================================================================
+`g:mkdx#settings.enter.o`                                   *mkdx-setting-enter-o*
+
+This setting also enables `o` to act like `<enter>` in the middle of lists /
+checklists / tasks.
+
+==============================================================================
+`g:mkdx#settings.enter.malformed = 1`               *mkdx-setting-enter-malformed*
 
 This setting defines behaviour to use when working with improperly indented
 markdown files. At the moment it works for checklist items that do not have an
@@ -387,7 +416,7 @@ will be rounded down to the previous indent.
 In the following example, the second item belongs under "hello" but the
 indentation is incorrect (imagine we're using a 'shiftwidth' of 4).
 
-If the third line is toggled without `g:mkdx#handle_malformed_indent` set to
+If the third line is toggled without `g:mkdx#settings.enter.malformed` set to
 1, the malformed item will be incremented instead of the "hello" item.
 
 
@@ -402,44 +431,21 @@ With this setting on, the correct item will actually be checked:
          - [-] again `<= toggled`
 
 ==============================================================================
-`g:mkdx#link_as_img_pat = 'a\?png\|jpe\?g\|gif' `       *mkdx-var-link-as-img-pat*
+`g:mkdx#settings.toc.text = 'TOC'`                         *mkdx-setting-toc-text*
 
-Defines the extensions to search for when identifying the type of link that
-|mkdx-function-wrap-link| will generate. Setting it to an empty string
-disables image wrapping and a regular empty markdown link will be generated
-instead.
+Define the heading text to use in the table of contents.
 
 ==============================================================================
-`g:mkdx#italic_token = '*'`                                *mkdx-var-italic-token*
+`g:mkdx#settings.toc.list_token = '-'`               *mkdx-setting-toc-list-token*
 
-Token used by |mkdx-plug-text-italic-n| and |mkdx-plug-text-italic-v| to wrap
-text in italic style.
-
-==============================================================================
-`g:mkdx#bold_token = '**'`                                   *mkdx-var-bold-token*
-
-Token used by |mkdx-plug-text-bold-n| and |mkdx-plug-text-bold-v| to wrap
-text in bold style.
-
-==============================================================================
-`g:mkdx#list_token = '-'`                                    *mkdx-var-list-token*
-
-This token defines what list markers should be inserted when toggling list /
-checklist items. It is also used by default in |mkdx-var-toc-list-token|.
-
-==============================================================================
-`g:mkdx#checkbox_initial_state = ' '`            *mkdx-var-checkbox-initial-state*
-
-When toggling between checkbox/checklist lines, using
-|mkdx-mapping-toggle-checkbox| or |mkdx-mapping-toggle-checklist| this defines
-what the default value of each inserted checkbox should be.
+Define the list style to use when generating a table of contents.
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*
 
-When `g:mkdx#map_keys` is set to 0, the user can bind individual functions
-through <Plug> mappings. Every normal mode <Plug> is repeatable using
-{repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
+When `g:mkdx#settings.map.enable` is set to 0, the user can bind individual
+functions through <Plug> mappings. Every normal mode <Plug> is repeatable
+using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 
 ==============================================================================
 <Plug>(mkdx-checkbox-next)                             *mkdx-plug-checkbox-next*
@@ -499,25 +505,30 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 ==============================================================================
 <Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
 
-    `:<C-U>call mkdx#WrapText('n', g:mkdx#bold_token, g:mkdx#bold_token,`
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.bold,`
+                           `\ g:mkdx#settings.tokens.bold,`
                            `\ 'mkdx-text-bold-n')<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-bold-v)                                 *mkdx-plug-text-bold-v*
 
-    `:<C-U>call mkdx#WrapText('v', g:mkdx#bold_token, g:mkdx#bold_token)<Cr>`
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.bold,`
+                           `\ g:mkdx#settings.tokens.bold,`
+                           `\ 'mkdx-text-bold-v')<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-italic-n)                             *mkdx-plug-text-italic-n*
 
-    `:<C-U>call mkdx#WrapText('n', g:mkdx#italic_token, g:mkdx#italic_token,`
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.italic,`
+                           `\ g:mkdx#settings.tokens.italic,`
                            `\ 'mkdx-text-italic-n')<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-italic-v)                             *mkdx-plug-text-italic-v*
 
-    `:<C-U>call mkdx#WrapText('v', g:mkdx#italic_token,`
-                           `\ g:mkdx#italic_token)<Cr>`
+    `:<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.italic,`
+                           `\ g:mkdx#settings.tokens.italic,`
+                           `\ 'mkdx-text-italic-v')<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-strike-n)                             *mkdx-plug-text-strike-n*
@@ -557,12 +568,13 @@ through <Plug> mappings. Every normal mode <Plug> is repeatable using
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
-These are the default mappings set by this plugin. Both |mkdx-var-map-keys|
-and |mkdx-var-map-prefix| control how they work. You can always find what a
-key maps to directly below the help tag. All mappings are {<buffer>} local.
+These are the default mappings set by this plugin. Both
+|mkdx-setting-map-enable| and |mkdx-setting-map-prefix| control how they work.
+You can always find what a key maps to directly below the help tag.
+All mappings are {<buffer>} local.
 
 The convention `<MAP_PREFIX>` will be used in examples below to indicate the
-value of `g:mkdx#map_prefix` (default: `"<leader>"`)
+value of `g:mkdx#settings.map.prefix` (default: `"<leader>"`)
 
 Before mkdx creates a specific mapping, it first checks wether any mapping
 already exists. If it does, it will not map the functionality.
@@ -607,14 +619,14 @@ the tag while staying in insert mode.
 Toggle checkbox forward                   *mkdx-mapping-toggle-checkbox-forward*
                                                                  <MAP_PREFIX>-
 
-Toggles the next item in the |mkdx-var-checkbox-toggles| list. Wraps
+Toggles the next item in the |mkdx-setting-checkbox-toggles| list. Wraps
 around to the start if the end is reached. Works in both visual and
 normal mode. This function restores visual selection if
-|mkdx-var-restore-visual| is set.
+|mkdx-setting-restore-visual| is set.
 
 When toggling an item which is nested in a list, the parent and child list
 items will be updated as well. Automatic updating of checkboxes
-can be disabled setting |mkdx-var-checklist-update-tree|.
+can be disabled setting |mkdx-setting-checkbox-update-tree|.
 
     `nmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
     `vmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
@@ -623,14 +635,14 @@ can be disabled setting |mkdx-var-checklist-update-tree|.
 Toggle checkbox backward                 *mkdx-mapping-toggle-checkbox-backward*
                                                                  <MAP_PREFIX>=
 
-Toggles the previous item in the |mkdx-var-checkbox-toggles| list. Wraps
+Toggles the previous item in the |mkdx-setting-checkbox-toggles| list. Wraps
 around to the end if the start is reached. Works in both visual and
 normal mode. This function restores visual selection if
-|mkdx-var-restore-visual| is set.
+|mkdx-setting-restore-visual| is set.
 
 When toggling an item which is nested in a list, the parent and child list
 items will be updated as well. Automatic updating of checkboxes
-can be disabled setting |mkdx-var-checklist-update-tree|.
+can be disabled setting |mkdx-setting-checkbox-update-tree|.
 
     `nmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
     `vmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
@@ -652,7 +664,7 @@ The cursor will be placed between the parentheses in |Insert-mode|.
 Wrap text in bold                               *mkdx-mapping-wrap-text-in-bold*
 
 Wrap the word under the cursor or a visual selection in bold. By default
-`**` is used for bolding text, this can be changed with |mkdx-var-bold-token|.
+`**` is used for bolding text, this can be changed with |mkdx-setting-tokens-bold|.
 
     `nmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-n)`
     `vmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-v)`
@@ -661,7 +673,8 @@ Wrap the word under the cursor or a visual selection in bold. By default
 Wrap text in italic                           *mkdx-mapping-wrap-text-in-italic*
 
 Wrap the word under the cursor or a visual selection in italic. By default
-`*` is used for italicizing text, this can be changed with |mkdx-var-italic-token|.
+`*` is used for italicizing text, this can be changed with
+|mkdx-setting-tokens-italic|.
 
     `nmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-n)`
     `vmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-v)`
@@ -715,7 +728,7 @@ Toggle quote                                         *mkdx-mapping-toggle-quote*
 
 Toggles a markdown quote on the current line or on every nonblank line in a
 visual selection. This function restores visual selection if
-|mkdx-var-restore-visual| is set.
+|mkdx-setting-restore-visual| is set.
 
     `nmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
     `vmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
@@ -730,7 +743,7 @@ following the newly added item are incremented accordingly. The following
 patterns are identified as list tokens:
 
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
-- Any token present in |mkdx-var-list-tokens|
+- Any token present in |mkdx-setting-tokens-list|
 
 For examples, see |mkdx-function-enter-handler|.
 
@@ -749,7 +762,7 @@ Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
 Toggles between a regular line and a line with a checkbox in normal and visual
 mode. In normal mode, the line under the cursor will be toggled. In visual
 mode, every line in the visual selection will be toggled. A default state for
-the inserted checkboxes can be set with |mkdx-var-checkbox-initial-state|.
+the inserted checkboxes can be set with |mkdx-setting-checkbox-initial-state|.
 
 In normal mode, the current line will be toggled (each line below represents a
 different example):
@@ -780,8 +793,8 @@ Toggle checklist                                 *mkdx-mapping-toggle-checklist*
 
 This one is nearly identical to |mkdx-mapping-toggle-checkbox| but instead,
 this one also prepends a list token (and a space) before the checkbox which
-can be set using: |mkdx-var-list-token|. The |mkdx-var-checkbox-initial-state|
-variable will also be respected here.
+can be set using: |mkdx-setting-tokens-list|.
+The |mkdx-setting-checkbox-initial-state| variable will also be respected here.
 
 The same example from above (each line is a different example):
 
@@ -825,7 +838,7 @@ mkdx#ToggleCheckboxState([, {reverse}])          *mkdx-function-toggle-checkbox*
 
 This function works in |Normal-mode| and |Visual-mode|.
 It toggles the first checkbox (`[ ]`) on the current line or every line in a
-selection to the next state in |mkdx-var-checkbox-toggles|. Cycling can be
+selection to the next state in |mkdx-setting-checkbox-toggles|. Cycling can be
 reversed by setting {increment} is 1. If {increment} is not supplied,
 |Number| 0 will be used by default.
 
@@ -869,8 +882,8 @@ If instead, an item higher in the list was toggled:
     - [ ] item 3
 
 All children are always updated to the same token of the toggled item. This
-behaviour can be changed or disabled with |mkdx-var-checklist-update-tree|.
-If your list isn't properly updated, see |mkdx-var-handle-malformed-indent|.
+behaviour can be changed or disabled with |mkdx-setting-checkbox-update-tree|.
+If your list isn't properly updated, see |mkdx-setting-enter-malformed|.
 
 ==============================================================================
 mkdx#WrapLink([, {mode}])                              *mkdx-function-wrap-link*
@@ -895,7 +908,7 @@ image link will be created instead.
 
 In this case, the cursor is placed just after the opening `(`. This allows you
 to prepend a URL / path. To disable link wrapping, see:
-|mkdx-var-link-as-img-pat|
+|mkdx-setting-image-extension-pattern|
 
 ==============================================================================
 mkdx#ToggleQuote()                                  *mkdx-function-toggle-quote*
@@ -954,7 +967,7 @@ mode or `o` in normal mode. It will append a new list item. The following are
 detected as list items:
 
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
-- Any token present in |mkdx-var-list-tokens|
+- Any token present in |mkdx-settings-tokens-list|
 
 This function respects indent level when appending a new item.
 When you add a new list item and press <enter> again (e.g. pressing <enter>
@@ -971,7 +984,7 @@ checkbox.
 
 The requirement here is that the checkbox is properly formatted, there has to
 be atleast 1 space between the list token and opening `[`. a space or ony of
-the |mkdx-var-checkbox-toggles| between `[` and `]`.
+the |mkdx-setting-checkbox-toggles| between `[` and `]`.
 
 If the list delimiter isn't a numeric sequence, all that happens is that a new
 line will be appended at the same indent level and the delimiter and a space
@@ -1033,11 +1046,11 @@ mkdx#GenerateTOC()                                  *mkdx-function-generate-toc*
 Insert a table of contents under the cursor. All headings are indented
 usimg |sw| setting multiplied by their header minus one. This means that h1
 tags aren't indented. The header line is customizable through
-|mkdx-var-toc-text|. If |mkdx-var-header-style| is changed, this function will
-use the new value accordingly.
+|mkdx-setting-toc-text|. If |mkdx-setting-tokens-header| is changed, this function
+will use the new value accordingly.
 
 List items are generated with a dash (-) character by default. This can be
-changed with |mkdx-var-toc-list-token|.
+changed with |mkdx-setting-toc-list-token|.
 
 ==============================================================================
 mkdx#UpdateTOC()                                      *mkdx-function-update-toc*
@@ -1048,7 +1061,7 @@ it finds it, the toc will be removed and regenerated using
 
 A heading is detected using the following regular expression:
 
-`    '^' . g:mkdx#header_style . '\{1,6} \+' . g:mkdx#toc_text`
+`    '^'. g:mkdx#settings.tokens.header .'\{1,6} \+'. g:mkdx#settings.toc.text`
     `'^#\{1,6} \+TOC'` <= default pattern
 
 ==============================================================================
@@ -1104,8 +1117,8 @@ mkdx#ToggleCheckboxTask()                   *mkdx-function-toggle-checkbox-task*
 
 This function will toggle a checkbox on the current line, or every line in a
 visual selection. The checkbox can have a default state defined by:
-|mkdx-var-checkbox-initial-state|. Any leading whitespace is preserved.
-This function recognizes lists defined by any of |mkdx-var-list-tokens| and
+|mkdx-setting-checkbox-initial-state|. Any leading whitespace is preserved.
+This function recognizes lists defined by any of |mkdx-setting-tokens-list| and
 checklists and will execute the following actions:
 
 If the current line is a list item that does not contain a checkbox, the
@@ -1128,10 +1141,11 @@ Otherwise a checkbox is toggled normally:
 mkdx#ToggleChecklist()                          *mkdx-function-toggle-checklist*
 
 Like |mkdx-function-toggle-checkbox-task|, but toggles a list token
-(and a space) in addition to the checkbox on the current line, or every line in a
-visual selection. The list token used is defined by |mkdx-var-list-token|. Any
-leading whitespace is preserved. This function recognizes lists defined
-by any of |mkdx-var-list-tokens| and will execute the following actions:
+(and a space) in addition to the checkbox on the current line, or every line
+in a visual selection. The list token used is defined by
+|mkdx-setting-tokens-list|. Any leading whitespace is preserved.
+This function recognizes lists defined by any of |mkdx-setting-tokens-list|
+and will execute the following actions:
 
 If the current line is a list item, a checkbox will be added as seen in
 |mkdx-function-toggle-checkbox-task|:
@@ -1149,7 +1163,7 @@ Checkbox state is preserved:
 
 Otherwise, toggling between a regular line and a checklist item will be
 performed, when toggling back and forth, the state of the checkbox is lost
-and |mkdx-var-checkbox-initial-state| is used instead:
+and |mkdx-setting-checkbox-initial-state| is used instead:
 
     - [x] checklist item  `=>` checklist item
     checklist item        `=>` - [ ] checklist item
@@ -1158,9 +1172,9 @@ and |mkdx-var-checkbox-initial-state| is used instead:
 mkdx#ToggleList()                                    *mkdx-function-toggle-list*
 
 This function will toggle a list token on the current line, or every line in
-a visual selection. The token can be specified using |mkdx-var-list-token|.Any
-leading whitespace is preserved. This function also recognizes regular tasks
-and checklist items (defined with |mkdx-var-list-tokens|) and will
+a visual selection. The token can be specified using |mkdx-setting-tokens-list|.
+Any leading whitespace is preserved. This function also recognizes regular
+tasks and checklist items (defined with |mkdx-setting-tokens-list|) and will
 execute the following actions:
 
 If the current line is a regular task, a list token is prepended. If a list

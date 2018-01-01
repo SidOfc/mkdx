@@ -391,7 +391,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
 |Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
-|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-O>:call mkdx#EnterHandler()<Cr>`|
+|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-R>=mkdx#EnterHandler()<Cr>`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`A<CR>`|
 
 # Unmapping functionality

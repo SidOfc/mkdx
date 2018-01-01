@@ -13,8 +13,8 @@ whenever he's working on his checklists, it seems to require little to no effort
 Org mode does two (probably many more) things very well, it gives you a place to put notes, and you can work on those notes very efficiently with mappings.
 This plugin aims to be a solution for the latter as for the former, different plugins can be installed.
 All the markdown plugins for Vim that I've tried basically serve a different purpose, most provide better syntax highlighting
-and some add other handy functions / mappings. This is my "markdown utility kit". One which I hope to improve in ways that I alone couldn't imagine :)
-It includes all the tools I need to be able to quickly and efficiently update, write and edit markdown files.
+and some add other handy functions / mappings. This is my definition of a "markdown utility kit". One which I hope to improve in ways that I alone couldn't imagine :)
+It includes all the tools needed to be able to quickly and efficiently update, write and edit markdown files.
 The markdown flavor will be similar to what you would see in GFM by default, but is not strictly enforced.
 A lot of the "G" in "GFM" can be replaced with your own flavors instead. See: [`:h mkdx-settings`](#gmkdxsettings).
 
@@ -39,6 +39,7 @@ settings and examples with default mappings.
     - [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider)
     - [`g:mkdx#table_divider`](#gmkdxtable_divider)
     - [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)
+    - [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero)
     - [`g:mkdx#list_tokens`](#gmkdxlist_tokens)
     - [`g:mkdx#fence_style`](#gmkdxfence_style)
     - [`g:mkdx#toc_text`](#gmkdxtoc_text)
@@ -144,7 +145,7 @@ This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged wit
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
 a `g:mkdx#settings` variable.
 
-Settings are only merged with the defaults and the `g:mkdx#` variables **once** during initial loading
+Settings are merged with the defaults and the `g:mkdx#` variables **once** during initial loading
 of the plugin. Internally, mkdx uses `g:mkdx#settings` so if you want to overwrite a setting while editing:
 
 ~~~viml
@@ -153,28 +154,32 @@ of the plugin. Internally, mkdx uses `g:mkdx#settings` so if you want to overwri
 
 The below table will show you which `g:mkdx#` variable is mapped to which `g:mkdx#settings` setting:
 
-|                 setting                 |           variable             |      default value      |
-|-----------------------------------------|--------------------------------|-------------------------|
-| g:mkdx#settings.map.prefix              | g:mkdx#map_prefix              | `'<leader>'`            |
-| g:mkdx#settings.map.enable              | g:mkdx#map_keys                | `1`                     |
-| g:mkdx#settings.checkbox.toggles        | g:mkdx#checkbox_toggles        | `[' ', '-', 'x']`       |
-| g:mkdx#settings.checkbox.update_tree    | g:mkdx#checklist_update_tree   | `2`                     |
-| g:mkdx#settings.restore_visual          | g:mkdx#restore_visual          | `1`                     |
-| g:mkdx#settings.tokens.header           | g:mkdx#header_style            | `'#'`                   |
-| g:mkdx#settings.table.header_divider    | g:mkdx#table_header_divider    | `'-'`                   |
-| g:mkdx#settings.table.divider           | g:mkdx#table_divider           | `'|'`                   |
-| g:mkdx#settings.enter.enable            | g:mkdx#enhance_enter           | `1`                     |
-| g:mkdx#settings.enter.o                 |                                | `1`                     |
-| g:mkdx#settings.tokens.enter            | g:mkdx#list_tokens             | `['-', '*', '>']`       |
-| g:mkdx#settings.tokens.fence            | g:mkdx#fence_style             | `''`                    |
-| g:mkdx#settings.enter.malformed         | g:mkdx#handle_malformed_indent | `1`                     |
-| g:mkdx#settings.image_extension_pattern | g:mkdx#link_as_img_pat         | `'a\?png\|jp\?eg\|gif'` |
-| g:mkdx#settings.tokens.bold             | g:mkdx#bold_token              | `'**'`                  |
-| g:mkdx#settings.tokens.italic           | g:mkdx#italic_token            | `'*'`                   |
-| g:mkdx#settings.tokens.list             | g:mkdx#list_token              | `'-'`                   |
-| g:mkdx#settings.toc.list_token          | g:mkdx#toc_list_token          | `'-'`                   |
-| g:mkdx#settings.toc.text                | g:mkdx#toc_text                | `'TOC'`                 |
-| g:mkdx#settings.checkbox.initial_state  | g:mkdx#checkbox_initial_state  | `' '`                   |
+|                                    setting                               |                               variable                            |      default value      |
+|--------------------------------------------------------------------------|-------------------------------------------------------------------|-------------------------|
+| [`g:mkdx#settings.map.prefix`](#gmkdxmap_prefix)                         | [`g:mkdx#map_prefix`](#gmkdxmap_prefix)                           | `'<leader>'`            |
+| [`g:mkdx#settings.map.enable`](#gmkdxmap_keys)                           | [`g:mkdx#map_keys`](#gmkdxmap_keys)                               | `1`                     |
+| [`g:mkdx#settings.checkbox.toggles`](#gmkdxcheckbox_toggles)             | [`g:mkdx#checkbox_toggles`](#gmkdxcheckbox_toggles)               | `[' ', '-', 'x']`       |
+| [`g:mkdx#settings.checkbox.update_tree`](#gmkdxchecklist_update_tree)    | [`g:mkdx#checklist_update_tree`](#gmkdxchecklist_update_tree)     | `2`                     |
+| [`g:mkdx#settings.restore_visual`](#gmkdxrestore_visual)                 | [`g:mkdx#restore_visual`](#gmkdxrestore_visual)                   | `1`                     |
+| [`g:mkdx#settings.tokens.header`](#gmkdxheader_style)                    | [`g:mkdx#header_style`](#gmkdxheader_style)                       | `'#'`                   |
+| [`g:mkdx#settings.table.header_divider`](#gmkdxtable_header_divider)     | [`g:mkdx#table_header_divider`](#gmkdxtable_header_divider)       | `'-'`                   |
+| [`g:mkdx#settings.table.divider`](#gmkdxtable_divider)                   | [`g:mkdx#table_divider`](#gmkdxtable_divider)                     | `' | '`                 |
+| [`g:mkdx#settings.enter.enable`](#gmkdxenhance_enter)                    | [`g:mkdx#enhance_enter`](#gmkdxenhance_enter)                     | `1`                     |
+| [`g:mkdx#settings.enter.o`](#gmkdx#settingsentero)                       |                                                                   | `1`                     |
+| [`g:mkdx#settings.tokens.enter`](#gmkdxlist_tokens)                      | [`g:mkdx#list_tokens`](#gmkdxlist_tokens)                         | `['-', '*', '>']`       |
+| [`g:mkdx#settings.tokens.fence`](#gmkdxfence_style)                      | [`g:mkdx#fence_style`](#gmkdxfence_style)                         | `''`                    |
+| [`g:mkdx#settings.enter.malformed`](#gmkdxhandle_malformed_indent)       | [`g:mkdx#handle_malformed_indent`](#gmkdxhandle_malformed_indent) | `1`                     |
+| [`g:mkdx#settings.image_extension_pattern`](#gmkdxlink_as_img_pat)       | [`g:mkdx#link_as_img_pat`](#gmkdxlink_as_img_pat)                 | `'a\?png\|jp\?eg\|gif'` |
+| [`g:mkdx#settings.tokens.bold`](#gmkdxbold_token)                        | [`g:mkdx#bold_token`](#gmkdxbold_token)                           | `'**'`                  |
+| [`g:mkdx#settings.tokens.italic`](#gmkdxitalic_token)                    | [`g:mkdx#italic_token`](#gmkdxitalic_token)                       | `'*'`                   |
+| [`g:mkdx#settings.tokens.list`](#gmkdxlist_token)                        | [`g:mkdx#list_token`](#gmkdxlist_token)                           | `'-'`                   |
+| [`g:mkdx#settings.toc.list_token`](#gmkdxtoc_list_token)                 | [`g:mkdx#toc_list_token`](#gmkdxtoc_list_token)                   | `'-'`                   |
+| [`g:mkdx#settings.toc.text`](#gmkdxtoc_text)                             | [`g:mkdx#toc_text`](#gmkdxtoc_text)                               | `'TOC'`                 |
+| [`g:mkdx#settings.checkbox.initial_state`](#gmkdxcheckbox_initial_state) | [`g:mkdx#checkbox_initial_state`](#gmkdxcheckbox_initial_state)   | `' '`                   |
+
+~~~viml
+" :h mkdx-var-settings
+~~~
 
 ## `g:mkdx#map_prefix`
 
@@ -265,6 +270,7 @@ You can also change the separator used in markdown tables.
 let g:mkdx#table_divider = '|'
 let g:mkdx#settings = { 'table': { 'divider': '|' } }
 ```
+
 ## `g:mkdx#enhance_enter`
 
 This setting enables auto-appending list items when you are editing a markdown list.
@@ -275,6 +281,17 @@ or just do a regular enter. unordered lists and numbered lists are both handled 
 " :h mkdx-var-enhance-enter
 let g:mkdx#enhance_enter = 1
 let g:mkdx#settings = { 'enter': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.enter.o`
+
+This setting does *not* have an associated `g:` variable so it will have to be put in a [`g:mkdx#settings` hash](#gmkdxsettings).
+This setting overwrites normal mode `o` in markdown files and causes `o` to work like pressing `<enter>` at the end of the line
+this means that lists, checklists, checkboxes, quotes etcetera are also inserted when pressing `o` in normal mode in addition to `<enter>` in insert mode.
+Note that [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) must be enabled for this to work.
+
+```viml
+let g:mkdx#settings = { 'enter': { 'o': 1 } }
 ```
 
 ## `g:mkdx#list_tokens`

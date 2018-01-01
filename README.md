@@ -133,10 +133,10 @@ let g:mkdx#settings = {
     \ }
 ~~~
 
-To overwrite a setting, simply write it as seen above:
+To overwrite a setting, simply write it as seen above in your _.vimrc_:
 
 ~~~viml
-let g:mkdx#settings = { 'enter': { 'enable': 0 } }
+let g:mkdx#settings = { enter: { enable: 0 } }
 ~~~
 
 Will disable the [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) setting.
@@ -145,11 +145,11 @@ This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged wit
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
 a `g:mkdx#settings` variable.
 
-Settings are merged with the defaults and the `g:mkdx#` variables **once** during initial loading
+Settings defined in _.vimrc_ are merged with the defaults and the `g:mkdx#` variables **once** during initial loading
 of the plugin. Internally, mkdx uses `g:mkdx#settings` so if you want to overwrite a setting while editing:
 
 ~~~viml
-:let g:mkdx#settings = { 'enter': { 'enable': 0 } }
+:let g:mkdx#settings.enter.enable = 0
 ~~~
 
 The below table will show you which `g:mkdx#` variable is mapped to which `g:mkdx#settings` setting:

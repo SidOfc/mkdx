@@ -154,7 +154,7 @@ To overwrite a setting while editing:
 For help, see:
 
 ~~~viml
-" :h mkdx-var-settings
+" :h mkdx-settings
 ~~~
 
 ## `g:mkdx#settings.image_extension_pattern`
@@ -164,7 +164,7 @@ will be generated when [wrapping text in a link](#as-a-link). Setting it to an e
 disables image wrapping and a regular empty markdown link will be used instead.
 
 ~~~viml
-" :h mkdx-var-link-as-img-pat
+" :h mkdx-setting-image-extension-pattern
 let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
 ~~~
 
@@ -173,7 +173,7 @@ let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
 This setting enables the restoration of the last visual selection after performing an action in visual mode:
 
 ```viml
-" :h mkdx-var-restore-visual
+" :h mkdx-setting-restore-visual
 let g:mkdx#settings = { 'restore_visual': 1 }
 ```
 
@@ -184,7 +184,7 @@ If a mapping contains <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd> key, it i
 If you do not like the default (`<leader>`) you can override it:
 
 ```viml
-" :h mkdx-var-map-prefix
+" :h mkdx-setting-map-prefix
 let g:mkdx#settings = { 'map': { 'prefix': '<leader>' } }
 ```
 
@@ -194,7 +194,7 @@ If you'd rather full control over what is mapped, you can opt-out all together b
 **Note** that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
 
 ```viml
-" :h mkdx-var-map-keys
+" :h mkdx-setting-map-enable
 let g:mkdx#settings = { 'map': { 'enable': 1 } }
 ```
 
@@ -207,7 +207,7 @@ The reason for this is that [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsetti
 to be able to work with a user supplied list of toggles.
 
 ```viml
-" :h mkdx-var-checkbox-toggles
+" :h mkdx-setting-checkbox-toggles
 let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', '-', 'x'] } }
 ```
 
@@ -219,7 +219,7 @@ update the statusses of any parents. Children are force updated to the same toke
 entirely, set this value to `0`. If you do not want children to be updated, set this value to `1` instead.
 
 ```viml
-" :h mkdx-var-checklist-update-tree
+" :h mkdx-setting-checkbox-update-tree
 let g:mkdx#settings = { 'checkbox': { 'update_tree': 2 } }
 ```
 
@@ -229,7 +229,7 @@ When toggling between checkbox/checklist lines, this defines
 what the default value of each inserted checkbox should be.
 
 ~~~viml
-" :h mkdx-var-checkbox-initial-state
+" :h mkdx-setting-checkbox-initial-state
 let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
 ~~~
 
@@ -238,7 +238,7 @@ let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
 If you want to use a different style for markdown headings (h1, h2, etc...).
 
 ```viml
-" :h mkdx-var-header-style
+" :h mkdx-setting-tokens-header
 let g:mkdx#settings = { 'tokens': { 'header': '#' } }
 ```
 ## `g:mkdx#settings.tokens.enter`
@@ -247,7 +247,7 @@ Used by [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable). This is the
 Since numbers are handled differently, they are not included in this list but they are supported.
 
 ```viml
-" :h mkdx-var-list-tokens
+" :h mkdx-setting-tokens-enter
 let g:mkdx#settings = { 'tokens': { 'enter': ['-', '*', '>'] } }
 ```
 
@@ -261,7 +261,7 @@ This value can be set to a `` ` `` or a `~` character. When set, the same style 
 fenced code blocks.
 
 ```viml
-" :h mkdx-var-fence-style
+" :h mkdx-setting-tokens-fence
 let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 ```
 
@@ -271,7 +271,7 @@ This token is used for italicizing the current word under the cursor or a visual
 See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
 
 ~~~viml
-" :h mkdx-var-italic-token
+" :h mkdx-setting-tokens-italic
 let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ~~~
 
@@ -281,7 +281,7 @@ This token is used for bolding the current word under the cursor or a visual sel
 See [Styling text](#styling-text) for more details.
 
 ~~~viml
-" :h mkdx-var-bold-token
+" :h mkdx-setting-tokens-bold
 let g:mkdx#settings = { 'tokens': { 'bold': '**' } }
 ~~~
 
@@ -291,7 +291,7 @@ This token defines what list markers should be inserted when toggling list /
 checklist items.
 
 ~~~viml
-" :h mkdx-var-list-token
+" :h mkdx-setting-tokens-list
 let g:mkdx#settings = { 'tokens': { 'list': '-' } }
 ~~~
 
@@ -300,7 +300,7 @@ let g:mkdx#settings = { 'tokens': { 'list': '-' } }
 You can change the separator used for table headings in markdown tables.
 
 ```viml
-" :h mkdx-var-table-header-divider
+" :h mkdx-setting-table-header-divider
 let g:mkdx#settings = { 'table': { 'header_divider': '-' } }
 ```
 
@@ -309,7 +309,7 @@ let g:mkdx#settings = { 'table': { 'header_divider': '-' } }
 You can also change the separator used in markdown tables.
 
 ```viml
-" :h mkdx-var-table-divider
+" :h mkdx-setting-table-divider
 let g:mkdx#settings = { 'table': { 'divider': '|' } }
 ```
 
@@ -320,7 +320,7 @@ When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not
 or just do a regular enter. unordered lists and numbered lists are both handled correctly.
 
 ```viml
-" :h mkdx-var-enhance-enter
+" :h mkdx-setting-enter-enable
 let g:mkdx#settings = { 'enter': { 'enable': 1 } }
 ```
 
@@ -331,7 +331,7 @@ this means that lists, checklists, checkboxes, quotes etcetera are also inserted
 Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
 
 ```viml
-" :h mkdx-var-enhance-enter
+" :h mkdx-setting-enter-o
 let g:mkdx#settings = { 'enter': { 'o': 1 } }
 ```
 
@@ -344,7 +344,7 @@ be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
 will be rounded down to the previous indent.
 
 ~~~viml
-" :h mkdx-var-handle-malformed-indent
+" :h mkdx-setting-enter-malformed
 let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
 ~~~
 
@@ -353,7 +353,7 @@ let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
 Defines the text to use for the table of contents header itself.
 
 ```viml
-" :h mkdx-var-toc-text
+" :h mkdx-setting-toc-text
 let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
 ```
 
@@ -362,7 +362,7 @@ let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
 Defines the list token to use in the generated TOC.
 
 ```viml
-" :h mkdx-var-toc-list-token
+" :h mkdx-setting-toc-list-token
 let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
 ```
 
@@ -496,8 +496,8 @@ the newly inserted item.
 
 ```viml
 " :h mkdx-mapping-list-items
-" :h mkdx-var-enhance-enter
-" :h mkdx-var-list-tokens
+" :h mkdx-setting-enter-enable
+" :h mkdx-setting-tokens-list
 " :h mkdx-function-enter-handler
 ```
 

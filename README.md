@@ -717,7 +717,7 @@ This is because some tasks such as "Write tests" might take a while to complete 
 - [x] Refactor settings into single variable while backwards compatible
 - [x] Improve line type toggles to better handle list / checklists
 - [x] Document settings instead of variables in README and mkdx.txt
-- [ ] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
+- [x] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
 - [ ] Write tests
 - [ ] Add a github Wiki
 

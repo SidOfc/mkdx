@@ -25,7 +25,8 @@ fun! s:TaskItem(linenum)
 endfun
 
 fun! s:TasksToCheck(linenum)
-  let [lnum, cnum]      = getpos(a:linenum)[1:2]
+  let lnum              = type(a:linenum) == type(0) ? a:linenum : line(a:linenum)
+  let cnum              = col('.')
   let current           = s:TaskItem(lnum)
   let [ctkn, cind, cln] = current
   let startc            = lnum
@@ -356,6 +357,8 @@ fun! mkdx#EnterHandler()
     let special = !empty(t)
     let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
     let incr    = len(split(get(matchlist(line, '^ *\([0-9.]\+\)'), 1, ''), '\.')) - 1
+    let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
+    let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
 
     if (at_end && !remove && match(line, '^ *[0-9.]\+') > -1)
       let min_indent = indent(lnum)
@@ -371,11 +374,14 @@ fun! mkdx#EnterHandler()
       endwhile
     endif
 
-    echom t ' ' . cb . ' ' tcb
-
-    if (remove) | call setline('.', '') | endif
-    if ((cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && !remove && at_end) | call s:UpdateTaskList('.', 1) | endif
-    return remove ? "" : "\n" . (!at_end ? '' : (tcb ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : (match(t, '[0-9.]\+') > -1 ? s:NextListNumber(t, incr > -1 ? incr : 0) : t) . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')))
+    if (remove)  | call setline('.', '')                                             | endif
+    if (upd_tl)  | call call('s:UpdateTaskList', tl_prms)                            | endif
+    if (remove)  | return ''                                                         | endif
+    if (!at_end) | return "\n"                                                       | endif
+    if (tcb)     | return "\n" . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
+    return ("\n"
+      \ . (match(t, '[0-9.]\+') > -1 ? s:NextListNumber(t, incr > -1 ? incr : 0) : t)
+      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' '))
   endif
 
   return "\n"

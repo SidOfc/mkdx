@@ -136,7 +136,7 @@ let g:mkdx#settings = {
 To overwrite a setting, simply write it as seen above in your _.vimrc_:
 
 ~~~viml
-let g:mkdx#settings = { enter: { enable: 0 } }
+let g:mkdx#settings = { 'enter': { 'enable': 0 } }
 ~~~
 
 Will disable the [`g:mkdx#enhance_enter`](#gmkdxenhance_enter) setting.

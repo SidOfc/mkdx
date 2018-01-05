@@ -351,9 +351,9 @@ fun! mkdx#EnterHandler()
     let at_end  = cnum > len
     let sp_pat  = '^ *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\?\|\[.\]\)'
     let results = matchlist(line, sp_pat)
-    let t       = results[2]
-    let tcb     = match(results[1], '^ *\[.\] *') > -1
-    let cb      = match(results[3], ' *\[.\] *') > -1
+    let t       = get(results, 2, '')
+    let tcb     = match(get(results, 1, ''), '^ *\[.\] *') > -1
+    let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
     let special = !empty(t)
     let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
     let incr    = len(split(get(matchlist(line, '^ *\([0-9.]\+\)'), 1, ''), '\.')) - 1
@@ -381,7 +381,7 @@ fun! mkdx#EnterHandler()
     if (tcb)     | return "\n" . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
     return ("\n"
       \ . (match(t, '[0-9.]\+') > -1 ? s:NextListNumber(t, incr > -1 ? incr : 0) : t)
-      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' '))
+      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (special ? ' ' : '')))
   endif
 
   return "\n"

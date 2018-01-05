@@ -420,7 +420,7 @@ fun! mkdx#UpdateTOC()
   normal! ``
 endfun
 
-fun! mkdx#ListHeaders()
+fun! s:ListHeaders()
   let headers = []
   let skip    = 0
   let bnum    = bufnr('%')
@@ -429,19 +429,21 @@ fun! mkdx#ListHeaders()
     let line = getline(lnum)
     let lvl  = strlen(get(matchlist(line, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
 
-    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
-    if (!skip && lvl > 0)
-      let clean_header = substitute(s:CleanHeader(line), '^ \+$', '', '')
-      call add(headers, {'lnum': lnum, 'text': repeat('#', lvl) . ' ' . clean_header, 'bufnr': bnum})
-    endif
+    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip                     | endif
+    if (!skip && lvl > 0)                        | call add(headers, [lnum, lvl, line]) | endif
   endfor
 
-  if (len(headers) > 0)
-    call setqflist(headers)
-    exe 'copen'
-  endif
-
   return headers
+endfun
+
+fun! s:HeaderToQF(key, value)
+  return {'bufnr': bufnr('%'), 'lnum': a:value[0], 'level': a:value[1],
+        \ 'text': repeat(g:mkdx#settings.tokens.header, a:value[1]) . ' ' . s:CleanHeader(a:value[2])}
+endfun
+
+fun! mkdx#QuickfixHeaders()
+  call setqflist(map(s:ListHeaders(), function('<SID>HeaderToQF')))
+  exe 'copen'
 endfun
 
 fun! mkdx#GenerateTOC()
@@ -453,26 +455,20 @@ fun! mkdx#GenerateTOC()
   let headers  = {}
   let headers[s:HeaderToHash(g:mkdx#settings.toc.text)] = 1
 
-  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    let line = getline(lnum)
-    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
-    let lvl  = strlen(get(matchlist(line, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
-
-    if (!skip && lvl > 0)
-      if (empty(header) && lnum > curspos)
-        let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-        call insert(contents, header)
-        call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:HeaderToListItem(header))
-      endif
-
-      let hsh = s:HeaderToHash(line)
-      let c   = get(headers, hsh, 0)
-      if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
-      let li  = s:HeaderToListItem(line, c > 0 ? '-' . c : '')
-
-      call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#settings.toc.list_token . ' ' . li)
-      let prevlvl = lvl
+  for [lnum, lvl, line] in s:ListHeaders()
+    if (empty(header) && lnum > curspos)
+      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      call insert(contents, header)
+      call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:HeaderToListItem(header))
     endif
+
+    let hsh = s:HeaderToHash(line)
+    let c   = get(headers, hsh, 0)
+    let li  = s:HeaderToListItem(line, c > 0 ? '-' . c : '')
+    if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
+
+    call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#settings.toc.list_token . ' ' . li)
+    let prevlvl = lvl
   endfor
 
   let c = curspos - 1

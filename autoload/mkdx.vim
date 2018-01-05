@@ -420,6 +420,30 @@ fun! mkdx#UpdateTOC()
   normal! ``
 endfun
 
+fun! mkdx#ListHeaders()
+  let headers = []
+  let skip    = 0
+  let bnum    = bufnr('%')
+
+  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+    let line = getline(lnum)
+    let lvl  = strlen(get(matchlist(line, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+
+    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
+    if (!skip && lvl > 0)
+      let clean_header = substitute(s:CleanHeader(line), '^ \+$', '', '')
+      call add(headers, {'lnum': lnum, 'text': repeat('#', lvl) . ' ' . clean_header, 'bufnr': bnum})
+    endif
+  endfor
+
+  if (len(headers) > 0)
+    call setqflist(headers)
+    exe 'copen'
+  endif
+
+  return headers
+endfun
+
 fun! mkdx#GenerateTOC()
   let contents = []
   let curspos  = getpos('.')[1]

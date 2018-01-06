@@ -44,6 +44,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-generate-toc)
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
+        <Plug>(mkdx-quickfix-toc)
         <Plug>(mkdx-text-bold-n)
         <Plug>(mkdx-text-bold-v)
         <Plug>(mkdx-text-italic-n)
@@ -72,6 +73,7 @@ CONTENTS                                                         *mkdx-contents*
         Toggle quote
         List items
         Generate or update table of contents
+        Quickfix table of contents
         Toggle checkbox
         Toggle checklist
         Toggle list
@@ -86,6 +88,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#GenerateTOC()
         mkdx#UpdateTOC()
         mkdx#GenerateOrUpdateTOC()
+        mkdx#QuickfixHeaders()
         mkdx#ToggleCheckboxTask()
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
@@ -156,6 +159,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-mkdx-generate-toc|
     - |mkdx-plug-mkdx-update-toc|
     - |mkdx-plug-mkdx-gen-or-update-toc|
+    - |mkdx-plug-mkdx-quickfix-toc|
     - |mkdx-plug-wrap-text-in-link-n|
     - |mkdx-plug-wrap-text-in-link-v|
     - |mkdx-plug-wrap-text-in-bold-n|
@@ -186,6 +190,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-quote|
     - |mkdx-mapping-list-items|
     - |mkdx-mapping-generate-or-update-toc|
+    - |mkdx-mapping-quickfix-table-of-contents|
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
@@ -200,6 +205,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-generate-toc|
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
+    - |mkdx-function-quickfix-headers|
     - |mkdx-function-wrap-text|
     - |mkdx-function-toggle-checkbox-task|
     - |mkdx-function-toggle-checklist|
@@ -498,9 +504,14 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#UpdateTOC()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-gen-or-upd-toc-toc)                   *mkdx-plug-gen-or-upd-toc-toc*
+<Plug>(mkdx-gen-or-upd-toc)                       *mkdx-plug-gen-or-upd-toc-toc*
 
     `:call mkdx#GenerateOrUpdateTOC()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-quickfix-toc)                               *mkdx-plug-quickfix-toc*
+
+    `:call mkdx#QuickfixHeaders()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
@@ -754,6 +765,12 @@ Generate or update table of contents       *mkdx-mapping-generate-or-update-toc*
 This function does one of two things based on wether a table of contents is
 already present. If it exists, the current table of contents will be updated.
 If it doesn't exist yet, a table of contents will be inserted at current line.
+
+==============================================================================
+Quickfix table of contents             *mkdx-mapping-quickfix-table-of-contents*
+                                                                 <MAP_PREFIX>I
+
+Adds all the markdown headers in the current file to the quickfix list.
 
 ==============================================================================
 Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
@@ -1071,6 +1088,12 @@ Like |mkdx-function-update-toc|, this function checks to see wether a table of
 content exists. Based on the result it will either call
 |mkdx-function-update-toc| if it exists, or |mkdx-function-generate-toc| if it
 doesn't exist yet.
+
+==============================================================================
+mkdx#QuickfixHeaders()                          *mkdx-function-quickfix-headers*
+
+Finds all the headers in the current file and opens them in a quickfix window
+to allow for easy jumping using regular quickfix commands.
 
 ==============================================================================
 mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*

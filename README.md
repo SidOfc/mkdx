@@ -67,6 +67,7 @@ settings and examples with default mappings.
         - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
+    - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
@@ -388,6 +389,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-n)`|
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
+|Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
 |Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
 |Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
@@ -707,6 +709,18 @@ Stuff inside fenced code blocks is excluded too.
 " :h mkdx-function-update-toc
 " :h mkdx-function-generate-or-update-toc
 ```
+
+## Open TOC in quickfix window
+
+![mkdx open toc in quickfix](doc/gifs/vim-mkdx-toggle-qf.gif)
+
+Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>I</kbd> to load all the markdown headers in a quickfix window.
+You can jump around using regular quickfix commands afterwards, as shown in the gif using `:cn` for example.
+
+~~~viml
+" :h mkdx-mapping-quickfix-table-of-contents
+" :h mkdx-function-quickfix-headers
+~~~
 
 # Roadmap
 

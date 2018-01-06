@@ -71,6 +71,21 @@ settings and examples with default mappings.
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
+# Changelog
+
+The latest changes will be visible in this list.
+To see more changes, see [CHANGELOG.md](CHANGELOG.md) for older changes (**note:** currently empty)
+
+## Version 0.5.0
+
+- This version introduces a mapping that opens a quickfix window with all your headers loaded.
+  See [Open TOC in quickfix window](open-toc-in-quickfix-window) section for an example.
+
+## Version 0.4.3.1
+
+- Fixes a critical issue with the enter handler functionality where often, it would crash due to missing out of bounds
+array check.
+
 # Install
 
 This plugin should work in _vim_ as well as _nvim_, no clue about _gvim_ but since this plugin only manipulates

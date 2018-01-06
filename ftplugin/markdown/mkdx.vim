@@ -63,6 +63,7 @@ noremap <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)
 noremap <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
 noremap <silent> <Plug>(mkdx-wrap-link-v)        :<C-U>call mkdx#WrapLink('v')<Cr>
 noremap <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
+noremap <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
 noremap <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
 noremap <silent> <Plug>(mkdx-update-toc)         :call      mkdx#UpdateTOC()<Cr>
 noremap <silent> <Plug>(mkdx-gen-or-upd-toc)     :call      mkdx#GenerateOrUpdateTOC()<Cr>
@@ -107,6 +108,7 @@ if g:mkdx#settings.map.enable == 1
         \ [1, 'v',     's',      '<Plug>(mkdx-text-strike-v)'],
         \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
         \ [1, 'n',     'i',      '<Plug>(mkdx-gen-or-upd-toc)'],
+        \ [1, 'n',     'I',      '<Plug>(mkdx-quickfix-toc)'],
         \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
         \ [0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA'],
         \ [0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA']

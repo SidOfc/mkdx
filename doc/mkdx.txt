@@ -2,13 +2,13 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.5.0`
+`Version: 0.6.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
                                                                       *mkdx-toc*
     Introduction
-        Helptags
+    Helptags
 
     `g:mkdx#settings`
         `g:mkdx#settings.image_extension_pattern`

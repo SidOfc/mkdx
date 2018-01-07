@@ -27,6 +27,9 @@ settings and examples with default mappings.
 
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
+- [Changelog](#changelog)
+    - [Version 0.5.0](#version-050)
+    - [Version 0.4.3.1](#version-0431)
 - [Install](#install)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
@@ -49,6 +52,7 @@ settings and examples with default mappings.
     - [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed)
     - [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
     - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
+    - [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
 - [Mappings](#mappings)
 - [Unmapping functionality](#unmapping-functionality)
 - [Examples](#examples)
@@ -75,6 +79,10 @@ settings and examples with default mappings.
 
 The latest changes will be visible in this list.
 To see more changes, see [CHANGELOG.md](CHANGELOG.md) for older changes (**note:** currently empty)
+
+## Version 0.6.0
+
+- This version adds _opt-in_ support for checkbox state highlighting. See [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable) for more information.
 
 ## Version 0.5.0
 
@@ -144,7 +152,8 @@ let g:mkdx#settings = {
       \                              'initial_state': ' ' },
       \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
       \ 'table':                   { 'divider': '|',
-      \                              'header_divider': '-' }
+      \                              'header_divider': '-' },
+      \ 'highlight':               { 'enable': 0 }
     \ }
 ~~~
 
@@ -382,6 +391,43 @@ Defines the list token to use in the generated TOC.
 let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
 ```
 
+## `g:mkdx#settings.highlight.enable`
+
+This setting enables state-specific highlighting for checkboxes.
+It will also override the default markdown syntax highlighting scheme to better accomodate the colors used.
+The highlighting is linked to the gitcommit* family of highlight groups (and Comment for list items), full list:
+
+- `Comment` is used for list items, e.g. items starting with `-`, `*`, `1.`
+- `gitcommitUnmergedFile` is used for empty checkboxes: `[ ]`
+- `gitcommitBranch` is used for pending / in-progress checkboxes: `[-]`
+- `gitcommitSelectedFile` is used for completed checkboxes: `[x]`
+
+If you want to change the highlighting groups, simply `link` them to different groups:
+
+~~~viml
+" :h mkdx-highlighting
+
+" these are the defaults, defined by mkdx in after/syntax/markdown/mkdx.vim
+highlight default link mkdxListItem Comment
+highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile
+highlight default link mkdxCheckboxPending gitcommitBranch
+highlight default link mkdxCheckboxComplete gitcommitSelectedFile
+
+" to change the color of list items to the "jsOperator" group, one would write this in their vimrc:
+highlight link mkdxListItem jsOperator
+~~~
+
+**Note**: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
+The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
+You can see it in action in the [Checking checkboxes / checklists](#checking-checkboxes--checklists) examples.
+
+```viml
+" :h mkdx-setting-highlight-enable
+" :h mkdx-highlighting
+" set to 1 to enable.
+let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
+```
+
 # Mappings
 
 The below list contains all mappings that mkdx creates by default.<br />
@@ -608,15 +654,19 @@ toggling checklists only performed a check to see if a checklist item was presen
 ## Checking Checkboxes / Checklists
 
 **Single checkbox:**
-![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox.gif)
+![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox-colors.gif)
+
 **Checkbox in checklist:**
-![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater.gif)
+![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater-colors.gif)
 
 Checkboxes can be checked using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>.
 checking a checkbox means going to the previous or next mark in the list of [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles).
 When checking an item which is nested in a list, the parent and child list items will be updated as well.
 Automatic updating of checkboxes can be disabled by setting [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree).
 All manipulations work fine in visual as well as normal mode.
+
+You can also see that the checkboxes are highlighted differently depending on state. This is an _opt-in_ setting which you must enable explicitly in your vimrc.
+See [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable) for more information.
 
 A file might not always be indented correctly, the solution to this is [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed).
 This setting is enabled by default, it rounds invalid (indentation not divisible by `:h shiftwidth`) either up or down
@@ -626,7 +676,7 @@ and will also become `4`.
 
 | off | on |
 |:---:|:--:|
-|![mkdx toggle checkbox malformed off](doc/gifs/vim-mkdx-checklist-malformed-off.gif)|![mkdx toggle checkbox malformed on](doc/gifs/vim-mkdx-checklist-malformed-on.gif)|
+|![mkdx toggle checkbox malformed off](doc/gifs/vim-mkdx-checklist-malformed-off-colors.gif)|![mkdx toggle checkbox malformed on](doc/gifs/vim-mkdx-checklist-malformed-on-colors.gif)|
 
 ```viml
 " :h mkdx-mapping-toggle-checkbox-forward

@@ -2,13 +2,13 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.5.0`
+`Version: 0.6.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
                                                                       *mkdx-toc*
     Introduction
-        Helptags
+    Helptags
 
     `g:mkdx#settings`
         `g:mkdx#settings.image_extension_pattern`
@@ -31,6 +31,13 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.enter.malformed`
         `g:mkdx#settings.toc.text`
         `g:mkdx#settings.toc.list_token`
+        `g:mkdx#settings.highlight.enable`
+
+    Highlighting
+        `mkdxListItem`
+        `mkdxCheckboxEmpty`
+        `mkdxCheckboxPending`
+        `mkdxCheckboxComplete`
 
     Plugs
         <Plug>(mkdx-checkbox-next)
@@ -115,8 +122,8 @@ https://github.com/sidofc/mkdx/pulls.
 ==============================================================================
 HELPTAGS                                                         *mkdx-helptags*
 
-The helptags are split into 3 types, |mdx-settings|, |mdx-mappings| and
-|mdx-functions|. These are the category tags. Within each
+The helptags are split into 4 types, |mdx-settings|, |mkdx-highlighting|,
+|mdx-mappings| and |mdx-functions|. These are the category tags. Within each
 See |mkdx-settings| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
 for functions. Below is a list of all helptags:
 
@@ -146,6 +153,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-enter-malformed|
     - |mkdx-setting-toc-text|
     - |mkdx-setting-toc-list-token|
+    - |mkdx-setting-highlight-enable|
+
+- |mkdx-highlighting|
+    - |mkdx-highlight-list-item|
+    - |mkdx-highlight-checkbox-empty|
+    - |mkdx-highlight-checkbox-pending|
+    - |mkdx-highlight-checkbox-complete|
 
 - |mkdx-plugs|
     - |mkdx-plug-checkbox-next|
@@ -231,7 +245,8 @@ at the bottom of every setting section. The default settings hash:
         `  \                              'initial_state': ' ' },`
     `      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },`
     `      \ 'table':                   { 'divider': '|',`
-         ` \                              'header_divider': '-' }`
+         ` \                              'header_divider': '-' },`
+         `\ 'highlight':               { 'enable': 0 }`
     `    \ }`
 
 To overwrite a setting, simply write it as seen above:
@@ -275,6 +290,7 @@ let s:defaults.tokens.list             `=>` g:mkdx#list_token
 let s:defaults.toc.list_token          `=>` g:mkdx#toc_list_token
 let s:defaults.toc.text                `=>` g:mkdx#toc_text
 let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
+let s:defaults.highlight.enable        `=>`
 
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
@@ -445,6 +461,50 @@ Define the heading text to use in the table of contents.
 `g:mkdx#settings.toc.list_token = '-'`               *mkdx-setting-toc-list-token*
 
 Define the list style to use when generating a table of contents.
+
+==============================================================================
+`g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*
+
+Enables state-specific highlighting for checkboxes.
+Setting this will override the syntax highlighting for list item markers (`-`,
+`*` or `1.1.` for example) in addition to providing highlighting for
+checkboxes. The scheme goes as follows:
+
+- Empty / unstarted checkboxes are colored red
+- In progress checkboxes are colored orange
+- Completed checkboxes are colored green
+
+See the section |mkdx-highlighting| for details about how to customize the
+colors.
+
+==============================================================================
+HIGHLIGHTING                                                 *mkdx-highlighting*
+
+mkdx provides opt-in highlighting for list items and checkboxes.
+To do this, mkdx defines its own |syntax| groups specifically for these types.
+The sections below show the default values of each highlight group.
+
+To override the colors for a highlight group, see: |highlight|.
+
+==============================================================================
+`mkdxListItem`                                          *mkdx-highlight-list-item*
+
+    `highlight default link mkdxListItem Comment`
+
+==============================================================================
+`mkdxCheckboxEmpty`                                *mkdx-highlight-checkbox-empty*
+
+    `highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile`
+
+==============================================================================
+`mkdxCheckboxPending`                            *mkdx-highlight-checkbox-pending*
+
+    `highlight default link mkdxCheckboxPending gitcommitBranch`
+
+==============================================================================
+`mkdxCheckboxComplete`                          *mkdx-highlight-checkbox-complete*
+
+    `highlight default link mkdxCheckboxComplete gitcommitSelectedFile`
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*

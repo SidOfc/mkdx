@@ -7,7 +7,8 @@ let s:defaults = {
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*', 'list': '-', 'fence': '', 'header': '#' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
       \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
-      \ 'table':                   { 'divider': '|', 'header_divider': '-' }
+      \ 'table':                   { 'divider': '|', 'header_divider': '-' },
+      \ 'highlight':               { 'enable': 0 }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif

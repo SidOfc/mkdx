@@ -1,3 +1,5 @@
+if (exists('g:mkdx#settings') && g:mkdx#settings.highlight.enable != 1) | finish | endif
+
 syntax match mkdxListItem '^[ \t]*\([0-9.]\+\|[-*]\)'
 syntax match mkdxCheckboxEmpty '\[ \]'
 syntax match mkdxCheckboxPending '\[-\]'

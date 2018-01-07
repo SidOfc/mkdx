@@ -747,6 +747,7 @@ This is because some tasks such as "Write tests" might take a while to complete 
 - [x] Improve line type toggles to better handle list / checklists
 - [x] Document settings instead of variables in README and mkdx.txt
 - [x] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
+- [-] Add opt-in syntax highlighting for list items and checkbox states
 - [ ] Write tests
 - [ ] Add a github Wiki
 

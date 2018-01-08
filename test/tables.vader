@@ -1,0 +1,27 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (Some rows of unquoted CSV content):
+  Name,Age,Gender
+  Eric Cartman,10,Unknown
+  Kenny McCormick,10,Male
+  Stan Marsh,10,Male
+  Kyle Brovlofski,10,Male
+
+Do (Visually select the rows and press <leader>,):
+  V5j ,
+
+Expect (A markdown table):
+  |      Name       | Age | Gender  |
+  |-----------------|-----|---------|
+  |  Eric Cartman   | 10  | Unknown |
+  | Kenny McCormick | 10  |  Male   |
+  |   Stan Marsh    | 10  |  Male   |
+  | Kyle Brovlofski | 10  |  Male   |
+
+
+
+

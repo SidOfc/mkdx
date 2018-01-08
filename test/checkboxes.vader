@@ -1,0 +1,128 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Set g:mkdx#settings.checkbox.toggles = [' ', '-', '~', 'x']):
+  let g:mkdx#settings.checkbox.toggles = [' ', '-', '~', 'x']
+
+Given (An empty checkbox line):
+  [ ] checkbox
+
+Do (Toggle it twice):
+   = =
+
+Expect (A checkbox with custom state):
+  [~] checkbox
+
+Execute (Set g:mkdx#settings.checkbox.toggles = [' ', '-', 'x']):
+  let g:mkdx#settings.checkbox.toggles = [' ', '-', 'x']
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Set g:mkdx#settings.checkbox.initial_state = '-'):
+  let g:mkdx#settings.checkbox.initial_state = '-'
+
+Given (An empty checkbox line):
+  [ ] checkbox
+
+Do (<enter> at the end of line):
+  A\<cr>
+
+Expect (A checkbox in pending state is added):
+  [ ] checkbox
+  [-] 
+
+Execute (Set g:mkdx#settings.checkbox.initial_state = ' '):
+  let g:mkdx#settings.checkbox.initial_state = ' '
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (An empty and a pending checkbox):
+  [ ] checkbox
+  [-] checkbox
+
+Do (Toggle each checkbox state forward):
+   =j =
+
+Expect (A pending and a complete checkbox):
+  [-] checkbox
+  [x] checkbox
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line and a checkbox line):
+  normal line
+  [ ] checkbox line
+
+Do (Toggle both lines with <space>t):
+   tj t
+
+Expect (A checkbox line and regular line):
+  [ ] normal line
+  checkbox line
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A checklist):
+  - [ ] checkbox
+      - [ ] checkbox
+      - [ ] checkbox
+          - [ ] checkbox
+  - [ ] checkbox
+
+Do (Update a deeply nested list item):
+  3j -
+
+Expect (The state of the checklist is updated):
+  - [-] checkbox
+      - [ ] checkbox
+      - [x] checkbox
+          - [x] checkbox
+  - [ ] checkbox
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Set g:mkdx#settings.enter.malformed = 0):
+  let g:mkdx#settings.enter.malformed = 0
+
+Given (A malformed checklist):
+  - [ ] checkbox
+     - [ ] checkbox
+      - [ ] checkbox
+      - [ ] checkbox
+  - [ ] checkbox
+
+Do (Update a deeply nested list item):
+  2j -
+
+Expect (The update to be handled "incorrectly"):
+  - [ ] checkbox
+     - [-] checkbox
+      - [x] checkbox
+      - [ ] checkbox
+  - [ ] checkbox
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Set g:mkdx#settings.enter.malformed = 1):
+  let g:mkdx#settings.enter.malformed = 1
+
+Given (A malformed checklist):
+  - [ ] checkbox
+     - [ ] checkbox
+      - [ ] checkbox
+      - [ ] checkbox
+  - [ ] checkbox
+
+Do (Update a deeply nested list item):
+  2j -
+
+Expect (The update to be handled correctly):
+  - [-] checkbox
+     - [ ] checkbox
+      - [x] checkbox
+      - [ ] checkbox
+  - [ ] checkbox
+

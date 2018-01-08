@@ -1,0 +1,85 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A markdown list):
+  - list item
+  - list item
+
+Do (<enter> at end of list item inserts empty list item):
+  A\<cr>
+
+Expect (An empty list item):
+  - list item
+  - 
+  - list item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A markdown list):
+  - list item
+  - list item
+
+Do (<o> on a list item inserts a new empty list item):
+  o
+
+Expect (An empty list item):
+  - list item
+  - 
+  - list item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A markdown list):
+  - list item
+  - list item
+
+Do (<enter> in the middle of list item performs regular <enter>):
+  6la\<cr>
+
+Expect (An empty list item):
+  - list 
+  item
+  - list item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+    2.1. subtask
+    2.2. subtask
+  3. hello
+
+Do (Press <o> on the item increments other list items):
+  o
+
+Expect (List items are correctly incremented and new empty list item):
+  1. task
+  2. 
+  3. task
+    3.1. subtask
+    3.2. subtask
+  4. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+    2.1. subtask
+    2.2. subtask
+  3. hello
+
+Do (Press <o> on the first nested item increments other list items):
+  2jo
+
+Expect (List items are correctly incremented and new empty list item):
+  1. task
+  2. task
+    2.1. subtask
+    2.2. 
+    2.3. subtask
+  3. hello

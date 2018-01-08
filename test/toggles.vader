@@ -1,0 +1,68 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A header):
+  # Hello world
+  ### Hello world
+
+Do (Promote and demote header):
+   ]j [
+
+Expect (Headers to be adjusted accordingly):
+  ## Hello world
+  ## Hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
+  > hello world
+
+Do (<leader>'):
+   'j '
+
+Expect (The line to be quoted):
+  > hello world
+  hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
+  [ ] hello world
+
+Do (<leader>t):
+   tj t
+
+Expect (The line to become a checkbox line):
+  [ ] hello world
+  hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
+  - [ ] hello world
+
+Do (<leader>lt):
+   ltj lt
+
+Expect (The line to become a checklist line):
+  - [ ] hello world
+  hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
+  - hello world
+
+Do (<leader>ll):
+   llj ll
+
+Expect (The line to become a list item):
+  - hello world
+  hello world

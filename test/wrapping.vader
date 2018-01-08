@@ -1,0 +1,113 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (turn the word "hello" into a link with <leader>ln):
+  w lnhttps://github.com/SidOfc/mkdx\<esc>
+
+Expect (The word "world" to be a link):
+  Hello [world](https://github.com/SidOfc/mkdx) 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world hello world
+
+Do (turn the selection into a link with <leader>ln):
+  wv2e lnhttps://github.com/SidOfc/mkdx\<esc>
+
+Expect (The word "world" to be a link):
+  Hello [world hello](https://github.com/SidOfc/mkdx) world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (Bolden "Hello" with <leader>b):
+   b
+
+Expect (The word "Hello" to be bold):
+  **Hello** world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (Bolden selection with <leader>b):
+  v2e b
+
+Expect (The selection to be bold):
+  **Hello world**
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (Italicize "Hello" with <leader>/):
+   /
+
+Expect (The word "Hello" to be italic):
+  *Hello* world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (italicize selection with <leader>/ in visual mode):
+  v2e /
+
+Expect (The selection to be italic):
+  *Hello world*
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (strike "Hello" with <leader>s):
+   s
+
+Expect (The word "Hello" to be strikethrough):
+  <strike>Hello</strike> world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (strike selection with <leader>s in visual mode):
+  v2e s
+
+Expect (The selection to be strikethrough):
+  <strike>Hello world</strike>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (inline-code "Hello" with <leader>`):
+   `
+
+Expect (The word "Hello" to be inline-code):
+  `Hello` world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "Hello world"):
+  Hello world
+
+Do (inline-code selection with <leader>` in visual mode):
+  v2e `
+
+Expect (The selection to be inline-code):
+  `Hello world`

@@ -1,0 +1,4 @@
+Execute (Setup):
+  setf markdown
+  set sw=4
+

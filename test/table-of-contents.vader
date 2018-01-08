@@ -1,6 +1,4 @@
-Execute (Setup):
-  setf markdown
-  set sw=4
+Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

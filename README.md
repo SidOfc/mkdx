@@ -73,6 +73,7 @@ settings and examples with default mappings.
     - [Convert CSV to table](#convert-csv-to-table)
     - [Generate or update TOC](#generate-or-update-toc)
     - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
+    - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
@@ -788,6 +789,50 @@ You can jump around using regular quickfix commands afterwards, as shown in the 
 " :h mkdx-function-quickfix-headers
 ~~~
 
+## Open TOC using [fzf](https://github.com/junegunn/fzf.vim) instead of quickfix window
+
+![mkdx open toc using fzf](doc/gifs/vim-mkdx-fzf-goto-header.gif)
+
+This is not built-in to the plugin but I just thought "why not, I'd use that".
+So I started working on a little snippet in my vimrc (included some comments here):
+
+~~~viml
+fun! s:MkdxGoToHeader(header)
+    " given a line: '  84: # Header'
+    " this will match the number 84 and move the cursor to the start of that line
+    call cursor(str2nr(get(matchlist(a:header, ' *\([0-9]\+\)'), 1, '')), 1)
+endfun
+
+fun! s:MkdxFormatHeader(key, val)
+    let text = get(a:val, 'text', '')
+    let lnum = get(a:val, 'lnum', '')
+
+    " if the text is empty or no lnum is present, return the empty string
+    if (empty(text) || empty(lnum)) | return text | endif
+
+    " We can't jump to it if we dont know the line number so that must be present in the outpt line.
+    " We also add extra padding up to 4 digits, so I hope your markdown files don't grow beyond 99.9k lines ;)
+    return repeat(' ', 4 - strlen(lnum)) . lnum . ': ' . text
+endfun
+
+fun! s:MkdxFzfQuickfixHeaders()
+    " passing 0 to mkdx#QuickfixHeaders causes it to return the list instead of opening the quickfix list
+    " this allows you to create a 'source' for fzf.
+    " first we map each item (formatted for quickfix use) using the function MkdxFormatHeader()
+    " then, we strip out any remaining empty headers.
+    let headers = filter(map(mkdx#QuickfixHeaders(0), function('<SID>MkdxFormatHeader')), 'v:val != ""')
+
+    " run the fzf function with the formatted data and as a 'sink' (action to execute on selected entry)
+    " supply the MkdxGoToHeader() function which will parse the line, extract the line number and move the cursor to it.
+    call fzf#run(fzf#wrap(
+            \ {'source': headers, 'sink': function('<SID>MkdxGoToHeader') }
+          \ ))
+endfun
+
+" finally, map it -- in this case, I mapped it to overwrite the default action for toggling quickfix (<PREFIX>I)
+nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
+~~~
+
 # Roadmap
 
 This roadmap is here to give you an idea of what's next, When features are suggested and are going to be implemented
@@ -799,7 +844,7 @@ This is because some tasks such as "Write tests" might take a while to complete 
 - [x] Document settings instead of variables in README and mkdx.txt
 - [x] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
 - [x] Add opt-in syntax highlighting for list items and checkbox states
-- [-] Write tests (even I'm surprised here, thanks again [junegunn for yet another awesome plugin!](https://github.com/junegunn/vader.vim))
+- [x] Write tests (even I'm surprised here, thanks again [junegunn for yet another awesome plugin!](https://github.com/junegunn/vader.vim))
 - [ ] Add a github Wiki
 
 # Contributing

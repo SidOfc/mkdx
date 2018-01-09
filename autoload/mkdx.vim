@@ -441,9 +441,14 @@ fun! s:HeaderToQF(key, value)
         \ 'text': repeat(g:mkdx#settings.tokens.header, a:value[1]) . ' ' . s:CleanHeader(a:value[2])}
 endfun
 
-fun! mkdx#QuickfixHeaders()
-  call setqflist(map(s:ListHeaders(), function('<SID>HeaderToQF')))
-  exe 'copen'
+fun! mkdx#QuickfixHeaders(...)
+  let qflist = map(s:ListHeaders(), function('<SID>HeaderToQF'))
+  if (get(a:000, 0, 1) == 0)
+    return qflist
+  else
+    call setqflist(qflist)
+    exe 'copen'
+  endif
 endfun
 
 fun! mkdx#GenerateTOC()

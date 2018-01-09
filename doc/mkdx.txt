@@ -1150,10 +1150,16 @@ content exists. Based on the result it will either call
 doesn't exist yet.
 
 ==============================================================================
-mkdx#QuickfixHeaders()                          *mkdx-function-quickfix-headers*
+mkdx#QuickfixHeaders([{quickfix}])              *mkdx-function-quickfix-headers*
 
 Finds all the headers in the current file and opens them in a quickfix window
 to allow for easy jumping using regular quickfix commands.
+
+If {quickfix} isn't provided, it defalts to 1, which means a quickfix list
+will be opened if the file contains any headers. When set to 0, a list of
+quickfix-ready entries will be returned instead in the format of:
+
+    `{'lnum': 23, 'text': '# header', 'bufnr': 5}`
 
 ==============================================================================
 mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*

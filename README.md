@@ -794,7 +794,7 @@ You can jump around using regular quickfix commands afterwards, as shown in the 
 ![mkdx open toc using fzf](doc/gifs/vim-mkdx-fzf-goto-header.gif)
 
 This is not built-in to the plugin but I just thought "why not, I'd use that".
-So I started working on a little snippet in my vimrc (included some comments here):
+So I started working on a little snippet in my [vimrc](https://github.com/SidOfc/dotfiles/blob/76393e2881c5577a316698eafb73c7dae36984bd/.vimrc#L340-L359) (included some comments here):
 
 ~~~viml
 fun! s:MkdxGoToHeader(header)

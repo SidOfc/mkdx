@@ -83,36 +83,36 @@ if g:mkdx#settings.map.enable == 1
   let s:ftilde   = empty(s:fstyle) ? '~~~' : s:fstyle
   let s:gv       = g:mkdx#settings.restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
-        \ [1, 'n',     '-',      '<Plug>(mkdx-checkbox-prev)'],
-        \ [1, 'n',     '=',      '<Plug>(mkdx-checkbox-next)'],
-        \ [1, 'v',     '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv],
-        \ [1, 'v',     '=',      '<Plug>(mkdx-checkbox-next)' . s:gv],
-        \ [1, 'n',     '[',      '<Plug>(mkdx-promote-header)'],
-        \ [1, 'n',     ']',      '<Plug>(mkdx-demote-header)'],
-        \ [1, 'n',     "'",      '<Plug>(mkdx-toggle-quote)'],
-        \ [1, 'v',     "'",      '<Plug>(mkdx-toggle-quote)' . s:gv],
-        \ [1, 'n',     "t",      '<Plug>(mkdx-toggle-checkbox)'],
-        \ [1, 'v',     "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv],
-        \ [1, 'n',     "lt",     '<Plug>(mkdx-toggle-checklist)'],
-        \ [1, 'v',     "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv],
-        \ [1, 'n',     "ll",     '<Plug>(mkdx-toggle-list)'],
-        \ [1, 'v',     "ll",     '<Plug>(mkdx-toggle-list)' . s:gv],
-        \ [1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
-        \ [1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
-        \ [1, 'n',     '/',      '<Plug>(mkdx-text-italic-n)'],
-        \ [1, 'n',     'b',      '<Plug>(mkdx-text-bold-n)'],
-        \ [1, 'n',     '`',      '<Plug>(mkdx-text-inline-code-n)'],
-        \ [1, 'n',     's',      '<Plug>(mkdx-text-strike-n)'],
-        \ [1, 'v',     '/',      '<Plug>(mkdx-text-italic-v)'],
-        \ [1, 'v',     'b',      '<Plug>(mkdx-text-bold-v)'],
-        \ [1, 'v',     '`',      '<Plug>(mkdx-text-inline-code-v)'],
-        \ [1, 'v',     's',      '<Plug>(mkdx-text-strike-v)'],
-        \ [1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
-        \ [1, 'n',     'i',      '<Plug>(mkdx-gen-or-upd-toc)'],
-        \ [1, 'n',     'I',      '<Plug>(mkdx-quickfix-toc)'],
-        \ [0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
-        \ [0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA'],
-        \ [0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA']
+        \ ['Toggle\ checkbox\ backward',    1, 'n',     '-',      '<Plug>(mkdx-checkbox-prev)'],
+        \ ['Toggle\ checkbox\ forward',     1, 'n',     '=',      '<Plug>(mkdx-checkbox-next)'],
+        \ ['Toggle\ checkbox\ forward',     1, 'v',     '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv],
+        \ ['Toggle\ checkbox\ backward',    1, 'v',     '=',      '<Plug>(mkdx-checkbox-next)' . s:gv],
+        \ ['Promote\ header',               1, 'n',     '[',      '<Plug>(mkdx-promote-header)'],
+        \ ['Demote\ header',                1, 'n',     ']',      '<Plug>(mkdx-demote-header)'],
+        \ ['Toggle\ quote',                 1, 'n',     "'",      '<Plug>(mkdx-toggle-quote)'],
+        \ ['Toggle\ quote',                 1, 'v',     "'",      '<Plug>(mkdx-toggle-quote)' . s:gv],
+        \ ['Toggle\ checkbox',              1, 'n',     "t",      '<Plug>(mkdx-toggle-checkbox)'],
+        \ ['Toggle\ checkbox',              1, 'v',     "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv],
+        \ ['Toggle\ checklist',             1, 'n',     "lt",     '<Plug>(mkdx-toggle-checklist)'],
+        \ ['Toggle\ checklist',             1, 'v',     "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv],
+        \ ['Toggle\ list',                  1, 'n',     "ll",     '<Plug>(mkdx-toggle-list)'],
+        \ ['Toggle\ list',                  1, 'v',     "ll",     '<Plug>(mkdx-toggle-list)' . s:gv],
+        \ ['Wrap\ link',                    1, 'n',     'ln',     '<Plug>(mkdx-wrap-link-n)'],
+        \ ['Wrap\ link',                    1, 'v',     'ln',     '<Plug>(mkdx-wrap-link-v)'],
+        \ ['Italic',                        1, 'n',     '/',      '<Plug>(mkdx-text-italic-n)'],
+        \ ['Italic',                        1, 'v',     '/',      '<Plug>(mkdx-text-italic-v)'],
+        \ ['Bold',                          1, 'n',     'b',      '<Plug>(mkdx-text-bold-n)'],
+        \ ['Bold',                          1, 'v',     'b',      '<Plug>(mkdx-text-bold-v)'],
+        \ ['Inline\ code',                  1, 'n',     '`',      '<Plug>(mkdx-text-inline-code-n)'],
+        \ ['Inline\ code',                  1, 'v',     '`',      '<Plug>(mkdx-text-inline-code-v)'],
+        \ ['Strike\ through',               1, 'n',     's',      '<Plug>(mkdx-text-strike-n)'],
+        \ ['Strike\ through',               1, 'v',     's',      '<Plug>(mkdx-text-strike-v)'],
+        \ ['Convert to table',              1, 'v',     ',',      '<Plug>(mkdx-tableize)'],
+        \ ['Generate\ /\ Update\ TOC',      1, 'n',     'i',      '<Plug>(mkdx-gen-or-upd-toc)'],
+        \ ['Open\ TOC\ in\ quickfix',       1, 'n',     'I',      '<Plug>(mkdx-quickfix-toc)'],
+        \ ['Insert\ kbd\ tag',              0, 'i',     '<<tab>', '<kbd></kbd>2hcit'],
+        \ ['Backtick\ fenced\ code\ block', 0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA'],
+        \ ['tilde\ fenced\ code\ block',    0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA']
         \ ]
 
   if (g:mkdx#settings.enter.enable)
@@ -123,12 +123,15 @@ if g:mkdx#settings.map.enable == 1
     endif
   endif
 
-  for [prefix, mapmode, binding, expr] in s:bindings
+  for [label, prefix, mapmode, binding, expr] in s:bindings
     let full_mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
     let plug_mapping = get(matchlist(binding, '<Plug>([^)]\+)'), 0, -1)
 
     if (mapcheck(full_mapping, mapmode) == "") && (!plug_mapping || !hasmapto(plug_mapping))
       exe mapmode . 'map <buffer> ' . full_mapping . ' ' . expr
+      " if (has('gui'))
+      exe mapmode . 'menu <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<TAB> ' . full_mapping . (mapmode == 'i' ? '<C-O>' : '') . ':silent call feedkeys(' . full_mapping . ')'
+      " endif
     endif
   endfor
 endif

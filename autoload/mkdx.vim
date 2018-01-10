@@ -182,7 +182,7 @@ fun! mkdx#WrapLink(...)
   exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
 
   let img = !empty(g:mkdx#settings.image_extension_pattern) && match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
-  let @z  = (match(ln, (@z . '$')) > -1 ? ' ' : '') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
+  let @z  = (match(ln, ('.' . @z . '$')) > -1 ? ' ' : '') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
 
   normal! "zPT(
 

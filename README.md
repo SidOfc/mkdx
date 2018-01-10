@@ -28,6 +28,7 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
+    - [Version 0.6.1](#version-061)
     - [Version 0.6.0](#version-060)
     - [Version 0.5.0](#version-050)
     - [Version 0.4.3.1](#version-0431)
@@ -80,7 +81,23 @@ settings and examples with default mappings.
 # Changelog
 
 The latest changes will be visible in this list.
-To see more changes, see [CHANGELOG.md](CHANGELOG.md) for older changes (**note:** currently empty)
+See [CHANGELOG.md](CHANGELOG.md) for older changes. (**note:** currently empty)
+
+## Version 0.6.1
+
+Fixes a bug where wrapping text on a line with a single word would cause a space to be prepended.
+Imagine the cursor is the pipe character (`|`) in this line: `w|ord`, [wrapping as a link](#as-a-link)
+would cause the following result:
+
+~~~
+# this
+word
+ [word](|)
+
+# now becomes this
+word
+[word](|)
+~~~
 
 ## Version 0.6.0
 

@@ -130,7 +130,7 @@ if g:mkdx#settings.map.enable == 1
     if (mapcheck(full_mapping, mapmode) == "") && (!plug_mapping || !hasmapto(plug_mapping))
       exe mapmode . 'map <buffer> ' . full_mapping . ' ' . expr
       " if (has('gui'))
-      exe mapmode . 'menu <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<TAB> ' . full_mapping . (mapmode == 'i' ? '<C-O>' : '') . ':silent call feedkeys(' . full_mapping . ')'
+      exe mapmode . 'menu <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<TAB> ' . full_mapping . (mapmode == 'i' ? '<C-O>' : '') . ':silent call feedkeys("' . full_mapping . '")<cr>'
       " endif
     endif
   endfor

@@ -28,6 +28,7 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
+    - [Version 0.7.0](#version-070)
     - [Version 0.6.1](#version-061)
     - [Version 0.6.0](#version-060)
     - [Version 0.5.0](#version-050)

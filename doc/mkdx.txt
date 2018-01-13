@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.7.0`
+`Version: 0.7.1`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*

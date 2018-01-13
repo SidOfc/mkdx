@@ -83,7 +83,12 @@ settings and examples with default mappings.
 # Changelog
 
 The latest changes will be visible in this list.
-See [CHANGELOG.md](CHANGELOG.md) for older changes. (**note:** currently empty)
+See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## Version 0.7.1
+
+Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
+This will put your cursor on a new empty list item above the current line.
 
 ## Version 0.7.0
 

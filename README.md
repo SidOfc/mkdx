@@ -83,6 +83,10 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes. (**note:** currently empty)
 
+## Version 0.7.0
+
+Add menu support in terminal vim and gvim if it `:has('menu')`.
+
 ## Version 0.6.1
 
 Fixes a bug where wrapping text on a line with a single word would cause a space to be prepended.

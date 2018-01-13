@@ -2,7 +2,7 @@ if exists('b:did_ftplugin') | finish | else | let b:did_ftplugin = 1 | endif
 let s:defaults = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },
+      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1, 'shifto': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*', 'list': '-', 'fence': '', 'header': '#' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
@@ -116,11 +116,16 @@ if g:mkdx#settings.map.enable == 1
         \ ]
 
   if (g:mkdx#settings.enter.enable)
-    imap <buffer><silent> <Cr> <C-R>=mkdx#EnterHandler()<Cr>
+    inoremap <buffer><silent> <S-CR> :echo hello<Cr>
+    inoremap <buffer><silent> <Cr> <C-R>=mkdx#EnterHandler()<Cr>
 
     if (g:mkdx#settings.enter.o)
       nmap <buffer><silent> o A<Cr>
     endif
+
+    if (g:mkdx#settings.enter.shifto)
+      nmap <buffer><silent> O :call mkdx#ShiftOHandler()<Cr>
+    end
   endif
 
   for [label, prefix, mapmode, binding, plug, cmd] in s:bindings

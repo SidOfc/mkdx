@@ -34,6 +34,20 @@ Given (A markdown list):
   - list item
   - list item
 
+Do (<O> on a list item prepends a new empty list item):
+  O
+
+Expect (An empty list item):
+  - 
+  - list item
+  - list item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A markdown list):
+  - list item
+  - list item
+
 Do (<enter> in the middle of list item performs regular <enter>):
   6la\<cr>
 
@@ -47,8 +61,8 @@ Expect (An empty list item):
 Given (A nested numbered list):
   1. task
   2. task
-    2.1. subtask
-    2.2. subtask
+      2.1. subtask
+      2.2. subtask
   3. hello
 
 Do (Press <o> on the item increments other list items):
@@ -58,8 +72,8 @@ Expect (List items are correctly incremented and new empty list item):
   1. task
   2. 
   3. task
-    3.1. subtask
-    3.2. subtask
+      3.1. subtask
+      3.2. subtask
   4. hello
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,8 +81,28 @@ Expect (List items are correctly incremented and new empty list item):
 Given (A nested numbered list):
   1. task
   2. task
-    2.1. subtask
-    2.2. subtask
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
+Do (Press <O> on the item increments other list items):
+  O
+
+Expect (List items are correctly incremented and new empty list item):
+  1. 
+  2. task
+  3. task
+      3.1. subtask
+      3.2. subtask
+  4. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
   3. hello
 
 Do (Press <o> on the first nested item increments other list items):
@@ -77,7 +111,27 @@ Do (Press <o> on the first nested item increments other list items):
 Expect (List items are correctly incremented and new empty list item):
   1. task
   2. task
-    2.1. subtask
-    2.2. 
-    2.3. subtask
+      2.1. subtask
+      2.2. 
+      2.3. subtask
+  3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
+Do (Press <O> on the first nested item increments other list items):
+  2jO
+
+Expect (List items are correctly incremented and new empty list item):
+  1. task
+  2. task
+      2.1. 
+      2.2. subtask
+      2.3. subtask
   3. hello

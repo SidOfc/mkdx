@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.7.0`
+`Version: 0.7.1`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -28,6 +28,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.table.divider`
         `g:mkdx#settings.enter.enable`
         `g:mkdx#settings.enter.o`
+        `g:mkdx#settings.enter.shifto`
         `g:mkdx#settings.enter.malformed`
         `g:mkdx#settings.toc.text`
         `g:mkdx#settings.toc.list_token`
@@ -150,6 +151,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-table-divider|
     - |mkdx-setting-enter-enable|
     - |mkdx-setting-enter-o|
+    - |mkdx-setting-enter-shifto|
     - |mkdx-setting-enter-malformed|
     - |mkdx-setting-toc-text|
     - |mkdx-setting-toc-list-token|
@@ -280,6 +282,7 @@ let s:defaults.table.header_divider    `=>` g:mkdx#table_header_divider
 let s:defaults.table.divider           `=>` g:mkdx#table_divider
 let s:defaults.enter.enable            `=>` g:mkdx#enhance_enter
 let s:defaults.enter.o                 `=>`
+let s:defaults.enter.shifto            `=>`
 let s:defaults.tokens.enter            `=>` g:mkdx#list_tokens
 let s:defaults.tokens.fence            `=>` g:mkdx#fence_style
 let s:defaults.enter.malformed         `=>` g:mkdx#handle_malformed_indent
@@ -425,6 +428,12 @@ Examples can be found at |mkdx-function-enter-handler|.
 
 This setting also enables `o` to act like `<enter>` in the middle of lists /
 checklists / tasks.
+
+==============================================================================
+`g:mkdx#settings.enter.shifto`                         *mkdx-setting-enter-shifto*
+
+This setting also enables `O` to prepend a list item above the current line
+and place your cursor on it.
 
 ==============================================================================
 `g:mkdx#settings.enter.malformed = 1`               *mkdx-setting-enter-malformed*

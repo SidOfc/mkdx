@@ -52,6 +52,7 @@ settings and examples with default mappings.
     - [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
     - [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable)
     - [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero)
+    - [`g:mkdx#settings.enter.shifto`](#gmkdxsettingsentershifto)
     - [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed)
     - [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
     - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
@@ -82,7 +83,12 @@ settings and examples with default mappings.
 # Changelog
 
 The latest changes will be visible in this list.
-See [CHANGELOG.md](CHANGELOG.md) for older changes. (**note:** currently empty)
+See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## Version 0.7.1
+
+Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
+This will put your cursor on a new empty list item above the current line.
 
 ## Version 0.7.0
 
@@ -103,20 +109,6 @@ word
 word
 [word](|)
 ~~~
-
-## Version 0.6.0
-
-- This version adds _opt-in_ support for checkbox state highlighting. See [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable) for more information.
-
-## Version 0.5.0
-
-- This version introduces a mapping that opens a quickfix window with all your headers loaded.
-  See [Open TOC in quickfix window](open-toc-in-quickfix-window) section for an example.
-
-## Version 0.4.3.1
-
-- Fixes a critical issue with the enter handler functionality where often, it would crash due to missing out of bounds
-array check.
 
 # Install
 
@@ -384,6 +376,17 @@ Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1
 let g:mkdx#settings = { 'enter': { 'o': 1 } }
 ```
 
+## `g:mkdx#settings.enter.shifto`
+
+This setting enables `O` in normal mode to prepend list items above the current line, your cursor will be placed after the newly added item.
+Like [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero), checkboxes are also added if they are present on the cursor line.
+Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
+
+```viml
+" :h mkdx-setting-enter-shifto
+let g:mkdx#settings = { 'enter': { 'shifto': 1 } }
+```
+
 ## `g:mkdx#settings.enter.malformed`
 
 This setting defines behaviour to use when working with improperly indented
@@ -480,6 +483,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-R>=mkdx#EnterHandler()<Cr>`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`A<CR>`|
+|<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`:call mkdx#ShiftOHandler()<Cr>`|
 
 # Unmapping functionality
 
@@ -577,7 +581,7 @@ imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>2h<C-o>cit
 |![mkdx unordered list](doc/gifs/vim-mkdx-unordered-list.gif)|![mkdx numbered list](doc/gifs/vim-mkdx-numbered-list.gif)|
 
 When [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) is set (default on), new list tokens will be inserted when
-editing a markdown list. This happens on any <kbd>enter</kbd> in _insert_ mode or <kbd>o</kbd> in normal mode.
+editing a markdown list. This happens on any <kbd>enter</kbd> in _insert_ mode or <kbd>o</kbd> and <kbd>O</kbd> in normal mode by default.
 Additionally, if the list item contains a checkbox (`[ ]` - any state possible) that will also be appended to
 the newly inserted item.
 

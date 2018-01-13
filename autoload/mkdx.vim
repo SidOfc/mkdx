@@ -332,13 +332,50 @@ fun! mkdx#Tableize() range
   call cursor(a:lastline + 1, 1)
 endfun
 
-fun! s:NextListNumber(current, depth)
+fun! s:NextListNumber(current, depth, ...)
   let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
   let tdot  = match(curr, '\.$') > -1
   let parts = split(curr, '\.')
+  let incr  = get(a:000, 0, 0) == 1 ? -1 : 1
 
-  if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + 1 | endif
+  if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
   return join(parts, '.') . (tdot ? '.' : '')
+endfun
+
+fun! mkdx#ShiftOHandler()
+  let lnum = line('.')
+  let line = getline(lnum)
+  let lin  = get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
+  let lis  = get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\)'), 1, -1)
+
+  if (lin != -1)
+    let suff = !empty(matchlist(line, '^ *' . lin . ' \[.\]'))
+    exe 'normal! O' . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+    call s:UpdateListNumbers(lnum, indent(lnum) / &sw)
+  elseif (lis != -1)
+    let suff = !empty(matchlist(line, '^ *' . lis . ' \[.\]'))
+    exe 'normal! O' . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+  else
+    normal! O
+  endif
+
+  startinsert!
+endfun
+
+fun! s:UpdateListNumbers(lnum, depth, ...)
+  let lnum       = a:lnum
+  let min_indent = indent(lnum)
+  let incr       = get(a:000, 0, 0)
+
+  while (nextnonblank(lnum) == lnum)
+    let lnum += 1
+
+    if (indent(lnum) < min_indent) | break | endif
+    call setline(lnum,
+      \ substitute(getline(lnum),
+      \            '^\( \{' . min_indent . ',}\)\([0-9.]\+\)',
+      \            '\=submatch(1) . s:NextListNumber(submatch(2), ' . a:depth . ', ' . incr . ')', ''))
+  endwhile
 endfun
 
 fun! mkdx#EnterHandler()
@@ -361,17 +398,7 @@ fun! mkdx#EnterHandler()
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
 
     if (at_end && !remove && match(line, '^ *[0-9.]\+') > -1)
-      let min_indent = indent(lnum)
-
-      while (nextnonblank(lnum) == lnum)
-        let lnum += 1
-
-        if (indent(lnum) < min_indent) | break | endif
-        call setline(lnum,
-          \ substitute(getline(lnum),
-          \            '^\( \{' . min_indent . ',}\)\([0-9.]\+\)',
-          \            '\=submatch(1) . s:NextListNumber(submatch(2), ' . incr . ')', ''))
-      endwhile
+      call s:UpdateListNumbers(lnum, incr)
     endif
 
     if (remove)  | call setline('.', '')                                             | endif

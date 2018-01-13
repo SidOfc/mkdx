@@ -123,15 +123,16 @@ if g:mkdx#settings.map.enable == 1
     endif
   endif
 
-  for [label, prefix, mapmode, binding, expr, cmd] in s:bindings
+  for [label, prefix, mapmode, binding, plug, cmd] in s:bindings
     let full_mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
     let plug_mapping = get(matchlist(binding, '<Plug>([^)]\+)'), 0, -1)
 
     if (mapcheck(full_mapping, mapmode) == "") && (!plug_mapping || !hasmapto(plug_mapping))
-      exe mapmode . 'map <buffer> ' . full_mapping . ' ' . expr
       if (!empty(cmd) && has('menu'))
           exe mapmode[0] . 'noremenu <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . full_mapping . ' ' . cmd
       end
+
+      exe mapmode . 'map <buffer> ' . full_mapping . ' ' . plug
     endif
   endfor
 endif

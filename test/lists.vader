@@ -2,6 +2,20 @@ Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given markdown (Checklists):
+  - [ ] unstarted
+  - [-] pending
+  - [x] complete
+
+Execute (Syntax groups are correctly set):
+  AssertEqual SyntaxAt(1, 1), 'mkdxListItem'
+  AssertEqual SyntaxAt(1, 3), 'mkdxCheckboxEmpty'
+  AssertEqual SyntaxAt(2, 3), 'mkdxCheckboxPending'
+  AssertEqual SyntaxAt(3, 3), 'mkdxCheckboxComplete'
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A markdown list):
   - list item
   - list item

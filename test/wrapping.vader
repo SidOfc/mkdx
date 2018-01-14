@@ -109,3 +109,14 @@ Do (inline-code selection with <leader>` in visual mode):
 
 Expect (The selection to be inline-code):
   `Hello world`
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A line "image.png is awesome"):
+  image.png is awesome
+
+Do (create image tag for "image.png" using <leader>ln in visual mode):
+  v3e ln
+
+Expect (The selection to be wrapped in an image link):
+  ![image.png](image.png) is awesome

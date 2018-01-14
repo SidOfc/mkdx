@@ -2,6 +2,18 @@ Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given markdown (Checkboxes):
+  [ ] unstarted
+  [-] pending
+  [x] complete
+
+Execute (Syntax groups are correctly set):
+  AssertEqual SyntaxAt(1, 1), 'mkdxCheckboxEmpty'
+  AssertEqual SyntaxAt(2, 1), 'mkdxCheckboxPending'
+  AssertEqual SyntaxAt(3, 1), 'mkdxCheckboxComplete'
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Execute (Set g:mkdx#settings.checkbox.toggles = [' ', '-', '~', 'x']):
   let g:mkdx#settings.checkbox.toggles = [' ', '-', '~', 'x']
 

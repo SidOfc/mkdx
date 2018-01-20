@@ -3,64 +3,96 @@ Include: setup.vader
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A header):
-  # Hello world
+  ## Hello world
+
+Do (<leader>] (demote header)):
+   ]
+
+Expect (Header to be demoted):
   ### Hello world
 
-Do (Promote and demote header):
-   ]j [
+Do (<leader>[ (promote header)):
+   [
 
-Expect (Headers to be adjusted accordingly):
-  ## Hello world
-  ## Hello world
+Expect (Header to be promoted):
+  # Hello world
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Do (<leader>[<leader>[ (promote to normal line)):
+   [ [
 
-Given (A regular line):
-  hello world
-  > hello world
+Expect (A regular line):
+  Hello world
 
-Do (<leader>'):
-   'j '
+Do (<leader>]<leader>]<leader>]<leader>]<leader>] (promote to normal line)):
+   ] ] ] ] ]
 
-Expect (The line to be quoted):
-  > hello world
-  hello world
+Expect (A regular line):
+  Hello world
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A regular line):
   hello world
-  [ ] hello world
+
+Do (<prefix>'):
+   '
+
+Expect (The line to be a quote):
+  > hello world
+
+Do (<prefix>'<prefix>'):
+   ' '
+
+Expect (The line to be unchanged):
+  hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
 
 Do (<leader>t):
-   tj t
+   t
 
 Expect (The line to become a checkbox line):
   [ ] hello world
+
+Do (<leader>t<leader>t):
+   t t
+
+Expect (The line to be unchanged):
   hello world
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A regular line):
   hello world
-  - [ ] hello world
 
 Do (<leader>lt):
-   ltj lt
+   lt
 
 Expect (The line to become a checklist line):
   - [ ] hello world
+
+Do (<leader>lt<leader>lt):
+   lt lt
+
+Expect (The line to be unchanged):
   hello world
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A regular line):
   hello world
-  - hello world
 
 Do (<leader>ll):
-   llj ll
+   ll
 
 Expect (The line to become a list item):
   - hello world
+
+Do (<leader>ll<leader>ll):
+   ll ll
+
+Expect (The line to be unchanged):
   hello world

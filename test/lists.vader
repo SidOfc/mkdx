@@ -13,7 +13,6 @@ Execute (Syntax groups are correctly set):
   AssertEqual SyntaxAt(2, 3), 'mkdxCheckboxPending'
   AssertEqual SyntaxAt(3, 3), 'mkdxCheckboxComplete'
 
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A markdown list):
@@ -109,6 +108,27 @@ Expect (List items are correctly incremented and new empty list item):
       3.1. subtask
       3.2. subtask
   4. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
+Do (Press <O> + <enter> on the item decrements following list items):
+  O\<cr>
+
+Expect (List items are correctly decremented and the line is now empty):
+  
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

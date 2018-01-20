@@ -178,13 +178,20 @@ fun! mkdx#WrapLink(...)
   let ln = getline('.')
   let m  = get(a:000, 0, 'n')
   let r  = @z
+  let nl = 0
 
   exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
 
-  let img = !empty(g:mkdx#settings.image_extension_pattern) && match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
-  let @z  = (match(ln, ('.' . @z . '$')) > -1 ? ' ' : '') . (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
+  if (m == 'v')
+    let nl = match(@z, '\n$') > -1
+    let @z = substitute(@z, '\n$', '', '')
+  endif
 
-  normal! "zPT(
+  let img = !empty(g:mkdx#settings.image_extension_pattern) && match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+  let @z  = (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
+  let end = nl ? 'mzo`zl' : 'T('
+
+  exe 'normal! "z' . ((strlen(@z) + virtcol('.') - (img ? 5 : 4)) >= strlen(ln) ? 'p' : 'P') . end
 
   let @z = r
 

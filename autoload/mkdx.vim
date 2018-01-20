@@ -347,7 +347,7 @@ fun! s:NextListNumber(current, depth, ...)
   let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
   let tdot  = match(curr, '\.$') > -1
   let parts = split(curr, '\.')
-  let incr  = get(a:000, 0, 0) == 1 ? -1 : 1
+  let incr  = get(a:000, 0, 0) < 0 ? -1 : 1
 
   if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
   return join(parts, '.') . (tdot ? '.' : '')
@@ -408,8 +408,8 @@ fun! mkdx#EnterHandler()
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
 
-    if (at_end && !remove && match(line, '^ *[0-9.]\+') > -1)
-      call s:UpdateListNumbers(lnum, incr)
+    if (at_end && match(line, '^ *[0-9.]\+') > -1)
+      call s:UpdateListNumbers(lnum, incr, (remove ? -1 : 1))
     endif
 
     if (remove)  | call setline('.', '')                                             | endif

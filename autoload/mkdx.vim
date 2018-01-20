@@ -290,13 +290,17 @@ fun! mkdx#ToggleHeader(...)
   let increment = get(a:000, 0, 0)
   let line      = getline('.')
 
-  if (match(line, '^' . g:mkdx#settings.tokens.header . '\{1,6} ') == -1) |  return | endif
+  if (!increment && (match(line, '^' . g:mkdx#settings.tokens.header . '\{1,6} ') == -1))
+    call setline('.', g:mkdx#settings.tokens.header . ' ' . line)
+    return
+  endif
 
   let parts     = split(line, '^' . g:mkdx#settings.tokens.header . '\{1,6} \zs')
-  let new_level = strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
-  let new_level = new_level > 6 ? 1 : (new_level < 1 ? 6 : new_level)
+  let new_level = len(parts) < 2 ? -1 : strlen(substitute(parts[0], ' ', '', 'g')) + (increment ? -1 : 1)
+  let new_level = new_level > 6 ? 0 : (new_level < 0 ? 6 : new_level)
+  let tail      = get(parts, 1, parts[0])
 
-  call setline('.', repeat(g:mkdx#settings.tokens.header, new_level) . ' ' . parts[1])
+  call setline('.', repeat(g:mkdx#settings.tokens.header, new_level) . (new_level > 0 ? ' ' : '') . tail)
   silent! call repeat#set("\<Plug>(mkdx-" . (increment ? 'promote' : 'demote') . "-header)")
 endfun
 

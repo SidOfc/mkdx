@@ -343,16 +343,6 @@ fun! mkdx#Tableize() range
   call cursor(a:lastline + 1, 1)
 endfun
 
-fun! s:NextListNumber(current, depth, ...)
-  let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
-  let tdot  = match(curr, '\.$') > -1
-  let parts = split(curr, '\.')
-  let incr  = get(a:000, 0, 0) < 0 ? -1 : 1
-
-  if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
-  return join(parts, '.') . (tdot ? '.' : '')
-endfun
-
 fun! mkdx#ShiftOHandler()
   let lnum = line('.')
   let line = getline(lnum)
@@ -387,6 +377,17 @@ fun! s:UpdateListNumbers(lnum, depth, ...)
       \            '^\( \{' . min_indent . ',}\)\([0-9.]\+\)',
       \            '\=submatch(1) . s:NextListNumber(submatch(2), ' . a:depth . ', ' . incr . ')', ''))
   endwhile
+endfun
+
+fun! s:NextListNumber(current, depth, ...)
+  let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
+  let tdot  = match(curr, '\.$') > -1
+  let parts = split(curr, '\.')
+  let incr  = get(a:000, 0, 0)
+  let incr  = incr < 0 ? incr : 1
+
+  if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
+  return join(parts, '.') . (tdot ? '.' : '')
 endfun
 
 fun! mkdx#EnterHandler()

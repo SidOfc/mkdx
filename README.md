@@ -143,8 +143,8 @@ git glone https://github.com/SidOfc/mkdx
 
 All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
 If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.
-Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended. For the first major release of mkdx,
-I'm planning to remove all `g:mkdx#` variables, except `g:mkdx#settings`. To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
+Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.
+To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
 
 ~~~viml
 let g:mkdx#settings = {
@@ -176,11 +176,7 @@ Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) set
 For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
 This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
-a `g:mkdx#settings` variable.
-
-<strike>This behaviour will be removed in version 1.0.0.</strike> This behaviour will remain supported.
-While support will exist, no more global variables are added and they will no longer be set by default, e.g. `echo exists('g:mkdx#table_header_divider') => 0`.
-Instead, check if `echo exists('g:mkdx#settings') == 1` instead. (Note: mkdx.vim is a **filetype** plugin, please enter a *markdown* buffer before checking. Once it's set, it should exist in the `g:` namespace.)
+a `g:mkdx#settings` variable. <strike>This behaviour will be removed in version 1.0.0.</strike> This behaviour will remain supported.
 
 Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
 To overwrite a setting while editing:

@@ -173,10 +173,14 @@ let g:mkdx#settings = { 'enter': { 'enable': 0 } }
 ~~~
 
 Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
-For backwards compatibility, `g:mkdx#` variables are merged into the defaults, this behaviour will be removed in version 1.0.0.
+For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
 This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
 a `g:mkdx#settings` variable.
+
+<strike>This behaviour will be removed in version 1.0.0.</strike> This behaviour will remain supported.
+While support will exist, no more global variables are added and they will no longer be set by default, e.g. `echo exists('g:mkdx#table_header_divider') => 0`.
+Instead, check if `echo exists('g:mkdx#settings') == 1` instead. (Note: mkdx.vim is a **filetype** plugin, please enter a *markdown* buffer before checking. Once it's set, it should exist in the `g:` namespace.)
 
 Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
 To overwrite a setting while editing:
@@ -864,7 +868,7 @@ This is because some tasks such as "Write tests" might take a while to complete 
 - [x] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
 - [x] Add opt-in syntax highlighting for list items and checkbox states
 - [x] Write tests (even I'm surprised here, thanks again [junegunn for yet another awesome plugin!](https://github.com/junegunn/vader.vim))
-- [ ] Add a github Wiki
+- [ ] Fix bugs / add features as they come in
 
 # Contributing
 

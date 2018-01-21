@@ -1016,12 +1016,15 @@ This function wraps around both ways: h1 to h6 and h6 to h1.
 When {increment} is 1:
 
     ## Hello    ` => ` # Hello
-    # Hello     ` => ` ###### Hello
+    # Hello     ` => ` Hello
+    Hello       ` =>  `###### Hello
 
 When {increment} is 0 (default):
 
-    # Hello     ` => ` ## Hello
-    ##### Hello ` => ` # Hello
+    # Hello      ` => ` ## Hello
+
+    ###### Hello ` =>  `Hello
+    Hello        ` =>  `# Hello
 
 ==============================================================================
 mkdx#Tableize()                                         *mkdx-function-tableize*

@@ -9,7 +9,7 @@ Given (Some rows of unquoted CSV content):
   Stan Marsh,10,Male
   Kyle Brovlofski,10,Male
 
-Do (Visually select the rows and press <leader>,):
+Do (V5j<prefix>, (visually select the rows and convert)):
   V5j ,
 
 Expect (A markdown table):

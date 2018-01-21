@@ -28,9 +28,9 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
-    - [Version 0.7.1](#version-071)
-    - [Version 0.7.0](#version-070)
-    - [Version 0.6.1](#version-061)
+    - [21-01-2018 VERSION 0.8.0](#21-01-2018-version-080)
+    - [13-01-2018 VERSION 0.7.1](#13-01-2018-version-071)
+    - [13-01-2018 VERSION 0.7.0](#13-01-2018-version-070)
 - [Install](#install)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
@@ -66,7 +66,7 @@ settings and examples with default mappings.
         - [Lists](#lists)
         - [Checklists](#checklists)
     - [Checking Checkboxes / Checklists](#checking-checkboxes--checklists)
-    - [Toggling Headers](#toggling-headers)
+    - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
     - [Toggling Quotes](#toggling-quotes)
     - [Wrapping text](#wrapping-text)
         - [As a link](#as-a-link)
@@ -83,30 +83,25 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
-## Version 0.7.1
+## 21-01-2018 VERSION 0.8.0
+
+- Fix some issues with `mkdx#WrapLink`.
+- `mkdx#WrapLink` handles selections that include newline character correctly.
+- Headers can now also be toggled on / off using `mkdx#ToggleHeader`.
+- When deleting a list item anywhere in the list, following list items are decremented by 1.
+- Added more tests for
+    - decrementing list items
+    - promoting / demoting headers
+    - Wrapping links and images
+
+## 13-01-2018 VERSION 0.7.1
 
 Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
 This will put your cursor on a new empty list item above the current line.
 
-## Version 0.7.0
+## 13-01-2018 VERSION 0.7.0
 
 Add menu support in terminal vim and gvim if it `:has('menu')`.
-
-## Version 0.6.1
-
-Fixes a bug where wrapping text on a line with a single word would cause a space to be prepended.
-Imagine the cursor is the pipe character (`|`) in this line: `w|ord`, [wrapping as a link](#as-a-link)
-would cause the following result:
-
-~~~
-# this
-word
- [word](|)
-
-# now becomes this
-word
-[word](|)
-~~~
 
 # Install
 
@@ -710,12 +705,12 @@ and will also become `4`.
 " :h mkdx-function-toggle-checkbox
 ```
 
-## Toggling Headers
+## Toggling and promoting / demoting Headers
 
 ![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
 
 Increment or decrement a heading with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>[</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>]</kbd>.
-These mappings cycle backward and forward between h1 and h6, wrapping around both ends.
+As can be seen in the gif, headings can be toggled as well as promoted / demoted with these mappings.
 The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader).
 
 ```viml

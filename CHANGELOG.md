@@ -1,3 +1,19 @@
+## Version 0.6.1
+
+Fixes a bug where wrapping text on a line with a single word would cause a space to be prepended.
+Imagine the cursor is the pipe character (`|`) in this line: `w|ord`, [wrapping as a link](#as-a-link)
+would cause the following result:
+
+~~~
+# this
+word
+ [word](|)
+
+# now becomes this
+word
+[word](|)
+~~~
+
 ## Version 0.6.0
 
 - This version adds _opt-in_ support for checkbox state highlighting. See [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable) for more information.

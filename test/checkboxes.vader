@@ -114,10 +114,10 @@ Expect (The update to be handled "incorrectly"):
       - [ ] checkbox
   - [ ] checkbox
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 Execute (Set g:mkdx#settings.enter.malformed = 1):
   let g:mkdx#settings.enter.malformed = 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A malformed checklist):
   - [ ] checkbox

@@ -112,8 +112,8 @@ if g:mkdx#settings.map.enable == 1
         \ ['Convert\ to\ table',            1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>'],
         \ ['Generate\ /\ Update\ TOC',      1, 'n', 'i',      '<Plug>(mkdx-gen-or-upd-toc)',          ':call mkdx#GenerateOrUpdateTOC()<cr>'],
         \ ['Open\ TOC\ in\ quickfix',       1, 'n', 'I',      '<Plug>(mkdx-quickfix-toc)',            ':call mkdx#QuickfixHeaders()<cr>'],
-        \ ['Toggle to kbd tag',             1, 'n', 'k',      '<Plug>(mkdx-toggle-to-kbd-n)',         ':call mkdx#ToggleToKbd()'],
-        \ ['Toggle to kbd tag',             1, 'v', 'k',      '<Plug>(mkdx-toggle-to-kbd-v)',         ':call mkdx#ToggleToKbd("v")'],
+        \ ['Toggle\ to\ kbd\ tag',             1, 'n', 'k',      '<Plug>(mkdx-toggle-to-kbd-n)',         ':call mkdx#ToggleToKbd()<cr>'],
+        \ ['Toggle\ to\ kbd\ tag',             1, 'v', 'k',      '<Plug>(mkdx-toggle-to-kbd-v)',         ':call mkdx#ToggleToKbd("v")<cr>'],
         \ ['Insert\ kbd\ tag',              0, 'inore', '<<tab>', '<kbd></kbd>2hcit',                 ''],
         \ ['Backtick\ fenced\ code\ block', 0, 'inore', '```',    s:fbtick . '' . s:fbtick . 'kA',  ''],
         \ ['tilde\ fenced\ code\ block',    0, 'inore', '~~~',    s:ftilde . '' . s:ftilde . 'kA',  '']

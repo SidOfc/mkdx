@@ -1,6 +1,57 @@
 """"" UTILITY FUNCTIONS
 
 let s:util = {}
+let s:util.modifier_mappings = {
+      \ 'C': 'ctrl',
+      \ 'M': 'meta',
+      \ 'S': 'shift',
+      \ 'ctrl': 'ctrl',
+      \ 'meta': 'meta',
+      \ 'shift': 'shift'
+      \ }
+
+fun! mkdx#ToggleToKbd(...)
+  let m  = get(a:000, 0, 'n')
+  let r  = @z
+  let ln = getline('.')
+
+  exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
+  echo @z
+  let oz = @z
+  let ps = split(oz, ' ')
+  let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')
+  exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
+  let @z = r
+endfun
+
+fun! s:util.ToggleMappingToKbd(str)
+  let input = a:str
+  let parts = split(input, '[-\+]')
+  let state = { 'regular': 0, 'meta': 0, 'ctrl': 0, 'shift': 0 }
+  let ilen  = len(parts) - 1
+  let idx   = 0
+  let out   = []
+  let res   = -1
+
+  for key in parts
+    if (match(key, '/kbd') > -1)
+      let result = substitute(key, '</\?kbd>', '', 'g')
+    else
+      let is_mod         = has_key(s:util.modifier_mappings, key)
+      let updater        = is_mod ? s:util.modifier_mappings[key] : 'regular'
+      let result         = is_mod && state[updater] == 0 ? s:util.modifier_mappings[key] : tolower(key)
+      let result         = idx == ilen ? tolower(key) : result
+      let updater        = idx == ilen ? 'regular' : updater
+      let state[updater] = 1
+      let idx           += 1
+      let result         = '<kbd>' . result . '</kbd>'
+    endif
+
+    call add(out, result)
+  endfor
+
+  return join(out, '+')
+endfun
 
 fun! s:util.ToggleTokenAtStart(line, token, ...)
   let line   = a:line

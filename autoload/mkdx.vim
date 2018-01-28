@@ -487,7 +487,7 @@ fun! mkdx#UpdateTOC()
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
-  let qflist = map(s:util.ListHeaders(), function('<SID>HeaderToQF'))
+  let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
   if (get(a:000, 0, 1) == 0)
     return qflist
   else

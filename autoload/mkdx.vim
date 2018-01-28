@@ -16,7 +16,6 @@ fun! mkdx#ToggleToKbd(...)
   let ln = getline('.')
 
   exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
-  echo @z
   let oz = @z
   let ps = split(oz, ' ')
   let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')

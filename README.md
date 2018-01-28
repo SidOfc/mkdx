@@ -84,6 +84,13 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 28-01-2018 VERSION 0.9.0
+
+- Fix `mkdx#HeaderToQF` wrong function ref.
+- Fix `g:mkdx#settings.enter.enable` and `g:mkdx#settings.enter.shifto` can be disabled during runtime.
+- Fix insert mode "\~\~\~" and "\`\`\`" recursion.
+- Add support for [toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts) in normal and visual mode.
+
 ## 21-01-2018 VERSION 0.8.0
 
 - Fix some issues with `mkdx#WrapLink`.
@@ -99,10 +106,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
 This will put your cursor on a new empty list item above the current line.
-
-## 13-01-2018 VERSION 0.7.0
-
-Add menu support in terminal vim and gvim if it `:has('menu')`.
 
 # Install
 

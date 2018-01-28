@@ -394,6 +394,10 @@ fun! mkdx#Tableize() range
 endfun
 
 fun! mkdx#ShiftOHandler()
+  if (!g:mkdx#settings.enter.shifto)
+    return normal! O
+  endif
+
   let lnum = line('.')
   let line = getline(lnum)
   let lin  = get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
@@ -418,7 +422,7 @@ fun! mkdx#EnterHandler()
   let cnum    = virtcol('.')
   let line    = getline(lnum)
 
-  if (!empty(line))
+  if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strlen(line)
     let at_end  = cnum > len
     let sp_pat  = '^ *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\?\|\[.\]\)'

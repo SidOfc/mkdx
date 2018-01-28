@@ -137,7 +137,7 @@ if g:mkdx#settings.map.enable == 1
 
     if (mapcheck(full_mapping, mapmode) == "") && (!plug_mapping || !hasmapto(plug_mapping))
       if (!empty(cmd) && has('menu'))
-          exe mapmode[0] . 'noremenu <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . full_mapping . ' ' . cmd
+          exe mapmode[0] . 'noremenu <silent> <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . full_mapping . ' ' . cmd
       end
 
       exe mapmode . 'map <buffer> ' . full_mapping . ' ' . plug

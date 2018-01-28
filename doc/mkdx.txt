@@ -64,6 +64,8 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-toggle-checkbox)
         <Plug>(mkdx-toggle-checklist)
         <Plug>(mkdx-toggle-list)
+        <Plug>(mkdx-toggle-to-kbd-n)
+        <Plug>(mkdx-toggle-to-kbd-v)
 
     Mappings
         Insert fenced code block
@@ -85,6 +87,7 @@ CONTENTS                                                         *mkdx-contents*
         Toggle checkbox
         Toggle checklist
         Toggle list
+        Toggle kbd shortcut
 
     Functions
         mkdx#ToggleCheckboxState()
@@ -100,6 +103,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleCheckboxTask()
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
+        mkdx#ToggleToKbd()
 
 
 ==============================================================================
@@ -189,6 +193,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-toggle-checkbox|
     - |mkdx-plug-toggle-checklist|
     - |mkdx-plug-toggle-list|
+    - |mkdx-plug-toggle-to-kbd-n|
+    - |mkdx-plug-toggle-to-kbd-v|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -210,6 +216,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
+    - |mkdx-mapping-toggle-kbd-shortcut|
 
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
@@ -226,6 +233,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-checkbox-task|
     - |mkdx-function-toggle-checklist|
     - |mkdx-function-toggle-list|
+    - |mkdx-function-toggle-to-kbd|
 
 ==============================================================================
 `g:mkdx#settings = { ... }`                                        *mkdx-settings*
@@ -646,6 +654,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#ToggleList()<Cr>`
 
 ==============================================================================
+<Plug>(mkdx-toggle-to-kbd-n)                         *mkdx-plug-toggle-to-kbd-n*
+
+    `:call mkdx#ToggleToKbd()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-to-kbd-v)                         *mkdx-plug-toggle-to-kbd-v*
+
+    `:<C-U>call mkdx#ToggleToKbd('v')<Cr>`
+
+==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both
@@ -913,6 +931,15 @@ In visual mode:
     `- this is another line` => `this is another line`
     `- blah blah more lines`    `blah blah more lines`
 
+==============================================================================
+Toggle kbd shortcut                           *mkdx-mapping-toggle-kbd-shortcut*
+                                                                 <MAP_PREFIX>k
+
+This mapping works in both normal and visual mode.
+In normal mode, it will attempt to convert the current |WORD| to an expanded
+kbd expression. In visual mode, the current visual selection will be expanded.
+
+Examples can be found at |mkdx-function-toggle-to-kbd|
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -1291,5 +1318,38 @@ Otherwise, a list marker is toggled as normal
 
     list item `   => ` - list item
     - list item ` => ` list item
+
+==============================================================================
+mkdx#ToggleToKbd([{mode}])                         *mkdx-function-toggle-to-kbd*
+
+This function will toggle the |WORD| under the cursor in normal mode or a
+visual selection into a markdown keyboard mapping.
+
+Some examples:
+
+    `C-S-j  =>   <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>j</kbd>`
+    `C-S-c  =>   <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>c</kbd>`
+
+uppercase characters `S`, `C` and `M` are recognized as modifiers
+as well as lowercase `shift`, `control` and `meta` keywords.
+Any modifier may appear only once in a mapping, all later occurences are
+parsed as regular keystrokes.
+
+(Note the last kbd tag has a regular lowercase `c` in it)
+
+    `C-S-C        =>  <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>c</kbd>`
+
+In these mappings the first 3 characters are all modifiers, `ctrl`, `shift`
+and `meta` respectively, so any other "would be modifiers" will now be parsed
+to regular keys.
+
+    `C-S-M-C  =>  <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>meta</kbd>+<kbd>c</kbd>`
+    `C-S-M-S  =>  <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>meta</kbd>+<kbd>s</kbd>`
+    `C-S-M-M  =>  <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>meta</kbd>+<kbd>m</kbd>`
+
+Multiple space separated mappings in a visual selection
+will also be converted:
+
+    `S-m S-p  =>  <kbd>shift</kbd>+<kbd>m</kbd> <kbd>shift</kbd>+<kbd>p</kbd>`
 
 vim:tw=78:sw=4:ft=help:norl:

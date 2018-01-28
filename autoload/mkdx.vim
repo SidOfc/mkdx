@@ -21,6 +21,10 @@ fun! mkdx#ToggleToKbd(...)
   let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')
   exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
   let @z = r
+
+  if (m == 'n')
+    silent! call repeat#set("\<Plug>(mkdx-toggle-to-kbd-n)")
+  endif
 endfun
 
 fun! s:util.ToggleMappingToKbd(str)

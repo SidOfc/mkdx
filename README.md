@@ -65,8 +65,9 @@ settings and examples with default mappings.
         - [Checkboxes](#checkboxes)
         - [Lists](#lists)
         - [Checklists](#checklists)
-    - [Checking Checkboxes / Checklists](#checking-checkboxes--checklists)
+    - [Ticking Checkboxes / Checklists](#ticking-checkboxes--checklists)
     - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
+    - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
     - [Toggling Quotes](#toggling-quotes)
     - [Wrapping text](#wrapping-text)
         - [As a link](#as-a-link)
@@ -453,21 +454,24 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 The below list contains all mappings that mkdx creates by default.<br />
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
+**Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
+
 |description|modes|mapping|Execute|
 |----|----|-------|-------|
 |Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
 |Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
 |Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
 |Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
+|Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
 |Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
 |Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
 |Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
 |Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
-|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-n)`|
-|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-n)`|
-|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-n)`|
-|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-n)`|
-|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-n)`|
+|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
+|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
+|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
+|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
+|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
@@ -672,7 +676,7 @@ toggling checklists only performed a check to see if a checklist item was presen
 " :h mkdx-function-toggle-checklist
 ~~~
 
-## Checking Checkboxes / Checklists
+## Ticking Checkboxes / Checklists
 
 **Single checkbox:**
 ![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox-colors.gif)
@@ -717,6 +721,19 @@ The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmk
 " :h mkdx-mapping-increment-header-level
 " :h mkdx-mapping-decrement-header-level
 " :h mkdx-function-toggle-header
+```
+
+## Toggling \<kbd /> shortcuts
+
+![mkdx toggle kbd shortcuts](doc/gifs/vim-mkdx-toggle-kbd.gif)
+
+(**Note:** *does not work with multiline selection*)
+
+Quickly toggle plain text shortcuts to markdown shortcuts and back with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>.
+
+```viml
+" :h mkdx-mapping-toggle-kbd-shortcut
+" :h mkdx-function-toggle-to-kbd
 ```
 
 ## Toggling Quotes

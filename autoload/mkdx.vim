@@ -27,6 +27,11 @@ fun! mkdx#ToggleToKbd(...)
   endif
 endfun
 
+fun! s:util.IsImage(str)
+  if (empty(g:mkdx#settings.image_extension_pattern)) | return 0 | endif
+  return match(get(split(a:str, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+endfun
+
 fun! s:util.ToggleMappingToKbd(str)
   let input = a:str
   let parts = split(input, '[-\+]')
@@ -345,29 +350,30 @@ fun! mkdx#WrapText(...)
   endif
 endfun
 
-fun! mkdx#WrapLink(...)
-  let ln = getline('.')
-  let m  = get(a:000, 0, 'n')
-  let r  = @z
-  let nl = 0
-
-  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
+fun! mkdx#WrapLink(...) range
+  let r = @z
+  let m = get(a:000, 0, 'n')
 
   if (m == 'v')
-    let nl = match(@z, '\n$') > -1
-    let @z = substitute(@z, '\n$', '', '')
-  endif
+    normal! gv"zy
+    let [slnum, scol] = getpos("'<")[1:2]
+    let [elnum, ecol] = getpos("'>")[1:2]
+    let is_img = s:util.IsImage(@z)
 
-  let img = !empty(g:mkdx#settings.image_extension_pattern) && match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
-  let @z  = (img ? '!' : '') . '[' . @z . '](' . (img ? @z : '') . ')'
-  let end = nl ? 'mzo`zl' : 'T('
-
-  exe 'normal! "z' . ((strlen(@z) + virtcol('.') - (img ? 5 : 4)) >= strlen(ln) ? 'p' : 'P') . end
+    call cursor(elnum, ecol)
+    exe 'normal! a](' . (is_img ? substitute(@z, '\n', '', 'g') : '') . ')'
+    call cursor(slnum, scol)
+    exe 'normal! i' . (is_img ? '!' : '') . '['
+    call cursor(elnum, ecol)
+    normal! f)
+  else
+    normal! "zdiw
+    let @z = '[' . @z . ']()'
+    exe 'normal! "z' . (virtcol('.') == strlen(getline('.')) ? 'p' : 'P')
+  end
 
   let @z = r
-
   startinsert
-  silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")
 endfun
 
 fun! mkdx#ToggleList()

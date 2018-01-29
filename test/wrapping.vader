@@ -2,14 +2,38 @@ Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Given (A line "Hello world"):
-  Hello world
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+  that I use to test links
 
-Do (<prefix>ln):
-   lnhttps://github.com/SidOfc/mkdx\<esc>
+Do ($vb<prefix>ln):
+  :normal! $vb\<cr> lnhello
 
 Expect (The word "Hello" to be a link):
-  [Hello](https://github.com/SidOfc/mkdx) world
+  Hello [there](hello)
+  this is an awesome short
+  paragraph of text
+  that I use to test links
+
+Do (jV<prefix>ln):
+  jV lnhello
+
+Expect (The word "Hello" to be a link):
+  Hello there
+  [this is an awesome short](hello)
+  paragraph of text
+  that I use to test links
+
+Do (jVj<prefix>ln):
+  jVj lnhello
+
+Expect (The word "Hello" to be a link):
+  Hello there
+  [this is an awesome short
+  paragraph of text](hello)
+  that I use to test links
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

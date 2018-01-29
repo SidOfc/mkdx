@@ -62,7 +62,7 @@ noremap <silent> <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr
 noremap <silent> <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>
 noremap <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)<Cr>
 noremap <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
-noremap <silent> <Plug>(mkdx-wrap-link-v)        :<C-U>call mkdx#WrapLink('v')<Cr>
+noremap <silent> <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
 noremap <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
 noremap <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
 noremap <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>

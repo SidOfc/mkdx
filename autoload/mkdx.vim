@@ -10,6 +10,33 @@ let s:util.modifier_mappings = {
       \ 'shift': 'shift'
       \ }
 
+fun! s:util.WrapSelectionOrWord(...)
+  let mode  = get(a:000, 0, 'n')
+  let start = get(a:000, 1, '')
+  let end   = get(a:000, 2, start)
+  let _r    = @z
+
+  if (mode == 'n')
+    normal! "zdiw
+    let nl = virtcol('.') == strlen(getline('.'))
+    let @z = start . @z . end
+    exe 'normal! "z' . (nl ? 'p' : 'P')
+  else
+    let [slnum, scol] = getpos("'<")[1:2]
+    let [elnum, ecol] = getpos("'>")[1:2]
+
+    call cursor(elnum, ecol)
+    exe 'normal! a' . end
+    call cursor(slnum, scol)
+    exe 'normal! i' . start
+    call cursor(elnum, ecol)
+  endif
+
+  let zz = @z
+  let @z = _r
+  return zz
+endfun
+
 fun! mkdx#ToggleToKbd(...)
   let m  = get(a:000, 0, 'n')
   let r  = @z
@@ -336,14 +363,8 @@ fun! mkdx#WrapText(...)
   let w  = get(a:000, 1, '')
   let x  = get(a:000, 2, w)
   let a  = get(a:000, 3, '')
-  let r  = @z
-  let ln = getline('.')
 
-  exe 'normal! ' . (m == 'n' ? '"zdiw' : 'gv"zd')
-  let oz = @z
-  let @z = w . @z . x
-  exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
-  let @z = r
+  call s:util.WrapSelectionOrWord(m, w, x, a)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -356,23 +377,17 @@ fun! mkdx#WrapLink(...) range
 
   if (m == 'v')
     normal! gv"zy
-    let [slnum, scol] = getpos("'<")[1:2]
-    let [elnum, ecol] = getpos("'>")[1:2]
-    let is_img = s:util.IsImage(@z)
-
-    call cursor(elnum, ecol)
-    exe 'normal! a](' . (is_img ? substitute(@z, '\n', '', 'g') : '') . ')'
-    call cursor(slnum, scol)
-    exe 'normal! i' . (is_img ? '!' : '') . '['
-    call cursor(elnum, ecol)
+    let img = s:util.IsImage(@z)
+    call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    normal! "zdiw
-    let @z = '[' . @z . ']()'
-    exe 'normal! "z' . (virtcol('.') == strlen(getline('.')) ? 'p' : 'P')
+    call s:util.WrapSelectionOrWord(m, '[', ']()')
   end
 
   let @z = r
+
+  silent! call repeat#set("\<Plug>(mkdx-wrap-link-" . m . ")")
+
   startinsert
 endfun
 

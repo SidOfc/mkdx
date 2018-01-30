@@ -87,6 +87,27 @@ Expect (The word "Hello" to be bold):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+
+Do (jv5el<prefix>b):
+  jv5e b
+
+Expect (Selection including newline to be wrapped):
+  Hello there
+  **this is an awesome short**
+  paragraph of text
+
+Do (jvj2e<prefix>b):
+  jvj2e b
+
+Expect (Multiline selection including newline to be wrapped):
+  Hello there
+  **this is an awesome short
+  paragraph of** text
+
 Given (A line "Hello world"):
   Hello world
 
@@ -107,7 +128,26 @@ Do (<prefix>/ (italicize "Hello")):
 Expect (The word "Hello" to be italic):
   *Hello* world
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+
+Do (jv5el<prefix>/):
+  jv5e /
+
+Expect (Line including newline to be wrapped):
+  Hello there
+  *this is an awesome short*
+  paragraph of text
+
+Do (jvj2e<prefix>/):
+  jvj2e /
+
+Expect (Line including newline to be wrapped):
+  Hello there
+  *this is an awesome short
+  paragraph of* text
 
 Given (A line "Hello world"):
   Hello world
@@ -128,8 +168,6 @@ Do (<prefix>s (strike "Hello")):
 
 Expect (The word "Hello" to be strikethrough):
   <strike>Hello</strike> world
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line "Hello world"):
   Hello world

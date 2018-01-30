@@ -85,6 +85,30 @@ Do (<prefix>b (bolden "Hello")):
 Expect (The word "Hello" to be bold):
   **Hello** world
 
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+  that I use to test links
+
+Do (Vj<prefix>b):
+  Vj b
+
+Expect (The word "Hello" to be a link):
+  **Hello there
+  this is an awesome short**
+  paragraph of text
+  that I use to test links
+
+Do (wvj<prefix>b):
+  wvj b
+
+Expect (The word "Hello" to be a link):
+  Hello **there
+  this is** an awesome short
+  paragraph of text
+  that I use to test links
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A paragraph of text):
@@ -178,6 +202,27 @@ Do (<prefix>s (strike selection)):
 Expect (The selection to be strikethrough):
   <strike>Hello world</strike>
 
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+
+Do (jV<prefix>s):
+  jV s
+
+Expect (Line including newline to be wrapped):
+  Hello there
+  <strike>this is an awesome short</strike>
+  paragraph of text
+
+Do (jwv3e<prefix>s):
+  jwv3e s
+
+Expect (Line including newline to be wrapped):
+  Hello there
+  this <strike>is an awesome</strike> short
+  paragraph of text
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line "Hello world"):
@@ -189,7 +234,18 @@ Do (<prefix>` (inline-code "Hello")):
 Expect (The word "Hello" to be inline-code):
   `Hello` world
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+
+Do (Vj<prefix>`):
+  Vj `
+
+Expect (Line including newline to be wrapped):
+  `Hello there
+  this is an awesome short`
+  paragraph of text
 
 Given (A line "Hello world"):
   Hello world
@@ -210,8 +266,6 @@ Do (<prefix>ln (create image tag for selection)):
 
 Expect (The selection to be wrapped in an image link):
   ![image.png](image.png) is awesome
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line ending in an image):
   check this example.png

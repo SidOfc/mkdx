@@ -1,6 +1,6 @@
 # mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub stars](https://img.shields.io/github/stars/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
-**If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**
+(**If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**)
 
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
@@ -113,7 +113,7 @@ This plugin should work in _vim_ as well as _nvim_, no clue about _gvim_ but sin
 text and is written in vimL, it will probably work there too. To install, use a plugin manager of choice like
 [Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen).
 
-**[Vundle](https://github.com/VundleVim/Vundle.vim)**
+[Vundle](https://github.com/VundleVim/Vundle.vim)
 ```viml
 Plugin 'SidOfc/mkdx'
 
@@ -121,7 +121,7 @@ Plugin 'SidOfc/mkdx'
 :PluginInstall
 ```
 
-**[NeoBundle](https://github.com/Shougo/neobundle.vim)**
+[NeoBundle](https://github.com/Shougo/neobundle.vim)
 ```viml
 NeoBundle 'SidOfc/mkdx'
 
@@ -129,7 +129,7 @@ NeoBundle 'SidOfc/mkdx'
 :NeoBundleInstall
 ```
 
-**[vim-plug](https://github.com/junegunn/vim-plug)**
+[vim-plug](https://github.com/junegunn/vim-plug)
 ```viml
 Plug 'SidOfc/mkdx'
 
@@ -137,7 +137,7 @@ Plug 'SidOfc/mkdx'
 :PlugInstall
 ```
 
-**[Pathogen](https://github.com/tpope/vim-pathogen)**
+[Pathogen](https://github.com/tpope/vim-pathogen)
 ```sh
 cd ~/.vim/bundle
 git glone https://github.com/SidOfc/mkdx
@@ -229,7 +229,7 @@ let g:mkdx#settings = { 'map': { 'prefix': '<leader>' } }
 ## `g:mkdx#settings.map.enable`
 
 If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
-**Note** that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
+Note: that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
 
 ```viml
 " :h mkdx-setting-map-enable
@@ -441,7 +441,7 @@ highlight default link mkdxCheckboxComplete gitcommitSelectedFile
 highlight link mkdxListItem jsOperator
 ~~~
 
-**Note**: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
+Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
 You can see it in action in the [Checking checkboxes / checklists](#checking-checkboxes--checklists) examples.
 
@@ -770,9 +770,10 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 
 ### As bold / italic / inline-code / strikethrough
 
-**Normal mode:**
+#### Normal mode
 ![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
-**Visual mode:**
+
+#### Visual mode
 ![mkdx wrap text in bold / italic / inline-code / strikethrough visual](doc/gifs/vim-mkdx-wrap-text-visual.gif)
 
 Wrap the word (anywhere) under the cursor or a visual selection using the following mappings:
@@ -870,6 +871,41 @@ endfun
 
 " finally, map it -- in this case, I mapped it to overwrite the default action for toggling quickfix (<PREFIX>I)
 nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
+~~~
+
+# Known issues
+
+## Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.
+
+Mkdx doesn't fiddle with any of vim's `set` settings itself, it handles everything from indenting lists
+to toggling headers to generating TOC's internally. This usually comes from other (markdown filetype) plugins that also do some setup for you.
+In vim/nvim, there is a setting called `formatoptions` that accepts certain flags, from the `:h formatoptions`:
+
+> This is a sequence of letters which describes how automatic
+> formatting is to be done.  See |fo-table|.  When the 'paste' option is
+> on, no formatting is done (like 'formatoptions' is empty).  Commas can
+> be inserted for readability.
+> To avoid problems with flags that are added in the future, use the
+> "+=" and "-=" feature of ":set" |add-option-flags|.
+
+One of these flags is the `r` flag, which reads:
+
+> Automatically insert the current comment leader after hitting
+> <Enter> in Insert mode.
+
+The mentioned "comment leader" is set by `comments` (see `:h comments`).
+Whenever a token in `comments` is encountered at the start of the line you pressed <kbd>enter</kbd> on, the next line will automatically get the same item inserted.
+For instance, the [vim-polyglot](https://github.com/sheerun/vim-polyglot) package provides [Plasticboy's vim-markdown](https://github.com/plasticboy/vim-markdown).
+Upon closer inspection of the markdown plugin, one can see that indeed the `formatoptions` and `comments` flags both [get set](https://github.com/plasticboy/vim-markdown/blob/861e84fc0bc97be8387e92ac2fc180599dc2b5a3/indent/markdown.vim#L8-L13).
+
+Personally, I have it disabled entirely with `let g:polyglot_disabled = ['markdown']`.
+If you do not wish to go down that road, you can also remove the `r` flag from `formatoptions` using an autocommand every time you load a new markdown file:
+
+~~~viml
+augroup Markdown
+  au!
+  au FileType markdown setlocal formatoptions-=r
+augroup END
 ~~~
 
 # Roadmap

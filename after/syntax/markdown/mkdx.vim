@@ -67,3 +67,9 @@ if hlexists('markdownCode')
   highlight default link mkdxInlineCodeDelimiter  markdownCodeDelimiter
   syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\~\~\~\~*.*$" end="^\s*\~\~\~\~*\ze\s*$" keepend
 endif
+
+if hlexists('htmlStrike')
+    syntax match mkdxStrikeThrough '\~[^\~]\+\~'hs=s+1,he=e-1
+    "highlight default mkdxStrikeThrough term=strikethrough cterm=strikethrough gui=strikethrough
+    highlight default link mkdxStrikeThrough htmlStrike
+endif

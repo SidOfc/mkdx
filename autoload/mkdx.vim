@@ -37,23 +37,6 @@ fun! s:util.WrapSelectionOrWord(...)
   return zz
 endfun
 
-fun! mkdx#ToggleToKbd(...)
-  let m  = get(a:000, 0, 'n')
-  let r  = @z
-  let ln = getline('.')
-
-  exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
-  let oz = @z
-  let ps = split(oz, ' ')
-  let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')
-  exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
-  let @z = r
-
-  if (m == 'n')
-    silent! call repeat#set("\<Plug>(mkdx-toggle-to-kbd-n)")
-  endif
-endfun
-
 fun! s:util.IsImage(str)
   if (empty(g:mkdx#settings.image_extension_pattern)) | return 0 | endif
   return match(get(split(a:str, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
@@ -109,6 +92,7 @@ fun! s:util.ToggleLineType(line, type)
     if (match(a:line, '^ *' . li_re) > -1)
       return substitute(a:line, '^\( *\)' . li_re . ' *', '\1', '')
     endif
+
     " if a:line isn't a list item, turn it into one
     return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', '')
   elseif (a:type == 'checklist')
@@ -336,6 +320,22 @@ fun! s:util.CenterString(str, length)
 endfun
 
 """"" MAIN FUNCTIONALITY
+fun! mkdx#ToggleToKbd(...)
+  let m  = get(a:000, 0, 'n')
+  let r  = @z
+  let ln = getline('.')
+
+  exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
+  let oz = @z
+  let ps = split(oz, ' ')
+  let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')
+  exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
+  let @z = r
+
+  if (m == 'n')
+    silent! call repeat#set("\<Plug>(mkdx-toggle-to-kbd-n)")
+  endif
+endfun
 
 fun! mkdx#ToggleCheckboxState(...)
   let reverse = get(a:000, 0, 0) == 1
@@ -359,10 +359,10 @@ fun! mkdx#ToggleCheckboxState(...)
 endfun
 
 fun! mkdx#WrapText(...)
-  let m  = get(a:000, 0, 'n')
-  let w  = get(a:000, 1, '')
-  let x  = get(a:000, 2, w)
-  let a  = get(a:000, 3, '')
+  let m = get(a:000, 0, 'n')
+  let w = get(a:000, 1, '')
+  let x = get(a:000, 2, w)
+  let a = get(a:000, 3, '')
 
   call s:util.WrapSelectionOrWord(m, w, x, a)
 

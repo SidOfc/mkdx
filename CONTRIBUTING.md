@@ -14,9 +14,7 @@ Contributing to mkdx is very easy, no matter what you would like to do :)
 
 # Code of Conduct
 
-Of course, working on open source together can prove to be difficult at times, All I ask is that everyone be treated equally.
-Be patient and understanding or ask for clarification if anything is unclear. Should anything require immediate attention, please
-send me [an email](mailto:sidneyliebrand@gmail.com) and it will be looked into ASAP.
+Please refer to [Contributor Covenant Code of Conduct](https://github.com/SidOfc/mkdx/blob/master/CODE_OF_CONDUCT.md) located inside this repository.
 
 # Opening an issue
 

@@ -472,11 +472,12 @@ fun! mkdx#Tableize() range
   call cursor(a:lastline + 1, 1)
 endfun
 
-fun! mkdx#ShiftOHandler()
-  if (!g:mkdx#settings.enter.shifto)
-    return normal! O
-  endif
+fun! mkdx#OHandler()
+  normal A
+  startinsert!
+endfun
 
+fun! mkdx#ShiftOHandler()
   let lnum = line('.')
   let line = getline(lnum)
   let len  = strlen(line)

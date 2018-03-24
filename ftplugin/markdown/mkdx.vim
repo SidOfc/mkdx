@@ -78,6 +78,8 @@ noremap <silent> <Plug>(mkdx-text-inline-code-v) :<C-U>call mkdx#WrapText('v', '
 noremap <silent> <Plug>(mkdx-text-strike-v)      :<C-U>call mkdx#WrapText('v', '<strike>', '</strike>')<Cr>
 noremap <silent> <Plug>(mkdx-toggle-to-kbd-n)    :call      mkdx#ToggleToKbd()<Cr>
 noremap <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleToKbd('v')<Cr>
+noremap <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
+noremap <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
 
 if g:mkdx#settings.map.enable == 1
   let s:fstyle   = g:mkdx#settings.tokens.fence == '~' ? '~~~' : (g:mkdx#settings.tokens.fence == '`' ? '```' : '')
@@ -122,12 +124,12 @@ if g:mkdx#settings.map.enable == 1
   if (g:mkdx#settings.enter.enable)
     inoremap <buffer><silent> <Cr> <C-R>=mkdx#EnterHandler()<Cr>
 
-    if (g:mkdx#settings.enter.o)
-      nmap <buffer><silent> o A<Cr>
+    if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
+      nmap <buffer><silent> o <Plug>(mkdx-o)
     endif
 
-    if (g:mkdx#settings.enter.shifto)
-      nmap <buffer><silent> O :call mkdx#ShiftOHandler()<Cr>
+    if (!hasmapto('<Plug>(mkdx-shift-o)') && g:mkdx#settings.enter.shifto)
+      nmap <buffer><silent> O <Plug>(mkdx-shift-o)
     end
   endif
 

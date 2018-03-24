@@ -18,10 +18,10 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
+    - [23-03-2018 VERSION 1.0.1](#23-03-2018-version-101)
     - [23-03-2018 VERSION 1.0.0](#23-03-2018-version-100)
     - [28-01-2018 VERSION 0.9.0](#28-01-2018-version-090)
     - [21-01-2018 VERSION 0.8.0](#21-01-2018-version-080)
-    - [13-01-2018 VERSION 0.7.1](#13-01-2018-version-071)
 - [Install](#install)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
@@ -79,6 +79,10 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 23-03-2018 VERSION 1.0.1
+
+- All mappings now use `<Plug>`.
+
 ## 23-03-2018 VERSION 1.0.0
 
 - Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines
@@ -93,17 +97,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix `g:mkdx#settings.enter.enable` and `g:mkdx#settings.enter.shifto` can be disabled during runtime.
 - Fix insert mode "\~\~\~" and "\`\`\`" recursion.
 - Add support for [toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts) in normal and visual mode.
-
-## 21-01-2018 VERSION 0.8.0
-
-- Fix some issues with `mkdx#WrapLink`.
-- `mkdx#WrapLink` handles selections that include newline character correctly.
-- Headers can now also be toggled on / off using `mkdx#ToggleHeader`.
-- When deleting a list item anywhere in the list, following list items are decremented by 1.
-- Added more tests for
-    - decrementing list items
-    - promoting / demoting headers
-    - Wrapping links and images
 
 # Install
 
@@ -479,10 +472,10 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
 |<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
-|Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
-|Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
-|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
-|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-R>=mkdx#EnterHandler()<Cr>`|
+|Insert fenced code block|insert|\`\`\`|`<Plug>(mkdx-fence-backtick)`|
+|Insert fenced code block|insert|\~\~\~|`<Plug>(mkdx-fence-tilde)`|
+|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
+|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
 
 # Unmapping functionality
 

@@ -1,3 +1,14 @@
+## 21-01-2018 VERSION 0.8.0
+
+- Fix some issues with `mkdx#WrapLink`.
+- `mkdx#WrapLink` handles selections that include newline character correctly.
+- Headers can now also be toggled on / off using `mkdx#ToggleHeader`.
+- When deleting a list item anywhere in the list, following list items are decremented by 1.
+- Added more tests for
+    - decrementing list items
+    - promoting / demoting headers
+    - Wrapping links and images
+
 ## 13-01-2018 VERSION 0.7.1
 
 Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.

@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.0.0`
+`Version: 1.0.1`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -68,6 +68,10 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-toggle-to-kbd-v)
         <Plug>(mkdx-o)
         <Plug>(mkdx-shift-o)
+        <Plug>(mkdx-enter)
+        <Plug>(mkdx-insert-kbd)
+        <Plug>(mkdx-fence-tilde)
+        <Plug>(mkdx-fence-backtick)
 
     Mappings
         Insert fenced code block
@@ -199,6 +203,10 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-toggle-to-kbd-v|
     - |mkdx-plug-o|
     - |mkdx-plug-shift-o|
+    - |mkdx-plug-enter|
+    - |mkdx-plug-insert-kbd|
+    - |mkdx-plug-fence-tilde|
+    - |mkdx-plug-fence-backtick|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -676,6 +684,26 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 <Plug>(mkdx-shift-o)                                         *mkdx-plug-shift-o*
 
     `:<C-U>call mkdx#ShiftOHandler<Cr>`
+
+==============================================================================
+<Plug>(mkdx-enter)                                             *mkdx-plug-enter*
+
+    `<C-R>=mkdx#EnterHandler()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-insert-kbd)                                   *mkdx-plug-insert-kbd*
+
+    `<kbd></kbd>2hcit`
+
+==============================================================================
+<Plug>(mkdx-fence-tilde)                                 *mkdx-plug-fence-tilde*
+
+    `<C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA`
+
+==============================================================================
+<Plug>(mkdx-fence-backtick)                           *mkdx-plug-fence-backtick*
+
+    `<C-R>=mkdx#InsertFencedCodeBlock('```')<Cr>kA`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*

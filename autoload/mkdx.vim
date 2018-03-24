@@ -1,5 +1,4 @@
 """"" UTILITY FUNCTIONS
-
 let s:util = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
@@ -324,6 +323,12 @@ fun! s:util.CenterString(str, length)
 endfun
 
 """"" MAIN FUNCTIONALITY
+fun! mkdx#InsertFencedCodeBlock(...)
+  let style = !empty(g:mkdx#settings.tokens.fence) ? g:mkdx#settings.tokens.fence : get(a:000, 0, '`')
+  let delim = repeat(style, 3)
+  return delim . '' . delim
+endfun
+
 fun! mkdx#ToggleToKbd(...)
   let m  = get(a:000, 0, 'n')
   let r  = @z

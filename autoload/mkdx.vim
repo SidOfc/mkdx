@@ -179,7 +179,7 @@ endfun
 fun! s:util.TaskItem(linenum)
   let line   = getline(a:linenum)
   let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')
-  let ident  = indent(a:linenum)
+  let ident  = strlen(get(matchlist(line, '^>\?\( \{0,}\)'), 1, ''))
   let rem    = ident % &sw
   let ident -= g:mkdx#settings.enter.malformed ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
 

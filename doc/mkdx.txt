@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 0.9.0`
+`Version: 1.0.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -66,6 +66,8 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-toggle-list)
         <Plug>(mkdx-toggle-to-kbd-n)
         <Plug>(mkdx-toggle-to-kbd-v)
+        <Plug>(mkdx-o)
+        <Plug>(mkdx-shift-o)
 
     Mappings
         Insert fenced code block
@@ -195,6 +197,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-toggle-list|
     - |mkdx-plug-toggle-to-kbd-n|
     - |mkdx-plug-toggle-to-kbd-v|
+    - |mkdx-plug-o|
+    - |mkdx-plug-shift-o|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-fenced-code-block|
@@ -662,6 +666,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 <Plug>(mkdx-toggle-to-kbd-v)                         *mkdx-plug-toggle-to-kbd-v*
 
     `:<C-U>call mkdx#ToggleToKbd('v')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-o)                                                     *mkdx-plug-o*
+
+    `:<C-U>call mkdx#OHandler()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-shift-o)                                         *mkdx-plug-shift-o*
+
+    `:<C-U>call mkdx#ShiftOHandler<Cr>`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*

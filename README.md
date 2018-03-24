@@ -8,16 +8,6 @@ markdown **filetype**. Functions are included to handle lists, checkboxes (even 
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
 of CSV data to a markdown table. And even then, there is more... visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
-My inspiration for this plugin largely came from Emacs' Org mode. One of my colleagues at work uses Org mode,
-whenever he's working on his checklists, it seems to require little to no effort to toggle checkboxes within nested lists.
-Org mode does two (probably many more) things very well, it gives you a place to put notes, and you can work on those notes very efficiently with mappings.
-This plugin aims to be a solution for the latter as for the former, different plugins can be installed.
-All the markdown plugins for Vim that I've tried basically serve a different purpose, most provide better syntax highlighting
-and some add other handy functions / mappings. This is my definition of a "markdown utility kit". One which I hope to improve in ways that I alone couldn't imagine :)
-It includes all the tools needed to be able to quickly and efficiently update, write and edit markdown files.
-The markdown flavor will be similar to what you would see in GFM by default, but is not strictly enforced.
-A lot of the "G" in "GFM" can be replaced with your own flavors instead. See: [`:h mkdx-settings`](#gmkdxsettings).
-
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
 Every _normal_ mode mapping can be repeated with the `.` command. Below you will find configurable
@@ -28,6 +18,7 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
+    - [23-03-2018 VERSION 1.0.0](#23-03-2018-version-100)
     - [28-01-2018 VERSION 0.9.0](#28-01-2018-version-090)
     - [21-01-2018 VERSION 0.8.0](#21-01-2018-version-080)
     - [13-01-2018 VERSION 0.7.1](#13-01-2018-version-071)
@@ -88,6 +79,14 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 23-03-2018 VERSION 1.0.0
+
+- Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines
+- Fix #12 - Update (task-)lists inside a quote
+- Fix #13 - Add / remove (task-)lists inside a quote
+- Add `<Plug>(mkdx-o)` in favor of directly mapping to `A<Cr>` to trigger `mkdx#EnterHandler`
+- Add `<Plug>(mkdx-shift-o)` in favor of directly mapping to `:call mkdx#ShiftOHandler()<Cr>`
+
 ## 28-01-2018 VERSION 0.9.0
 
 - Fix `mkdx#HeaderToQF` wrong function ref.
@@ -106,15 +105,11 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
     - promoting / demoting headers
     - Wrapping links and images
 
-## 13-01-2018 VERSION 0.7.1
-
-Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
-This will put your cursor on a new empty list item above the current line.
-
 # Install
 
-This plugin should work in _vim_ as well as _nvim_, no clue about _gvim_ but since this plugin only manipulates
-text and is written in vimL, it will probably work there too. To install, use a plugin manager of choice like
+This plugin is tested using [Vader.vim](https://github.com/junegunn/vader.vim) in _vim_, _nvim_ and _mvim_.
+
+To install, use a plugin manager of choice like
 [Vundle](https://github.com/VundleVim/Vundle.vim) or [Pathogen](https://github.com/tpope/vim-pathogen).
 
 [Vundle](https://github.com/VundleVim/Vundle.vim)
@@ -184,7 +179,7 @@ Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) set
 For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
 This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
-a `g:mkdx#settings` variable. <strike>This behaviour will be removed in version 1.0.0.</strike> This behaviour will remain supported.
+a `g:mkdx#settings` variable.
 
 Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
 To overwrite a setting while editing:
@@ -482,12 +477,12 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
+|<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
+|<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
 |Insert fenced code block|insert|\`\`\`|`` ```<CR>```<ESC>kA ``|
 |Insert fenced code block|insert|\~\~\~|`~~~<CR>~~~<ESC>kA`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<kbd></kbd><ESC>2hcit`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<C-R>=mkdx#EnterHandler()<Cr>`|
-|<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`A<CR>`|
-|<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`:call mkdx#ShiftOHandler()<Cr>`|
 
 # Unmapping functionality
 

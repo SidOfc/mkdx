@@ -1,3 +1,8 @@
+## 13-01-2018 VERSION 0.7.1
+
+Add support for <kbd>shift</kbd>+<kbd>O</kbd> in addition to <kbd>enter</kbd> and <kbd>O</kbd> in normal mode.
+This will put your cursor on a new empty list item above the current line.
+
 ## 13-01-2018 VERSION 0.7.0
 
 Add menu support in terminal vim and gvim if it `:has('menu')`.

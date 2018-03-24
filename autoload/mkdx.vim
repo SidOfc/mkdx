@@ -16,12 +16,7 @@ fun! s:util.WrapSelectionOrWord(...)
   let end   = get(a:000, 2, start)
   let _r    = @z
 
-  if (mode == 'n')
-    normal! "zdiw
-    let nl = virtcol('.') == strlen(getline('.'))
-    let @z = start . @z . end
-    exe 'normal! "z' . (nl ? 'p' : 'P')
-  else
+  if (mode != 'n')
     let [slnum, scol] = getpos("'<")[1:2]
     let [elnum, ecol] = getpos("'>")[1:2]
 
@@ -30,6 +25,11 @@ fun! s:util.WrapSelectionOrWord(...)
     call cursor(slnum, scol)
     exe 'normal! i' . start
     call cursor(elnum, ecol)
+  else
+    normal! "zdiw
+    let nl = virtcol('.') == strlen(getline('.'))
+    let @z = start . @z . end
+    exe 'normal! "z' . (nl ? 'p' : 'P')
   endif
 
   let zz = @z

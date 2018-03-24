@@ -217,17 +217,19 @@ endfun
 
 fun! s:util.UpdateListNumbers(lnum, depth, ...)
   let lnum       = a:lnum
-  let min_indent = indent(lnum)
+  let min_indent = strlen(get(matchlist(getline(lnum), '^>\?\( \{0,}\)'), 1, ''))
   let incr       = get(a:000, 0, 0)
 
   while (nextnonblank(lnum) == lnum)
-    let lnum += 1
+    let lnum  += 1
+    let ln     = getline(lnum)
+    let ident  = strlen(get(matchlist(ln, '^>\?\( \{0,}\)'), 1, ''))
 
-    if (indent(lnum) < min_indent) | break | endif
+    if (ident < min_indent) | break | endif
     call setline(lnum,
-      \ substitute(getline(lnum),
-      \            '^\( \{' . min_indent . ',}\)\([0-9.]\+\)',
-      \            '\=submatch(1) . s:util.NextListNumber(submatch(2), ' . a:depth . ', ' . incr . ')', ''))
+      \ substitute(ln,
+      \    '^\(>\? \{' . min_indent . ',}\)\([0-9.]\+\)',
+      \    '\=submatch(1) . s:util.NextListNumber(submatch(2), ' . a:depth . ', ' . incr . ')', ''))
   endwhile
 endfun
 
@@ -477,16 +479,28 @@ fun! mkdx#ShiftOHandler()
 
   let lnum = line('.')
   let line = getline(lnum)
+  let len  = strlen(line)
+  let quot = len > 0 ? line[0] == '>' : 0
+  let qstr = ''
+  if (quot)
+    let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
+    let line = line[strlen(qstr):]
+  endif
+
   let lin  = get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
   let lis  = get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\)'), 1, -1)
 
   if (lin != -1)
     let suff = !empty(matchlist(line, '^ *' . lin . ' \[.\]'))
-    exe 'normal! O' . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+    exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
     call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
   elseif (lis != -1)
     let suff = !empty(matchlist(line, '^ *' . lis . ' \[.\]'))
-    exe 'normal! O' . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+    exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+  elseif (quot)
+    echo line
+    let suff = !empty(matchlist(line, '^ *\[.\]'))
+    exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
   else
     normal! O
   endif
@@ -502,27 +516,30 @@ fun! mkdx#EnterHandler()
   if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strlen(line)
     let at_end  = cnum > len
-    let sp_pat  = '^ *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\?\|\[.\]\)'
+    let sp_pat  = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\?\|\[.\]\)'
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')
-    let tcb     = match(get(results, 1, ''), '^ *\[.\] *') > -1
+    let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
     let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
+    let quote   = len > 0 ? line[0] == '>' : 0
     let special = !empty(t)
     let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
-    let incr    = len(split(get(matchlist(line, '^ *\([0-9.]\+\)'), 1, ''), '\.')) - 1
+    let incr    = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\)'), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
+    let qu_str  = quote ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
 
-    if (at_end && match(line, '^ *[0-9.]\+') > -1)
+    if (at_end && match(line, '^>\? *[0-9.]\+') > -1)
       call s:util.UpdateListNumbers(lnum, incr, (remove ? -1 : 1))
     endif
 
-    if (remove)  | call setline('.', '')                                             | endif
-    if (upd_tl)  | call call(s:util.UpdateTaskList, tl_prms)                         | endif
-    if (remove)  | return ''                                                         | endif
-    if (!at_end) | return "\n"                                                       | endif
-    if (tcb)     | return "\n" . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
+    if (remove)  | call setline('.', '')                                                      | endif
+    if (upd_tl)  | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
+    if (remove)  | return ''                                                                  | endif
+    if (!at_end) | return "\n"                                                                | endif
+    if (tcb)     | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
     return ("\n"
+      \ . qu_str
       \ . (match(t, '[0-9.]\+') > -1 ? s:util.NextListNumber(t, incr > -1 ? incr : 0) : t)
       \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (special ? ' ' : '')))
   endif

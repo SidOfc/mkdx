@@ -79,6 +79,8 @@ fun! s:util.ToggleTokenAtStart(line, token, ...)
     return substitute(line, tok_re, '', '')
   elseif (!empty(line))
     return get(a:000, 0, a:token) . ' ' . line
+  else
+    return line
   endif
 endfun
 

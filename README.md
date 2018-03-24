@@ -21,7 +21,6 @@ settings and examples with default mappings.
     - [23-03-2018 VERSION 1.0.1](#23-03-2018-version-101)
     - [23-03-2018 VERSION 1.0.0](#23-03-2018-version-100)
     - [28-01-2018 VERSION 0.9.0](#28-01-2018-version-090)
-    - [21-01-2018 VERSION 0.8.0](#21-01-2018-version-080)
 - [Install](#install)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)

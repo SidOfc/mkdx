@@ -437,20 +437,18 @@ Note: syntax highlighting is opt-in _by default_. This means you must explicitly
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
 You can see it in action in the [Checking checkboxes / checklists](#checking-checkboxes--checklists) examples.
 
-```viml
+~~~viml
 " :h mkdx-setting-highlight-enable
 " :h mkdx-highlighting
 " set to 1 to enable.
-let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
-```
+let g:mkdx#settings = { 'highlight': { 'enable': 0, '*' } }
+~~~
 
 # Mappings
 
 The below list contains all mappings that mkdx creates by default.<br />
 To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
-
-
 
 **Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
 

@@ -46,7 +46,10 @@ settings and examples with default mappings.
     - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
     - [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
 - [Mappings](#mappings)
+- [Remapping functionality](#remapping-functionality)
 - [Unmapping functionality](#unmapping-functionality)
+    - [Using \<Nop>](#using-nop)
+    - [Using \<Plug>](#using-plug)
 - [Examples](#examples)
     - [Insert fenced code block](#insert-fenced-code-block)
     - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
@@ -78,11 +81,16 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
-## 23-03-2018 VERSION 1.0.1
+## 25-03-2018 VERSION 1.0.2
+
+- Fix incorrect <Plug> mapping detection
+- Update README, add remapping section
+
+## 24-03-2018 VERSION 1.0.1
 
 - All mappings now use `<Plug>`.
 
-## 23-03-2018 VERSION 1.0.0
+## 24-03-2018 VERSION 1.0.0
 
 - Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines
 - Fix #12 - Update (task-)lists inside a quote
@@ -446,6 +454,7 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 # Mappings
 
 The below list contains all mappings that mkdx creates by default.<br />
+To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
 **Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
@@ -476,12 +485,41 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
 
+# Remapping functionality
+
+`<Plug>` mappings can easily be remapped to any other key you prefer.
+When a `<Plug>(mkdx-*)` mapping is found, mkdx will not create the default mapping for that specific `<Plug>`.
+If you want to disable functionality instead, see: [Unmapping functionality](#unmapping-functionality).
+
+```viml
+" this will remap <leader>q in every filetype, not very handy in most cases
+nnoremap <leader>q <Plug>(mkdx-quickfix-toc)
+
+" to keep it limited to markdown files, one can use an "autocommand".
+" First, make sure we don't create the default mapping when entering markdown files.
+" All plugs can be disabled like this (except insert mode ones, they need "imap" instead of "nmap").
+nmap <Plug> <Plug>(mkdx-quickfix-toc)
+
+" then create a function to remap manually
+fun! s:MkdxRemap()
+    " regular map family can be used since these are buffer local.
+    nmap <buffer><silent> <leader>q <Plug>(mkdx-quickfix-toc)
+    " other overrides go here
+endfun
+
+" finally, add a "FileType" autocommand that calls "s:MkdxRemap()" upon entering markdown filetype
+augroup Mkdx
+    au!
+    au FileType markdown, mkdx call s:MkdxRemap()
+augroup END
+```
+
 # Unmapping functionality
 
 In case some functionality gets in your way, you can unmap a specific function quite easily.
 There are two different methods we can use to prevent mkdx from creating (well, 2 for _almost_) any mapping:
 
-**Unmapping by mapping**
+## Using \<Nop>
 
 If you want to unmap specific functionality, you'll have to define a mapping for it.
 This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
@@ -504,7 +542,7 @@ Also, the <kbd>ENTER</kbd> mapping for insert mode cannot be unmapped using this
 "global" <kbd>ENTER</kbd> mapping (for completing function / if statements for instance) for this functionality (like endwise.vim).
 But, there is of course, still a way to stop mkdx from mapping to <kbd>ENTER</kbd> (and **all** other mappings) in the next section.
 
-**Unmapping by \<Plug>**
+## Using \<Plug>
 
 If you don't know what a \<Plug> is, it is a builtin tool for plugin authors to provide a more
 "clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).

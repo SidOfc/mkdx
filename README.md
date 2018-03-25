@@ -18,9 +18,9 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim---)
 - [TOC](#toc)
 - [Changelog](#changelog)
-    - [23-03-2018 VERSION 1.0.1](#23-03-2018-version-101)
-    - [23-03-2018 VERSION 1.0.0](#23-03-2018-version-100)
-    - [28-01-2018 VERSION 0.9.0](#28-01-2018-version-090)
+    - [25-03-2018 VERSION 1.0.2](#25-03-2018-version-102)
+    - [24-03-2018 VERSION 1.0.1](#24-03-2018-version-101)
+    - [24-03-2018 VERSION 1.0.0](#24-03-2018-version-100)
 - [Install](#install)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
@@ -97,13 +97,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix #13 - Add / remove (task-)lists inside a quote
 - Add `<Plug>(mkdx-o)` in favor of directly mapping to `A<Cr>` to trigger `mkdx#EnterHandler`
 - Add `<Plug>(mkdx-shift-o)` in favor of directly mapping to `:call mkdx#ShiftOHandler()<Cr>`
-
-## 28-01-2018 VERSION 0.9.0
-
-- Fix `mkdx#HeaderToQF` wrong function ref.
-- Fix `g:mkdx#settings.enter.enable` and `g:mkdx#settings.enter.shifto` can be disabled during runtime.
-- Fix insert mode "\~\~\~" and "\`\`\`" recursion.
-- Add support for [toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts) in normal and visual mode.
 
 # Install
 

@@ -1,3 +1,10 @@
+## 28-01-2018 VERSION 0.9.0
+
+- Fix `mkdx#HeaderToQF` wrong function ref.
+- Fix `g:mkdx#settings.enter.enable` and `g:mkdx#settings.enter.shifto` can be disabled during runtime.
+- Fix insert mode "\~\~\~" and "\`\`\`" recursion.
+- Add support for [toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts) in normal and visual mode.
+
 ## 21-01-2018 VERSION 0.8.0
 
 - Fix some issues with `mkdx#WrapLink`.

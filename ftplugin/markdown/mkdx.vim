@@ -135,15 +135,14 @@ if g:mkdx#settings.map.enable == 1
   endif
 
   for [label, prefix, mapmode, binding, plug, cmd] in s:bindings
-    let full_mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
-    let plug_mapping = get(matchlist(binding, '<Plug>([^)]\+)'), 0, -1)
+    let mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
 
-    if (mapcheck(full_mapping, mapmode) == "") && (!hasmapto(plug_mapping))
+    if ((mapcheck(mapping, mapmode) == "") && !hasmapto(plug))
       if (!empty(cmd) && has('menu'))
-          exe mapmode . 'noremenu <silent> <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . full_mapping . ' ' . cmd
+          exe mapmode . 'noremenu <silent> <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . mapping . ' ' . cmd
       end
 
-      exe mapmode . 'map <buffer> ' . full_mapping . ' ' . plug
+      exe mapmode . 'map <buffer> ' . mapping . ' ' . plug
     endif
   endfor
 endif

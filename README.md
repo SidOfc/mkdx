@@ -142,7 +142,7 @@ If you still have other `g:mkdx#` variables in your _.vimrc_, they should be rep
 Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.
 To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
 
-~~~viml
+```viml
 let g:mkdx#settings = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
@@ -160,13 +160,13 @@ let g:mkdx#settings = {
       \                              'header_divider': '-' },
       \ 'highlight':               { 'enable': 0 }
     \ }
-~~~
+```
 
 To overwrite a setting, simply write it as seen above in your _.vimrc_:
 
-~~~viml
+```viml
 let g:mkdx#settings = { 'enter': { 'enable': 0 } }
-~~~
+```
 
 Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
 For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
@@ -177,15 +177,15 @@ a `g:mkdx#settings` variable.
 Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
 To overwrite a setting while editing:
 
-~~~viml
+```viml
 :let g:mkdx#settings.enter.enable = 0
-~~~
+```
 
 For help, see:
 
-~~~viml
+```viml
 " :h mkdx-settings
-~~~
+```
 
 ## `g:mkdx#settings.image_extension_pattern`
 
@@ -193,10 +193,10 @@ Defines the extensions to search for when identifying the type of link that
 will be generated when [wrapping text in a link](#as-a-link). Setting it to an empty string
 disables image wrapping and a regular empty markdown link will be used instead.
 
-~~~viml
+```viml
 " :h mkdx-setting-image-extension-pattern
 let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
-~~~
+```
 
 ## `g:mkdx#settings.restore_visual`
 
@@ -258,10 +258,10 @@ let g:mkdx#settings = { 'checkbox': { 'update_tree': 2 } }
 When toggling between checkbox/checklist lines, this defines
 what the default value of each inserted checkbox should be.
 
-~~~viml
+```viml
 " :h mkdx-setting-checkbox-initial-state
 let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
-~~~
+```
 
 ## `g:mkdx#settings.tokens.header`
 
@@ -300,30 +300,30 @@ let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 This token is used for italicizing the current word under the cursor or a visual selection of text.
 See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
 
-~~~viml
+```viml
 " :h mkdx-setting-tokens-italic
 let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
-~~~
+```
 
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
 See [Styling text](#styling-text) for more details.
 
-~~~viml
+```viml
 " :h mkdx-setting-tokens-bold
 let g:mkdx#settings = { 'tokens': { 'bold': '**' } }
-~~~
+```
 
 ## `g:mkdx#settings.tokens.list`
 
 This token defines what list markers should be inserted when toggling list /
 checklist items.
 
-~~~viml
+```viml
 " :h mkdx-setting-tokens-list
 let g:mkdx#settings = { 'tokens': { 'list': '-' } }
-~~~
+```
 
 ## `g:mkdx#settings.table.header_divider`
 
@@ -384,10 +384,10 @@ markdown lists. At the moment it works for checklist items that do not have an
 be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
 will be rounded down to the previous indent.
 
-~~~viml
+```viml
 " :h mkdx-setting-enter-malformed
 let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
-~~~
+```
 
 ## `g:mkdx#settings.toc.text`
 
@@ -411,7 +411,7 @@ let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
 
 This setting enables state-specific highlighting for checkboxes.
 It will also override the default markdown syntax highlighting scheme to better accomodate the colors used.
-The highlighting is linked to the gitcommit* family of highlight groups (and Comment for list items), full list:
+The highlighting is linked to the `gitcommit*` family of highlight groups (and Comment for list items), full list:
 
 - `Comment` is used for list items, e.g. items starting with `-`, `*`, `1.`
 - `gitcommitUnmergedFile` is used for empty checkboxes: `[ ]`
@@ -420,7 +420,7 @@ The highlighting is linked to the gitcommit* family of highlight groups (and Com
 
 If you want to change the highlighting groups, simply `link` them to different groups:
 
-~~~viml
+```viml
 " :h mkdx-highlighting
 
 " these are the defaults, defined by mkdx in after/syntax/markdown/mkdx.vim
@@ -431,7 +431,7 @@ highlight default link mkdxCheckboxComplete gitcommitSelectedFile
 
 " to change the color of list items to the "jsOperator" group, one would write this in their vimrc:
 highlight link mkdxListItem jsOperator
-~~~
+```
 
 Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
@@ -449,6 +449,8 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 The below list contains all mappings that mkdx creates by default.<br />
 To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
+
+
 
 **Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
 
@@ -521,13 +523,13 @@ it will still get mapped to other markdown buffers. To disable any map, first fi
 Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>).
 In your _.vimrc_, add the following:
 
-~~~viml
+```viml
 " this will disable toggling checkbox next in normal mode.
 nmap <leader>= <Nop>
 
 " this will disable toggling checkbox next in visual mode.
 vmap <leader>= <Nop>
-~~~
+```
 
 The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
 by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping \<Plug> mappings.
@@ -545,9 +547,9 @@ To disable a \<Plug> mapping, first find it [here](#mappings) or at: `:h mkdx-pl
 Say you want to disable the behaviour for toggling the next checkbox state.
 The corresponding \<Plug> is called `<Plug>(mkdx-checkbox-next)`. To disable it, add the following to your _.vimrc_:
 
-~~~viml
+```viml
 map <Plug> <Plug>(mkdx-checkbox-next)
-~~~
+```
 
 # Examples
 
@@ -630,20 +632,20 @@ The checkbox will be removed instead, if it exists. The initial state can be def
 
 When toggling a checkbox in a list or checklist, the checkbox will be added / removed accordingly:
 
-~~~
+```
 - list item           => - [ ] list item
 - [ ] checklist item  => - checklist item
 * [ ] checklist item  => * checklist item
 1. [ ] checklist item => 1. checklist item
-~~~
+```
 
 **Note:** the list / checklist support has been added in version *0.4.1*. Prior to that,
 the checkbox would be inserted at the start of the line instead of after the list token.
 
-~~~viml
+```viml
 " :h mkdx-mapping-toggle-checkbox
 " :h mkdx-function-toggle-checkbox-task
-~~~
+```
 
 ### Lists
 
@@ -654,20 +656,20 @@ This will cause a [list token](#gmkdxsettingstokenslist) to be inserted. When pr
 
 When toggling a checkbox or a checklist item, the list token will be added / removed accordingly:
 
-~~~
+```
 [ ] checkbox item     => - [ ] checkbox item
 - [ ] checklist item  => - checklist item
 * [ ] checklist item  => * checklist item
 1. [ ] checklist item => 1. checklist item
-~~~
+```
 
 **Note:** the checklist support has been added in version *0.4.1*. Prior to that,
 tokens other than [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist) weren't toggled.
 
-~~~viml
+```viml
 " :h mkdx-mapping-toggle-list
 " :h mkdx-function-toggle-list
-~~~
+```
 
 ### Checklists
 
@@ -679,27 +681,27 @@ If it is already present, it will be removed. Like [Checkboxes](#checkboxes), th
 
 If the current line or selection is one or multiple list items, a checkbox with state of [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state) will be added:
 
-~~~
+```
 - list item  => - [ ] list item
 * list item  => * [ ] list item
 1. list item => 1. [ ] list item
-~~~
+```
 
 If the current line or selection is one or multiple checkboxes, a [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist) will be added.
 Any state the checkbox is in will be preserved:
 
-~~~
+```
 [ ] list item  => - [ ] list item
 [x] list item  => - [x] list item
-~~~
+```
 
 **note:** the list item / checkbox support has been added in version *0.4.1*. Prior to that,
 toggling checklists only performed a check to see if a checklist item was present or not.
 
-~~~viml
+```viml
 " :h mkdx-mapping-toggle-checklist
 " :h mkdx-function-toggle-checklist
-~~~
+```
 
 ## Ticking Checkboxes / Checklists
 
@@ -846,10 +848,10 @@ Stuff inside fenced code blocks is excluded too.
 Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>I</kbd> to load all the markdown headers in a quickfix window.
 You can jump around using regular quickfix commands afterwards, as shown in the gif using `:cn` for example.
 
-~~~viml
+```viml
 " :h mkdx-mapping-quickfix-table-of-contents
 " :h mkdx-function-quickfix-headers
-~~~
+```
 
 ## Open TOC using [fzf](https://github.com/junegunn/fzf.vim) instead of quickfix window
 
@@ -858,7 +860,7 @@ You can jump around using regular quickfix commands afterwards, as shown in the 
 This is not built-in to the plugin but I just thought "why not, I'd use that".
 So I started working on a little snippet in my [vimrc](https://github.com/SidOfc/dotfiles/blob/76393e2881c5577a316698eafb73c7dae36984bd/.vimrc#L340-L359) (included some comments here):
 
-~~~viml
+```viml
 fun! s:MkdxGoToHeader(header)
     " given a line: '  84: # Header'
     " this will match the number 84 and move the cursor to the start of that line
@@ -893,7 +895,7 @@ endfun
 
 " finally, map it -- in this case, I mapped it to overwrite the default action for toggling quickfix (<PREFIX>I)
 nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
-~~~
+```
 
 # Known issues
 
@@ -923,12 +925,12 @@ Upon closer inspection of the markdown plugin, one can see that indeed the `form
 Personally, I have it disabled entirely with `let g:polyglot_disabled = ['markdown']`.
 If you do not wish to go down that road, you can also remove the `r` flag from `formatoptions` using an autocommand every time you load a new markdown file:
 
-~~~viml
+```viml
 augroup Markdown
   au!
   au FileType markdown setlocal formatoptions-=r
 augroup END
-~~~
+```
 
 # Roadmap
 

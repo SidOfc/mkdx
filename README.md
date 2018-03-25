@@ -72,7 +72,7 @@ settings and examples with default mappings.
     - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
     - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
 - [Known issues](#known-issues)
-    - [Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.](#double-dash-is-inserted-when-pressing-kbdenterkbd-at-the-end-of-a-list-item)
+    - [Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.](#double-dash-is-inserted-when-pressing-enter-at-the-end-of-a-list-item)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 

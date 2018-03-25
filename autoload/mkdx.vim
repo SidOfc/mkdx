@@ -172,7 +172,16 @@ fun! s:util.CleanHeader(header)
 endfun
 
 fun! s:util.HeaderToHash(header)
-  return substitute(substitute(tolower(s:util.CleanHeader(a:header)), '[^0-9a-z_\- ]\+', '', 'g'), ' ', '-', 'g')
+  let h = tolower(s:util.CleanHeader(a:header))
+  let h = substitute(h, '`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g')
+  let h = substitute(h, '<kbd>\(.*\)<\/kbd>', '\1', 'g')
+  let h = substitute(h, '[^0-9a-z_\- ]\+', '', 'g')
+  let h = substitute(h, ' ', '-', 'g')
+  return h
+endfun
+
+fun! mkdx#test(line)
+  echo s:util.HeaderToHash(a:line)
 endfun
 
 fun! s:util.TaskItem(linenum)
@@ -567,6 +576,7 @@ endfun
 fun! mkdx#UpdateTOC()
   let startc = -1
   let nnb    = -1
+  let curpos = getpos('.')
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
@@ -583,7 +593,7 @@ fun! mkdx#UpdateTOC()
 
   exe 'normal! :' . startc . ',' . endc . 'd'
   call mkdx#GenerateTOC()
-  normal! ``
+  call setpos('.', curpos)
 endfun
 
 fun! mkdx#QuickfixHeaders(...)

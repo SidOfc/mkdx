@@ -437,12 +437,12 @@ Note: syntax highlighting is opt-in _by default_. This means you must explicitly
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
 You can see it in action in the [Checking checkboxes / checklists](#checking-checkboxes--checklists) examples.
 
-~~~viml
+```viml
 " :h mkdx-setting-highlight-enable
 " :h mkdx-highlighting
 " set to 1 to enable.
 let g:mkdx#settings = { 'highlight': { 'enable': 0, '*' } }
-~~~
+```
 
 # Mappings
 
@@ -738,7 +738,7 @@ and will also become `4`.
 
 ![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
 
-Increment or decrement a heading with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>[</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>]</kbd>.
+Increment or decrement a heading with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>.
 As can be seen in the gif, headings can be toggled as well as promoted / demoted with these mappings.
 The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader).
 
@@ -752,7 +752,7 @@ The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmk
 
 ![mkdx toggle kbd shortcuts](doc/gifs/vim-mkdx-toggle-kbd.gif)
 
-(**Note:** *does not work with multiline selection*)
+**Note:** *does not work with multiline selection*
 
 Quickly toggle plain text shortcuts to markdown shortcuts and back with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>.
 

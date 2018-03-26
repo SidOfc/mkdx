@@ -6,7 +6,8 @@ mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formattin
 markdown documents. It does this by adding some configurable mappings for files with a
 markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
-of CSV data to a markdown table. And even then, there is more... visit `:h mkdx` or `:h mkdx-helptags` for more information.
+of CSV data to a markdown table. And there's even more :D  
+Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
@@ -22,6 +23,27 @@ settings and examples with default mappings.
     - [24-03-2018 VERSION 1.0.1](#24-03-2018-version-101)
     - [24-03-2018 VERSION 1.0.0](#24-03-2018-version-100)
 - [Install](#install)
+- [Examples](#examples)
+    - [Insert fenced code block](#insert-fenced-code-block)
+    - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
+    - [List items](#list-items)
+    - [Toggling lists, checklists or checkboxes](#toggling-lists-checklists-or-checkboxes)
+        - [Checkboxes](#checkboxes)
+        - [Lists](#lists)
+        - [Checklists](#checklists)
+    - [Completing Checkboxes / Checklists](#completing-checkboxes--checklists)
+    - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
+    - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
+    - [Toggling Quotes](#toggling-quotes)
+    - [Wrapping text](#wrapping-text)
+        - [As a link](#as-a-link)
+        - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
+            - [Normal mode](#normal-mode)
+            - [Visual mode](#visual-mode)
+    - [Convert CSV to table](#convert-csv-to-table)
+    - [Generate or update TOC](#generate-or-update-toc)
+    - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
+    - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
 - [`g:mkdx#settings`](#gmkdxsettings)
     - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
     - [`g:mkdx#settings.restore_visual`](#gmkdxsettingsrestore_visual)
@@ -48,29 +70,8 @@ settings and examples with default mappings.
 - [Mappings](#mappings)
 - [Remapping functionality](#remapping-functionality)
 - [Unmapping functionality](#unmapping-functionality)
-    - [Using \<Nop>](#using-nop)
-    - [Using \<Plug>](#using-plug)
-- [Examples](#examples)
-    - [Insert fenced code block](#insert-fenced-code-block)
-    - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
-    - [List items](#list-items)
-    - [Toggling lists, checklists or checkboxes](#toggling-lists-checklists-or-checkboxes)
-        - [Checkboxes](#checkboxes)
-        - [Lists](#lists)
-        - [Checklists](#checklists)
-    - [Completing Checkboxes / Checklists](#completing-checkboxes--checklists)
-    - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
-    - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
-    - [Toggling Quotes](#toggling-quotes)
-    - [Wrapping text](#wrapping-text)
-        - [As a link](#as-a-link)
-        - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
-            - [Normal mode](#normal-mode)
-            - [Visual mode](#visual-mode)
-    - [Convert CSV to table](#convert-csv-to-table)
-    - [Generate or update TOC](#generate-or-update-toc)
-    - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
-    - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
+    - [Using `<Nop>`](#using-nop)
+    - [Using `<Plug>`](#using-plug)
 - [Known issues](#known-issues)
     - [Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.](#double-dash-is-inserted-when-pressing-enter-at-the-end-of-a-list-item)
 - [Roadmap](#roadmap)
@@ -132,421 +133,7 @@ Plug 'SidOfc/mkdx'
 [Pathogen](https://github.com/tpope/vim-pathogen)
 ```sh
 cd ~/.vim/bundle
-git glone https://github.com/SidOfc/mkdx
-```
-
-# `g:mkdx#settings`
-
-All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
-If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.
-Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.
-To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
-
-```viml
-let g:mkdx#settings = {
-      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
-      \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },
-      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
-      \ 'tokens':                  { 'enter': ['-', '*', '>'],
-      \                              'bold': '**', 'italic': '*',
-      \                              'list': '-', 'fence': '',
-      \                              'header': '#' },
-      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
-      \                              'update_tree': 2,
-      \                              'initial_state': ' ' },
-      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
-      \ 'table':                   { 'divider': '|',
-      \                              'header_divider': '-' },
-      \ 'highlight':               { 'enable': 0 }
-    \ }
-```
-
-To overwrite a setting, simply write it as seen above in your _.vimrc_:
-
-```viml
-let g:mkdx#settings = { 'enter': { 'enable': 0 } }
-```
-
-Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
-For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
-This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
-So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
-a `g:mkdx#settings` variable.
-
-Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
-To overwrite a setting while editing:
-
-```viml
-:let g:mkdx#settings.enter.enable = 0
-```
-
-For help, see:
-
-```viml
-" :h mkdx-settings
-```
-
-## `g:mkdx#settings.image_extension_pattern`
-
-Defines the extensions to search for when identifying the type of link that
-will be generated when [wrapping text in a link](#as-a-link). Setting it to an empty string
-disables image wrapping and a regular empty markdown link will be used instead.
-
-```viml
-" :h mkdx-setting-image-extension-pattern
-let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
-```
-
-## `g:mkdx#settings.restore_visual`
-
-This setting enables the restoration of the last visual selection after performing an action in visual mode:
-
-```viml
-" :h mkdx-setting-restore-visual
-let g:mkdx#settings = { 'restore_visual': 1 }
-```
-
-## `g:mkdx#settings.map.prefix`
-
-All mappings are prefixed with a single prefix key.
-If a mapping contains <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd> key, it is the value of this variable.
-If you do not like the default (`<leader>`) you can override it:
-
-```viml
-" :h mkdx-setting-map-prefix
-let g:mkdx#settings = { 'map': { 'prefix': '<leader>' } }
-```
-
-## `g:mkdx#settings.map.enable`
-
-If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
-Note: that the plugin checks if a keybind exists before creating it. You can safely override every mapping this plugin sets.
-
-```viml
-" :h mkdx-setting-map-enable
-let g:mkdx#settings = { 'map': { 'enable': 1 } }
-```
-
-## `g:mkdx#settings.checkbox.toggles`
-
-This setting defines the list of states to use when toggling a checkbox.
-It can be overridden by setting it to a list of your choosing. Note that special characters must be escaped!
-Also, the list of toggles **must** contain at the very least, 3 items!
-The reason for this is that [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree) uses these
-to be able to work with a user supplied list of toggles.
-
-```viml
-" :h mkdx-setting-checkbox-toggles
-let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', '-', 'x'] } }
-```
-
-## `g:mkdx#settings.checkbox.update_tree`
-
-With this setting on, checkboxes that are toggled within checklists (lists of checkboxes) cause parent and child list items
-to be updated automatically. The states from [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) are used to check and
-update the statusses of any parents. Children are force updated to the same token of their parent. To disable this behaviour
-entirely, set this value to `0`. If you do not want children to be updated, set this value to `1` instead.
-
-```viml
-" :h mkdx-setting-checkbox-update-tree
-let g:mkdx#settings = { 'checkbox': { 'update_tree': 2 } }
-```
-
-## `g:mkdx#settings.checkbox.initial_state`
-
-When toggling between checkbox/checklist lines, this defines
-what the default value of each inserted checkbox should be.
-
-```viml
-" :h mkdx-setting-checkbox-initial-state
-let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
-```
-
-## `g:mkdx#settings.tokens.header`
-
-If you want to use a different style for markdown headings (h1, h2, etc...).
-
-```viml
-" :h mkdx-setting-tokens-header
-let g:mkdx#settings = { 'tokens': { 'header': '#' } }
-```
-## `g:mkdx#settings.tokens.enter`
-
-Used by [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable). This is the list of tokens that are supported by default.
-Since numbers are handled differently, they are not included in this list but they are supported.
-
-```viml
-" :h mkdx-setting-tokens-enter
-let g:mkdx#settings = { 'tokens': { 'enter': ['-', '*', '>'] } }
-```
-
-## `g:mkdx#settings.tokens.fence`
-
-Defines the fencing style to use when [inserting a fenced code block](#insert-fenced-code-block).
-By default it is set to an empty string, in which case typing tildes will result in a fenced code block
-using tildes and typing backticks results in a code block using backticks.
-
-This value can be set to a `` ` `` or a `~` character. When set, the same style will always be used for
-fenced code blocks.
-
-```viml
-" :h mkdx-setting-tokens-fence
-let g:mkdx#settings = { 'tokens': { 'fence': '' } }
-```
-
-## `g:mkdx#settings.tokens.italic`
-
-This token is used for italicizing the current word under the cursor or a visual selection of text.
-See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
-
-```viml
-" :h mkdx-setting-tokens-italic
-let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
-```
-
-## `g:mkdx#settings.tokens.bold`
-
-This token is used for bolding the current word under the cursor or a visual selection of text.
-See [Styling text](#styling-text) for more details.
-
-```viml
-" :h mkdx-setting-tokens-bold
-let g:mkdx#settings = { 'tokens': { 'bold': '**' } }
-```
-
-## `g:mkdx#settings.tokens.list`
-
-This token defines what list markers should be inserted when toggling list /
-checklist items.
-
-```viml
-" :h mkdx-setting-tokens-list
-let g:mkdx#settings = { 'tokens': { 'list': '-' } }
-```
-
-## `g:mkdx#settings.table.header_divider`
-
-You can change the separator used for table headings in markdown tables.
-
-```viml
-" :h mkdx-setting-table-header-divider
-let g:mkdx#settings = { 'table': { 'header_divider': '-' } }
-```
-
-## `g:mkdx#settings.table.divider`
-
-You can also change the separator used in markdown tables.
-
-```viml
-" :h mkdx-setting-table-divider
-let g:mkdx#settings = { 'table': { 'divider': '|' } }
-```
-
-## `g:mkdx#settings.enter.enable`
-
-This setting enables auto-appending list items when you are editing a markdown list.
-When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
-or just do a regular enter. unordered lists and numbered lists are both handled correctly.
-
-```viml
-" :h mkdx-setting-enter-enable
-let g:mkdx#settings = { 'enter': { 'enable': 1 } }
-```
-
-## `g:mkdx#settings.enter.o`
-
-This setting overwrites normal mode `o` in markdown files and causes `o` to work like pressing `<enter>` at the end of the line
-this means that lists, checklists, checkboxes, quotes etcetera are also inserted when pressing `o` in normal mode in addition to `<enter>` in insert mode.
-Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
-
-```viml
-" :h mkdx-setting-enter-o
-let g:mkdx#settings = { 'enter': { 'o': 1 } }
-```
-
-## `g:mkdx#settings.enter.shifto`
-
-This setting enables `O` in normal mode to prepend list items above the current line, your cursor will be placed after the newly added item.
-Like [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero), checkboxes are also added if they are present on the cursor line.
-Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
-
-```viml
-" :h mkdx-setting-enter-shifto
-let g:mkdx#settings = { 'enter': { 'shifto': 1 } }
-```
-
-## `g:mkdx#settings.enter.malformed`
-
-This setting defines behaviour to use when working with improperly indented
-markdown lists. At the moment it works for checklist items that do not have an
-`indent()` which is divisible by `shiftwidth`. In which case the indent will
-be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
-will be rounded down to the previous indent.
-
-```viml
-" :h mkdx-setting-enter-malformed
-let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
-```
-
-## `g:mkdx#settings.toc.text`
-
-Defines the text to use for the table of contents header itself.
-
-```viml
-" :h mkdx-setting-toc-text
-let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
-```
-
-## `g:mkdx#settings.toc.list_token`
-
-Defines the list token to use in the generated TOC.
-
-```viml
-" :h mkdx-setting-toc-list-token
-let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
-```
-
-## `g:mkdx#settings.highlight.enable`
-
-This setting enables state-specific highlighting for checkboxes.
-It will also override the default markdown syntax highlighting scheme to better accomodate the colors used.
-The highlighting is linked to the `gitcommit*` family of highlight groups (and Comment for list items), full list:
-
-- `Comment` is used for list items, e.g. items starting with `-`, `*`, `1.`
-- `gitcommitUnmergedFile` is used for empty checkboxes: `[ ]`
-- `gitcommitBranch` is used for pending / in-progress checkboxes: `[-]`
-- `gitcommitSelectedFile` is used for completed checkboxes: `[x]`
-
-If you want to change the highlighting groups, simply `link` them to different groups:
-
-```viml
-" :h mkdx-highlighting
-
-" these are the defaults, defined by mkdx in after/syntax/markdown/mkdx.vim
-highlight default link mkdxListItem Comment
-highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile
-highlight default link mkdxCheckboxPending gitcommitBranch
-highlight default link mkdxCheckboxComplete gitcommitSelectedFile
-
-" to change the color of list items to the "jsOperator" group, one would write this in their vimrc:
-highlight link mkdxListItem jsOperator
-```
-
-Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
-The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
-You can see it in action in the [Checking checkboxes / checklists](#checking-checkboxes--checklists) examples.
-
-```viml
-" :h mkdx-setting-highlight-enable
-" :h mkdx-highlighting
-" set to 1 to enable.
-let g:mkdx#settings = { 'highlight': { 'enable': 0, '*' } }
-```
-
-# Mappings
-
-The below list contains all mappings that mkdx creates by default.<br />
-To remap functionality: [remapping functionality](#remapping-functionality).
-To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
-
-**Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
-
-|description|modes|mapping|Execute|
-|----|----|-------|-------|
-|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
-|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
-|Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
-|Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
-|Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
-|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
-|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
-|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
-|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
-|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
-|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
-|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
-|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
-|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
-|CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
-|Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
-|Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
-|<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
-|<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
-|Insert fenced code block|insert|\`\`\`|`<Plug>(mkdx-fence-backtick)`|
-|Insert fenced code block|insert|\~\~\~|`<Plug>(mkdx-fence-tilde)`|
-|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
-|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
-
-# Remapping functionality
-
-`<Plug>` mappings can easily be remapped to any other key you prefer.
-When a `<Plug>(mkdx-*)` mapping is found, mkdx will not create the default mapping for that specific `<Plug>`.
-If you want to disable functionality instead, see: [Unmapping functionality](#unmapping-functionality).
-
-```viml
-" this will remap <leader>q in every filetype, not very handy in most cases
-nnoremap <leader>q <Plug>(mkdx-quickfix-toc)
-
-" to keep it limited to markdown files, one can use an "autocommand".
-" First, make sure we don't create the default mapping when entering markdown files.
-" All plugs can be disabled like this (except insert mode ones, they need "imap" instead of "nmap").
-nmap <Plug> <Plug>(mkdx-quickfix-toc)
-
-" then create a function to remap manually
-fun! s:MkdxRemap()
-    " regular map family can be used since these are buffer local.
-    nmap <buffer><silent> <leader>q <Plug>(mkdx-quickfix-toc)
-    " other overrides go here
-endfun
-
-" finally, add a "FileType" autocommand that calls "s:MkdxRemap()" upon entering markdown filetype
-augroup Mkdx
-    au!
-    au FileType markdown, mkdx call s:MkdxRemap()
-augroup END
-```
-
-# Unmapping functionality
-
-In case some functionality gets in your way, you can unmap a specific function quite easily.
-There are two different methods we can use to prevent mkdx from creating (well, 2 for _almost_) any mapping:
-
-## Using \<Nop>
-
-If you want to unmap specific functionality, you'll have to define a mapping for it.
-This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
-it will still get mapped to other markdown buffers. To disable any map, first find it [here](#mappings) or at: `:h mkdx-mappings`.
-
-Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>).
-In your _.vimrc_, add the following:
-
-```viml
-" this will disable toggling checkbox next in normal mode.
-nmap <leader>= <Nop>
-
-" this will disable toggling checkbox next in visual mode.
-vmap <leader>= <Nop>
-```
-
-The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
-by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping \<Plug> mappings.
-Also, the <kbd>ENTER</kbd> mapping for insert mode cannot be unmapped using this method. This is because any plugin can provide a more
-"global" <kbd>ENTER</kbd> mapping (for completing function / if statements for instance) for this functionality (like endwise.vim).
-But, there is of course, still a way to stop mkdx from mapping to <kbd>ENTER</kbd> (and **all** other mappings) in the next section.
-
-## Using \<Plug>
-
-If you don't know what a \<Plug> is, it is a builtin tool for plugin authors to provide a more
-"clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).
-All of the functions of mkdx are mapped using \<Plug> mappings.
-To disable a \<Plug> mapping, first find it [here](#mappings) or at: `:h mkdx-plugs`.
-
-Say you want to disable the behaviour for toggling the next checkbox state.
-The corresponding \<Plug> is called `<Plug>(mkdx-checkbox-next)`. To disable it, add the following to your _.vimrc_:
-
-```viml
-map <Plug> <Plug>(mkdx-checkbox-next)
+git clone https://github.com/SidOfc/mkdx
 ```
 
 # Examples
@@ -895,6 +482,413 @@ endfun
 nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
 ```
 
+# `g:mkdx#settings`
+
+All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
+If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.
+Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.
+To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
+
+```viml
+" :h mkdx-settings
+let g:mkdx#settings = {
+      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
+      \ 'restore_visual':          1,
+      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },
+      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
+      \ 'tokens':                  { 'enter': ['-', '*', '>'],
+      \                              'bold': '**', 'italic': '*',
+      \                              'list': '-', 'fence': '',
+      \                              'header': '#' },
+      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
+      \                              'update_tree': 2,
+      \                              'initial_state': ' ' },
+      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
+      \ 'table':                   { 'divider': '|',
+      \                              'header_divider': '-' },
+      \ 'highlight':               { 'enable': 0 }
+    \ }
+```
+
+To overwrite a setting, simply write it as seen above in your _.vimrc_:
+
+```viml
+" :h mkdx-settings
+let g:mkdx#settings = { 'enter': { 'enable': 0 } }
+```
+
+Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
+For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
+This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
+So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
+a `g:mkdx#settings` variable.
+
+Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.  
+To overwrite a setting while editing:
+
+```viml
+" :h mkdx-settings
+:let g:mkdx#settings.enter.enable = 0
+```
+
+## `g:mkdx#settings.image_extension_pattern`
+
+Defines the extensions to search for when identifying the type of link that
+will be generated when [wrapping text in a link](#as-a-link). Setting it to an empty string
+disables image wrapping and a regular empty markdown link will be used instead.
+
+```viml
+" :h mkdx-setting-image-extension-pattern
+let g:mkdx#settings = { 'image_extension_pattern': 'a\?png\|jpe\?g\|gif' }
+```
+
+## `g:mkdx#settings.restore_visual`
+
+This setting enables the restoration of the last visual selection after performing an action in visual mode:
+
+```viml
+" :h mkdx-setting-restore-visual
+let g:mkdx#settings = { 'restore_visual': 1 }
+```
+
+## `g:mkdx#settings.map.prefix`
+
+All mappings are prefixed with a single prefix key.
+If a mapping contains <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd> key, it is the value of this variable.
+If you do not like the default (`<leader>`) you can override it:
+
+```viml
+" :h mkdx-setting-map-prefix
+let g:mkdx#settings = { 'map': { 'prefix': '<leader>' } }
+```
+
+## `g:mkdx#settings.map.enable`
+
+If you'd rather full control over what is mapped, you can opt-out all together by setting it to `0`.
+Note: that the plugin checks if a keybind exists before creating it. Mappings defined in your _.vimrc_ will not be overwritten.
+
+```viml
+" :h mkdx-setting-map-enable
+let g:mkdx#settings = { 'map': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.checkbox.toggles`
+
+Defines the list of states to use when toggling a checkbox.
+It can be set to a list of your choosing. Special characters must be escaped!
+Also, the list of toggles **must** contain at the very least, 3 items!
+This is because [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree) uses these
+to be able to work with a user supplied list of toggles.
+
+```viml
+" :h mkdx-setting-checkbox-toggles
+let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', '-', 'x'] } }
+```
+
+## `g:mkdx#settings.checkbox.update_tree`
+
+With this setting on, checkboxes that are toggled within checklists (lists of checkboxes) cause parent and child list items
+to be updated automatically. The states from [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) are used to check and
+update the statusses of any parents. Children are force updated to the same token of their parent. To disable this behaviour
+entirely, set this value to `0`. If you do not want children to be updated, set this value to `1` instead.
+
+```viml
+" :h mkdx-setting-checkbox-update-tree
+let g:mkdx#settings = { 'checkbox': { 'update_tree': 2 } }
+```
+
+## `g:mkdx#settings.checkbox.initial_state`
+
+When toggling between checkbox/checklist lines, this defines
+what the default value of each inserted checkbox should be.
+
+```viml
+" :h mkdx-setting-checkbox-initial-state
+let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
+```
+
+## `g:mkdx#settings.tokens.header`
+
+If you want to use a different style for markdown headings (h1, h2, etc...).
+
+```viml
+" :h mkdx-setting-tokens-header
+let g:mkdx#settings = { 'tokens': { 'header': '#' } }
+```
+## `g:mkdx#settings.tokens.enter`
+
+Used by [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable). This is the list of tokens that are supported by default.
+Since numbers are handled differently, they are not included in this list but they are supported.
+
+```viml
+" :h mkdx-setting-tokens-enter
+let g:mkdx#settings = { 'tokens': { 'enter': ['-', '*', '>'] } }
+```
+
+## `g:mkdx#settings.tokens.fence`
+
+Defines the fencing style to use when [inserting a fenced code block](#insert-fenced-code-block).
+By default it is set to an empty string, in which case typing tildes will result in a fenced code block
+using tildes and typing backticks results in a code block using backticks.
+
+This value can be set to a `` ` `` or a `~` character. When set, the same style will always be used for
+fenced code blocks.
+
+```viml
+" :h mkdx-setting-tokens-fence
+let g:mkdx#settings = { 'tokens': { 'fence': '' } }
+```
+
+## `g:mkdx#settings.tokens.italic`
+
+This token is used for italicizing the current word under the cursor or a visual selection of text.
+See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
+
+```viml
+" :h mkdx-setting-tokens-italic
+let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
+```
+
+## `g:mkdx#settings.tokens.bold`
+
+This token is used for bolding the current word under the cursor or a visual selection of text.
+See [Styling text](#styling-text) for more details.
+
+```viml
+" :h mkdx-setting-tokens-bold
+let g:mkdx#settings = { 'tokens': { 'bold': '**' } }
+```
+
+## `g:mkdx#settings.tokens.list`
+
+This token defines what list markers should be inserted when toggling list /
+checklist items.
+
+```viml
+" :h mkdx-setting-tokens-list
+let g:mkdx#settings = { 'tokens': { 'list': '-' } }
+```
+
+## `g:mkdx#settings.table.header_divider`
+
+You can change the separator used for table headings in markdown tables.
+
+```viml
+" :h mkdx-setting-table-header-divider
+let g:mkdx#settings = { 'table': { 'header_divider': '-' } }
+```
+
+## `g:mkdx#settings.table.divider`
+
+You can also change the separator used in markdown tables.
+
+```viml
+" :h mkdx-setting-table-divider
+let g:mkdx#settings = { 'table': { 'divider': '|' } }
+```
+
+## `g:mkdx#settings.enter.enable`
+
+This setting enables auto-appending list items when you are editing a markdown list.
+When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
+or just do a regular enter. unordered lists and numbered lists are both handled correctly.
+
+```viml
+" :h mkdx-setting-enter-enable
+let g:mkdx#settings = { 'enter': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.enter.o`
+
+This setting overwrites normal mode `o` in markdown files and causes `o` to work like pressing `<enter>` at the end of the line
+this means that lists, checklists, checkboxes, quotes etcetera are also inserted when pressing `o` in normal mode in addition to `<enter>` in insert mode.
+Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
+
+```viml
+" :h mkdx-setting-enter-o
+let g:mkdx#settings = { 'enter': { 'o': 1 } }
+```
+
+## `g:mkdx#settings.enter.shifto`
+
+This setting enables `O` in normal mode to prepend list items above the current line, your cursor will be placed after the newly added item.
+Like [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero), checkboxes are also added if they are present on the cursor line.
+Note that [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) must be `1` for this to work.
+
+```viml
+" :h mkdx-setting-enter-shifto
+let g:mkdx#settings = { 'enter': { 'shifto': 1 } }
+```
+
+## `g:mkdx#settings.enter.malformed`
+
+This setting defines behaviour to use when working with improperly indented
+markdown lists. At the moment it works for checklist items that do not have an
+`indent()` which is divisible by `shiftwidth`. In which case the indent will
+be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
+will be rounded down to the previous indent.
+
+```viml
+" :h mkdx-setting-enter-malformed
+let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
+```
+
+## `g:mkdx#settings.toc.text`
+
+Defines the text to use for the table of contents header itself.
+
+```viml
+" :h mkdx-setting-toc-text
+let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
+```
+
+## `g:mkdx#settings.toc.list_token`
+
+Defines the list token to use in the generated TOC.
+
+```viml
+" :h mkdx-setting-toc-list-token
+let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
+```
+
+## `g:mkdx#settings.highlight.enable`
+
+This setting enables state-specific highlighting for checkboxes.
+It will also override the default markdown syntax highlighting scheme to better accomodate the colors used.
+The highlighting is linked to the `gitcommit*` family of highlight groups (and Comment for list items), full list:
+
+- `Comment` is used for list items, e.g. items starting with `-`, `*`, `1.`
+- `gitcommitUnmergedFile` is used for empty checkboxes: `[ ]`
+- `gitcommitBranch` is used for pending / in-progress checkboxes: `[-]`
+- `gitcommitSelectedFile` is used for completed checkboxes: `[x]`
+
+If you want to change the highlighting groups, simply `link` them to different groups:
+
+```viml
+" :h mkdx-highlighting
+
+" these are the defaults, defined by mkdx in after/syntax/markdown/mkdx.vim
+highlight default link mkdxListItem Comment
+highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile
+highlight default link mkdxCheckboxPending gitcommitBranch
+highlight default link mkdxCheckboxComplete gitcommitSelectedFile
+
+" to change the color of list items to the "jsOperator" group, one would write this in their vimrc:
+highlight link mkdxListItem jsOperator
+```
+
+Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
+The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
+You can see it in action in the [Completing checkboxes / checklists](#completing-checkboxes--checklists) examples.
+
+```viml
+" :h mkdx-setting-highlight-enable
+" :h mkdx-highlighting
+" set to 1 to enable.
+let g:mkdx#settings = { 'highlight': { 'enable': 0, '*' } }
+```
+
+# Mappings
+
+The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).  
+To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
+
+**Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
+
+|description|modes|mapping|Execute|
+|----|----|-------|-------|
+|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
+|Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
+|Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
+|Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
+|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
+|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
+|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
+|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
+|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
+|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
+|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
+|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
+|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
+|CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
+|Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
+|Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
+|<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
+|<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
+|Insert fenced code block|insert|<kbd>\`</kbd><kbd>\`</kbd><kbd>\`</kbd>|`<Plug>(mkdx-fence-backtick)`|
+|Insert fenced code block|insert|<kbd>\~</kbd><kbd>\~</kbd><kbd>\~</kbd>|`<Plug>(mkdx-fence-tilde)`|
+|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
+|<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
+
+# Remapping functionality
+
+`<Plug>` mappings can easily be remapped to any other key you prefer.
+When a `<Plug>(mkdx-*)` mapping is found, mkdx will not create the default mapping for that `<Plug>`.
+If you want to disable functionality, see: [Unmapping functionality](#unmapping-functionality).
+
+```viml
+" this will remap <leader>q in every filetype, not very handy in most cases
+nnoremap <leader>q <Plug>(mkdx-quickfix-toc)
+
+" to keep it limited to markdown files, one can use an "autocommand".
+" First, make sure we don't create the default mapping when entering markdown files.
+" All plugs can be disabled like this (except insert mode ones, they need "imap" instead of "nmap").
+nmap <Plug> <Plug>(mkdx-quickfix-toc)
+
+" then create a function to remap manually
+fun! s:MkdxRemap()
+    " regular map family can be used since these are buffer local.
+    nmap <buffer><silent> <leader>q <Plug>(mkdx-quickfix-toc)
+    " other overrides go here
+endfun
+
+" finally, add a "FileType" autocommand that calls "s:MkdxRemap()" upon entering markdown filetype
+augroup Mkdx
+    au!
+    au FileType markdown, mkdx call s:MkdxRemap()
+augroup END
+```
+
+# Unmapping functionality
+
+In case some functionality gets in your way, you can unmap a specific function quite easily.
+There are two different methods we can use to prevent mkdx from creating any mapping:
+
+## Using `<Nop>`
+
+If you want to unmap specific functionality, you'll have to define a mapping for it.
+This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
+it will still get mapped to other markdown buffers. To disable any map, first find it [here](#mappings) or at: `:h mkdx-mappings`.
+
+Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>).
+In your _.vimrc_, add the following:
+
+```viml
+" this will disable toggling checkbox next in normal mode.
+nmap <leader>= <Nop>
+
+" this will disable toggling checkbox next in visual mode.
+vmap <leader>= <Nop>
+```
+
+The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
+by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping `<Plug>` mappings.
+
+## Using `<Plug>`
+
+If you don't know what a `<Plug>` is, it is a builtin tool for plugin authors to provide a more
+"clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).
+All of the functions of mkdx are mapped using `<Plug>` mappings.
+To disable a `<Plug>` mapping, first find it [here](#mappings) or at: `:h mkdx-plugs`.
+
+Say you want to disable the behaviour for toggling the next checkbox state.
+The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next)`. To disable it, add the following to your _.vimrc_:
+
+```viml
+map <Plug> <Plug>(mkdx-checkbox-next)
+```
+
 # Known issues
 
 ## Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.
@@ -936,14 +930,10 @@ This roadmap is here to give you an idea of what's next, When features are sugge
 or new bugs are found they will show up in this list. This list isn't a queue, sometimes the order of tasks will change.
 This is because some tasks such as "Write tests" might take a while to complete in comparison to implementing a certain feature or fixing a bug for example.
 
-- [x] Refactor settings into single variable while backwards compatible
-- [x] Improve line type toggles to better handle list / checklists
-- [x] Document settings instead of variables in README and mkdx.txt
-- [x] Refactor some [hairy plugin](https://github.com/SidOfc/mkdx/blob/f8c58e13f81b3501c154d3e61ba9d8dab704f8c9/autoload/mkdx.vim#L359-L388) code.
-- [x] Add opt-in syntax highlighting for list items and checkbox states
-- [x] Write tests (even I'm surprised here, thanks again [junegunn for yet another awesome plugin!](https://github.com/junegunn/vader.vim))
-- [x] Implement additional shortcut-to-kbd functionality
-- [ ] Fix bugs / add features as they come in
+- [ ] Add setting to always place the TOC in a fixed position (e.g. below nth header)
+- [ ] Add setting to generate the TOC inside a `<details />` tag for github
+- [ ] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
+- [ ] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
 
 # Contributing
 

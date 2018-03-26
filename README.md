@@ -926,10 +926,6 @@ augroup END
 
 # Roadmap
 
-This roadmap is here to give you an idea of what's next, When features are suggested and are going to be implemented
-or new bugs are found they will show up in this list. This list isn't a queue, sometimes the order of tasks will change.
-This is because some tasks such as "Write tests" might take a while to complete in comparison to implementing a certain feature or fixing a bug for example.
-
 - [ ] Add setting to always place the TOC in a fixed position (e.g. below nth header)
 - [ ] Add setting to generate the TOC inside a `<details />` tag for github
 - [ ] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.

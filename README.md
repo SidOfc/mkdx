@@ -1,6 +1,6 @@
-# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub stars](https://img.shields.io/github/stars/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/stargazers) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
+# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
-(**If this README is displayed incorrectly, please see the version on [github.com](https://github.com/SidOfc/mkdx).**)
+![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater-colors.gif)
 
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
@@ -15,7 +15,7 @@ settings and examples with default mappings.
 
 # TOC
 
-- [mkdx.vim](#mkdxvim---)
+- [mkdx.vim](#mkdxvim--)
 - [TOC](#toc)
 - [Changelog](#changelog)
     - [25-03-2018 VERSION 1.0.2](#25-03-2018-version-102)
@@ -58,7 +58,7 @@ settings and examples with default mappings.
         - [Checkboxes](#checkboxes)
         - [Lists](#lists)
         - [Checklists](#checklists)
-    - [Ticking Checkboxes / Checklists](#ticking-checkboxes--checklists)
+    - [Completing Checkboxes / Checklists](#completing-checkboxes--checklists)
     - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
     - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
     - [Toggling Quotes](#toggling-quotes)
@@ -701,7 +701,7 @@ toggling checklists only performed a check to see if a checklist item was presen
 " :h mkdx-function-toggle-checklist
 ```
 
-## Ticking Checkboxes / Checklists
+## Completing Checkboxes / Checklists
 
 **Single checkbox:**
 ![mkdx toggle checkbox](doc/gifs/vim-mkdx-toggle-checkbox-colors.gif)

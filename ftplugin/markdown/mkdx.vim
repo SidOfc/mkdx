@@ -6,7 +6,7 @@ let s:defaults = {
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*', 'list': '-', 'fence': '', 'header': '#' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
-      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
+      \ 'toc':                     { 'text': "TOC", 'list_token': '-', 'position': 0 },
       \ 'table':                   { 'divider': '|', 'header_divider': '-' },
       \ 'highlight':               { 'enable': 0 }
     \ }

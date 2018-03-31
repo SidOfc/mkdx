@@ -634,11 +634,15 @@ fun! mkdx#GenerateTOC()
   let srclen   = len(src)
   let curr     = 0
   let headers[s:util.HeaderToHash(g:mkdx#settings.toc.text)] = 1
+  let toc_pos = g:mkdx#settings.toc.position - 1
+  let after_info = get(src, toc_pos, -1)
+  let after_pos = toc_pos >= 0 && type(after_info) == type([])
 
   for [lnum, lvl, line] in src
     let curr += 1
-    if (empty(header) && lnum >= curspos)
+    if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
       let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
+      call insert(contents, '')
       call insert(contents, header)
       call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
     endif
@@ -652,6 +656,7 @@ fun! mkdx#GenerateTOC()
 
     if (empty(header) && curr == srclen)
       let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
+      call insert(contents, '')
       call insert(contents, header)
       call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
     endif
@@ -659,12 +664,20 @@ fun! mkdx#GenerateTOC()
     let prevlvl = lvl
   endfor
 
-  let c = curspos - 1
+  if (after_pos)
+    let c = after_info[0] - 1
+  else
+    let c = curspos - 1
+  endif
+
   for item in contents
     call append(c, item)
     let c += 1
   endfor
 
+  if (after_pos)
+    call append(c, '')
+  endif
+
   call cursor(curspos, 1)
-  normal! Ak
 endfun

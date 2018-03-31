@@ -641,7 +641,7 @@ fun! mkdx#GenerateTOC()
 
   for [lnum, lvl, line] in src
     let curr += 1
-    if (curr == srclen || (empty(header) && lnum >= curspos))
+    if (empty(header) && lnum >= curspos)
       let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
       call insert(contents, header)
       call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
@@ -653,6 +653,13 @@ fun! mkdx#GenerateTOC()
     if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
 
     call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#settings.toc.list_token . ' ' . li)
+
+    if (empty(header) && curr == srclen)
+      let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
+      call insert(contents, header)
+      call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
+    endif
+
     let prevlvl = lvl
   endfor
 

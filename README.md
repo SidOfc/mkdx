@@ -19,9 +19,9 @@ settings and examples with default mappings.
 - [mkdx.vim](#mkdxvim--)
 - [TOC](#toc)
 - [Changelog](#changelog)
+    - [31-03-2018 VERSION 1.1.0](#31-03-2018-version-110)
     - [25-03-2018 VERSION 1.0.2](#25-03-2018-version-102)
     - [24-03-2018 VERSION 1.0.1](#24-03-2018-version-101)
-    - [24-03-2018 VERSION 1.0.0](#24-03-2018-version-100)
 - [Install](#install)
 - [Examples](#examples)
     - [Insert fenced code block](#insert-fenced-code-block)
@@ -66,6 +66,7 @@ settings and examples with default mappings.
     - [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed)
     - [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
     - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
+    - [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition)
     - [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
 - [Mappings](#mappings)
 - [Remapping functionality](#remapping-functionality)
@@ -82,6 +83,13 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 31-03-2018 VERSION 1.1.0
+
+- Stricter rules for highlighting (do not highlight bold markers at start of line as list items).
+- Fix TOC links using headings containing <kbd /> tags.
+- Fix deep merging of `g:mkdx#settings` hash.
+- Add setting to place TOC in fixed position.
+
 ## 25-03-2018 VERSION 1.0.2
 
 - Fix incorrect <Plug> mapping detection
@@ -90,14 +98,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 24-03-2018 VERSION 1.0.1
 
 - All mappings now use `<Plug>`.
-
-## 24-03-2018 VERSION 1.0.0
-
-- Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines
-- Fix #12 - Update (task-)lists inside a quote
-- Fix #13 - Add / remove (task-)lists inside a quote
-- Add `<Plug>(mkdx-o)` in favor of directly mapping to `A<Cr>` to trigger `mkdx#EnterHandler`
-- Add `<Plug>(mkdx-shift-o)` in favor of directly mapping to `:call mkdx#ShiftOHandler()<Cr>`
 
 # Install
 
@@ -418,6 +418,8 @@ at cursor position if one does not exist, otherwise updates the existing TOC.
 the text used in the heading can be changed using [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext) and the
 list style can be changed using [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token).
 Stuff inside fenced code blocks is excluded too.
+
+If you want to place the TOC always as the _[N]th_ header, see [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition).
 
 ```viml
 " :h mkdx-mapping-generate-or-update-toc
@@ -750,6 +752,17 @@ Defines the list token to use in the generated TOC.
 ```viml
 " :h mkdx-setting-toc-list-token
 let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
+```
+
+## `g:mkdx#settings.toc.position`
+
+The position at which to place the TOC, `0` is used for cursor.
+If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
+e.g. setting it to `1` will cause it to be the first heading of your document.
+
+```viml
+" :h mkdx-setting-toc-position
+let g:mkdx#settings = { 'toc': { 'position': 0 } }
 ```
 
 ## `g:mkdx#settings.highlight.enable`

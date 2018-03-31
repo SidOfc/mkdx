@@ -1,3 +1,11 @@
+## 24-03-2018 VERSION 1.0.0
+
+- Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines
+- Fix #12 - Update (task-)lists inside a quote
+- Fix #13 - Add / remove (task-)lists inside a quote
+- Add `<Plug>(mkdx-o)` in favor of directly mapping to `A<Cr>` to trigger `mkdx#EnterHandler`
+- Add `<Plug>(mkdx-shift-o)` in favor of directly mapping to `:call mkdx#ShiftOHandler()<Cr>`
+
 ## 28-01-2018 VERSION 0.9.0
 
 - Fix `mkdx#HeaderToQF` wrong function ref.

@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.0.2`
+`Version: 1.1.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -32,6 +32,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.enter.malformed`
         `g:mkdx#settings.toc.text`
         `g:mkdx#settings.toc.list_token`
+        `g:mkdx#settings.toc.position`
         `g:mkdx#settings.highlight.enable`
 
     Highlighting
@@ -165,6 +166,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-enter-malformed|
     - |mkdx-setting-toc-text|
     - |mkdx-setting-toc-list-token|
+    - |mkdx-setting-toc-position|
     - |mkdx-setting-highlight-enable|
 
 - |mkdx-highlighting|
@@ -490,6 +492,13 @@ Define the heading text to use in the table of contents.
 `g:mkdx#settings.toc.list_token = '-'`               *mkdx-setting-toc-list-token*
 
 Define the list style to use when generating a table of contents.
+
+==============================================================================
+`g:mkdx#settings.toc.position = 0`                     *mkdx-setting-toc-position*
+
+The position at which to place the TOC, `0` is used for cursor line (default).
+If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
+e.g. setting it to `1` will cause it to be the first heading of your document.
 
 ==============================================================================
 `g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*

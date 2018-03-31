@@ -634,11 +634,15 @@ fun! mkdx#GenerateTOC()
   let prevlvl  = 1
   let skip     = 0
   let headers  = {}
+  let src      = s:util.ListHeaders()
+  let srclen   = len(src)
+  let curr     = 0
   let headers[s:util.HeaderToHash(g:mkdx#settings.toc.text)] = 1
 
-  for [lnum, lvl, line] in s:util.ListHeaders()
-    if (empty(header) && lnum > curspos)
-      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+  for [lnum, lvl, line] in src
+    let curr += 1
+    if (curr == srclen || (empty(header) && lnum >= curspos))
+      let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
       call insert(contents, header)
       call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
     endif

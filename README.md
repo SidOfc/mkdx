@@ -576,13 +576,16 @@ let g:mkdx#settings = { 'map': { 'enable': 1 } }
 
 Defines the list of states to use when toggling a checkbox.
 It can be set to a list of your choosing. Special characters must be escaped!
-Also, the list of toggles **must** contain at the very least, 3 items!
+Also, the list of toggles **must** contain at the very least, 2 items!
 This is because [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree) uses these
 to be able to work with a user supplied list of toggles.
 
 ```viml
 " :h mkdx-setting-checkbox-toggles
 let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', '-', 'x'] } }
+
+" GFM supported list (e.g. on GitHub)
+let g:mkdx#settings = { 'checkbox': { 'toggles': [' ', 'x'] } }
 ```
 
 ## `g:mkdx#settings.checkbox.update_tree`
@@ -928,7 +931,7 @@ augroup END
 
 - [ ] Add setting to always place the TOC in a fixed position (e.g. below nth header)
 - [ ] Add setting to generate the TOC inside a `<details />` tag for github
-- [ ] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
+- [x] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
 - [x] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
 
 # Contributing

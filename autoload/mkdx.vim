@@ -180,10 +180,6 @@ fun! s:util.HeaderToHash(header)
   return h
 endfun
 
-fun! mkdx#test(line)
-  echo s:util.HeaderToHash(a:line)
-endfun
-
 fun! s:util.TaskItem(linenum)
   let line   = getline(a:linenum)
   let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')

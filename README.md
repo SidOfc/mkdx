@@ -929,7 +929,7 @@ augroup END
 - [ ] Add setting to always place the TOC in a fixed position (e.g. below nth header)
 - [ ] Add setting to generate the TOC inside a `<details />` tag for github
 - [ ] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
-- [ ] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
+- [x] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
 
 # Contributing
 

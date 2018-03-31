@@ -161,6 +161,10 @@ fun! s:util.HeaderToQF(key, value)
         \ 'text': repeat(g:mkdx#settings.tokens.header, a:value[1]) . ' ' . s:util.CleanHeader(a:value[2])}
 endfun
 
+fun! s:util.FormatTOCHeader(level, content, ...)
+  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(a:content, get(a:000, 0, ''))
+endfun
+
 fun! s:util.HeaderToListItem(header, ...)
   return '[' . substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g') . '](#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . ')'
 endfun
@@ -640,25 +644,29 @@ fun! mkdx#GenerateTOC()
 
   for [lnum, lvl, line] in src
     let curr += 1
-    if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
-      let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
-      call insert(contents, '')
-      call insert(contents, header)
-      call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
-    endif
-
     let hsh = s:util.HeaderToHash(line)
     let c   = get(headers, hsh, 0)
-    let li  = s:util.HeaderToListItem(line, c > 0 ? '-' . c : '')
-    if (c == 0) | let headers[hsh] = 1 | else | let headers[hsh] += 1 | endif
+    let sfx = c > 0 ? '-' . c : ''
+    if (c == 0)
+      let headers[hsh] = 1
+    else
+      let headers[hsh] += 1
+    endif
 
-    call add(contents, repeat(repeat(' ', &sw), lvl - 1) . g:mkdx#settings.toc.list_token . ' ' . li)
-
-    if (empty(header) && curr == srclen)
-      let header = g:mkdx#settings.tokens.header . ' ' . g:mkdx#settings.toc.text
+    if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
+      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       call insert(contents, '')
       call insert(contents, header)
-      call add(contents, repeat(repeat(' ', &sw), prevlvl - 1) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(header))
+      call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+    endif
+
+    call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
+
+    if (empty(header) && curr == srclen)
+      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      call insert(contents, '')
+      call insert(contents, header)
+      call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
     endif
 
     let prevlvl = lvl
@@ -670,14 +678,21 @@ fun! mkdx#GenerateTOC()
     let c = curspos - 1
   endif
 
+  let clen = len(contents)
+  echo clen
+
+  if (nextnonblank(c) == c)
+    if (c > 0)
+      call insert(contents, '')
+    else
+      call add(contents, '')
+    endif
+  endif
+
   for item in contents
     call append(c, item)
     let c += 1
   endfor
-
-  if (after_pos)
-    call append(c, '')
-  endif
 
   call cursor(curspos, 1)
 endfun

@@ -332,6 +332,27 @@ fun! s:util.CenterString(str, length)
 endfun
 
 """"" MAIN FUNCTIONALITY
+let s:HASH = type({})
+fun! mkdx#MergeSettings(...)
+  let a = get(a:000, 0, {})
+  let b = get(a:000, 1, {})
+  let c = {}
+
+  for akey in keys(a)
+    if has_key(b, akey)
+      if (type(b[akey]) == s:HASH && type(a[akey]) == s:HASH)
+        let c[akey] = mkdx#MergeSettings(a[akey], b[akey])
+      else
+        let c[akey] = b[akey]
+      endif
+    else
+      let c[akey] = a[akey]
+    endif
+  endfor
+
+  return c
+endfun
+
 fun! mkdx#InsertFencedCodeBlock(...)
   let style = !empty(g:mkdx#settings.tokens.fence) ? g:mkdx#settings.tokens.fence : get(a:000, 0, '`')
   let delim = repeat(style, 3)

@@ -31,26 +31,7 @@ if exists('g:mkdx#toc_list_token')          | let s:defaults.toc.list_token = g:
 if exists('g:mkdx#toc_text')                | let s:defaults.toc.text = g:mkdx#toc_text                             | endif
 if exists('g:mkdx#checkbox_initial_state')  | let s:defaults.checkbox.initial_state = g:mkdx#checkbox_initial_state | endif
 
-fun! s:merge_settings(...)
-  let target = deepcopy(get(a:000, 0, {}))
-  let a      = get(a:000, 1, {})
-  let b      = get(a:000, 2, {})
-
-  for [setting, value] in items(target)
-    let aa = has_key(a, setting) ? a[setting] : -1
-    let bb = has_key(b, setting) ? b[setting] : -1
-
-    if (type(value) == type({}))
-      let target[setting] = s:merge_settings(target[setting], (type(aa) == type({}) ? aa : {}), (type(bb) == type({}) ? bb : {}))
-    else
-      let target[setting] = bb != -1 ? bb : (aa != -1 ? aa : value)
-    endif
-  endfor
-
-  return target
-endfun
-
-let g:mkdx#settings = exists('g:mkdx#settings_initialized') ? g:mkdx#settings : s:merge_settings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
+let g:mkdx#settings = exists('g:mkdx#settings_initialized') ? g:mkdx#settings : mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
 let g:mkdx#settings_initialized = 1
 
 noremap  <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>

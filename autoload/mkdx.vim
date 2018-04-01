@@ -641,7 +641,7 @@ fun! mkdx#UpdateTOC()
       let endc += 1
       if (s:util.IsHeader(endc))
         break
-      if (s:util.IsDetailsTag(endc))
+      elseif (s:util.IsDetailsTag(endc))
         let endc += 1
         break
       endif

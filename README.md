@@ -1,6 +1,6 @@
 # mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
-![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater-colors.gif)
+![mkdx update checklist](doc/gifs/vim-mkdx-gen-or-upd-toc.gif)
 
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
@@ -14,74 +14,95 @@ This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-re
 Every _normal_ mode mapping can be repeated with the `.` command. Below you will find configurable
 settings and examples with default mappings.
 
-# TOC
+# Table of Contents
 
-- [mkdx.vim](#mkdxvim--)
-- [TOC](#toc)
-- [Changelog](#changelog)
-    - [31-03-2018 VERSION 1.1.0](#31-03-2018-version-110)
-    - [25-03-2018 VERSION 1.0.2](#25-03-2018-version-102)
-    - [24-03-2018 VERSION 1.0.1](#24-03-2018-version-101)
-- [Install](#install)
-- [Examples](#examples)
-    - [Insert fenced code block](#insert-fenced-code-block)
-    - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
-    - [List items](#list-items)
-    - [Toggling lists, checklists or checkboxes](#toggling-lists-checklists-or-checkboxes)
-        - [Checkboxes](#checkboxes)
-        - [Lists](#lists)
-        - [Checklists](#checklists)
-    - [Completing Checkboxes / Checklists](#completing-checkboxes--checklists)
-    - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
-    - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
-    - [Toggling Quotes](#toggling-quotes)
-    - [Wrapping text](#wrapping-text)
-        - [As a link](#as-a-link)
-        - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
-            - [Normal mode](#normal-mode)
-            - [Visual mode](#visual-mode)
-    - [Convert CSV to table](#convert-csv-to-table)
-    - [Generate or update TOC](#generate-or-update-toc)
-    - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
-    - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
-- [`g:mkdx#settings`](#gmkdxsettings)
-    - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
-    - [`g:mkdx#settings.restore_visual`](#gmkdxsettingsrestore_visual)
-    - [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix)
-    - [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable)
-    - [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles)
-    - [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree)
-    - [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state)
-    - [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader)
-    - [`g:mkdx#settings.tokens.enter`](#gmkdxsettingstokensenter)
-    - [`g:mkdx#settings.tokens.fence`](#gmkdxsettingstokensfence)
-    - [`g:mkdx#settings.tokens.italic`](#gmkdxsettingstokensitalic)
-    - [`g:mkdx#settings.tokens.bold`](#gmkdxsettingstokensbold)
-    - [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist)
-    - [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider)
-    - [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
-    - [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable)
-    - [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero)
-    - [`g:mkdx#settings.enter.shifto`](#gmkdxsettingsentershifto)
-    - [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed)
-    - [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
-    - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
-    - [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition)
-    - [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
-- [Mappings](#mappings)
-- [Remapping functionality](#remapping-functionality)
-- [Unmapping functionality](#unmapping-functionality)
-    - [Using `<Nop>`](#using-nop)
-    - [Using `<Plug>`](#using-plug)
-- [Known issues](#known-issues)
-    - [Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.](#double-dash-is-inserted-when-pressing-enter-at-the-end-of-a-list-item)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
+<details>
+<summary>Click to expand Table of Contents</summary>
+<ul>
+    <li><a href="#mkdxvim--">mkdx.vim</a></li>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
+        <li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
+        <li><a href="#25-03-2018-version-102">25-03-2018 VERSION 1.0.2</a></li>
+        <li><a href="#24-03-2018-version-101">24-03-2018 VERSION 1.0.1</a></li>
+    </ul></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#examples">Examples</a><ul>
+        <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
+        <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
+        <li><a href="#inserting-list-items">Inserting list items</a></li>
+        <li><a href="#converting-from--to-lists-checklists-or-checkboxes">Converting from / to lists, checklists or checkboxes</a><ul>
+            <li><a href="#checkboxes">Checkboxes</a></li>
+            <li><a href="#lists">Lists</a></li>
+            <li><a href="#checklists">Checklists</a></li>
+        </ul></li>
+        <li><a href="#completing-checkboxes--checklists">Completing Checkboxes / Checklists</a></li>
+        <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
+        <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
+        <li><a href="#toggling-quotes">Toggling Quotes</a></li>
+        <li><a href="#wrapping-text">Wrapping text</a><ul>
+            <li><a href="#as-a-link">As a link</a></li>
+            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a><ul>
+                <li><a href="#normal-mode">Normal mode</a></li>
+                <li><a href="#visual-mode">Visual mode</a></li>
+            </ul></li>
+        </ul></li>
+        <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
+        <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
+        <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
+        <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
+        <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
+    </ul></li>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
+        <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
+        <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
+        <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
+        <li><a href="#gmkdxsettingsmapenable"><code>g:mkdx#settings.map.enable</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxtoggles"><code>g:mkdx#settings.checkbox.toggles</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxupdate_tree"><code>g:mkdx#settings.checkbox.update_tree</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxinitial_state"><code>g:mkdx#settings.checkbox.initial_state</code></a></li>
+        <li><a href="#gmkdxsettingstokensheader"><code>g:mkdx#settings.tokens.header</code></a></li>
+        <li><a href="#gmkdxsettingstokensenter"><code>g:mkdx#settings.tokens.enter</code></a></li>
+        <li><a href="#gmkdxsettingstokensfence"><code>g:mkdx#settings.tokens.fence</code></a></li>
+        <li><a href="#gmkdxsettingstokensitalic"><code>g:mkdx#settings.tokens.italic</code></a></li>
+        <li><a href="#gmkdxsettingstokensbold"><code>g:mkdx#settings.tokens.bold</code></a></li>
+        <li><a href="#gmkdxsettingstokenslist"><code>g:mkdx#settings.tokens.list</code></a></li>
+        <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
+        <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
+        <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
+        <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
+        <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
+        <li><a href="#gmkdxsettingsentermalformed"><code>g:mkdx#settings.enter.malformed</code></a></li>
+        <li><a href="#gmkdxsettingstoctext"><code>g:mkdx#settings.toc.text</code></a></li>
+        <li><a href="#gmkdxsettingstoclist_token"><code>g:mkdx#settings.toc.list_token</code></a></li>
+        <li><a href="#gmkdxsettingstocposition"><code>g:mkdx#settings.toc.position</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
+        <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
+    </ul></li>
+    <li><a href="#mappings">Mappings</a></li>
+    <li><a href="#remapping-functionality">Remapping functionality</a></li>
+    <li><a href="#unmapping-functionality">Unmapping functionality</a><ul>
+        <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
+        <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
+    </ul></li>
+    <li><a href="#known-issues">Known issues</a><ul>
+        <li><a href="#double-dash-is-inserted-when-pressing-enter-at-the-end-of-a-list-item">Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.</a></li>
+    </ul></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+</ul>
+</details>
 
 # Changelog
 
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## 01-04-2018 VERSION 1.2.0
+
+- Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).
 
 ## 31-03-2018 VERSION 1.1.0
 
@@ -183,7 +204,7 @@ by <kbd>ctrl</kbd>+<kbd>o</kbd>.
 imap <buffer><silent><unique> <<Tab> <kbd></kbd><C-o>2h<C-o>cit
 ```
 
-## List items
+## Inserting list items
 
 |Unordered|Numbered|
 |---------|--------|
@@ -201,7 +222,7 @@ the newly inserted item.
 " :h mkdx-function-enter-handler
 ```
 
-## Toggling lists, checklists or checkboxes
+## Converting from / to lists, checklists or checkboxes
 
 In both normal and visual mode, lines can be toggled back and forth between either checkbox items,
 checklist items, or regular list items. In normal mode, the current line will be toggled.
@@ -428,6 +449,32 @@ If you want to place the TOC always as the _[N]th_ header, see [`g:mkdx#settings
 " :h mkdx-function-generate-or-update-toc
 ```
 
+## Generate or update TOC as `<details>`
+
+![mkdx generate or update table of contents as details](doc/gifs/vim-mkdx-gen-or-upd-toc-details.gif)
+
+Github supports the `<details>` and `<summary>` tags! With these, we can make an expandable table of contents (like this README).
+Unfortunately though, markdown isn't supported inside the `<details>` tag, not even with `markdown=1` (not from what I've tried anyway, let me know if you do!).
+So instead the TOC itself will be rendered as HTML nested `<ul>` tags with `<li><a></a></li>` tags.
+
+**NOTE:** This requires you to enable [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable)!
+
+<details>
+<summary>Click to expand example</summary>
+<ul>
+<li><a href="#mkdxvim--">mkdx.vim</a></li>
+<li><a href="#toc">TOC</a></li>
+<li><a href="#changelog">Changelog</a></li>
+<li><ul>
+<li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
+<li><a href="#25-03-2018-version-102">25-03-2018 VERSION 1.0.2</a></li>
+<li><a href="#24-03-2018-version-101">24-03-2018 VERSION 1.0.1</a></li>
+</ul></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</details>
+
 ## Open TOC in quickfix window
 
 ![mkdx open toc in quickfix](doc/gifs/vim-mkdx-toggle-qf.gif)
@@ -505,7 +552,13 @@ let g:mkdx#settings = {
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
       \                              'update_tree': 2,
       \                              'initial_state': ' ' },
-      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },
+      \ 'toc':                     { 'text': "TOC", 'list_token': '-',
+      \                              'position': 0,
+      \                              'details': {
+      \                                 'enable': 0,
+      \                                 'summary': 'Click to expand {{toc.text}}'
+      \                              }
+      \                            },
       \ 'table':                   { 'divider': '|',
       \                              'header_divider': '-' },
       \ 'highlight':               { 'enable': 0 }
@@ -765,6 +818,28 @@ e.g. setting it to `1` will cause it to be the first heading of your document.
 let g:mkdx#settings = { 'toc': { 'position': 0 } }
 ```
 
+## `g:mkdx#settings.toc.details.enable`
+
+This setting controls wether the generated TOC will be output as a regular _markdown_ list or inside a `<details>` tag.
+See: [Generate or update TOC as `<details>`](#generate-or-update-toc-as-details) for an example.
+By default, this option is disabled. To use it, set it's value to `1` instead.
+
+```viml
+" :h mkdx-setting-toc-details-enable
+let g:mkdx#settings = { 'toc': { 'details': { 'enable': 0 } } }
+```
+
+## `g:mkdx#settings.toc.details.summary`
+
+With [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable) set to `1`, a `<summary>` tag will also be
+generated inside the resulting `<details>` tag. This tag contains the text that will be displayed next to the "▶".
+The default value has a special placeholder `{{toc.text}}`. This will be replaced with the value of [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext) upon generation.
+
+```viml
+" :h mkdx-setting-toc-details-summary
+let g:mkdx#settings = { 'toc': { 'details': { 'summary': 'Click to expand {{toc.text}}' } } }
+```
+
 ## `g:mkdx#settings.highlight.enable`
 
 This setting enables state-specific highlighting for checkboxes.
@@ -941,7 +1016,7 @@ augroup END
 # Roadmap
 
 - [x] Add setting to always place the TOC in a fixed position (e.g. below nth header)
-- [ ] Add setting to generate the TOC inside a `<details />` tag for github
+- [x] Add setting to generate the TOC inside a `<details />` tag for github
 - [x] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
 - [x] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
 

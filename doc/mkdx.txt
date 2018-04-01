@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.1.0`
+`Version: 1.2.0`
 
 ==============================================================================
 CONTENTS                                                         *mkdx-contents*
@@ -33,6 +33,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.toc.text`
         `g:mkdx#settings.toc.list_token`
         `g:mkdx#settings.toc.position`
+        `g:mkdx#settings.toc.details.enable`
+        `g:mkdx#settings.toc.details.summary`
         `g:mkdx#settings.highlight.enable`
 
     Highlighting
@@ -167,6 +169,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-toc-text|
     - |mkdx-setting-toc-list-token|
     - |mkdx-setting-toc-position|
+    - |mkdx-setting-toc-details-enable|
+    - |mkdx-setting-toc-details-summary|
     - |mkdx-setting-highlight-enable|
 
 - |mkdx-highlighting|
@@ -267,10 +271,16 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],`
         `  \                              'update_tree': 2,`
         `  \                              'initial_state': ' ' },`
-    `      \ 'toc':                     { 'text': "TOC", 'list_token': '-' },`
+    `      \ 'toc':                     { 'text': "TOC", 'list_token': '-',`
+    `      \                              'position': 0,`
+    `      \                              'details': {`
+    `      \                                'enable': 0,`
+    `      \                                'summary': '{{toc.text}}'`
+    `      \                              }`
+    `      \                            },`
     `      \ 'table':                   { 'divider': '|',`
          ` \                              'header_divider': '-' },`
-         `\ 'highlight':               { 'enable': 0 }`
+         ` \ 'highlight':               { 'enable': 0 }`
     `    \ }`
 
 To overwrite a setting, simply write it as seen above:
@@ -499,6 +509,33 @@ Define the list style to use when generating a table of contents.
 The position at which to place the TOC, `0` is used for cursor line (default).
 If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
 e.g. setting it to `1` will cause it to be the first heading of your document.
+
+==============================================================================
+`g:mkdx#settings.toc.details.enable = 0`         *mkdx-setting-toc-details-enable*
+
+This setting controls wether the generated TOC will be output as a regular
+markdown list or inside a `<details>` tag. When this setting is enabled, the
+generated output will be a nested html structure instead of markdown since
+markdown within a `<details>` tag isn't supported on github.
+
+This setting tries to keep formatting of inline code (between "`") by
+replacing them with `<code>` tags.
+
+If any HTML tag is found inside a `<code>` block, it is escaped by replacing
+`<` with `&lt;` and `>` with `&gt;`.
+
+==============================================================================
+`g:mkdx#settings.toc.details.summary =`         *mkdx-setting-toc-details-summary*
+` \ 'Click to expand {{toc.text}}'`
+
+When |mkdx-setting-toc-details-enable| is set to `1`, an additional `<summary>` tag
+will be generated inside the `<details>` tag. The summary tag contains the
+text to be displayed next to the expand/collapse arrow.
+
+The placeholder `{{toc.text}}` is there to insert the contents of
+|mkdx-setting-toc-text| during generation, it is completely optional and can
+be omitted. If it is set to an empty string, |mkdx-setting-toc-text| will be used
+by default.
 
 ==============================================================================
 `g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*
@@ -1211,13 +1248,22 @@ Deep nested list with second level enter:
 mkdx#GenerateTOC()                                  *mkdx-function-generate-toc*
 
 Insert a table of contents under the cursor. All headings are indented
-usimg |sw| setting multiplied by their header minus one. This means that h1
+using |sw| setting multiplied by their header level minus one. This means that h1
 tags aren't indented. The header line is customizable through
-|mkdx-setting-toc-text|. If |mkdx-setting-tokens-header| is changed, this function
-will use the new value accordingly.
+|mkdx-setting-toc-text|.
 
 List items are generated with a dash (-) character by default. This can be
 changed with |mkdx-setting-toc-list-token|.
+
+If you always want the TOC to be the [N]th heading in your document, this can
+be specified with |mkdx-setting-toc-position|. Setting it to `1` would cause
+the TOC to be the first heading of the document, etc...
+
+As of version `1.2.0`, |mkdx| can generate the TOC inside a `<details>` tag!
+See the following settings for more information:
+
+Enabling: |mkdx-setting-toc-details-enable|
+Enabling: |mkdx-setting-toc-details-summary|
 
 ==============================================================================
 mkdx#UpdateTOC()                                      *mkdx-function-update-toc*

@@ -165,6 +165,23 @@ fun! s:util.FormatTOCHeader(level, content, ...)
   return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(a:content, get(a:000, 0, ''))
 endfun
 
+fun! s:util.EscapeTags(str)
+  return substitute(substitute(a:str, '<', '\&lt;', 'g'), '>', '\&gt;', 'g')
+endfun
+
+fun! s:util.HeaderToATag(header, ...)
+  let cheader = substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g')
+  let cheader = substitute(cheader, '\\\@<!`\(.*\)\\\@<!`', '<code>\1</code>', 'g')
+  let cheader = substitute(cheader, '<code>\(.*\)</code>', '\="<code>" . s:util.EscapeTags(submatch(1)) . "</code>"', 'g')
+  let cheader = substitute(cheader, '\\<\(.*\)>', '\&lt;\1\&gt;', 'g')
+  let cheader = substitute(cheader, '\\`\(.*\)\\`', '`\1`', 'g')
+  return '<a href="#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . '">' . cheader . '</a>'
+endfun
+
+fun! mkdx#test(header, ...)
+  return s:util.HeaderToATag(a:header, get(a:000, 0, ''))
+endfun
+
 fun! s:util.HeaderToListItem(header, ...)
   return '[' . substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g') . '](#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . ')'
 endfun
@@ -534,7 +551,6 @@ fun! mkdx#ShiftOHandler()
     let suff = !empty(matchlist(line, '^ *' . lis . ' \[.\]'))
     exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
   elseif (quot)
-    echo line
     let suff = !empty(matchlist(line, '^ *\[.\]'))
     exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
   else
@@ -642,44 +658,81 @@ fun! mkdx#GenerateTOC()
   let after_info = get(src, toc_pos, -1)
   let after_pos = toc_pos >= 0 && type(after_info) == type([])
 
+  if (g:mkdx#settings.toc.details.enable)
+    let summary_text =
+          \ empty(g:mkdx#settings.toc.details.summary)
+          \ ? g:mkdx#settings.toc.text
+          \ : substitute(g:mkdx#settings.toc.details.summary, '{{toc.text}}', g:mkdx#settings.toc.text, 'g')
+
+    call add(contents, '<details>')
+    call add(contents, '<summary>' . summary_text . '</summary>')
+    call add(contents, '<ul>')
+  endif
+
   for [lnum, lvl, line] in src
     let curr += 1
     let hsh = s:util.HeaderToHash(line)
     let c   = get(headers, hsh, 0)
     let sfx = c > 0 ? '-' . c : ''
+    let spc = repeat(repeat(' ', &sw), lvl)
     if (c == 0)
       let headers[hsh] = 1
     else
       let headers[hsh] += 1
     endif
 
+    let nextlvl    = get(src, curr, [0, lvl])[1]
+    let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
+
+    if (g:mkdx#settings.toc.details.enable && lvl < prevlvl)
+      let clvl = prevlvl
+      while (clvl > lvl)
+        let clvl -= 1
+        call add(contents, repeat(repeat(' ', &sw), clvl) . '</ul></li>')
+      endwhile
+    endif
+
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       call insert(contents, '')
       call insert(contents, header)
-      call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+      if (g:mkdx#settings.toc.details.enable)
+        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, sfx) . '</li>')
+      else
+        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+      endif
     endif
 
-    call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
+    if (g:mkdx#settings.toc.details.enable)
+      call add(contents, spc . '<li>' . s:util.HeaderToATag(line, sfx) . ending_tag)
+    else
+      call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
+    endif
 
     if (empty(header) && curr == srclen)
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       call insert(contents, '')
       call insert(contents, header)
-      call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+      if (g:mkdx#settings.toc.details.enable)
+        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, sfx) . '</li>')
+      else
+        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+      endif
     endif
 
     let prevlvl = lvl
   endfor
+
+  if (g:mkdx#settings.toc.details.enable)
+    call add(contents, '</ul>')
+    call add(contents, '</details>')
+  endif
 
   if (after_pos)
     let c = after_info[0] - 1
   else
     let c = curspos - 1
   endif
-
-  let clen = len(contents)
-  echo clen
 
   if (nextnonblank(c) == c)
     if (c > 0)

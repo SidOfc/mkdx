@@ -1,12 +1,12 @@
 if exists('b:did_ftplugin') | finish | else | let b:did_ftplugin = 1 | endif
-let s:defaults = {
+let s:defaults          = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
       \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1, 'shifto': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*', 'list': '-', 'fence': '', 'header': '#' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
-      \ 'toc':                     { 'text': "TOC", 'list_token': '-', 'position': 0 },
+      \ 'toc':                     { 'text': 'TOC', 'list_token': '-', 'position': 0, 'details': { 'enable': 0, 'summary': 'Click to expand {{toc.text}}' } },
       \ 'table':                   { 'divider': '|', 'header_divider': '-' },
       \ 'highlight':               { 'enable': 0 }
     \ }

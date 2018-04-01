@@ -615,6 +615,14 @@ fun! mkdx#GenerateOrUpdateTOC()
   call mkdx#GenerateTOC()
 endfun
 
+fun! s:util.IsDetailsTag(lnum)
+  return substitute(getline(a:lnum), '[ \t]\+', '', 'g') == '</details>'
+endfun
+
+fun! s:util.IsHeader(lnum)
+  return match(getline(a:lnum), '^[ \t]*#\{1,6}') > -1
+endfun
+
 fun! mkdx#UpdateTOC()
   let startc = -1
   let nnb    = -1
@@ -629,12 +637,20 @@ fun! mkdx#UpdateTOC()
 
   if (startc)
     let endc = startc + (nextnonblank(startc + 1) - startc)
-    while nextnonblank(endc) == endc |  let endc += 1 | endwhile
+    while (nextnonblank(endc) == endc)
+      let endc += 1
+      if (s:util.IsHeader(endc))
+        break
+      if (s:util.IsDetailsTag(endc))
+        let endc += 1
+        break
+      endif
+    endwhile
     let endc -= 1
   endif
 
   exe 'normal! :' . startc . ',' . endc . 'd'
-  call mkdx#GenerateTOC()
+  call mkdx#GenerateTOC(1)
   call setpos('.', curpos)
 endfun
 
@@ -648,7 +664,8 @@ fun! mkdx#QuickfixHeaders(...)
   endif
 endfun
 
-fun! mkdx#GenerateTOC()
+fun! mkdx#GenerateTOC(...)
+  let toc_exst = get(a:000, 0, 0)
   let contents = []
   let curspos  = getpos('.')[1]
   let header   = ''
@@ -733,7 +750,7 @@ fun! mkdx#GenerateTOC()
     call add(contents, '</details>')
   endif
 
-  if (after_pos)
+  if (!toc_exst && after_pos)
     let c = after_info[0] - 1
   else
     let c = curspos - 1

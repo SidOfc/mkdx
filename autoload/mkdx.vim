@@ -759,13 +759,8 @@ fun! mkdx#GenerateTOC(...)
     let c = curspos - 1
   endif
 
-  if (nextnonblank(c) == c)
-    if (c > 0)
-      call insert(contents, '')
-    else
-      call add(contents, '')
-    endif
-  endif
+  if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
+  if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif
 
   for item in contents
     call append(c, item)

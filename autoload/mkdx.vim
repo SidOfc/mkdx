@@ -613,6 +613,8 @@ fun! mkdx#EnterHandler()
 endfun
 
 fun! mkdx#GenerateOrUpdateTOC()
+  silent! call repeat#set("\<Plug>(mkdx-gen-or-upd-toc)")
+
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
       call mkdx#UpdateTOC()

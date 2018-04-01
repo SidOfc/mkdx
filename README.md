@@ -868,7 +868,7 @@ You can see it in action in the [Completing checkboxes / checklists](#completing
 " :h mkdx-setting-highlight-enable
 " :h mkdx-highlighting
 " set to 1 to enable.
-let g:mkdx#settings = { 'highlight': { 'enable': 0, '*' } }
+let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 ```
 
 # Mappings

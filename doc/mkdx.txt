@@ -1173,6 +1173,12 @@ detected as list items:
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
 - Any token present in |mkdx-settings-tokens-list|
 
+Vim has builtin |formatoptions| that can -partially- take care of that job.
+Since mkdx provides a custom `<enter>` handler, we do not want the option `r`
+to interfere by prepending known |comments| when pressing `<enter>`. For this
+reason, mkdx removes the `r` option using |setlocal|. This means it will not
+overwrite your global settings.
+
 This function respects indent level when appending a new item.
 When you add a new list item and press <enter> again (e.g. pressing <enter>
 twice after an existing list item) the list item and any indentation will be

@@ -86,9 +86,6 @@ settings and examples with default mappings.
         <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
         <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
     </ul></li>
-    <li><a href="#known-issues">Known issues</a><ul>
-        <li><a href="#double-dash-is-inserted-when-pressing-enter-at-the-end-of-a-list-item">Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.</a></li>
-    </ul></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
 </ul>
@@ -971,41 +968,6 @@ The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next)`. To disable it
 
 ```viml
 map <Plug> <Plug>(mkdx-checkbox-next)
-```
-
-# Known issues
-
-## Double dash is inserted when pressing <kbd>enter</kbd> at the end of a list item.
-
-Mkdx doesn't fiddle with any of vim's `set` settings itself, it handles everything from indenting lists
-to toggling headers to generating TOC's internally. This usually comes from other (markdown filetype) plugins that also do some setup for you.
-In vim/nvim, there is a setting called `formatoptions` that accepts certain flags, from the `:h formatoptions`:
-
-> This is a sequence of letters which describes how automatic
-> formatting is to be done.  See |fo-table|.  When the 'paste' option is
-> on, no formatting is done (like 'formatoptions' is empty).  Commas can
-> be inserted for readability.
-> To avoid problems with flags that are added in the future, use the
-> "+=" and "-=" feature of ":set" |add-option-flags|.
-
-One of these flags is the `r` flag, which reads:
-
-> Automatically insert the current comment leader after hitting
-> <Enter> in Insert mode.
-
-The mentioned "comment leader" is set by `comments` (see `:h comments`).
-Whenever a token in `comments` is encountered at the start of the line you pressed <kbd>enter</kbd> on, the next line will automatically get the same item inserted.
-For instance, the [vim-polyglot](https://github.com/sheerun/vim-polyglot) package provides [Plasticboy's vim-markdown](https://github.com/plasticboy/vim-markdown).
-Upon closer inspection of the markdown plugin, one can see that indeed the `formatoptions` and `comments` flags both [get set](https://github.com/plasticboy/vim-markdown/blob/861e84fc0bc97be8387e92ac2fc180599dc2b5a3/indent/markdown.vim#L8-L13).
-
-Personally, I have it disabled entirely with `let g:polyglot_disabled = ['markdown']`.
-If you do not wish to go down that road, you can also remove the `r` flag from `formatoptions` using an autocommand every time you load a new markdown file:
-
-```viml
-augroup Markdown
-  au!
-  au FileType markdown setlocal formatoptions-=r
-augroup END
 ```
 
 # Roadmap

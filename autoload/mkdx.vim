@@ -650,8 +650,10 @@ fun! mkdx#UpdateTOC()
   endif
 
   exe 'normal! :' . startc . ',' . endc . 'd'
-  call mkdx#GenerateTOC(1)
-  call setpos('.', curpos)
+  let deleted = endc - startc + 1
+  let curs_af = curpos[1] >= endc
+  let inslen = mkdx#GenerateTOC(1)
+  call cursor(curpos[1] - (curs_af ? deleted - inslen : 0), curpos[2])
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
@@ -667,7 +669,8 @@ endfun
 fun! mkdx#GenerateTOC(...)
   let toc_exst = get(a:000, 0, 0)
   let contents = []
-  let curspos  = getpos('.')[1]
+  let cpos     = getpos('.')
+  let curspos  = cpos[1]
   let header   = ''
   let prevlvl  = 1
   let skip     = 0
@@ -769,5 +772,6 @@ fun! mkdx#GenerateTOC(...)
     let c += 1
   endfor
 
-  call cursor(curspos, 1)
+  call setpos('.', cpos)
+  return len(contents)
 endfun

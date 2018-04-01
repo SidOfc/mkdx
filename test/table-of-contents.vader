@@ -2,6 +2,9 @@ Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Execute (Reset settings):
+  let g:mkdx#settings.toc.details.enable = 0
+
 Given (A file with headers):
   
   # Header 1
@@ -16,9 +19,9 @@ Do (<leader>i):
    i
 
 Expect (A table of contents):
-  # TOC
+  # Table of Contents
 
-  - [TOC](#toc)
+  - [Table of Contents](#table-of-contents)
   - [Header 1](#header-1)
   - [Header 2](#header-2)
   - [Header 3](#header-3)
@@ -38,9 +41,9 @@ Expect (A table of contents):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A file with a table of contents):
-  # TOC
+  # Table of Contents
 
-  - [TOC](#toc)
+  - [Table of Contents](#table-of-contents)
   - [Header 1](#header-1)
   - [Header 2](#header-2)
   - [Header 3](#header-3)
@@ -61,9 +64,9 @@ Do (Insert a new header and press <leader>i):
   GA\<cr>## hello\<esc> i
 
 Expect (An updated table of contents):
-  # TOC
+  # Table of Contents
 
-  - [TOC](#toc)
+  - [Table of Contents](#table-of-contents)
   - [Header 1](#header-1)
   - [Header 2](#header-2)
   - [Header 3](#header-3)
@@ -81,3 +84,9 @@ Expect (An updated table of contents):
   # Header [with link](https://google.com)
   # Header ![with img](img.png)
   ## hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Reset settings):
+  let g:mkdx#settings.toc.details.enable = 0
+

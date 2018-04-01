@@ -533,22 +533,26 @@ fun! mkdx#ShiftOHandler()
   let lnum = line('.')
   let line = getline(lnum)
   let len  = strlen(line)
-  let quot = len > 0 ? line[0] == '>' : 0
   let qstr = ''
-  if (quot)
+  let bld  = match(line, '^ *\*\*') > -1
+  let quot = len > 0 ? line[0] == '>' : 0
+
+  if (!bld && quot)
     let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
     let line = line[strlen(qstr):]
   endif
 
-  let lin  = get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
-  let lis  = get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\)'), 1, -1)
+  let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
+  let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\)'), 1, -1)
 
   if (lin != -1)
-    let suff = !empty(matchlist(line, '^ *' . lin . ' \[.\]'))
+    let esc  = lin == '*' ? '\*' : lin
+    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
     exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
     call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
   elseif (lis != -1)
-    let suff = !empty(matchlist(line, '^ *' . lis . ' \[.\]'))
+    let esc  = lis == '*' ? '\*' : lis
+    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
     exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
   elseif (quot)
     let suff = !empty(matchlist(line, '^ *\[.\]'))
@@ -574,12 +578,12 @@ fun! mkdx#EnterHandler()
     let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
     let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
     let quote   = len > 0 ? line[0] == '>' : 0
-    let special = !empty(t)
     let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
     let incr    = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\)'), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
     let qu_str  = quote ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
+    let ast_bld = match(line, '^ *\*\*') > -1
 
     if (at_end && match(line, '^>\? *[0-9.]\+') > -1)
       call s:util.UpdateListNumbers(lnum, incr, (remove ? -1 : 1))
@@ -588,12 +592,13 @@ fun! mkdx#EnterHandler()
     if (remove)  | call setline('.', '')                                                      | endif
     if (upd_tl)  | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
     if (remove)  | return ''                                                                  | endif
+    if (ast_bld) | return "\n"                                                                | endif
     if (!at_end) | return "\n"                                                                | endif
     if (tcb)     | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
     return ("\n"
       \ . qu_str
       \ . (match(t, '[0-9.]\+') > -1 ? s:util.NextListNumber(t, incr > -1 ? incr : 0) : t)
-      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (special ? ' ' : '')))
+      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (!empty(t) ? ' ' : '')))
   endif
 
   return "\n"

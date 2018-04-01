@@ -25,7 +25,6 @@ settings and examples with default mappings.
         <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
         <li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
         <li><a href="#25-03-2018-version-102">25-03-2018 VERSION 1.0.2</a></li>
-        <li><a href="#24-03-2018-version-101">24-03-2018 VERSION 1.0.1</a></li>
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
@@ -115,10 +114,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 - Fix incorrect <Plug> mapping detection
 - Update README, add remapping section
-
-## 24-03-2018 VERSION 1.0.1
-
-- All mappings now use `<Plug>`.
 
 # Install
 

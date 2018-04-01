@@ -1,3 +1,7 @@
+## 24-03-2018 VERSION 1.0.1
+
+- All mappings now use `<Plug>`.
+
 ## 24-03-2018 VERSION 1.0.0
 
 - Fix #11 - `mkdx#ToggleQuote` inserting `0` on empty lines

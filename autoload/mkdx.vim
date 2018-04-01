@@ -36,6 +36,14 @@ fun! s:util.WrapSelectionOrWord(...)
   return zz
 endfun
 
+fun! s:util.IsDetailsTag(lnum)
+  return substitute(getline(a:lnum), '[ \t]\+', '', 'g') == '</details>'
+endfun
+
+fun! s:util.IsHeader(lnum)
+  return match(getline(a:lnum), '^[ \t]*#\{1,6}') > -1
+endfun
+
 fun! s:util.IsImage(str)
   if (empty(g:mkdx#settings.image_extension_pattern)) | return 0 | endif
   return match(get(split(a:str, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
@@ -613,14 +621,6 @@ fun! mkdx#GenerateOrUpdateTOC()
   endfor
 
   call mkdx#GenerateTOC()
-endfun
-
-fun! s:util.IsDetailsTag(lnum)
-  return substitute(getline(a:lnum), '[ \t]\+', '', 'g') == '</details>'
-endfun
-
-fun! s:util.IsHeader(lnum)
-  return match(getline(a:lnum), '^[ \t]*#\{1,6}') > -1
 endfun
 
 fun! mkdx#UpdateTOC()

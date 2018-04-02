@@ -700,7 +700,7 @@ let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
-See [Styling text](#as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-bold

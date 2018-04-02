@@ -1,5 +1,6 @@
 """"" UTILITY FUNCTIONS
 let s:util = {}
+let s:util.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0"
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
       \ 'M': 'meta',
@@ -8,6 +9,104 @@ let s:util.modifier_mappings = {
       \ 'meta': 'meta',
       \ 'shift': 'shift'
       \ }
+
+fun! s:util.ExtractCurlHttpCode(data, ...)
+  let ev = get(a:000, 2, '')
+
+  if (ev == 'stdout')
+    let status = get(get(a:000, 1, []), 0, '404')
+    let status = status =~ '\D' ? 500 : str2nr(status)
+    let qflen  = len(getqflist())
+    let total  = a:data[0]
+
+    if (status < 200 || status > 299)
+      let [total, bufnum, lnum, column, url] = a:data
+      let text   = repeat('0', 3 - strlen(status)) . status . ': ' . url
+      let qflen += 1
+
+      call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
+      if (qflen == 1) | copen | endif
+    endif
+
+    if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
+    echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
+    echohl None
+  endif
+endfun
+
+fun! s:util.GetRemoteUrl()
+  if (!executable('git'))
+    return 0
+  endif
+
+  let remote = system('git ls-remote --get-url 2>/dev/null')
+
+  if (!v:shell_error && strlen(remote) > 4)
+    let secure = remote[0:4] == "https"
+    let branch = system('git branch 2>/dev/null | grep "\*.*"')
+    if (!v:shell_error && strlen(branch) > 0)
+      let remote = substitute(substitute(remote[0:-2], '^\(\(https\?:\)\?//\|.*@\)\|\.git$', '', 'g'), ':', '/', 'g')
+      let remote = (secure ? 'https' : 'http') . '://' . remote . '/blob/' . branch[2:-2] . '/'
+      return remote
+    endif
+    return 0
+  endif
+  return 0
+endfun
+
+fun! s:util.AsyncDeadExternalToQF(...)
+  let resetqf  = get(a:000, 0, 1)
+  let prev_tot = get(a:000, 1, 0)
+  let external = s:util.ListExternalLinks()
+  let bufnum   = bufnr('%')
+  let has_rem  = -1
+  let total    = len(external) + prev_tot
+
+  if (resetqf) | call setqflist([]) | endif
+  for [lnum, column, url] in external
+    let has_frag = url[0]   == '#'
+    let has_prot = url[0:1] == '//'
+    let has_http = url[0:3] == 'http'
+
+    if ((has_rem || has_rem == -1) && !has_frag && !has_http && !has_prot)
+      let remote   = s:util.GetRemoteUrl()
+      let has_rem  = match(remote, '\D') > -1
+      if (has_rem) | let url = (remote[0:(url[-1] == '/' ? -2 : -1)] . url) | endif
+    endif
+
+    call jobstart('curl -L -I -s -o /dev/null -A "' . s:util.user_agent . '" -w "%{http_code}" ' . url,
+                \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+  endfor
+
+  return external
+endfun
+
+fun! s:util.ListExternalLinks()
+  let limit = line('$') + 1
+  let lnum  = 1
+  let xtnal = []
+
+  while (lnum < limit)
+    let line = getline(lnum)
+    let col  = 0
+    let len  = len(line)
+
+    while (col < len)
+      let col += match(line[col:], '\](\([^#][^)]\+\))')
+      if (col < 0) | break | endif
+
+      let matchtext = get(matchlist(line[col:], '\](\([^#][^)]\+\))'), 1, -1)
+      if (matchtext == -1) | break | endif
+
+      call add(xtnal, [lnum, col + 2, matchtext])
+      let col += len(matchtext)
+    endwhile
+
+    let lnum += 1
+  endwhile
+
+  return xtnal
+endfun
 
 fun! s:util.ListFragmentLinks()
   let limit = line('$') + 1
@@ -68,7 +167,7 @@ fun! s:util.FindDeadFragmentLinks()
     if (!exists) | call add(dead, {'bufnr': bufnum, 'lnum': lnum, 'col': column + 1, 'text': hash}) | endif
   endfor
 
-  return dead
+  return [dead, len(frags)]
 endfun
 
 fun! s:util.WrapSelectionOrWord(...)
@@ -440,22 +539,28 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
-fun! mkdx#QuickfixDeadFrags(...)
-  let dead = s:util.FindDeadFragmentLinks()
-
+fun! mkdx#QuickfixDeadLinks(...)
+  let [dead, total] = s:util.FindDeadFragmentLinks()
   if (get(a:000, 0, 1))
     let dl = len(dead)
+    let sf = ''
+
+    call setqflist(dead)
+    if (has('nvim'))
+      call s:util.AsyncDeadExternalToQF(0, total)
+    else
+      let sf = ' (#fragments only)'
+    endif
+
     if (dl > 0)
-      call setqflist(dead)
       exe 'copen'
       echohl ErrorMsg
     else
-      call setqflist([])
       exe 'cclose'
       echohl MoreMsg
     endif
 
-    echo dl . ' dead fragment link' . (dl == 1 ? '' : 's')
+    echo dl . '/' . total ' dead link' . (dl == 1 ? '' : 's') . sf
     echohl None
   else
     return dead

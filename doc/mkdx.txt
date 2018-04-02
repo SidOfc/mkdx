@@ -56,7 +56,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
         <Plug>(mkdx-quickfix-toc)
-        <Plug>(mkdx-quickfix-frags)
+        <Plug>(mkdx-quickfix-links)
         <Plug>(mkdx-text-bold-n)
         <Plug>(mkdx-text-bold-v)
         <Plug>(mkdx-text-italic-n)
@@ -94,7 +94,7 @@ CONTENTS                                                         *mkdx-contents*
         List items
         Generate or update table of contents
         Quickfix table of contents
-        Quickfix dead fragment links
+        Quickfix dead links
         Toggle checkbox
         Toggle checklist
         Toggle list
@@ -113,7 +113,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#UpdateTOC()
         mkdx#GenerateOrUpdateTOC()
         mkdx#QuickfixHeaders()
-        mkdx#QuickfixDeadFrags()
+        mkdx#QuickfixDeadLinks()
         mkdx#ToggleCheckboxTask()
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
@@ -197,7 +197,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-update-toc|
     - |mkdx-plug-gen-or-update-toc|
     - |mkdx-plug-quickfix-toc|
-    - |mkdx-plug-quickfix-frags|
+    - |mkdx-plug-quickfix-links|
     - |mkdx-plug-wrap-text-in-link-n|
     - |mkdx-plug-wrap-text-in-link-v|
     - |mkdx-plug-wrap-text-in-bold-n|
@@ -237,7 +237,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-list-items|
     - |mkdx-mapping-generate-or-update-toc|
     - |mkdx-mapping-quickfix-table-of-contents|
-    - |mkdx-mapping-quickfix-dead-frags|
+    - |mkdx-mapping-quickfix-dead-links|
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
@@ -256,7 +256,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
     - |mkdx-function-quickfix-headers|
-    - |mkdx-function-quickfix-dead-frags|
+    - |mkdx-function-quickfix-dead-links|
     - |mkdx-function-wrap-text|
     - |mkdx-function-toggle-checkbox-task|
     - |mkdx-function-toggle-checklist|
@@ -662,9 +662,9 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#QuickfixHeaders()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-quickfix-frags)                           *mkdx-plug-quickfix-frags*
+<Plug>(mkdx-quickfix-links)                           *mkdx-plug-quickfix-links*
 
-    `:call mkdx#QuickfixDeadFrags()<Cr>`
+    `:call mkdx#QuickfixDeadLinks()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
@@ -966,12 +966,14 @@ Quickfix table of contents             *mkdx-mapping-quickfix-table-of-contents*
 Adds all the markdown headers in the current file to the quickfix list.
 
 ==============================================================================
-Quickfix dead fragment links                  *mkdx-mapping-quickfix-dead-frags*
+Quickfix dead links                           *mkdx-mapping-quickfix-dead-links*
                                                                  <MAP_PREFIX>L
 
-Checks every markdown fragment link (`[link](#somewhere-on-page)`) in the
-document for existence, if a link does not exist, it will be added to the
-quickfix list.
+Checks every markdown link in the document for existence, if a link does not
+exist, it will be added to the quickfix list.
+
+A fragment link is dead when none of the headers in the document match it.
+An external link is dead when it returns a statuscode `< 200` and `> 299`
 
 ==============================================================================
 Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
@@ -1349,13 +1351,17 @@ quickfix-ready entries will be returned instead in the format of:
     `{'lnum': 23, 'text': '# header', 'bufnr': 5}`
 
 ==============================================================================
-mkdx#QuickfixFrags([{quickfix}])                  *mkdx-function-quickfix-frags*
+mkdx#QuickfixDeadLinks([{quickfix}])         *mkdx-function-quickfix-dead-links*
 
-Find all dead fragment links in the current file and opens them in a quickfix
+Find all dead links in the current file and opens them in a quickfix
 window to allow for easy jumping using regular quickfix commands.
 
-Dead links are found by converting all the headers in the document to their
-respective `#fragment-link` urls. These are the existing links within the
+There are two types of links:
+
+FRAGMENT
+
+Dead fragment links are found by converting all the headers in the document to
+their respective `#fragment-link` urls. These are the existing links within the
 document which we can use to compare against a list of `#fragment-link`s found
 by scanning the markdown links in the document.
 
@@ -1369,6 +1375,19 @@ will be opened if the file contains any headers. When set to 0, a list of
 quickfix-ready entries will be returned instead in the format of:
 
     `{'lnum': 23, 'col': 3, 'text': '#unknown-header', 'bufnr': 5}`
+
+EXTERNAL
+
+If {quickfix} is provided and equals 1, |mkdx| also scans the document for any
+external links (http://, https://, // or any absolute / relative link) and
+uses neovim's |job-control| or vim's |job| feature together with `cURL` to
+asynchronously check if all those links are still in the air.
+
+These links will be added to the quickfix list but, they will not be added to
+the final result of calling this function.
+
+One can always use |getqflist| after calling this function to fetch the
+quickfix list entries afterwards.
 
 ==============================================================================
 mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*

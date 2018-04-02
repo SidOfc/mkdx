@@ -1,4 +1,4 @@
-# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
+# mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](https://github.com/SidOfc/mkdx/releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
 ![mkdx update checklist](doc/gifs/vim-mkdx-gen-or-upd-toc.gif)
 
@@ -174,7 +174,7 @@ Now you can safely change a header, if you want to know if you broke anything yo
 ```viml
 " :h mkdx-mapping-quickfix-dead-frags
 " :h mkdx-function-quickfix-dead-frags
-" :h mkdx-plug-quickfix-frags
+" :h mkdx-plug-quickfix-links
 ```
 
 ## Insert fenced code block
@@ -430,6 +430,15 @@ Wrap the word (anywhere) under the cursor or a visual selection using the follow
 As with all other mappings, all the *normal* mode mappings are repeatable.
 
 ## Convert CSV to table
+
+//protocol
+/absolute
+relative
+http://web
+https://web
+
+git@github.com:sidofc/mkdx
+https://github.com/SidOfc/mkdx.git
 
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
@@ -919,7 +928,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
-|Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd>|`<Plug>(mkdx-quickfix-frags)`|
+|Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd>|`<Plug>(mkdx-quickfix-links)`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
 |<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
 |Insert fenced code block|insert|<kbd>\`</kbd><kbd>\`</kbd><kbd>\`</kbd>|`<Plug>(mkdx-fence-backtick)`|

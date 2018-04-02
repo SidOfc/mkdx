@@ -102,7 +102,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Automatically remove `r` from `formatoptions` inside markdown files (buffer local override)
 - Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
 - Cursor stays on the same line after updating table of contents
-- mkdx#QuickfixHeaders() shows amount of headers and doesn't open quickfix when no headers are present.
+- `mkdx#QuickfixHeaders()` shows amount of headers and doesn't open quickfix when no headers are present.
 - Added feature: [Dead fragment link detection](#dead-fragment-link-detection)
 
 ## 01-04-2018 VERSION 1.2.0

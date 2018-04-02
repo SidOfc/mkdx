@@ -185,13 +185,14 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-promote-header|
     - |mkdx-plug-demote-header|
     - |mkdx-plug-toggle-quote|
-    - |mkdx-plug-mkdx-wrap-link-n|
-    - |mkdx-plug-mkdx-wrap-link-v|
-    - |mkdx-plug-mkdx-tableize|
-    - |mkdx-plug-mkdx-generate-toc|
-    - |mkdx-plug-mkdx-update-toc|
-    - |mkdx-plug-mkdx-gen-or-update-toc|
-    - |mkdx-plug-mkdx-quickfix-toc|
+    - |mkdx-plug-wrap-link-n|
+    - |mkdx-plug-wrap-link-v|
+    - |mkdx-plug-tableize|
+    - |mkdx-plug-generate-toc|
+    - |mkdx-plug-update-toc|
+    - |mkdx-plug-gen-or-update-toc|
+    - |mkdx-plug-quickfix-toc|
+    - |mkdx-plug-quickfix-frags|
     - |mkdx-plug-wrap-text-in-link-n|
     - |mkdx-plug-wrap-text-in-link-v|
     - |mkdx-plug-wrap-text-in-bold-n|

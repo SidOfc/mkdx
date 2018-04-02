@@ -88,7 +88,7 @@ Expect (List items are correctly incremented and new empty list item):
       3.1. subtask
       3.2. subtask
   4. hello
-
+  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A nested numbered list):
@@ -108,7 +108,7 @@ Expect (List items are correctly incremented and new empty list item):
       3.1. subtask
       3.2. subtask
   4. hello
-
+  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A nested numbered list):
@@ -128,8 +128,7 @@ Expect (List items are correctly decremented and the line is now empty):
       2.1. subtask
       2.2. subtask
   3. hello
-
-
+  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A nested numbered list):

@@ -63,6 +63,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let total    = len(external) + prev_tot
 
   if (resetqf) | call setqflist([]) | endif
+
   for [lnum, column, url] in external
     let has_frag = url[0]   == '#'
     let has_prot = url[0:1] == '//'
@@ -545,18 +546,13 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (dl > 0)
-      exe 'copen'
-      echohl ErrorMsg
-    else
-      exe 'cclose'
-      echohl MoreMsg
-    endif
+    if (has('nvim')) | call s:util.AsyncDeadExternalToQF(0, total) | endif
 
+    if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
+    if (dl > 0) | copen | else | cclose | endif
     echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
     echohl None
 
-    if (has('nvim')) | call s:util.AsyncDeadExternalToQF(0, total) | endif
   else
     return dead
   endif

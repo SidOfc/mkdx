@@ -56,6 +56,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
         <Plug>(mkdx-quickfix-toc)
+        <Plug>(mkdx-quickfix-frags)
         <Plug>(mkdx-text-bold-n)
         <Plug>(mkdx-text-bold-v)
         <Plug>(mkdx-text-italic-n)
@@ -93,6 +94,7 @@ CONTENTS                                                         *mkdx-contents*
         List items
         Generate or update table of contents
         Quickfix table of contents
+        Quickfix dead fragment links
         Toggle checkbox
         Toggle checklist
         Toggle list
@@ -105,10 +107,13 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleHeader()
         mkdx#Tableize()
         mkdx#EnterHandler()
+        mkdx#OHandler()
+        mkdx#ShiftOHandler()
         mkdx#GenerateTOC()
         mkdx#UpdateTOC()
         mkdx#GenerateOrUpdateTOC()
         mkdx#QuickfixHeaders()
+        mkdx#QuickfixDeadFrags()
         mkdx#ToggleCheckboxTask()
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
@@ -232,6 +237,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-list-items|
     - |mkdx-mapping-generate-or-update-toc|
     - |mkdx-mapping-quickfix-table-of-contents|
+    - |mkdx-mapping-quickfix-dead-frags|
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
@@ -244,10 +250,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-header|
     - |mkdx-function-tableize|
     - |mkdx-function-enter-handler|
+    - |mkdx-function-o-handler|
+    - |mkdx-function-shift-o-handler|
     - |mkdx-function-generate-toc|
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
     - |mkdx-function-quickfix-headers|
+    - |mkdx-function-quickfix-dead-frags|
     - |mkdx-function-wrap-text|
     - |mkdx-function-toggle-checkbox-task|
     - |mkdx-function-toggle-checklist|
@@ -653,6 +662,11 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#QuickfixHeaders()<Cr>`
 
 ==============================================================================
+<Plug>(mkdx-quickfix-frags)                           *mkdx-plug-quickfix-frags*
+
+    `:call mkdx#QuickfixDeadFrags()<Cr>`
+
+==============================================================================
 <Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
 
     `:<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.bold,`
@@ -952,6 +966,14 @@ Quickfix table of contents             *mkdx-mapping-quickfix-table-of-contents*
 Adds all the markdown headers in the current file to the quickfix list.
 
 ==============================================================================
+Quickfix dead fragment links                  *mkdx-mapping-quickfix-dead-frags*
+                                                                 <MAP_PREFIX>L
+
+Checks every markdown fragment link (`[link](#somewhere-on-page)`) in the
+document for existence, if a link does not exist, it will be added to the
+quickfix list.
+
+==============================================================================
 Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
                                                                  <MAP_PREFIX>t
 
@@ -1170,12 +1192,15 @@ Will produce this table:
 ==============================================================================
 mkdx#EnterHandler()                                *mkdx-function-enter-handler*
 
-This function detects when you are in a list, when pressing <enter> in insert
-mode or `o` in normal mode. It will append a new list item. The following are
-detected as list items:
+When |mkdx-setting-enter-enable| is enabled,
+this function detects when you are in a list, when pressing <enter> in insert
+mode or `o` and `O` in normal mode. It will append a new list item. The following
+are detected as list items:
 
-- Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
-- Any token present in |mkdx-settings-tokens-list|
+- Optional quote character, followed by any number of spaces followed
+  by dot separated numbers (`>\?'^ \+[0-9.]\+'`).
+- Optional quote character, followed by any number of spaces and
+  a token present in |mkdx-settings-tokens-list|
 
 Vim has builtin |formatoptions| that can -partially- take care of that job.
 Since mkdx provides a custom `<enter>` handler, we do not want the option `r`
@@ -1255,6 +1280,22 @@ Deep nested list with second level enter:
     `5. list item`
 
 ==============================================================================
+mkdx#OHandler()                                        *mkdx-function-o-handler*
+
+When |mkdx-setting-enter-enable| and |mkdx-setting-enter-o| are enabled,
+This function checks if you are in the middle of a list. If this is true,
+|mkdx-function-enter-handler| is triggered with a `normal! A<Cr>` command.
+Otherwise, execute `normal! o` as if nothing happened.
+
+==============================================================================
+mkdx#ShiftOHandler()                             *mkdx-function-shift-o-handler*
+
+When |mkdx-setting-enter-enable| and |mkdx-setting-enter-shift-o| are enabled,
+This function checks if you are in the middle of a list. If this is true,
+basically an "upward" |mkdx-function-enter-handler| will be triggered.
+Otherwise, execute `normal! O` as if nothing happened.
+
+==============================================================================
 mkdx#GenerateTOC()                                  *mkdx-function-generate-toc*
 
 Insert a table of contents under the cursor. All headings are indented
@@ -1306,6 +1347,28 @@ will be opened if the file contains any headers. When set to 0, a list of
 quickfix-ready entries will be returned instead in the format of:
 
     `{'lnum': 23, 'text': '# header', 'bufnr': 5}`
+
+==============================================================================
+mkdx#QuickfixFrags([{quickfix}])                  *mkdx-function-quickfix-frags*
+
+Find all dead fragment links in the current file and opens them in a quickfix
+window to allow for easy jumping using regular quickfix commands.
+
+Dead links are found by converting all the headers in the document to their
+respective `#fragment-link` urls. These are the existing links within the
+document which we can use to compare against a list of `#fragment-link`s found
+by scanning the markdown links in the document.
+
+when a fragment link is found and it exists in the list of header
+fragment-urls, we can assume that the link exists. If a fragment url is found
+that does not exist inside the list of header fragments, it gets added to the
+quickfix list for closer inspection.
+
+If {quickfix} isn't provided, it defalts to 1, which means a quickfix list
+will be opened if the file contains any headers. When set to 0, a list of
+quickfix-ready entries will be returned instead in the format of:
+
+    `{'lnum': 23, 'col': 3, 'text': '#unknown-header', 'bufnr': 5}`
 
 ==============================================================================
 mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*

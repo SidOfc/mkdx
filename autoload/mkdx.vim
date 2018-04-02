@@ -543,15 +543,8 @@ fun! mkdx#QuickfixDeadLinks(...)
   let [dead, total] = s:util.FindDeadFragmentLinks()
   if (get(a:000, 0, 1))
     let dl = len(dead)
-    let sf = ''
 
     call setqflist(dead)
-    if (has('nvim'))
-      call s:util.AsyncDeadExternalToQF(0, total)
-    else
-      let sf = ' (#fragments only)'
-    endif
-
     if (dl > 0)
       exe 'copen'
       echohl ErrorMsg
@@ -560,8 +553,10 @@ fun! mkdx#QuickfixDeadLinks(...)
       echohl MoreMsg
     endif
 
-    echo dl . '/' . total ' dead link' . (dl == 1 ? '' : 's') . sf
+    echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
     echohl None
+
+    if (has('nvim')) | call s:util.AsyncDeadExternalToQF(0, total) | endif
   else
     return dead
   endif

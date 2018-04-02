@@ -9,6 +9,90 @@ let s:util.modifier_mappings = {
       \ 'shift': 'shift'
       \ }
 
+fun! s:util.ListFragmentLinks()
+  let limit = line('$') + 1
+  let lnum  = 1
+  let frags = []
+
+  while (lnum < limit)
+    let line = getline(lnum)
+    let col  = 0
+    let len  = len(line)
+
+    while (col < len)
+      let col += match(line[col:], '\](\(#[^)]\+\))')
+      if (col < 0) | break | endif
+
+      let matchtext = get(matchlist(line[col:], '\](\(#[^)]\+\))'), 1, -1)
+      if (matchtext == -1) | break | endif
+
+      call add(frags, [lnum, col + 2, matchtext])
+      let col += len(matchtext)
+    endwhile
+
+    let lnum += 1
+  endwhile
+
+  return frags
+endfun
+
+fun! s:util.FindDeadFragmentLinks()
+  let headers = {}
+  let hashes  = []
+  let dead    = []
+  let src     = s:util.ListHeaders()
+  let frags   = s:util.ListFragmentLinks()
+  let bufnum  = bufnr('%')
+
+  for [lnum, lvl, line] in src
+    let hsh = s:util.HeaderToHash(line)
+    let c   = get(headers, hsh, 0)
+    let sfx = c > 0 ? '-' . c : ''
+
+    if (c == 0)
+      let headers[hsh] = 1
+    else
+      let headers[hsh] += 1
+    endif
+
+    call add(hashes, '#' . hsh . sfx)
+  endfor
+
+  for [lnum, column, hash] in frags
+    let exists = 0
+
+    for existing in hashes
+      if (hash == existing) | let exists = 1 | break | endif
+    endfor
+
+    if (!exists) | call add(dead, {'bufnr': bufnum, 'lnum': lnum, 'col': column + 1, 'text': hash}) | endif
+  endfor
+
+  return dead
+endfun
+
+fun! mkdx#QuickfixDeadFragmentLinks(...)
+  let dead = s:util.FindDeadFragmentLinks()
+
+  if (get(a:000, 0, 1))
+    let dl = len(dead)
+    if (dl > 0)
+      call setqflist(dead)
+      exe 'copen'
+      echohl ErrorMsg
+    else
+      call setqflist([])
+      exe 'cclose'
+      echohl MoreMsg
+    endif
+
+    echo dl . ' dead fragment link' . (dl == 1 ? '' : 's')
+    echohl None
+  else
+    return dead
+  endif
+endfun
+
 fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')

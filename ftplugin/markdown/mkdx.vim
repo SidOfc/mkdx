@@ -45,7 +45,7 @@ noremap  <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1
 noremap  <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
 noremap  <silent> <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
 noremap  <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
-noremap  <silent> <Plug>(mkdx-quickfix-frags)     :call      mkdx#QuickfixDeadFragmentLinks()<Cr>
+noremap  <silent> <Plug>(mkdx-quickfix-frags)     :call      mkdx#QuickfixDeadFrags()<Cr>
 noremap  <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
 noremap  <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
 noremap  <silent> <Plug>(mkdx-update-toc)         :call      mkdx#UpdateTOC()<Cr>
@@ -97,7 +97,7 @@ if g:mkdx#settings.map.enable == 1
         \ ['Convert\ to\ table',                   1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>'],
         \ ['Generate\ /\ Update\ TOC',             1, 'n', 'i',      '<Plug>(mkdx-gen-or-upd-toc)',          ':call mkdx#GenerateOrUpdateTOC()<cr>'],
         \ ['Open\ TOC\ in\ quickfix',              1, 'n', 'I',      '<Plug>(mkdx-quickfix-toc)',            ':call mkdx#QuickfixHeaders()<cr>'],
-        \ ['Open\ dead\ "#"\ links\ in\ quickfix', 1, 'n', 'L',      '<Plug>(mkdx-quickfix-frags)',          ':call mkdx#QuickfixDeadFragmentLinks()<cr>'],
+        \ ['Open\ dead\ "#"\ links\ in\ quickfix', 1, 'n', 'L',      '<Plug>(mkdx-quickfix-frags)',          ':call mkdx#QuickfixDeadFrags()<cr>'],
         \ ['Toggle\ to\ kbd\ tag',                 1, 'n', 'k',      '<Plug>(mkdx-toggle-to-kbd-n)',         ':call mkdx#ToggleToKbd()<cr>'],
         \ ['Toggle\ to\ kbd\ tag',                 1, 'v', 'k',      '<Plug>(mkdx-toggle-to-kbd-v)',         ':call mkdx#ToggleToKbd("v")<cr>'],
         \ ['Insert\ kbd\ tag',                     0, 'i', '<<tab>', '<Plug>(mkdx-insert-kbd)',              '<kbd></kbd>2hcit'],

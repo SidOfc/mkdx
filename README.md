@@ -6,7 +6,7 @@ mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formattin
 markdown documents. It does this by adding some configurable mappings for files with a
 markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
-of CSV data to a markdown table. And there's even more :D  
+of CSV data to a markdown table. And there's a lot more :D  
 Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
@@ -28,6 +28,7 @@ settings and examples with default mappings.
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
+        <li><a href="#dead-fragment-link-detection">Dead fragment link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
@@ -154,6 +155,24 @@ git clone https://github.com/SidOfc/mkdx
 Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
+## Dead fragment link detection
+
+![mkdx dead fragment detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
+
+Often when writing documentation, you'll find the need to point to some other location on the same page.
+So you go ahead and write that fragment URL and forget about it. Later you come back to this file and you change the header (thus changing the output fragment for that header),
+but you **forgot** you even had a link in there in the first place! A new broken link is born :/
+
+Well, no more -- Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd> and Vim's `quickfix` window
+will come to your rescue. It will compare all fragment links in the document to those of the headers and show you which ones don't match.
+Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
+
+```viml
+" :h mkdx-mapping-quickfix-dead-frags
+" :h mkdx-function-quickfix-dead-frags
+" :h mkdx-plug-quickfix-frags
+```
 
 ## Insert fenced code block
 
@@ -897,6 +916,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
+|Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd>|`<Plug>(mkdx-quickfix-frags)`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
 |<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
 |Insert fenced code block|insert|<kbd>\`</kbd><kbd>\`</kbd><kbd>\`</kbd>|`<Plug>(mkdx-fence-backtick)`|

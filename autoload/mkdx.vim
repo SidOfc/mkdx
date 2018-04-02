@@ -71,28 +71,6 @@ fun! s:util.FindDeadFragmentLinks()
   return dead
 endfun
 
-fun! mkdx#QuickfixDeadFragmentLinks(...)
-  let dead = s:util.FindDeadFragmentLinks()
-
-  if (get(a:000, 0, 1))
-    let dl = len(dead)
-    if (dl > 0)
-      call setqflist(dead)
-      exe 'copen'
-      echohl ErrorMsg
-    else
-      call setqflist([])
-      exe 'cclose'
-      echohl MoreMsg
-    endif
-
-    echo dl . ' dead fragment link' . (dl == 1 ? '' : 's')
-    echohl None
-  else
-    return dead
-  endif
-endfun
-
 fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')
@@ -460,6 +438,28 @@ fun! mkdx#MergeSettings(...)
   endfor
 
   return c
+endfun
+
+fun! mkdx#QuickfixDeadFrags(...)
+  let dead = s:util.FindDeadFragmentLinks()
+
+  if (get(a:000, 0, 1))
+    let dl = len(dead)
+    if (dl > 0)
+      call setqflist(dead)
+      exe 'copen'
+      echohl ErrorMsg
+    else
+      call setqflist([])
+      exe 'cclose'
+      echohl MoreMsg
+    endif
+
+    echo dl . ' dead fragment link' . (dl == 1 ? '' : 's')
+    echohl None
+  else
+    return dead
+  endif
 endfun
 
 fun! mkdx#InsertFencedCodeBlock(...)

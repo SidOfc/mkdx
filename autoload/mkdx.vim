@@ -660,11 +660,24 @@ endfun
 
 fun! mkdx#QuickfixHeaders(...)
   let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
-  if (get(a:000, 0, 1) == 0)
-    return qflist
+
+  if (get(a:000, 0, 1))
+    let dl = len(qflist)
+
+    if (dl > 0)
+      call setqflist(qflist)
+      exe 'copen'
+      echohl MoreMsg
+    else
+      call setqflist([])
+      exe 'cclose'
+      echohl ErrorMsg
+    endif
+
+    echo dl . ' header' . (dl == 1 ? '' : 's')
+    echohl None
   else
-    call setqflist(qflist)
-    exe 'copen'
+    return qflist
   endif
 endfun
 
@@ -680,7 +693,6 @@ fun! mkdx#GenerateTOC(...)
   let src      = s:util.ListHeaders()
   let srclen   = len(src)
   let curr     = 0
-  let headers[s:util.HeaderToHash(g:mkdx#settings.toc.text)] = 1
   let toc_pos = g:mkdx#settings.toc.position - 1
   let after_info = get(src, toc_pos, -1)
   let after_pos = toc_pos >= 0 && type(after_info) == type([])
@@ -700,14 +712,9 @@ fun! mkdx#GenerateTOC(...)
     let curr += 1
     let hsh = s:util.HeaderToHash(line)
     let c   = get(headers, hsh, 0)
-    let sfx = c > 0 ? '-' . c : ''
+    let sfx = (c > 0) ? '-' . c : ''
     let spc = repeat(repeat(' ', &sw), lvl)
-    if (c == 0)
-      let headers[hsh] = 1
-    else
-      let headers[hsh] += 1
-    endif
-
+    let headers[hsh] = c == 0 ? 1 : headers[hsh] + 1
     let nextlvl    = get(src, curr, [0, lvl])[1]
     let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
 
@@ -721,12 +728,16 @@ fun! mkdx#GenerateTOC(...)
 
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh    = s:util.HeaderToHash(header)
+      let hc     = get(headers, csh, 0)
+      let hsf    = (hc > 0) ? '-' . hc : ''
+      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
       call insert(contents, '')
       call insert(contents, header)
       if (g:mkdx#settings.toc.details.enable)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, sfx) . '</li>')
+        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
       else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
       endif
     endif
 
@@ -738,12 +749,17 @@ fun! mkdx#GenerateTOC(...)
 
     if (empty(header) && curr == srclen)
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh    = s:util.HeaderToHash(header)
+      let hc     = get(headers, csh, 0)
+      let hsf    = (hc > 0) ? '-' . hc : ''
+      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
+
       call insert(contents, '')
       call insert(contents, header)
       if (g:mkdx#settings.toc.details.enable)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, sfx) . '</li>')
+        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
       else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, sfx))
+        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
       endif
     endif
 

@@ -305,27 +305,30 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
+let s:defaults.image_extension_pattern `=>` g:mkdx#link_as_img_pat
+let s:defaults.restore_visual          `=>` g:mkdx#restore_visual
 let s:defaults.map.prefix              `=>` g:mkdx#map_prefix
 let s:defaults.map.enable              `=>` g:mkdx#map_keys
 let s:defaults.checkbox.toggles        `=>` g:mkdx#checkbox_toggles
 let s:defaults.checkbox.update_tree    `=>` g:mkdx#checklist_update_tree
-let s:defaults.restore_visual          `=>` g:mkdx#restore_visual
-let s:defaults.tokens.header           `=>` g:mkdx#header_style
+let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
 let s:defaults.table.header_divider    `=>` g:mkdx#table_header_divider
 let s:defaults.table.divider           `=>` g:mkdx#table_divider
-let s:defaults.enter.enable            `=>` g:mkdx#enhance_enter
-let s:defaults.enter.o                 `=>`
-let s:defaults.enter.shifto            `=>`
+let s:defaults.tokens.header           `=>` g:mkdx#header_style
 let s:defaults.tokens.enter            `=>` g:mkdx#list_tokens
 let s:defaults.tokens.fence            `=>` g:mkdx#fence_style
-let s:defaults.enter.malformed         `=>` g:mkdx#handle_malformed_indent
-let s:defaults.image_extension_pattern `=>` g:mkdx#link_as_img_pat
 let s:defaults.tokens.bold             `=>` g:mkdx#bold_token
 let s:defaults.tokens.italic           `=>` g:mkdx#italic_token
 let s:defaults.tokens.list             `=>` g:mkdx#list_token
+let s:defaults.enter.enable            `=>` g:mkdx#enhance_enter
+let s:defaults.enter.malformed         `=>` g:mkdx#handle_malformed_indent
+let s:defaults.enter.o                 `=>`
+let s:defaults.enter.shifto            `=>`
 let s:defaults.toc.list_token          `=>` g:mkdx#toc_list_token
 let s:defaults.toc.text                `=>` g:mkdx#toc_text
-let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
+let s:defaults.toc.position            `=>`
+let s:defaults.toc.details.enable      `=>`
+let s:defaults.toc.details.summary     `=>`
 let s:defaults.highlight.enable        `=>`
 
 ==============================================================================

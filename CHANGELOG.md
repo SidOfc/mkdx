@@ -1,3 +1,8 @@
+## 25-03-2018 VERSION 1.0.2
+
+- Fix incorrect <Plug> mapping detection
+- Update README, add remapping section
+
 ## 24-03-2018 VERSION 1.0.1
 
 - All mappings now use `<Plug>`.

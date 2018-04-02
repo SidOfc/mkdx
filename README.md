@@ -22,9 +22,9 @@ settings and examples with default mappings.
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
         <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
         <li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
-        <li><a href="#25-03-2018-version-102">25-03-2018 VERSION 1.0.2</a></li>
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
@@ -97,6 +97,14 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 02-04-2018 VERSION 1.3.0
+
+- Automatically remove `r` from `formatoptions` inside markdown files (buffer local override)
+- Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
+- Cursor stays on the same line after updating table of contents
+- mkdx#QuickfixHeaders() shows amount of headers and doesn't open quickfix when no headers are present.
+- Added feature: [Dead fragment link detection](#dead-fragment-link-detection)
+
 ## 01-04-2018 VERSION 1.2.0
 
 - Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).
@@ -107,11 +115,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix TOC links using headings containing <kbd /> tags.
 - Fix deep merging of `g:mkdx#settings` hash.
 - Add setting to place TOC in fixed position.
-
-## 25-03-2018 VERSION 1.0.2
-
-- Fix incorrect <Plug> mapping detection
-- Update README, add remapping section
 
 # Install
 

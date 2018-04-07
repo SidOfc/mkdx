@@ -21,7 +21,8 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
 
     if (status < 200 || status > 299)
       let [total, bufnum, lnum, column, url] = a:data
-      let text   = repeat('0', 3 - strlen(status)) . status . ': ' . url
+      let suff   = status == 0 ? '---' : repeat('0', 3 - strlen(status)) . status
+      let text   = suff . ': ' . url
       let qflen += 1
 
       call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
@@ -36,7 +37,7 @@ endfun
 
 fun! s:util.GetRemoteUrl()
   if (!executable('git'))
-    return 0
+    return ''
   endif
 
   let remote = system('git ls-remote --get-url 2>/dev/null')
@@ -49,18 +50,20 @@ fun! s:util.GetRemoteUrl()
       let remote = (secure ? 'https' : 'http') . '://' . remote . '/blob/' . branch[2:-2] . '/'
       return remote
     endif
-    return 0
+    return ''
   endif
-  return 0
+  return ''
 endfun
 
 fun! s:util.AsyncDeadExternalToQF(...)
   let resetqf  = get(a:000, 0, 1)
   let prev_tot = get(a:000, 1, 0)
+  let _pt      = prev_tot
   let external = s:util.ListExternalLinks()
+  let ext_len  = len(external)
   let bufnum   = bufnr('%')
-  let has_rem  = -1
-  let total    = len(external) + prev_tot
+  let total    = ext_len + prev_tot
+  let remote   = ext_len > 0 ? s:util.GetRemoteUrl() : ''
 
   if (resetqf) | call setqflist([]) | endif
 
@@ -69,14 +72,13 @@ fun! s:util.AsyncDeadExternalToQF(...)
     let has_prot = url[0:1] == '//'
     let has_http = url[0:3] == 'http'
 
-    if ((has_rem || has_rem == -1) && !has_frag && !has_http && !has_prot)
-      let remote   = s:util.GetRemoteUrl()
-      let has_rem  = match(remote, '\D') > -1
-      if (has_rem) | let url = (remote[0:(url[-1] == '/' ? -2 : -1)] . url) | endif
+    if (!empty(remote) && !has_frag && !has_http && !has_prot)
+      let url = remote[0:(url[-1] == '/' ? -2 : -1)] . url
     endif
 
-    call jobstart('curl -L -I -s -o /dev/null -A "' . s:util.user_agent . '" -w "%{http_code}" ' . url,
-                \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+    call jobstart('curl -L -I -s --no-keepalive -o /dev/null -A "' . s:util.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"',
+                \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]]),
+                \  'on_exit': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
   endfor
 
   return external
@@ -546,7 +548,9 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (has('nvim')) | call s:util.AsyncDeadExternalToQF(0, total) | endif
+    if (g:mkdx#settings.links.external.enable && has('nvim') && executable('curl'))
+      call s:util.AsyncDeadExternalToQF(0, total)
+    endif
 
     if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
     if (dl > 0) | copen | else | cclose | endif

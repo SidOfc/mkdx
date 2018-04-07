@@ -28,7 +28,7 @@ settings and examples with default mappings.
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
-        <li><a href="#dead-fragment-link-detection">Dead fragment link detection</a></li>
+        <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
@@ -55,6 +55,11 @@ settings and examples with default mappings.
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
     </ul></li>
     <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
+        <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx$settings.links.external.timeout</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx$settings.links.external.host</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx$settings.links.external.user_agent</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx$settings.links.external.relative</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -99,7 +104,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## 02-04-2018 VERSION 1.3.0
 
-- Added feature: [Dead fragment link detection](#dead-fragment-link-detection)
+- Added feature: [Dead fragment link detection](#dead-link-detection)
 - Automatically remove `r` from `formatoptions` inside markdown files (buffer local override)
 - Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
 - Cursor stays on the same line after updating table of contents
@@ -159,21 +164,25 @@ Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmk
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
 
-## Dead fragment link detection
+## Dead link detection
 
-![mkdx dead fragment detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
+![mkdx dead detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
 
 Often when writing documentation, you'll find the need to point to some other location on the same page.
 So you go ahead and write that fragment URL and forget about it. Later you come back to this file and you change the header (thus changing the output fragment for that header),
-but you **forgot** you even had a link in there in the first place! A new broken link is born :/
+but you **forgot** you even had a link to it in the first place! A new broken link is born :/
 
 Well, no more -- Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd> and Vim's `quickfix` window
 will come to your rescue. It will compare all fragment links in the document to those of the headers and show you which ones don't match.
 Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
 
+External links will also be checked, your (n/m/g)vim must support either Vim's `jobs` or Neovim's `job-control` in order for this to be enabled.
+Also, `curl` and `git` will also be used to send requests or create an absolute path for relative links.
+See [`g:mkdx#settings.links.external.enable`](#gmkdxsettingslinksexternalenable) for more information and other settings.
+
 ```viml
-" :h mkdx-mapping-quickfix-dead-frags
-" :h mkdx-function-quickfix-dead-frags
+" :h mkdx-mapping-quickfix-dead-links
+" :h mkdx-function-quickfix-dead-links
 " :h mkdx-plug-quickfix-links
 ```
 
@@ -584,6 +593,11 @@ let g:mkdx#settings = {
       \                            },
       \ 'table':                   { 'divider': '|',
       \                              'header_divider': '-' },
+      \ 'links':                   { 'external': {
+      \                                 'enable': 1, 'timeout': 3, 'host': '', 'relative': 1,
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0'
+      \                               }
+      \                            },
       \ 'highlight':               { 'enable': 0 }
     \ }
 ```
@@ -608,6 +622,75 @@ To overwrite a setting while editing:
 " :h mkdx-settings
 :let g:mkdx#settings.enter.enable = 0
 ```
+
+## `g:mkdx#settings.links.external.enable`
+
+Check external links in the background disabled by default.
+Requests will be sent using a `curl` command which looks like this:
+
+```sh
+curl -L -I -s --no-keepalive -o /dev/null -A [g:mkdx#settings.links.external.user_agent] -m [g:mkdx#settings.links.external.timeout] -w "%{http_code}" [URL]'
+```
+
+As can be seen from the example two additional settings are used in this request:
+
+- `-m` gets set to [`g:mkdx#settings.links.external.timeout`](#gmkdxsettingslinksexternaltimeout)
+- `-A` gets set to [`g:mkdx#settings.links.external.user_agent`](#gmkdxsettingslinksexternaluser_agent)
+
+When a relative URL is encountered, mkdx attempts to convert it to an absolute path.
+This only works inside a `git` repository at the moment, `git ls-remote` output will be used to do the conversion.
+You can override this behaviour by setting a custom host with [`g:mkdx#settings.links.external.host`](#gmkdxsettingslinksexternalhost).
+Relative link checking can be disabled all together by setting [`g:mkdx#settings.links.external.relative`](#gmkdxsettingslinksexternalrelative) to `0`;
+
+```viml
+" :h mkdx-setting-links-external-enable
+let g:mkdx#settings = { 'links': { 'external': { 'enable': 0 } } }
+```
+
+## `g:mkdx#settings.links.external.timeout`
+
+This is the maximum time in seconds a request may take. By default it is set to `3`. After this time, the request is cancelled and added to the quickfix list.
+
+```viml
+" :h mkdx-setting-links-external-timeout
+let g:mkdx#settings = { 'links': { 'external': { 'timeout': 3 } } }
+```
+
+## `g:mkdx#settings.links.external.host`
+
+When a host is supplied, mkdx will not attempt to do `git ls-remote` detection and instead, simply prepends host string provided. 
+Since these links can either be _relative_ (url) or _absolute_ (/url) some additional checks are executed to prevent double slashes e.g: `localhost:3000//url`.
+Therefore you can safely append or remove a trailing `/` from your host.
+
+```viml
+" :h mkdx-setting-links-external-host
+let g:mkdx#settings = { 'links': { 'external': { 'host': '' } } }
+```
+
+## `g:mkdx#settings.links.external.user_agent`
+
+Specify an actual user agent to prevent being blocked from a website.
+If you don't like being `Chrome/9001` then feel free to change it into anything you like :)
+
+```viml
+" :h mkdx-setting-links-external-enable
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0' } } }
+```
+
+## `g:mkdx#settings.links.external.relative`
+
+When set to `0`, relative links will be ignored while checking the document for dead links.
+Relative URL's are defined as link paths that do not start with a `#` (fragment URL) or `http` (protocol).
+Therefore both _relative_ (url) and _absolute_ (/url) URL's are "relative" in this context, as no host is provided.
+When [`g:mkdx#settings.links.external.host`](#gmkdxsettingslinksexternalhost) is empty, mkdx attempts to construct an absolute path using `git ls-remote` output.
+
+```viml
+" :h mkdx-setting-links-external-relative
+let g:mkdx#settings = { 'links': { 'external': { 'relative': 1 } } }
+```
+
+
+Host to use instead of trying to autodetect a `git` repository URL.
 
 ## `g:mkdx#settings.image_extension_pattern`
 

@@ -1,6 +1,5 @@
 """"" UTILITY FUNCTIONS
 let s:util = {}
-let s:util.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0"
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
       \ 'M': 'meta',
@@ -36,8 +35,8 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
 endfun
 
 fun! s:util.GetRemoteUrl()
-  if (!executable('git'))
-    return ''
+  if (!empty(g:mkdx#settings.links.external.host))
+    return g:mkdx#settings.links.external.host
   endif
 
   let remote = system('git ls-remote --get-url 2>/dev/null')
@@ -64,6 +63,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let bufnum   = bufnr('%')
   let total    = ext_len + prev_tot
   let remote   = ext_len > 0 ? s:util.GetRemoteUrl() : ''
+  let skip_rel = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
 
   if (resetqf) | call setqflist([]) | endif
 
@@ -72,13 +72,14 @@ fun! s:util.AsyncDeadExternalToQF(...)
     let has_prot = url[0:1] == '//'
     let has_http = url[0:3] == 'http'
 
-    if (!empty(remote) && !has_frag && !has_http && !has_prot)
-      let url = remote[0:(url[-1] == '/' ? -2 : -1)] . url
+    if (!skip_rel && !has_frag && !has_http && !has_prot)
+      let url = substitute(remote, '/+$', '', '') . '/' . substitute(url, '^/+', '', '')
     endif
 
-    call jobstart('curl -L -I -s --no-keepalive -o /dev/null -A "' . s:util.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"',
-                \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]]),
-                \  'on_exit': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+    if (!skip_rel)
+      call jobstart('curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"',
+                  \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+    endif
   endfor
 
   return external

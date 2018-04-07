@@ -16,74 +16,86 @@ settings and examples with default mappings.
 
 # Table of Contents
 
-- [mkdx.vim](#mkdxvim--)
-- [Table of Contents](#table-of-contents)
-- [Changelog](#changelog)
-    - [02-04-2018 VERSION 1.3.0](#02-04-2018-version-130)
-    - [01-04-2018 VERSION 1.2.0](#01-04-2018-version-120)
-    - [31-03-2018 VERSION 1.1.0](#31-03-2018-version-110)
-- [Install](#install)
-- [Examples](#examples)
-    - [Dead link detection](#dead-link-detection)
-    - [Insert fenced code block](#insert-fenced-code-block)
-    - [Insert `<kbd></kbd>` shortcut](#insert-kbdkbd-shortcut)
-    - [Inserting list items](#inserting-list-items)
-    - [Converting from / to lists, checklists or checkboxes](#converting-from--to-lists-checklists-or-checkboxes)
-        - [Checkboxes](#checkboxes)
-        - [Lists](#lists)
-        - [Checklists](#checklists)
-    - [Completing Checkboxes / Checklists](#completing-checkboxes--checklists)
-    - [Toggling and promoting / demoting Headers](#toggling-and-promoting--demoting-headers)
-    - [Toggling \<kbd /> shortcuts](#toggling-kbd--shortcuts)
-    - [Toggling Quotes](#toggling-quotes)
-    - [Wrapping text](#wrapping-text)
-        - [As a link](#as-a-link)
-        - [As bold / italic / inline-code / strikethrough](#as-bold--italic--inline-code--strikethrough)
-            - [Normal mode](#normal-mode)
-            - [Visual mode](#visual-mode)
-    - [Convert CSV to table](#convert-csv-to-table)
-    - [Generate or update TOC](#generate-or-update-toc)
-    - [Generate or update TOC as `<details>`](#generate-or-update-toc-as-details)
-    - [Open TOC in quickfix window](#open-toc-in-quickfix-window)
-    - [Open TOC using fzf instead of quickfix window](#open-toc-using-fzf-instead-of-quickfix-window)
-- [`g:mkdx#settings`](#gmkdxsettings)
-    - [`g:mkdx#settings.links.external.enable`](#gmkdxsettingslinksexternalenable)
-    - [`g:mkdx#settings.links.external.timeout`](#gmkdxsettingslinksexternaltimeout)
-    - [`g:mkdx#settings.links.external.host`](#gmkdxsettingslinksexternalhost)
-    - [`g:mkdx#settings.links.external.user_agent`](#gmkdxsettingslinksexternaluser_agent)
-    - [`g:mkdx#settings.links.external.relative`](#gmkdxsettingslinksexternalrelative)
-    - [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern)
-    - [`g:mkdx#settings.restore_visual`](#gmkdxsettingsrestore_visual)
-    - [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix)
-    - [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable)
-    - [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles)
-    - [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree)
-    - [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state)
-    - [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader)
-    - [`g:mkdx#settings.tokens.enter`](#gmkdxsettingstokensenter)
-    - [`g:mkdx#settings.tokens.fence`](#gmkdxsettingstokensfence)
-    - [`g:mkdx#settings.tokens.italic`](#gmkdxsettingstokensitalic)
-    - [`g:mkdx#settings.tokens.bold`](#gmkdxsettingstokensbold)
-    - [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist)
-    - [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider)
-    - [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
-    - [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable)
-    - [`g:mkdx#settings.enter.o`](#gmkdxsettingsentero)
-    - [`g:mkdx#settings.enter.shifto`](#gmkdxsettingsentershifto)
-    - [`g:mkdx#settings.enter.malformed`](#gmkdxsettingsentermalformed)
-    - [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
-    - [`g:mkdx#settings.toc.list_token`](#gmkdxsettingstoclist_token)
-    - [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition)
-    - [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable)
-    - [`g:mkdx#settings.toc.details.summary`](#gmkdxsettingstocdetailssummary)
-    - [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
-- [Mappings](#mappings)
-- [Remapping functionality](#remapping-functionality)
-- [Unmapping functionality](#unmapping-functionality)
-    - [Using `<Nop>`](#using-nop)
-    - [Using `<Plug>`](#using-plug)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
+<details>
+<summary>Click to expand Table of Contents</summary>
+<ul>
+    <li><a href="#mkdxvim--">mkdx.vim</a></li>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
+        <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
+        <li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
+    </ul></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#examples">Examples</a><ul>
+        <li><a href="#dead-link-detection">Dead link detection</a></li>
+        <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
+        <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
+        <li><a href="#inserting-list-items">Inserting list items</a></li>
+        <li><a href="#converting-from--to-lists-checklists-or-checkboxes">Converting from / to lists, checklists or checkboxes</a><ul>
+            <li><a href="#checkboxes">Checkboxes</a></li>
+            <li><a href="#lists">Lists</a></li>
+            <li><a href="#checklists">Checklists</a></li>
+        </ul></li>
+        <li><a href="#completing-checkboxes--checklists">Completing Checkboxes / Checklists</a></li>
+        <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
+        <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
+        <li><a href="#toggling-quotes">Toggling Quotes</a></li>
+        <li><a href="#wrapping-text">Wrapping text</a><ul>
+            <li><a href="#as-a-link">As a link</a></li>
+            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a><ul>
+                <li><a href="#normal-mode">Normal mode</a></li>
+                <li><a href="#visual-mode">Visual mode</a></li>
+            </ul></li>
+        </ul></li>
+        <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
+        <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
+        <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
+        <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
+        <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
+    </ul></li>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
+        <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
+        <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
+        <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
+        <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
+        <li><a href="#gmkdxsettingsmapenable"><code>g:mkdx#settings.map.enable</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxtoggles"><code>g:mkdx#settings.checkbox.toggles</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxupdate_tree"><code>g:mkdx#settings.checkbox.update_tree</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxinitial_state"><code>g:mkdx#settings.checkbox.initial_state</code></a></li>
+        <li><a href="#gmkdxsettingstokensheader"><code>g:mkdx#settings.tokens.header</code></a></li>
+        <li><a href="#gmkdxsettingstokensenter"><code>g:mkdx#settings.tokens.enter</code></a></li>
+        <li><a href="#gmkdxsettingstokensfence"><code>g:mkdx#settings.tokens.fence</code></a></li>
+        <li><a href="#gmkdxsettingstokensitalic"><code>g:mkdx#settings.tokens.italic</code></a></li>
+        <li><a href="#gmkdxsettingstokensbold"><code>g:mkdx#settings.tokens.bold</code></a></li>
+        <li><a href="#gmkdxsettingstokenslist"><code>g:mkdx#settings.tokens.list</code></a></li>
+        <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
+        <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
+        <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
+        <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
+        <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
+        <li><a href="#gmkdxsettingsentermalformed"><code>g:mkdx#settings.enter.malformed</code></a></li>
+        <li><a href="#gmkdxsettingstoctext"><code>g:mkdx#settings.toc.text</code></a></li>
+        <li><a href="#gmkdxsettingstoclist_token"><code>g:mkdx#settings.toc.list_token</code></a></li>
+        <li><a href="#gmkdxsettingstocposition"><code>g:mkdx#settings.toc.position</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
+        <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
+    </ul></li>
+    <li><a href="#mappings">Mappings</a></li>
+    <li><a href="#remapping-functionality">Remapping functionality</a></li>
+    <li><a href="#unmapping-functionality">Unmapping functionality</a><ul>
+        <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
+        <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
+    </ul></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+</ul>
+</details>
 
 # Changelog
 

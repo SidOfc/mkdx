@@ -22,9 +22,9 @@ settings and examples with default mappings.
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
         <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
         <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
-        <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
@@ -99,6 +99,10 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 08-04-2018 VERSION 1.4.1
+
+- [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
+
 ## 08-04-2018 VERSION 1.4.0
 
 - Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
@@ -111,10 +115,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
 - Cursor stays on the same line after updating table of contents
 - `mkdx#QuickfixHeaders()` shows amount of headers and doesn't open quickfix when no headers are present.
-
-## 01-04-2018 VERSION 1.2.0
-
-- Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).
 
 # Install
 
@@ -590,7 +590,7 @@ let g:mkdx#settings = {
       \                              'header_divider': '-' },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.1'
       \                               }
       \                            },
       \ 'highlight':               { 'enable': 0 }
@@ -681,7 +681,7 @@ If you're running a static site generator and would like to know if every link w
 Using the same link as an example, the output link will instead, look like this:
 
 ```html
-See <a href="localhost:5000/CONTRIBUTING.md">CONTRIBUTING</a>
+See <a href="http://localhost:5000/CONTRIBUTING.md">CONTRIBUTING</a>
 ```
 
 The host can be changed at any given time during runtime, the next time a dead link check is run, the new host will be used instead.
@@ -698,7 +698,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.1' } } }
 ```
 
 ## `g:mkdx#settings.links.external.relative`

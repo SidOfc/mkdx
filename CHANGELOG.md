@@ -1,3 +1,7 @@
+## 01-04-2018 VERSION 1.2.0
+
+- Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).
+
 ## 31-03-2018 VERSION 1.1.0
 
 - Stricter rules for highlighting (do not highlight bold markers at start of line as list items).

@@ -1,84 +1,3 @@
-# TOC
-
-<details>
-<summary>Click to expand TOC</summary>
-<ul>
-    <li><a href="#toc">TOC</a></li>
-    <li><a href="#mkdxvim--">mkdx.vim</a></li>
-    <li><a href="#table-of-contents">Table of Contents</a></li>
-    <li><a href="#changelog">Changelog</a><ul>
-        <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
-        <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
-        <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
-    </ul></li>
-    <li><a href="#install">Install</a></li>
-    <li><a href="#examples">Examples</a><ul>
-        <li><a href="#dead-link-detection">Dead link detection</a></li>
-        <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
-        <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
-        <li><a href="#inserting-list-items">Inserting list items</a></li>
-        <li><a href="#converting-from--to-lists-checklists-or-checkboxes">Converting from / to lists, checklists or checkboxes</a><ul>
-            <li><a href="#checkboxes">Checkboxes</a></li>
-            <li><a href="#lists">Lists</a></li>
-            <li><a href="#checklists">Checklists</a></li>
-        </ul></li>
-        <li><a href="#completing-checkboxes--checklists">Completing Checkboxes / Checklists</a></li>
-        <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
-        <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
-        <li><a href="#toggling-quotes">Toggling Quotes</a></li>
-        <li><a href="#wrapping-text">Wrapping text</a><ul>
-            <li><a href="#as-a-link">As a link</a></li>
-            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
-        </ul></li>
-        <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
-        <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
-        <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
-        <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
-        <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
-    </ul></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
-        <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
-        <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
-        <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
-        <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
-        <li><a href="#gmkdxsettingsmapenable"><code>g:mkdx#settings.map.enable</code></a></li>
-        <li><a href="#gmkdxsettingscheckboxtoggles"><code>g:mkdx#settings.checkbox.toggles</code></a></li>
-        <li><a href="#gmkdxsettingscheckboxupdate_tree"><code>g:mkdx#settings.checkbox.update_tree</code></a></li>
-        <li><a href="#gmkdxsettingscheckboxinitial_state"><code>g:mkdx#settings.checkbox.initial_state</code></a></li>
-        <li><a href="#gmkdxsettingstokensheader"><code>g:mkdx#settings.tokens.header</code></a></li>
-        <li><a href="#gmkdxsettingstokensenter"><code>g:mkdx#settings.tokens.enter</code></a></li>
-        <li><a href="#gmkdxsettingstokensfence"><code>g:mkdx#settings.tokens.fence</code></a></li>
-        <li><a href="#gmkdxsettingstokensitalic"><code>g:mkdx#settings.tokens.italic</code></a></li>
-        <li><a href="#gmkdxsettingstokensbold"><code>g:mkdx#settings.tokens.bold</code></a></li>
-        <li><a href="#gmkdxsettingstokenslist"><code>g:mkdx#settings.tokens.list</code></a></li>
-        <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
-        <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
-        <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
-        <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
-        <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
-        <li><a href="#gmkdxsettingsentermalformed"><code>g:mkdx#settings.enter.malformed</code></a></li>
-        <li><a href="#gmkdxsettingstoctext"><code>g:mkdx#settings.toc.text</code></a></li>
-        <li><a href="#gmkdxsettingstoclist_token"><code>g:mkdx#settings.toc.list_token</code></a></li>
-        <li><a href="#gmkdxsettingstocposition"><code>g:mkdx#settings.toc.position</code></a></li>
-        <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
-        <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
-        <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
-    </ul></li>
-    <li><a href="#mappings">Mappings</a></li>
-    <li><a href="#remapping-functionality">Remapping functionality</a></li>
-    <li><a href="#unmapping-functionality">Unmapping functionality</a><ul>
-        <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
-        <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
-    </ul></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-</ul>
-</details>
-
 # mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](https://github.com/SidOfc/mkdx/releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
 ![mkdx update checklist](doc/gifs/vim-mkdx-gen-or-upd-toc.gif)
@@ -103,9 +22,9 @@ settings and examples with default mappings.
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
         <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
         <li><a href="#01-04-2018-version-120">01-04-2018 VERSION 1.2.0</a></li>
-        <li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>

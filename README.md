@@ -173,7 +173,7 @@ Well, no more -- Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</
 will come to your rescue. It will compare all fragment links in the document to those of the headers and show you which ones don't match.
 Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
 
-External links will also be checked, your (n/m/g)vim must support either Vim's `jobs` or Neovim's `job-control` in order for this to be enabled.
+External links will also be checked, your (n/m/g)vim must support either Vim's `job` or Neovim's `job-control` in order for this to be enabled.
 Also, `curl` and `git` will also be used to send requests or create an absolute path for relative links.
 See [`g:mkdx#settings.links.external.enable`](#gmkdxsettingslinksexternalenable) for more information and other settings.
 
@@ -599,7 +599,7 @@ let g:mkdx#settings = {
     \ }
 ```
 
-To overwrite a setting, simply write it as seen above in your _.vimrc_:
+To overwrite a setting, write it as seen above in your _.vimrc_:
 
 ```viml
 " :h mkdx-settings
@@ -655,9 +655,38 @@ let g:mkdx#settings = { 'links': { 'external': { 'timeout': 3 } } }
 
 ## `g:mkdx#settings.links.external.host`
 
-When a host is supplied, mkdx will not attempt to do `git ls-remote` detection and instead, simply prepends host string provided. 
+When a host is supplied, mkdx will not attempt to do `git ls-remote` detection and instead, prepends host string provided to any absolute or relative link url.
 Since these links can either be _relative_ (url) or _absolute_ (/url) some additional checks are executed to prevent double slashes e.g: `localhost:3000//url`.
 Therefore you can safely append or remove a trailing `/` from your host.
+
+As an example, say you have the following markdown link in your README.md file:
+
+```markdown
+See [CONTRIBUTING](/CONTRIBUTING.md)
+```
+
+The `git ls-remote` command will be executed to construct a base for the relative link. both SSH and HTTP hosts are parsed to a base URL.
+Additionally, when constructing the base, we need to know the current branch since for example, github appends `blob/[BRANCHNAME]` to every URL as well.
+To extract this information, a `git branch` command is run.
+The output link will look like this:
+
+```html
+See <a href="https://github.com/sidofc/mkdx/blob/master/CONTRIBUTING.md">CONTRIBUTING</a>
+```
+
+If you're running a static site generator and would like to know if every link works, you can set it like so:
+
+```viml
+:let g:mkdx#settings.links.external.host = 'localhost:5000'
+```
+
+Using the same link as an example, the output link will instead, look like this:
+
+```html
+See <a href="localhost:5000/CONTRIBUTING.md">CONTRIBUTING</a>
+```
+
+The host can be changed at any given time during runtime, the next time a dead link check is run, the new host will be used instead.
 
 ```viml
 " :h mkdx-setting-links-external-host
@@ -956,7 +985,7 @@ The highlighting is linked to the `gitcommit*` family of highlight groups (and C
 - `gitcommitBranch` is used for pending / in-progress checkboxes: `[-]`
 - `gitcommitSelectedFile` is used for completed checkboxes: `[x]`
 
-If you want to change the highlighting groups, simply `link` them to different groups:
+If you want to change the highlighting groups, `link` them to different groups:
 
 ```viml
 " :h mkdx-highlighting

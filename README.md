@@ -6,7 +6,7 @@ mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formattin
 markdown documents. It does this by adding some configurable mappings for files with a
 markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
 shortcuts, headers and links. In addition to that, this plugin provides a mapping to convert a selection
-of CSV data to a markdown table. And there's a lot more :D  
+of CSV data to a markdown table. And there's a lot more :D
 Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
 A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
@@ -99,6 +99,11 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 08-04-2018 VERSION 1.4.0
+
+- Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
+- Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
+
 ## 02-04-2018 VERSION 1.3.0
 
 - Added feature: [Dead fragment link detection](#dead-link-detection)
@@ -110,13 +115,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 01-04-2018 VERSION 1.2.0
 
 - Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).
-
-## 31-03-2018 VERSION 1.1.0
-
-- Stricter rules for highlighting (do not highlight bold markers at start of line as list items).
-- Fix TOC links using headings containing <kbd /> tags.
-- Fix deep merging of `g:mkdx#settings` hash.
-- Add setting to place TOC in fixed position.
 
 # Install
 
@@ -592,7 +590,7 @@ let g:mkdx#settings = {
       \                              'header_divider': '-' },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.0'
       \                               }
       \                            },
       \ 'highlight':               { 'enable': 0 }
@@ -612,7 +610,7 @@ This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged wit
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
 a `g:mkdx#settings` variable.
 
-Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.  
+Settings defined in _.vimrc_ are merged with the defaults during initial loading of the plugin.
 To overwrite a setting while editing:
 
 ```viml
@@ -622,7 +620,7 @@ To overwrite a setting while editing:
 
 ## `g:mkdx#settings.links.external.enable`
 
-Check external links in the background disabled by default.  
+Check external links in the background disabled by default.
 Requests will be sent using a `curl` command which looks like this:
 
 ```sh
@@ -700,7 +698,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.0' } } }
 ```
 
 ## `g:mkdx#settings.links.external.relative`
@@ -1013,7 +1011,7 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 
 # Mappings
 
-The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).  
+The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
 **Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*

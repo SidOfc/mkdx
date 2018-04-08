@@ -1,3 +1,10 @@
+## 31-03-2018 VERSION 1.1.0
+
+- Stricter rules for highlighting (do not highlight bold markers at start of line as list items).
+- Fix TOC links using headings containing <kbd /> tags.
+- Fix deep merging of `g:mkdx#settings` hash.
+- Add setting to place TOC in fixed position.
+
 ## 25-03-2018 VERSION 1.0.2
 
 - Fix incorrect <Plug> mapping detection

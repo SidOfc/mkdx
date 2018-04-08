@@ -591,7 +591,7 @@ let g:mkdx#settings = {
       \ 'table':                   { 'divider': '|',
       \                              'header_divider': '-' },
       \ 'links':                   { 'external': {
-      \                                 'enable': 1, 'timeout': 3, 'host': '', 'relative': 1,
+      \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0'
       \                               }
       \                            },

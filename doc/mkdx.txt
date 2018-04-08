@@ -301,7 +301,7 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'table':                   { 'divider': '|',`
          ` \                              'header_divider': '-' },`
           `\ 'links':                   { 'external': {`
-          `\                                 'enable': 1,`
+          `\                                 'enable': 0,`
           `\                                 'timeout': 3,`
           `\                                 'host': '',`
           `\                                 'relative': 1,`

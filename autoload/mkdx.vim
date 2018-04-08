@@ -1,5 +1,7 @@
 """"" UTILITY FUNCTIONS
-let s:util = {}
+let s:_is_nvim               = has('nvim')
+let s:_can_async             = s:_is_nvim || has('job')
+let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
       \ 'M': 'meta',
@@ -8,6 +10,110 @@ let s:util.modifier_mappings = {
       \ 'meta': 'meta',
       \ 'shift': 'shift'
       \ }
+
+fun! s:util.ExtractCurlHttpCode(data, ...)
+  let status = s:_is_nvim ? get(get(a:000, 1, []), 0, '404') : get(a:000, 1, '404')
+  let status = status =~ '\D' ? 500 : str2nr(status)
+  let qflen  = len(getqflist())
+  let total  = a:data[0]
+
+  if (status < 200 || status > 299)
+    let [total, bufnum, lnum, column, url] = a:data
+    let suff   = status == 0 ? '---' : repeat('0', 3 - strlen(status)) . status
+    let text   = suff . ': ' . url
+    let qflen += 1
+
+    call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
+    if (qflen == 1) | copen | endif
+  endif
+
+  if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
+  echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
+  echohl None
+endfun
+
+fun! s:util.GetRemoteUrl()
+  if (!empty(g:mkdx#settings.links.external.host))
+    return g:mkdx#settings.links.external.host
+  endif
+
+  let remote = system('git ls-remote --get-url 2>/dev/null')
+
+  if (!v:shell_error && strlen(remote) > 4)
+    let secure = remote[0:4] == "https"
+    let branch = system('git branch 2>/dev/null | grep "\*.*"')
+    if (!v:shell_error && strlen(branch) > 0)
+      let remote = substitute(substitute(remote[0:-2], '^\(\(https\?:\)\?//\|.*@\)\|\.git$', '', 'g'), ':', '/', 'g')
+      let remote = (secure ? 'https' : 'http') . '://' . remote . '/blob/' . branch[2:-2] . '/'
+      return remote
+    endif
+    return ''
+  endif
+  return ''
+endfun
+
+fun! s:util.AsyncDeadExternalToQF(...)
+  let resetqf  = get(a:000, 0, 1)
+  let prev_tot = get(a:000, 1, 0)
+  let _pt      = prev_tot
+  let external = s:util.ListExternalLinks()
+  let ext_len  = len(external)
+  let bufnum   = bufnr('%')
+  let total    = ext_len + prev_tot
+  let remote   = ext_len > 0 ? s:util.GetRemoteUrl() : ''
+  let skip_rel = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
+
+  if (resetqf) | call setqflist([]) | endif
+
+  for [lnum, column, url] in external
+    let has_frag = url[0]   == '#'
+    let has_prot = url[0:1] == '//'
+    let has_http = url[0:3] == 'http'
+
+    if (!skip_rel && !has_frag && !has_http && !has_prot)
+      let url = substitute(remote, '/+$', '', '') . '/' . substitute(url, '^/+', '', '')
+    endif
+
+    let cmd = 'curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"'
+
+    if (!skip_rel)
+      if (s:_is_nvim)
+        call jobstart(cmd, {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+      elseif (s:_can_async)
+        call job_start(cmd, {'pty': 0, 'out_cb': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+      endif
+    endif
+  endfor
+
+  return external
+endfun
+
+fun! s:util.ListExternalLinks()
+  let limit = line('$') + 1
+  let lnum  = 1
+  let xtnal = []
+
+  while (lnum < limit)
+    let line = getline(lnum)
+    let col  = 0
+    let len  = len(line)
+
+    while (col < len)
+      let col += match(line[col:], '\](\([^#][^)]\+\))')
+      if (col < 0) | break | endif
+
+      let matchtext = get(matchlist(line[col:], '\](\([^#][^)]\+\))'), 1, -1)
+      if (matchtext == -1) | break | endif
+
+      call add(xtnal, [lnum, col + 2, matchtext])
+      let col += len(matchtext)
+    endwhile
+
+    let lnum += 1
+  endwhile
+
+  return xtnal
+endfun
 
 fun! s:util.ListFragmentLinks()
   let limit = line('$') + 1
@@ -68,7 +174,7 @@ fun! s:util.FindDeadFragmentLinks()
     if (!exists) | call add(dead, {'bufnr': bufnum, 'lnum': lnum, 'col': column + 1, 'text': hash}) | endif
   endfor
 
-  return dead
+  return [dead, len(frags)]
 endfun
 
 fun! s:util.WrapSelectionOrWord(...)
@@ -440,23 +546,21 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
-fun! mkdx#QuickfixDeadFrags(...)
-  let dead = s:util.FindDeadFragmentLinks()
-
+fun! mkdx#QuickfixDeadLinks(...)
+  let [dead, total] = s:util.FindDeadFragmentLinks()
   if (get(a:000, 0, 1))
     let dl = len(dead)
-    if (dl > 0)
-      call setqflist(dead)
-      exe 'copen'
-      echohl ErrorMsg
-    else
-      call setqflist([])
-      exe 'cclose'
-      echohl MoreMsg
+
+    call setqflist(dead)
+    if (g:mkdx#settings.links.external.enable && s:_can_async && executable('curl'))
+      call s:util.AsyncDeadExternalToQF(0, total)
     endif
 
-    echo dl . ' dead fragment link' . (dl == 1 ? '' : 's')
+    if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
+    if (dl > 0) | copen | else | cclose | endif
+    echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
     echohl None
+
   else
     return dead
   endif

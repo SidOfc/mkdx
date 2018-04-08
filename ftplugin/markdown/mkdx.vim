@@ -8,6 +8,8 @@ let s:defaults          = {
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
       \ 'toc':                     { 'text': 'TOC', 'list_token': '-', 'position': 0, 'details': { 'enable': 0, 'summary': 'Click to expand {{toc.text}}' } },
       \ 'table':                   { 'divider': '|', 'header_divider': '-' },
+      \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
+      \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0' } },
       \ 'highlight':               { 'enable': 0 }
     \ }
 
@@ -45,7 +47,7 @@ noremap  <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1
 noremap  <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
 noremap  <silent> <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
 noremap  <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
-noremap  <silent> <Plug>(mkdx-quickfix-frags)     :call      mkdx#QuickfixDeadFrags()<Cr>
+noremap  <silent> <Plug>(mkdx-quickfix-links)     :call      mkdx#QuickfixDeadLinks()<Cr>
 noremap  <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
 noremap  <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
 noremap  <silent> <Plug>(mkdx-update-toc)         :call      mkdx#UpdateTOC()<Cr>
@@ -70,39 +72,39 @@ inoremap <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlo
 if g:mkdx#settings.map.enable == 1
   let s:gv       = g:mkdx#settings.restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
-        \ ['Toggle\ checkbox\ backward',           1, 'n', '-',      '<Plug>(mkdx-checkbox-prev)',           ':call mkdx#ToggleCheckboxState(1)<cr>'],
-        \ ['Toggle\ checkbox\ forward',            1, 'n', '=',      '<Plug>(mkdx-checkbox-next)',           ':call mkdx#ToggleCheckboxState()<cr>'],
-        \ ['Toggle\ checkbox\ forward',            1, 'v', '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv,    ':call mkdx#ToggleCheckboxState()<cr>' . s:gv],
-        \ ['Toggle\ checkbox\ backward',           1, 'v', '=',      '<Plug>(mkdx-checkbox-next)' . s:gv,    ':call mkdx#ToggleCheckboxState(1)<cr>' . s:gv],
-        \ ['Promote\ header',                      1, 'n', '[',      '<Plug>(mkdx-promote-header)',          ':<C-U>call mkdx#ToggleHeader(1)<cr>'],
-        \ ['Demote\ header',                       1, 'n', ']',      '<Plug>(mkdx-demote-header)',           ':<C-U>call mkdx#ToggleHeader()<cr>'],
-        \ ['Toggle\ quote',                        1, 'n', "'",      '<Plug>(mkdx-toggle-quote)',            ':call mkdx#ToggleQuote()<cr>'],
-        \ ['Toggle\ quote',                        1, 'v', "'",      '<Plug>(mkdx-toggle-quote)' . s:gv,     ':call mkdx#ToggleQuote()<cr>' . s:gv],
-        \ ['Toggle\ checkbox',                     1, 'n', "t",      '<Plug>(mkdx-toggle-checkbox)',         ':call mkdx#ToggleCheckboxTask()<cr>'],
-        \ ['Toggle\ checkbox',                     1, 'v', "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv,  ':call mkdx#ToggleCheckboxTask()<cr>' . s:gv],
-        \ ['Toggle\ checklist',                    1, 'n', "lt",     '<Plug>(mkdx-toggle-checklist)',        ':call mkdx#ToggleChecklist()<cr>'],
-        \ ['Toggle\ checklist',                    1, 'v', "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv, ':call mkdx#ToggleChecklist()<cr>' . s:gv],
-        \ ['Toggle\ list',                         1, 'n', "ll",     '<Plug>(mkdx-toggle-list)',             ':call mkdx#ToggleList()<cr>'],
-        \ ['Toggle\ list',                         1, 'v', "ll",     '<Plug>(mkdx-toggle-list)' . s:gv,      ':call mkdx#ToggleList()<cr>' . s:gv],
-        \ ['Wrap\ link',                           1, 'n', 'ln',     '<Plug>(mkdx-wrap-link-n)',             ':<C-U>call mkdx#WrapLink()<cr>'],
-        \ ['Wrap\ link',                           1, 'v', 'ln',     '<Plug>(mkdx-wrap-link-v)',             ':<C-U>call mkdx#WrapLink("v")<cr>'],
-        \ ['Italic',                               1, 'n', '/',      '<Plug>(mkdx-text-italic-n)',           ':<C-U>call mkdx#WrapText("n", g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic, "mkdx-text-italic-n")<Cr>'],
-        \ ['Italic',                               1, 'v', '/',      '<Plug>(mkdx-text-italic-v)',           ':<C-U>call mkdx#WrapText("v", g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic)<Cr>'],
-        \ ['Bold',                                 1, 'n', 'b',      '<Plug>(mkdx-text-bold-n)',             ':<C-U>call mkdx#WrapText("n", g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold, "mkdx-text-bold-n")<Cr>'],
-        \ ['Bold',                                 1, 'v', 'b',      '<Plug>(mkdx-text-bold-v)',             ':<C-U>call mkdx#WrapText("v", g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold)<Cr>'],
-        \ ['Inline\ code',                         1, 'n', '`',      '<Plug>(mkdx-text-inline-code-n)',      ':<C-U>call mkdx#WrapText("n", "`", "`", "mkdx-text-inline-code-n")<cr>'],
-        \ ['Inline\ code',                         1, 'v', '`',      '<Plug>(mkdx-text-inline-code-v)',      ':<C-U>call mkdx#WrapText("v", "`", "`")<cr>'],
-        \ ['Strike\ through',                      1, 'n', 's',      '<Plug>(mkdx-text-strike-n)',           ':<C-U>call mkdx#WrapText("n", "<strike>", "</strike>", "mkdx-text-strike-n")<cr>'],
-        \ ['Strike\ through',                      1, 'v', 's',      '<Plug>(mkdx-text-strike-v)',           ':<C-U>call mkdx#WrapText("v", "<strike>", "</strike>")<cr>'],
-        \ ['Convert\ to\ table',                   1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>'],
-        \ ['Generate\ /\ Update\ TOC',             1, 'n', 'i',      '<Plug>(mkdx-gen-or-upd-toc)',          ':call mkdx#GenerateOrUpdateTOC()<cr>'],
-        \ ['Open\ TOC\ in\ quickfix',              1, 'n', 'I',      '<Plug>(mkdx-quickfix-toc)',            ':call mkdx#QuickfixHeaders()<cr>'],
-        \ ['Open\ dead\ "#"\ links\ in\ quickfix', 1, 'n', 'L',      '<Plug>(mkdx-quickfix-frags)',          ':call mkdx#QuickfixDeadFrags()<cr>'],
-        \ ['Toggle\ to\ kbd\ tag',                 1, 'n', 'k',      '<Plug>(mkdx-toggle-to-kbd-n)',         ':call mkdx#ToggleToKbd()<cr>'],
-        \ ['Toggle\ to\ kbd\ tag',                 1, 'v', 'k',      '<Plug>(mkdx-toggle-to-kbd-v)',         ':call mkdx#ToggleToKbd("v")<cr>'],
-        \ ['Insert\ kbd\ tag',                     0, 'i', '<<tab>', '<Plug>(mkdx-insert-kbd)',              '<kbd></kbd>2hcit'],
-        \ ['Backtick\ fenced\ code\ block',        0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
-        \ ['tilde\ fenced\ code\ block',           0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA']
+        \ ['Toggle\ checkbox\ backward',      1, 'n', '-',      '<Plug>(mkdx-checkbox-prev)',           ':call mkdx#ToggleCheckboxState(1)<cr>'],
+        \ ['Toggle\ checkbox\ forward',       1, 'n', '=',      '<Plug>(mkdx-checkbox-next)',           ':call mkdx#ToggleCheckboxState()<cr>'],
+        \ ['Toggle\ checkbox\ forward',       1, 'v', '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv,    ':call mkdx#ToggleCheckboxState()<cr>' . s:gv],
+        \ ['Toggle\ checkbox\ backward',      1, 'v', '=',      '<Plug>(mkdx-checkbox-next)' . s:gv,    ':call mkdx#ToggleCheckboxState(1)<cr>' . s:gv],
+        \ ['Promote\ header',                 1, 'n', '[',      '<Plug>(mkdx-promote-header)',          ':<C-U>call mkdx#ToggleHeader(1)<cr>'],
+        \ ['Demote\ header',                  1, 'n', ']',      '<Plug>(mkdx-demote-header)',           ':<C-U>call mkdx#ToggleHeader()<cr>'],
+        \ ['Toggle\ quote',                   1, 'n', "'",      '<Plug>(mkdx-toggle-quote)',            ':call mkdx#ToggleQuote()<cr>'],
+        \ ['Toggle\ quote',                   1, 'v', "'",      '<Plug>(mkdx-toggle-quote)' . s:gv,     ':call mkdx#ToggleQuote()<cr>' . s:gv],
+        \ ['Toggle\ checkbox',                1, 'n', "t",      '<Plug>(mkdx-toggle-checkbox)',         ':call mkdx#ToggleCheckboxTask()<cr>'],
+        \ ['Toggle\ checkbox',                1, 'v', "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv,  ':call mkdx#ToggleCheckboxTask()<cr>' . s:gv],
+        \ ['Toggle\ checklist',               1, 'n', "lt",     '<Plug>(mkdx-toggle-checklist)',        ':call mkdx#ToggleChecklist()<cr>'],
+        \ ['Toggle\ checklist',               1, 'v', "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv, ':call mkdx#ToggleChecklist()<cr>' . s:gv],
+        \ ['Toggle\ list',                    1, 'n', "ll",     '<Plug>(mkdx-toggle-list)',             ':call mkdx#ToggleList()<cr>'],
+        \ ['Toggle\ list',                    1, 'v', "ll",     '<Plug>(mkdx-toggle-list)' . s:gv,      ':call mkdx#ToggleList()<cr>' . s:gv],
+        \ ['Wrap\ link',                      1, 'n', 'ln',     '<Plug>(mkdx-wrap-link-n)',             ':<C-U>call mkdx#WrapLink()<cr>'],
+        \ ['Wrap\ link',                      1, 'v', 'ln',     '<Plug>(mkdx-wrap-link-v)',             ':<C-U>call mkdx#WrapLink("v")<cr>'],
+        \ ['Italic',                          1, 'n', '/',      '<Plug>(mkdx-text-italic-n)',           ':<C-U>call mkdx#WrapText("n", g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic, "mkdx-text-italic-n")<Cr>'],
+        \ ['Italic',                          1, 'v', '/',      '<Plug>(mkdx-text-italic-v)',           ':<C-U>call mkdx#WrapText("v", g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic)<Cr>'],
+        \ ['Bold',                            1, 'n', 'b',      '<Plug>(mkdx-text-bold-n)',             ':<C-U>call mkdx#WrapText("n", g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold, "mkdx-text-bold-n")<Cr>'],
+        \ ['Bold',                            1, 'v', 'b',      '<Plug>(mkdx-text-bold-v)',             ':<C-U>call mkdx#WrapText("v", g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold)<Cr>'],
+        \ ['Inline\ code',                    1, 'n', '`',      '<Plug>(mkdx-text-inline-code-n)',      ':<C-U>call mkdx#WrapText("n", "`", "`", "mkdx-text-inline-code-n")<cr>'],
+        \ ['Inline\ code',                    1, 'v', '`',      '<Plug>(mkdx-text-inline-code-v)',      ':<C-U>call mkdx#WrapText("v", "`", "`")<cr>'],
+        \ ['Strike\ through',                 1, 'n', 's',      '<Plug>(mkdx-text-strike-n)',           ':<C-U>call mkdx#WrapText("n", "<strike>", "</strike>", "mkdx-text-strike-n")<cr>'],
+        \ ['Strike\ through',                 1, 'v', 's',      '<Plug>(mkdx-text-strike-v)',           ':<C-U>call mkdx#WrapText("v", "<strike>", "</strike>")<cr>'],
+        \ ['Convert\ to\ table',              1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>'],
+        \ ['Generate\ /\ Update\ TOC',        1, 'n', 'i',      '<Plug>(mkdx-gen-or-upd-toc)',          ':call mkdx#GenerateOrUpdateTOC()<cr>'],
+        \ ['Open\ TOC\ in\ quickfix',         1, 'n', 'I',      '<Plug>(mkdx-quickfix-toc)',            ':call mkdx#QuickfixHeaders()<cr>'],
+        \ ['Open\ dead\ links\ in\ quickfix', 1, 'n', 'L',      '<Plug>(mkdx-quickfix-links)',          ':call mkdx#QuickfixDeadLinks()<cr>'],
+        \ ['Toggle\ to\ kbd\ tag',            1, 'n', 'k',      '<Plug>(mkdx-toggle-to-kbd-n)',         ':call mkdx#ToggleToKbd()<cr>'],
+        \ ['Toggle\ to\ kbd\ tag',            1, 'v', 'k',      '<Plug>(mkdx-toggle-to-kbd-v)',         ':call mkdx#ToggleToKbd("v")<cr>'],
+        \ ['Insert\ kbd\ tag',                0, 'i', '<<tab>', '<Plug>(mkdx-insert-kbd)',              '<kbd></kbd>2hcit'],
+        \ ['Backtick\ fenced\ code\ block',   0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
+        \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA']
         \ ]
 
   if (g:mkdx#settings.enter.enable)

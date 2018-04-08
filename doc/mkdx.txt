@@ -11,6 +11,11 @@ CONTENTS                                                         *mkdx-contents*
     Helptags
 
     `g:mkdx#settings`
+        `g:mkdx#settings.links.external.enable`
+        `g:mkdx#settings.links.external.timeout`
+        `g:mkdx#settings.links.external.host`
+        `g:mkdx#settings.links.external.user_agent`
+        `g:mkdx#settings.links.external.relative`
         `g:mkdx#settings.image_extension_pattern`
         `g:mkdx#settings.restore_visual`
         `g:mkdx#settings.map.prefix`
@@ -56,7 +61,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-update-toc)
         <Plug>(mkdx-gen-or-upd-toc)
         <Plug>(mkdx-quickfix-toc)
-        <Plug>(mkdx-quickfix-frags)
+        <Plug>(mkdx-quickfix-links)
         <Plug>(mkdx-text-bold-n)
         <Plug>(mkdx-text-bold-v)
         <Plug>(mkdx-text-italic-n)
@@ -94,7 +99,7 @@ CONTENTS                                                         *mkdx-contents*
         List items
         Generate or update table of contents
         Quickfix table of contents
-        Quickfix dead fragment links
+        Quickfix dead links
         Toggle checkbox
         Toggle checklist
         Toggle list
@@ -113,7 +118,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#UpdateTOC()
         mkdx#GenerateOrUpdateTOC()
         mkdx#QuickfixHeaders()
-        mkdx#QuickfixDeadFrags()
+        mkdx#QuickfixDeadLinks()
         mkdx#ToggleCheckboxTask()
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
@@ -152,6 +157,11 @@ for functions. Below is a list of all helptags:
 - |mkdx-helptags|
 
 - |mkdx-settings|
+    - |mkdx-setting-links-external-enable|
+    - |mkdx-setting-links-external-timeout|
+    - |mkdx-setting-links-external-host|
+    - |mkdx-setting-links-external-ua|
+    - |mkdx-setting-links-external-rel|
     - |mkdx-setting-image-extension-pattern|
     - |mkdx-setting-restore-visual|
     - |mkdx-setting-map-prefix|
@@ -197,7 +207,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-update-toc|
     - |mkdx-plug-gen-or-update-toc|
     - |mkdx-plug-quickfix-toc|
-    - |mkdx-plug-quickfix-frags|
+    - |mkdx-plug-quickfix-links|
     - |mkdx-plug-wrap-text-in-link-n|
     - |mkdx-plug-wrap-text-in-link-v|
     - |mkdx-plug-wrap-text-in-bold-n|
@@ -237,7 +247,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-list-items|
     - |mkdx-mapping-generate-or-update-toc|
     - |mkdx-mapping-quickfix-table-of-contents|
-    - |mkdx-mapping-quickfix-dead-frags|
+    - |mkdx-mapping-quickfix-dead-links|
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
@@ -256,7 +266,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-update-toc|
     - |mkdx-function-generate-or-update-toc|
     - |mkdx-function-quickfix-headers|
-    - |mkdx-function-quickfix-dead-frags|
+    - |mkdx-function-quickfix-dead-links|
     - |mkdx-function-wrap-text|
     - |mkdx-function-toggle-checkbox-task|
     - |mkdx-function-toggle-checklist|
@@ -290,6 +300,14 @@ at the bottom of every setting section. The default settings hash:
     `      \                            },`
     `      \ 'table':                   { 'divider': '|',`
          ` \                              'header_divider': '-' },`
+          `\ 'links':                   { 'external': {`
+          `\                                 'enable': 0,`
+          `\                                 'timeout': 3,`
+          `\                                 'host': '',`
+          `\                                 'relative': 1,`
+          `\                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.3.0'`
+          `\                              }`
+          `\                            },`
          ` \ 'highlight':               { 'enable': 0 }`
     `    \ }`
 
@@ -314,31 +332,93 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
-let s:defaults.image_extension_pattern `=>` g:mkdx#link_as_img_pat
-let s:defaults.restore_visual          `=>` g:mkdx#restore_visual
-let s:defaults.map.prefix              `=>` g:mkdx#map_prefix
-let s:defaults.map.enable              `=>` g:mkdx#map_keys
-let s:defaults.checkbox.toggles        `=>` g:mkdx#checkbox_toggles
-let s:defaults.checkbox.update_tree    `=>` g:mkdx#checklist_update_tree
-let s:defaults.checkbox.initial_state  `=>` g:mkdx#checkbox_initial_state
-let s:defaults.table.header_divider    `=>` g:mkdx#table_header_divider
-let s:defaults.table.divider           `=>` g:mkdx#table_divider
-let s:defaults.tokens.header           `=>` g:mkdx#header_style
-let s:defaults.tokens.enter            `=>` g:mkdx#list_tokens
-let s:defaults.tokens.fence            `=>` g:mkdx#fence_style
-let s:defaults.tokens.bold             `=>` g:mkdx#bold_token
-let s:defaults.tokens.italic           `=>` g:mkdx#italic_token
-let s:defaults.tokens.list             `=>` g:mkdx#list_token
-let s:defaults.enter.enable            `=>` g:mkdx#enhance_enter
-let s:defaults.enter.malformed         `=>` g:mkdx#handle_malformed_indent
-let s:defaults.enter.o                 `=>`
-let s:defaults.enter.shifto            `=>`
-let s:defaults.toc.list_token          `=>` g:mkdx#toc_list_token
-let s:defaults.toc.text                `=>` g:mkdx#toc_text
-let s:defaults.toc.position            `=>`
-let s:defaults.toc.details.enable      `=>`
-let s:defaults.toc.details.summary     `=>`
-let s:defaults.highlight.enable        `=>`
+let s:defaults.links.external.enable     `=>`
+let s:defaults.links.external.host       `=>`
+let s:defaults.links.external.timeout    `=>`
+let s:defaults.links.external.relative   `=>`
+let s:defaults.links.external.user_agent `=>`
+let s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
+let s:defaults.restore_visual            `=>` g:mkdx#restore_visual
+let s:defaults.map.prefix                `=>` g:mkdx#map_prefix
+let s:defaults.map.enable                `=>` g:mkdx#map_keys
+let s:defaults.checkbox.toggles          `=>` g:mkdx#checkbox_toggles
+let s:defaults.checkbox.update_tree      `=>` g:mkdx#checklist_update_tree
+let s:defaults.checkbox.initial_state    `=>` g:mkdx#checkbox_initial_state
+let s:defaults.table.header_divider      `=>` g:mkdx#table_header_divider
+let s:defaults.table.divider             `=>` g:mkdx#table_divider
+let s:defaults.tokens.header             `=>` g:mkdx#header_style
+let s:defaults.tokens.enter              `=>` g:mkdx#list_tokens
+let s:defaults.tokens.fence              `=>` g:mkdx#fence_style
+let s:defaults.tokens.bold               `=>` g:mkdx#bold_token
+let s:defaults.tokens.italic             `=>` g:mkdx#italic_token
+let s:defaults.tokens.list               `=>` g:mkdx#list_token
+let s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
+let s:defaults.enter.malformed           `=>` g:mkdx#handle_malformed_indent
+let s:defaults.enter.o                   `=>`
+let s:defaults.enter.shifto              `=>`
+let s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
+let s:defaults.toc.text                  `=>` g:mkdx#toc_text
+let s:defaults.toc.position              `=>`
+let s:defaults.toc.details.enable        `=>`
+let s:defaults.toc.details.summary       `=>`
+let s:defaults.highlight.enable          `=>`
+
+==============================================================================
+`g:mkdx#settings.links.external.enable = 0`   *mkdx-setting-links-external-enable*
+
+Check external links as well as absolute and relative paths aside from
+fragment links. Requires Neovim |job-control| or Regular vim |job|.
+
+The following CURL command will be run in the background:
+
+`curl -L -I -s --no-keepalive -o /dev/null \`
+     `-m [g:mkdx#settings.links.external.timeout] -w "%{http_code}"' \`
+     `-A [g:mkdx#settings.links.external.user_agent] [URL];`
+
+See |mkdx-setting-links-external-timeout| for the value of `-m` and
+|mkdx-setting-links-external-ua| for `-A`.
+
+When a relative URL is encountered, mkdx attempts to convert it to an absolute
+path. This only works inside a `git` repository at the moment. `git ls-remote`
+output will be used to construct an absolute URL. This behaviour can
+overridden by setting |mkdx-setting-links-external-host|. Relative link
+checking can be disabled all together by setting
+|mkdx-setting-links-external-rel| to `0`.
+
+==============================================================================
+`g:mkdx#settings.links.external.timeout = 3` *mkdx-setting-links-external-timeout*
+
+This is the maximum time in seconds a request may take.
+By default it is set to `3`. After this time, the request is cancelled and
+added to the quickfix list.
+
+==============================================================================
+`g:mkdx#settings.links.external.host = ''`      *mkdx-setting-links-external-host*
+
+When a host is supplied, mkdx will not attempt to do `git ls-remote` detection
+and instead, simply prepends host string provided.  Since these links can
+either be {relative} (url) or {absolute} (/url) some additional checks are
+executed to prevent double slashes e.g: `localhost:3000//url`. Therefore you can
+safely append or remove a trailing `/` from your host.
+
+==============================================================================
+`g:mkdx#settings.links.external.user_agent =`     *mkdx-setting-links-external-ua*
+` \ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1)' .`
+` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.3.0'`
+
+Specify an actual user agent to prevent being blocked from a website.
+If you don't like being `Chrome/9001` then feel free to change it
+into anything you like :)
+
+==============================================================================
+`g:mkdx#settings.links.external.relative = 0`    *mkdx-setting-links-external-rel*
+
+When set to `0`, relative links will be ignored while checking the document for
+dead links. Relative URL's are defined as link paths that do not start with
+a `#` (fragment URL) or `http` (protocol). Therefore both {relative} (url) and
+{absolute} (/url) URL's are "relative" in this context, as no host is
+provided. When |mkdx-setting-links-external-host| is empty, mkdx attempts to
+construct an absolute path using `git ls-remote` output.
 
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
@@ -662,9 +742,9 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#QuickfixHeaders()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-quickfix-frags)                           *mkdx-plug-quickfix-frags*
+<Plug>(mkdx-quickfix-links)                           *mkdx-plug-quickfix-links*
 
-    `:call mkdx#QuickfixDeadFrags()<Cr>`
+    `:call mkdx#QuickfixDeadLinks()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-text-bold-n)                                 *mkdx-plug-text-bold-n*
@@ -966,12 +1046,16 @@ Quickfix table of contents             *mkdx-mapping-quickfix-table-of-contents*
 Adds all the markdown headers in the current file to the quickfix list.
 
 ==============================================================================
-Quickfix dead fragment links                  *mkdx-mapping-quickfix-dead-frags*
+Quickfix dead links                           *mkdx-mapping-quickfix-dead-links*
                                                                  <MAP_PREFIX>L
 
-Checks every markdown fragment link (`[link](#somewhere-on-page)`) in the
-document for existence, if a link does not exist, it will be added to the
-quickfix list.
+Checks every markdown link in the document for existence, if a link does not
+exist, it will be added to the quickfix list.
+
+A fragment link is dead when none of the headers in the document match it.
+An external link is dead when it returns a statuscode `< 200` and `> 299`.
+
+See |mkdx-setting-links-external-enable| for more information.
 
 ==============================================================================
 Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
@@ -1349,13 +1433,17 @@ quickfix-ready entries will be returned instead in the format of:
     `{'lnum': 23, 'text': '# header', 'bufnr': 5}`
 
 ==============================================================================
-mkdx#QuickfixFrags([{quickfix}])                  *mkdx-function-quickfix-frags*
+mkdx#QuickfixDeadLinks([{quickfix}])         *mkdx-function-quickfix-dead-links*
 
-Find all dead fragment links in the current file and opens them in a quickfix
+Find all dead links in the current file and opens them in a quickfix
 window to allow for easy jumping using regular quickfix commands.
 
-Dead links are found by converting all the headers in the document to their
-respective `#fragment-link` urls. These are the existing links within the
+There are two types of links:
+
+FRAGMENT
+
+Dead fragment links are found by converting all the headers in the document to
+their respective `#fragment-link` urls. These are the existing links within the
 document which we can use to compare against a list of `#fragment-link`s found
 by scanning the markdown links in the document.
 
@@ -1369,6 +1457,18 @@ will be opened if the file contains any headers. When set to 0, a list of
 quickfix-ready entries will be returned instead in the format of:
 
     `{'lnum': 23, 'col': 3, 'text': '#unknown-header', 'bufnr': 5}`
+
+EXTERNAL
+
+If {quickfix} is provided and equals 1 and |mkdx-setting-links-external-enable|,
+if set to `1`, |mkdx| also scans the document for any external links
+(http://, https://, // or any absolute / relative link) and
+uses neovim's |job-control| or vim's |job| feature together with `cURL` to
+asynchronously check if all those links are still in the air.
+
+These links will be added to the quickfix list but, they will not be added to
+the final result of calling this function. One can always use |getqflist|
+after calling this function to fetch the quickfix list entries afterwards.
 
 ==============================================================================
 mkdx#WrapText({mode}, {start}, {end}, {repeat})        *mkdx-function-wrap-text*

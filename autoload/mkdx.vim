@@ -132,15 +132,15 @@ fun! s:util.ListFragmentLinks()
     while (col < len)
       let tcol = match(line[col:], '\](\(#[^)]\+\))')
       let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#[^"]\+\)"')
-      let type = href < 0 ? 'tcol' : 'href'
-      if ((type == 'href' && href < 0) || (type == 'tcol' && tcol < 0)) | break | endif
-      let col += type == 'href' ? href : tcol
-      let rgx  = type == 'href' ? 'href="\(#[^"]\+\)"' : '\](\(#[^)]\+\))'
+      let html = href > -1
+      if ((html && href < 0) || (!html && tcol < 0)) | break | endif
+      let col += html ? href : tcol
+      let rgx  = html ? 'href="\(#[^"]\+\)"' : '\](\(#[^)]\+\))'
 
       let matchtext = get(matchlist(line[col:], rgx), 1, -1)
       if (matchtext == -1) | break | endif
 
-      call add(frags, [lnum, col + (type == 'href' ? 6 : 2), matchtext])
+      call add(frags, [lnum, col + (html ? 6 : 2), matchtext])
       let col += len(matchtext)
     endwhile
 

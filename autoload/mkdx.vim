@@ -23,7 +23,7 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
     let text   = suff . ': ' . url
     let qflen += 1
 
-    call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
+    call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column + 1, 'text': text, 'status': status}], 'a')
     if (qflen == 1) | copen | endif
   endif
 
@@ -126,13 +126,17 @@ fun! s:util.ListFragmentLinks()
     let len  = len(line)
 
     while (col < len)
-      let col += match(line[col:], '\](\(#[^)]\+\))')
-      if (col < 0) | break | endif
+      let tcol = match(line[col:], '\](\(#[^)]\+\))')
+      let href = tcol > -1 ? -1 : match(line[col:], 'href="\([^"]\+\)"')
+      let type = href < 0 ? 'tcol' : 'href'
+      if ((type == 'href' && href < 0) || (type == 'tcol' && tcol < 0)) | break | endif
+      let col += type == 'href' ? href : tcol
+      let rgx  = type == 'href' ? 'href="\([^"]\+\)"' : '\](\(#[^)]\+\))'
 
-      let matchtext = get(matchlist(line[col:], '\](\(#[^)]\+\))'), 1, -1)
+      let matchtext = get(matchlist(line[col:], rgx), 1, -1)
       if (matchtext == -1) | break | endif
 
-      call add(frags, [lnum, col + 2, matchtext])
+      call add(frags, [lnum, col + (type == 'href' ? 6 : 2), matchtext])
       let col += len(matchtext)
     endwhile
 

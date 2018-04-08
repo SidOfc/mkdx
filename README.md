@@ -43,10 +43,7 @@ settings and examples with default mappings.
         <li><a href="#toggling-quotes">Toggling Quotes</a></li>
         <li><a href="#wrapping-text">Wrapping text</a><ul>
             <li><a href="#as-a-link">As a link</a></li>
-            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a><ul>
-                <li><a href="#normal-mode">Normal mode</a></li>
-                <li><a href="#visual-mode">Visual mode</a></li>
-            </ul></li>
+            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
         </ul></li>
         <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
@@ -423,10 +420,10 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 
 ### As bold / italic / inline-code / strikethrough
 
-#### Normal mode
+**Normal mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
 
-#### Visual mode
+**Visual mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough visual](doc/gifs/vim-mkdx-wrap-text-visual.gif)
 
 Wrap the word (anywhere) under the cursor or a visual selection using the following mappings:

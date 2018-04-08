@@ -1,5 +1,7 @@
 """"" UTILITY FUNCTIONS
-let s:util = {}
+let s:_is_nvim               = has('nvim')
+let s:_can_async             = s:_is_nvim || has('job')
+let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
       \ 'M': 'meta',
@@ -10,28 +12,24 @@ let s:util.modifier_mappings = {
       \ }
 
 fun! s:util.ExtractCurlHttpCode(data, ...)
-  let ev = get(a:000, 2, '')
+  let status = s:_is_nvim ? get(get(a:000, 1, []), 0, '404') : get(a:000, 1, '404')
+  let status = status =~ '\D' ? 500 : str2nr(status)
+  let qflen  = len(getqflist())
+  let total  = a:data[0]
 
-  if (ev == 'stdout')
-    let status = get(get(a:000, 1, []), 0, '404')
-    let status = status =~ '\D' ? 500 : str2nr(status)
-    let qflen  = len(getqflist())
-    let total  = a:data[0]
+  if (status < 200 || status > 299)
+    let [total, bufnum, lnum, column, url] = a:data
+    let suff   = status == 0 ? '---' : repeat('0', 3 - strlen(status)) . status
+    let text   = suff . ': ' . url
+    let qflen += 1
 
-    if (status < 200 || status > 299)
-      let [total, bufnum, lnum, column, url] = a:data
-      let suff   = status == 0 ? '---' : repeat('0', 3 - strlen(status)) . status
-      let text   = suff . ': ' . url
-      let qflen += 1
-
-      call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
-      if (qflen == 1) | copen | endif
-    endif
-
-    if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-    echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
-    echohl None
+    call setqflist([{'bufnr': bufnum, 'lnum': lnum, 'col': column, 'text': text, 'status': status}], 'a')
+    if (qflen == 1) | copen | endif
   endif
+
+  if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
+  echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
+  echohl None
 endfun
 
 fun! s:util.GetRemoteUrl()
@@ -76,9 +74,14 @@ fun! s:util.AsyncDeadExternalToQF(...)
       let url = substitute(remote, '/+$', '', '') . '/' . substitute(url, '^/+', '', '')
     endif
 
+    let cmd = 'curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"'
+
     if (!skip_rel)
-      call jobstart('curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"',
-                  \ {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+      if (s:_is_nvim)
+        call jobstart(cmd, {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+      elseif (s:_can_async)
+        call job_start(cmd, {'pty': 0, 'out_cb': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+      endif
     endif
   endfor
 
@@ -549,7 +552,7 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (g:mkdx#settings.links.external.enable && has('nvim') && executable('curl'))
+    if (g:mkdx#settings.links.external.enable && s:_can_async && executable('curl'))
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
 

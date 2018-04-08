@@ -367,7 +367,7 @@ let s:defaults.highlight.enable          `=>`
 `g:mkdx#settings.links.external.enable = 0`   *mkdx-setting-links-external-enable*
 
 Check external links as well as absolute and relative paths aside from
-fragment links. Requires Neovim |jobstart| or Regular vim "job_start".
+fragment links. Requires Neovim |job-control| or Regular vim |job|.
 
 The following CURL command will be run in the background:
 

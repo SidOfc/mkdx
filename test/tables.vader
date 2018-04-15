@@ -20,6 +20,23 @@ Expect (A markdown table):
   |   Stan Marsh    | 10  |  Male   |
   | Kyle Brovlofski | 10  |  Male   |
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given (Some rows of quoted CSV content):
+  "Name","Age","Gender"
+  "Er'ic Cartman","10","Unknown"
+  "Kenny McCormick","10","Male"
+  "Stan Mar\"sh","10","Male"
+  "K,le Brovlofski","10","Male"
 
+Do (V5j<prefix>, (visually select the rows and convert)):
+  V5j ,
+
+Expect (A markdown table):
+  |      Name       | Age | Gender  |
+  |-----------------|-----|---------|
+  |  Er'ic Cartman  | 10  | Unknown |
+  | Kenny McCormick | 10  |  Male   |
+  |   Stan Mar"sh   | 10  |  Male   |
+  | K,le Brovlofski | 10  |  Male   |
 

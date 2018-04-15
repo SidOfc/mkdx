@@ -11,6 +11,48 @@ let s:util.modifier_mappings = {
       \ 'shift': 'shift'
       \ }
 
+fun! s:util.CsvRowToList(...)
+  let line     = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
+  let len      = strlen(line) - 1
+  let colcount = range(0, len)
+
+  if (len < 1) | return [] | endif
+
+  let quote    = ""
+  let escaped  = 0
+  let currcol  = ""
+  let result   = []
+
+  for idx in colcount
+    let char = line[idx]
+    if (escaped)
+      let currcol .= char
+      let escaped  = 0
+    elseif (char == "\\")
+      let escaped = 1
+    elseif (!empty(quote))
+      if (char != quote)
+        let currcol .= char
+      else
+        let quote = ""
+      endif
+    elseif ((char == "'") || (char == "\""))
+      let quote = char
+    elseif ((char == ",") || (char == "\t"))
+      call add(result, currcol)
+      let currcol = ""
+    else
+      let currcol .= char
+    endif
+  endfor
+
+  if (!empty(currcol))
+    call add(result, currcol)
+  endif
+
+  return result
+endfun
+
 fun! s:util.ExtractCurlHttpCode(data, ...)
   let status = s:_is_nvim ? get(get(a:000, 1, []), 0, '404') : get(a:000, 1, '404')
   let status = status =~ '\D' ? 500 : str2nr(status)
@@ -702,7 +744,7 @@ fun! mkdx#Tableize() range
   let linecount    = range(0, len(lines) - 1)
 
   for idx in linecount
-    let lines[idx] = split(lines[idx], delimiter, 1)
+    let lines[idx] = s:util.CsvRowToList(lines[idx])
 
     for column in range(0, len(lines[idx]) - 1)
       let curr_word_max = strlen(lines[idx][column])

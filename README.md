@@ -1102,6 +1102,7 @@ map <Plug> <Plug>(mkdx-checkbox-next)
 
 - [ ] add alignment options for columns in a table generated from CSV.
 - [ ] Add alignment options for specific column names or indexes in a table generated from CSV.
+- [ ] Make numeric list items require a space between them and other content to prevent false positives.
 
 # Contributing
 

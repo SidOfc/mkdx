@@ -435,15 +435,6 @@ As with all other mappings, all the *normal* mode mappings are repeatable.
 
 ## Convert CSV to table
 
-//protocol
-/absolute
-relative
-http://web
-https://web
-
-git@github.com:sidofc/mkdx
-https://github.com/SidOfc/mkdx.git
-
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>.

@@ -1,3 +1,11 @@
+## 02-04-2018 VERSION 1.3.0
+
+- Added feature: [Dead fragment link detection](#dead-link-detection)
+- Automatically remove `r` from `formatoptions` inside markdown files (buffer local override)
+- Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
+- Cursor stays on the same line after updating table of contents
+- `mkdx#QuickfixHeaders()` shows amount of headers and doesn't open quickfix when no headers are present.
+
 ## 01-04-2018 VERSION 1.2.0
 
 - Added feature: Support generating [table of contents inside `<details>` tag](#generate-or-update-toc-as-details).

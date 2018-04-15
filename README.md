@@ -22,9 +22,9 @@ settings and examples with default mappings.
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
         <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
         <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
-        <li><a href="#02-04-2018-version-130">02-04-2018 VERSION 1.3.0</a></li>
     </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
@@ -99,6 +99,10 @@ settings and examples with default mappings.
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 15-04-2018 VERSION 1.4.2
+
+- [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data
+
 ## 08-04-2018 VERSION 1.4.1
 
 - [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
@@ -107,14 +111,6 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 - Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
 - Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
-
-## 02-04-2018 VERSION 1.3.0
-
-- Added feature: [Dead fragment link detection](#dead-link-detection)
-- Automatically remove `r` from `formatoptions` inside markdown files (buffer local override)
-- Fix table of contents "eating" a header when there is no blank line between the table of contents and the next heading
-- Cursor stays on the same line after updating table of contents
-- `mkdx#QuickfixHeaders()` shows amount of headers and doesn't open quickfix when no headers are present.
 
 # Install
 
@@ -440,8 +436,8 @@ As with all other mappings, all the *normal* mode mappings are repeatable.
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.
 The divider (`|`) as well as the header divider can be changed with [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
-and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider). Currently, this is only a very simple function.
-It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).
+and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider). <strike>Currently, this is only a very simple function.
+It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).</strike> The above example contains a simple unqouted example but as of version _1.4.2_, quoted CSV is also supported.
 
 ```viml
 " :h mkdx-mapping-csv-to-markdown-table
@@ -581,7 +577,7 @@ let g:mkdx#settings = {
       \                              'header_divider': '-' },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.1'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'
       \                               }
       \                            },
       \ 'highlight':               { 'enable': 0 }
@@ -689,7 +685,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.1' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
 ```
 
 ## `g:mkdx#settings.links.external.relative`
@@ -1104,10 +1100,8 @@ map <Plug> <Plug>(mkdx-checkbox-next)
 
 # Roadmap
 
-- [x] Add setting to always place the TOC in a fixed position (e.g. below nth header)
-- [x] Add setting to generate the TOC inside a `<details />` tag for github
-- [x] Allow [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles) to only have 2 elements.
-- [x] Fix merging of `g:mkdx#settings` ([`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles))
+- [ ] add alignment options for columns in a table generated from CSV.
+- [ ] Add alignment options for specific column names or indexes in a table generated from CSV.
 
 # Contributing
 

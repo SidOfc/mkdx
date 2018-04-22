@@ -50,8 +50,9 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentjumplist"><code>g:mkdx#settings.links.fragment.jumplist</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -659,16 +660,6 @@ The host can be changed at any given time during runtime, the next time a dead l
 let g:mkdx#settings = { 'links': { 'external': { 'host': '' } } }
 ```
 
-## `g:mkdx#settings.links.external.user_agent`
-
-Specify an actual user agent to prevent being blocked from a website.
-If you don't like being `Chrome/9001` then feel free to change it into anything you like :)
-
-```viml
-" :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
-```
-
 ## `g:mkdx#settings.links.external.relative`
 
 When set to `0`, relative links will be ignored while checking the document for dead links.
@@ -681,8 +672,26 @@ When [`g:mkdx#settings.links.external.host`](#gmkdxsettingslinksexternalhost) is
 let g:mkdx#settings = { 'links': { 'external': { 'relative': 1 } } }
 ```
 
+## `g:mkdx#settings.links.external.user_agent`
 
-Host to use instead of trying to autodetect a `git` repository URL.
+Specify an actual user agent to prevent being blocked from a website.
+If you don't like being `Chrome/9001` then feel free to change it into anything you like :)
+
+```viml
+" :h mkdx-setting-links-external-ua
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
+```
+
+## `g:mkdx#settings.links.fragment.jumplist`
+
+Specify wether or not to add the cursor position _before jumping_ to the jumplist (`:h jumplist`).
+The jumplist allows you to jump back and forth between certain positions in code defined by "jumps".
+This setting is enabled by default, set it to `0` to disable.
+
+~~~viml
+" :h mkdx-setting-links-fragment-jumplist
+let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
+~~~
 
 ## `g:mkdx#settings.image_extension_pattern`
 

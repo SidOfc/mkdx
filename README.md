@@ -1100,9 +1100,9 @@ map <Plug> <Plug>(mkdx-checkbox-next)
 
 # Roadmap
 
-- [ ] (#17) Add a mapping to go to fragment link location.
-- [ ] (#18) Add alignment options for columns in a table generated from CSV.
-- [ ] (#18) Add alignment options for specific column names or indexes in a table generated from CSV.
+- [ ] ([#17](../../issues/17)) Add a mapping to go to fragment link location.
+- [ ] ([#18](../../issues/18)) Add alignment options for columns in a table generated from CSV.
+- [ ] ([#18](../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
 - [ ] Make numeric list items require a space between them and other content to prevent false positives.
 
 # Contributing

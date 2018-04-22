@@ -23,6 +23,7 @@ settings and examples with default mappings.
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
+        <li><a href="#using-the-menu">Using the menu</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>

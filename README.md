@@ -41,6 +41,7 @@ settings and examples with default mappings.
             <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
         </ul></li>
         <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
+        <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
@@ -421,6 +422,23 @@ It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).</st
 " :h mkdx-mapping-csv-to-markdown-table
 " :h mkdx-function-tableize
 ```
+
+## Jump to header
+
+![mkdx jump to header](doc/gifs/vim-mkdx-jump-to-header.gif)
+
+Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd> to jump to a fragment identifier within the document.
+Every link starting with a `#` symbol is considered a fragment identifier. both **markdown** and **HTML** are supported.
+Before performing a jump, the current cursor position will be added to the jumplist (`:h jumplist`).
+This allows you to jump back and forth between that header and the selected link using <kbd>\`</kbd><kbd>\`</kbd>.
+This behaviour can be disabled by overriding [`g:mkdx#settings.links.fragment.jumplist`](#gmkdxsettingslinksfragmentjumplist).
+
+~~~viml
+" :h mkdx-setting-links-fragment-jumplist
+" :h mkdx-plug-jump-to-header
+" :h mkdx-function-jump-to-header
+" :h mkdx-mapping-jump-to-header
+~~~
 
 ## Generate or update TOC
 
@@ -1014,6 +1032,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
 |Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
 |Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd>|`<Plug>(mkdx-quickfix-links)`|
+|Jump to header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd>|`<Plug>(mkdx-jump-to-header)`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
 |<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
 |Insert fenced code block|insert|<kbd>\`</kbd><kbd>\`</kbd><kbd>\`</kbd>|`<Plug>(mkdx-fence-backtick)`|

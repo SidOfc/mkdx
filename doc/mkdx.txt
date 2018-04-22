@@ -16,6 +16,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.links.external.host`
         `g:mkdx#settings.links.external.user_agent`
         `g:mkdx#settings.links.external.relative`
+        `g:mkdx#settings.links.fragment.jumplist`
         `g:mkdx#settings.image_extension_pattern`
         `g:mkdx#settings.restore_visual`
         `g:mkdx#settings.map.prefix`
@@ -56,6 +57,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-toggle-quote)
         <Plug>(mkdx-wrap-link-n)
         <Plug>(mkdx-wrap-link-v)
+        <Plug>(mkdx-jump-to-header)
         <Plug>(mkdx-tableize)
         <Plug>(mkdx-generate-toc)
         <Plug>(mkdx-update-toc)
@@ -100,6 +102,7 @@ CONTENTS                                                         *mkdx-contents*
         Generate or update table of contents
         Quickfix table of contents
         Quickfix dead links
+        Jump to header
         Toggle checkbox
         Toggle checklist
         Toggle list
@@ -110,6 +113,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#WrapLink()
         mkdx#ToggleQuote()
         mkdx#ToggleHeader()
+        mkdx#JumpToHeader()
         mkdx#Tableize()
         mkdx#EnterHandler()
         mkdx#OHandler()
@@ -123,7 +127,6 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
         mkdx#ToggleToKbd()
-
 
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
@@ -160,8 +163,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-links-external-enable|
     - |mkdx-setting-links-external-timeout|
     - |mkdx-setting-links-external-host|
-    - |mkdx-setting-links-external-ua|
     - |mkdx-setting-links-external-rel|
+    - |mkdx-setting-links-external-ua|
+    - |mkdx-setting-links-fragment-jumplist|
     - |mkdx-setting-image-extension-pattern|
     - |mkdx-setting-restore-visual|
     - |mkdx-setting-map-prefix|
@@ -202,6 +206,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-toggle-quote|
     - |mkdx-plug-wrap-link-n|
     - |mkdx-plug-wrap-link-v|
+    - |mkdx-plug-jump-to-header|
     - |mkdx-plug-tableize|
     - |mkdx-plug-generate-toc|
     - |mkdx-plug-update-toc|
@@ -248,6 +253,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-generate-or-update-toc|
     - |mkdx-mapping-quickfix-table-of-contents|
     - |mkdx-mapping-quickfix-dead-links|
+    - |mkdx-mapping-jump-to-header|
     - |mkdx-mapping-toggle-checkbox|
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
@@ -258,6 +264,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-wrap-link|
     - |mkdx-function-toggle-quote|
     - |mkdx-function-toggle-header|
+    - |mkdx-function-jump-to-header|
     - |mkdx-function-tableize|
     - |mkdx-function-enter-handler|
     - |mkdx-function-o-handler|
@@ -294,8 +301,8 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'toc':                     { 'text': "TOC", 'list_token': '-',`
     `      \                              'position': 0,`
     `      \                              'details': {`
-    `      \                                'enable': 0,`
-    `      \                                'summary': '{{toc.text}}'`
+    `      \                                 'enable': 0,`
+    `      \                                 'summary': '{{toc.text}}'`
     `      \                              }`
     `      \                            },`
     `      \ 'table':                   { 'divider': '|',`
@@ -306,6 +313,9 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'host': '',`
           `\                                 'relative': 1,`
           `\                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'`
+          `\                              },`
+          `\                              'fragment': {`
+          `\                                 'jumplist': 1`
           `\                              }`
           `\                            },`
          ` \ 'highlight':               { 'enable': 0 }`
@@ -337,6 +347,7 @@ let s:defaults.links.external.host       `=>`
 let s:defaults.links.external.timeout    `=>`
 let s:defaults.links.external.relative   `=>`
 let s:defaults.links.external.user_agent `=>`
+let s:defaults.links.fragment.jumplist   `=>`
 let s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
 let s:defaults.restore_visual            `=>` g:mkdx#restore_visual
 let s:defaults.map.prefix                `=>` g:mkdx#map_prefix
@@ -419,6 +430,17 @@ a `#` (fragment URL) or `http` (protocol). Therefore both {relative} (url) and
 {absolute} (/url) URL's are "relative" in this context, as no host is
 provided. When |mkdx-setting-links-external-host| is empty, mkdx attempts to
 construct an absolute path using `git ls-remote` output.
+
+==============================================================================
+`g:mkdx#settings.links.fragment.jumplist =` *mkdx-setting-links-fragment-jumplist*
+`    \ 1`
+
+Specify wether or not to add the cursor position to the |jumplist| before
+jumping to a header in the document with |mkdx-function-jump-to-header|.
+
+The current cursor position will only be added to the |jumplist| when a valid
+link is found, otherwise nothing will happen and the |jumplist| remains
+untouched.
 
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
@@ -715,6 +737,11 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 <Plug>(mkdx-wrap-link-v)                                 *mkdx-plug-wrap-link-v*
 
     `:call mkdx#WrapLink('v')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-jump-to-header)                           *mkdx-plug-jump-to-header*
+
+`    :call mkdx#JumpToHeader()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-tableize)                                       *mkdx-plug-tableize*
@@ -1053,9 +1080,18 @@ Checks every markdown link in the document for existence, if a link does not
 exist, it will be added to the quickfix list.
 
 A fragment link is dead when none of the headers in the document match it.
-An external link is dead when it returns a statuscode `< 200` and `> 299`.
+An external link is dead when it returns a statuscode `< 200` and `> 299` or
+the request timed out.
 
 See |mkdx-setting-links-external-enable| for more information.
+
+==============================================================================
+Jump to header                                     *mkdx-mapping-jump-to-header*
+                                                                 <MAP_PREFIX>j
+
+Jump to a fragment link present in the document. The cursor position before
+the jump is saved in the |jumplist| to allow jumping back and forth quickly. See
+|mkdx-function-jump-to-header| for additional information.
 
 ==============================================================================
 Toggle checkbox                                   *mkdx-mapping-toggle-checkbox*
@@ -1252,9 +1288,56 @@ When {increment} is 0 (default):
     Hello        ` =>  `# Hello
 
 ==============================================================================
+mkdx#JumpToHeader()                               *mkdx-function-jump-to-header*
+
+Jump to {fragment} identifiers within the document directly from the link at
+the cursor position. Both HTML and markdown links are supported.
+
+A valid {fragment} identifier is a link that points to a heading within the
+same file. It starts with a `#` symbol followed by the anchor text.
+
+If a markdown document contains the following heading:
+
+`    # Hello world!`
+`    Such a beautiful place to be :)`
+
+A valid {fragment} identifier could be any of:
+
+    Markdown:
+`    [go to hello world](#hello-world)`
+
+    HTML:
+    `<a href="#hello-world">go to hello world</a>`
+    `<a id="whatever" href="#hello-world">go to hello world</a>`
+    `<a id="whatever" href="#hello-world" class="nothing">go to hello world</a>`
+
+The cursor can be anywhere on a link for it to be used, `^` marks indicate
+valid cursor positions:
+
+    Markdown:
+`    more information: [go to hello world](#hello-world) or ...`
+`                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`
+
+    HTML:
+`    more information: <a href="#hello-world">go to hello world</a> or ...`
+`                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`
+
+If the cursor is not on a link, the current line will be scanned from left to
+right for links, the first fragment identifier found will be used.
+
+In case of HTML links, other attributes can be present on the link. The only
+requirement for it to be picked up is that it has a {href} attribute and its
+value starts with a `#` symbol aside from being a valid `<a>` tag of course.
+
+Whenever you jump to a specific link in the document, your cursor position as
+it was BEFORE the jump will be stored. This allows you to go back to where you
+found the link using "``" mapping. To disable this behaviour, see:
+|mkdx-setting-links-fragment-jumplist|.
+
+==============================================================================
 mkdx#Tableize()                                         *mkdx-function-tableize*
 
-Convert a visual selection of CSV data to a markdown table.
+Convert a visual selection of {CSV} or {TSV} data to a markdown table.
 The first nonblank line in the selection will be used as header for the table.
 At the moment, alignment of columns is limited to centering only.
 
@@ -1272,6 +1355,24 @@ Will produce this table:
 `       John    | 23  |  Male`
 `    Catherline | 44  | Female`
 `      Manny    | 22  |  Male`
+
+As of version `1.4.2`, |mkdx| also supports "quoted" CSV / TSV data.
+Another more complex example:
+
+  `"Name","Age","Gender"`
+  `"Er'ic Cartman","10","Unknown"`
+  `"Kenny McCormick","10","Male"`
+  `"Stan Mar\"sh","10","Male"`
+  `"K,le Brovlofski","10","Male"`
+
+Will produce this table:
+
+  `|      Name       | Age | Gender  |`
+  `|-----------------|-----|---------|`
+  `|  Er'ic Cartman  | 10  | Unknown |`
+  `| Kenny McCormick | 10  |  Male   |`
+  `|   Stan Mar"sh   | 10  |  Male   |`
+  `| K,le Brovlofski | 10  |  Male   |`
 
 ==============================================================================
 mkdx#EnterHandler()                                *mkdx-function-enter-handler*

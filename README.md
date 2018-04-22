@@ -41,6 +41,7 @@ settings and examples with default mappings.
             <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
         </ul></li>
         <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
+        <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
@@ -50,8 +51,9 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
-        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
+        <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentjumplist"><code>g:mkdx#settings.links.fragment.jumplist</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -132,10 +134,6 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
-Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
-The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
-In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
-
 ## Dead link detection
 
 ![mkdx dead detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
@@ -144,7 +142,7 @@ Often when writing documentation, you'll find the need to point to some other lo
 So you go ahead and write that fragment URL and forget about it. Later you come back to this file and you change the header (thus changing the output fragment for that header),
 but you **forgot** you even had a link to it in the first place! A new broken link is born :/
 
-Well, no more -- Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd> and Vim's `quickfix` window
+Well, no more -- Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>L</kbd> and Vim's `quickfix` window
 will come to your rescue. It will compare all fragment links in the document to those of the headers and show you which ones don't match.
 Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
 
@@ -227,7 +225,7 @@ In visual mode, every line in the visual selection will be toggled.
 
 ![mkdx toggle checkbox line](doc/gifs/vim-mkdx-toggle-checkbox-line.gif)
 
-Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>t</kbd>.
+Checkboxes can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>t</kbd>.
 This will cause a checkbox to be prepended before the line if it doesn't exist.
 The checkbox will be removed instead, if it exists. The initial state can be defined using [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
 
@@ -252,7 +250,7 @@ the checkbox would be inserted at the start of the line instead of after the lis
 
 ![mkdx toggle list line](doc/gifs/vim-mkdx-toggle-list-line.gif)
 
-Lists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ll</kbd>.
+Lists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>l</kbd>.
 This will cause a [list token](#gmkdxsettingstokenslist) to be inserted. When present, it will be removed.
 
 When toggling a checkbox or a checklist item, the list token will be added / removed accordingly:
@@ -276,7 +274,7 @@ tokens other than [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist) were
 
 ![mkdx toggle checklist line](doc/gifs/vim-mkdx-toggle-checklist-line.gif)
 
-Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>lt</kbd>.
+Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>.
 This will cause a [list token](#gmkdxsettingstokenslist) followed by a checkbox to be prepended before the line if it doesn't exist.
 If it is already present, it will be removed. Like [Checkboxes](#checkboxes), the initial state of the checkbox can be defined using: [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
 
@@ -312,7 +310,7 @@ toggling checklists only performed a check to see if a checklist item was presen
 **Checkbox in checklist:**
 ![mkdx update checklist](doc/gifs/vim-mkdx-checklist-updater-colors.gif)
 
-Checkboxes can be checked using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>.
+Checkboxes can be checked using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>=</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>-</kbd>.
 checking a checkbox means going to the previous or next mark in the list of [`g:mkdx#settings.checkbox.toggles`](#gmkdxsettingscheckboxtoggles).
 When checking an item which is nested in a list, the parent and child list items will be updated as well.
 Automatic updating of checkboxes can be disabled by setting [`g:mkdx#settings.checkbox.update_tree`](#gmkdxsettingscheckboxupdate_tree).
@@ -341,7 +339,7 @@ and will also become `4`.
 
 ![mkdx toggle header](doc/gifs/vim-mkdx-toggle-heading.gif)
 
-Increment or decrement a heading with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>.
+Increment or decrement a heading with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\[</kbd> and <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\]</kbd>.
 As can be seen in the gif, headings can be toggled as well as promoted / demoted with these mappings.
 The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader).
 
@@ -357,7 +355,7 @@ The header character can be changed using [`g:mkdx#settings.tokens.header`](#gmk
 
 **Note:** *does not work with multiline selection*
 
-Quickly toggle plain text shortcuts to markdown shortcuts and back with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>.
+Quickly toggle plain text shortcuts to markdown shortcuts and back with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>'</kbd>.
 
 ```viml
 " :h mkdx-mapping-toggle-kbd-shortcut
@@ -368,7 +366,7 @@ Quickly toggle plain text shortcuts to markdown shortcuts and back with <kbd>[\<
 
 ![mkdx toggle quotes](doc/gifs/vim-mkdx-toggle-quote.gif)
 
-Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>.
+Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>'</kbd>.
 
 ```viml
 " :h mkdx-mapping-toggle-quote
@@ -382,7 +380,7 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
 Wrap the word under the cursor or a visual selection in an empty markdown link
-with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
+with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
 cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the cursor.
 
 If what you're wrapping is an image (only works with visual selections at the moment), an image link will be created
@@ -403,10 +401,10 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 
 Wrap the word (anywhere) under the cursor or a visual selection using the following mappings:
 
-- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd> => *italic*
-- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd> => **bold**
-- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd> => `inline code`
-- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd> => <strike>strikethrough</strike>
+- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd> => *italic*
+- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> => **bold**
+- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\`</kbd> => `inline code`
+- <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd> => <strike>strikethrough</strike>
 
 As with all other mappings, all the *normal* mode mappings are repeatable.
 
@@ -414,7 +412,7 @@ As with all other mappings, all the *normal* mode mappings are repeatable.
 
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
-Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>.
+Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>,</kbd>.
 The first row will be used as a header.A separator will be inserted below the header.
 The divider (`|`) as well as the header divider can be changed with [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
 and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider). <strike>Currently, this is only a very simple function.
@@ -424,6 +422,23 @@ It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).</st
 " :h mkdx-mapping-csv-to-markdown-table
 " :h mkdx-function-tableize
 ```
+
+## Jump to header
+
+![mkdx jump to header](doc/gifs/vim-mkdx-jump-to-header.gif)
+
+Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd> to jump to a fragment identifier within the document.
+Every link starting with a `#` symbol is considered a fragment identifier. both **markdown** and **HTML** are supported.
+Before performing a jump, the current cursor position will be added to the jumplist (`:h jumplist`).
+This allows you to jump back and forth between that header and the selected link using <kbd>\`</kbd><kbd>\`</kbd>.
+This behaviour can be disabled by overriding [`g:mkdx#settings.links.fragment.jumplist`](#gmkdxsettingslinksfragmentjumplist).
+
+~~~viml
+" :h mkdx-setting-links-fragment-jumplist
+" :h mkdx-plug-jump-to-header
+" :h mkdx-function-jump-to-header
+" :h mkdx-mapping-jump-to-header
+~~~
 
 ## Generate or update TOC
 
@@ -659,16 +674,6 @@ The host can be changed at any given time during runtime, the next time a dead l
 let g:mkdx#settings = { 'links': { 'external': { 'host': '' } } }
 ```
 
-## `g:mkdx#settings.links.external.user_agent`
-
-Specify an actual user agent to prevent being blocked from a website.
-If you don't like being `Chrome/9001` then feel free to change it into anything you like :)
-
-```viml
-" :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
-```
-
 ## `g:mkdx#settings.links.external.relative`
 
 When set to `0`, relative links will be ignored while checking the document for dead links.
@@ -681,8 +686,27 @@ When [`g:mkdx#settings.links.external.host`](#gmkdxsettingslinksexternalhost) is
 let g:mkdx#settings = { 'links': { 'external': { 'relative': 1 } } }
 ```
 
+## `g:mkdx#settings.links.external.user_agent`
 
-Host to use instead of trying to autodetect a `git` repository URL.
+Specify an actual user agent to prevent being blocked from a website.
+If you don't like being `Chrome/9001` then feel free to change it into anything you like :)
+
+```viml
+" :h mkdx-setting-links-external-ua
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
+```
+
+## `g:mkdx#settings.links.fragment.jumplist`
+
+Specify wether or not to add the cursor position _before jumping_ to the jumplist (`:h jumplist`).
+This setting is enabled by default, set it to `0` to disable.
+
+~~~viml
+" :h mkdx-setting-links-fragment-jumplist
+" :h mkdx-function-jump-to-header
+" :h mkdx-plug-jump-to-header
+let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
+~~~
 
 ## `g:mkdx#settings.image_extension_pattern`
 
@@ -979,36 +1003,41 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 
 # Mappings
 
+Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
+The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
+In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
 The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
-**Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
+**Note:** _replace `-{n|v}` with just `-n` or `-v` when creating your own mappings_
 
 |description|modes|mapping|Execute|
 |----|----|-------|-------|
-|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
-|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
-|Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
-|Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
-|Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
-|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
-|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
-|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>lt</kbd>|`<Plug>(mkdx-toggle-checklist)`|
-|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ll</kbd>|`<Plug>(mkdx-toggle-list)`|
-|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>ln</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
-|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
-|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
-|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
-|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
-|CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
-|Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
-|Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
-|Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>L</kbd>|`<Plug>(mkdx-quickfix-links)`|
+|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
+|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
+|Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
+|Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
+|Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
+|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
+|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
+|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checklist)`|
+|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>l</kbd>|`<Plug>(mkdx-toggle-list)`|
+|Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
+|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
+|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
+|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
+|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
+|CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
+|Jump to header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd>|`<Plug>(mkdx-jump-to-header)`|
+|Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|
+|Quickfix TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>I</kbd>|`<Plug>(mkdx-quickfix-toc)`|
+|Quickfix dead fragment links|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>L</kbd>|`<Plug>(mkdx-quickfix-links)`|
 |<kbd>o</kbd> handler|normal|<kbd>o</kbd>|`<Plug>(mkdx-o)`|
 |<kbd>O</kbd> handler|normal|<kbd>O</kbd>|`<Plug>(mkdx-shift-o)`|
 |Insert fenced code block|insert|<kbd>\`</kbd><kbd>\`</kbd><kbd>\`</kbd>|`<Plug>(mkdx-fence-backtick)`|
 |Insert fenced code block|insert|<kbd>\~</kbd><kbd>\~</kbd><kbd>\~</kbd>|`<Plug>(mkdx-fence-tilde)`|
-|Insert kbd shortcut|insert|<kbd>\<</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
+|Insert kbd shortcut|insert|<kbd>\<</kbd><kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
 
 # Remapping functionality
@@ -1051,7 +1080,7 @@ If you want to unmap specific functionality, you'll have to define a mapping for
 This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
 it will still get mapped to other markdown buffers. To disable any map, first find it [here](#mappings) or at: `:h mkdx-mappings`.
 
-Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd>+<kbd>=</kbd>).
+Say you want to disable toggling next checkbox state (mapped to <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>=</kbd>).
 In your _.vimrc_, add the following:
 
 ```viml
@@ -1085,9 +1114,9 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [ ] ([#17](../../issues/17)) Add a mapping to go to fragment link location.
-- [ ] ([#18](../../issues/18)) Add alignment options for columns in a table generated from CSV.
-- [ ] ([#18](../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
+- [ ] ([#17](../../../issues/17)) Add a mapping to go to fragment link location.
+- [ ] ([#18](../../../issues/18)) Add alignment options for columns in a table generated from CSV.
+- [ ] ([#18](../../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
 - [ ] Make numeric list items require a space between them and other content to prevent false positives.
 
 # Changelog

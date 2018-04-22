@@ -596,6 +596,57 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
+fun! mkdx#JumpToHeader()
+  let [lnum, cnum] = getpos('.')[1:2]
+  let line = getline(lnum)
+  let col  = 0
+  let len  = len(line)
+  let lnks = []
+  let link = ''
+
+  while (col < len)
+    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|<a .*href="\([^"]\+\)".*>.*</a>'
+    let tcol = match(line[col:], rgx)
+    let matches   = matchlist(line[col:], rgx)
+    let matchtext = get(matches, 0, '')
+    let addr      = get(matches, matchtext[0:1] == '<a' ? 2 : 1, '')
+    let matchlen  = strlen(matchtext)
+    if (matchlen < 1) | break | endif
+
+    let col += tcol + 1 + matchlen
+    let sps  = col - matchlen
+    let eps  = col - 1
+
+    if (sps <= cnum && eps >= cnum && addr[0] == '#')
+      let link = addr[1:]
+      break
+    elseif (addr[0] == '#')
+      call add(lnks, addr[1:])
+    endif
+  endwhile
+
+  if (empty(link) && !empty(lnks)) | let link = lnks[0] | endif
+  if (empty(link)) | return | endif
+
+  let headers = {}
+  for [lnum, colnum, header] in s:util.ListHeaders()
+    let hsh = s:util.HeaderToHash(header)
+    let c   = get(headers, hsh, 0)
+    let sfx = (c > 0) ? '-' . c : ''
+    let headers[hsh] = c == 0 ? 1 : headers[hsh] + 1
+    let hsh .= sfx
+
+    if (link == hsh)
+      if (g:mkdx#settings.links.fragment.jumplist)
+        normal! m'0
+      endif
+
+      call cursor(lnum, 0)
+      break
+    endif
+  endfor
+endfun
+
 fun! mkdx#QuickfixDeadLinks(...)
   let [dead, total] = s:util.FindDeadFragmentLinks()
   if (get(a:000, 0, 1))

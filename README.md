@@ -1169,9 +1169,9 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [x] ([#17](../../../issues/17)) Add a mapping to go to fragment link location.
-- [ ] ([#18](../../../issues/18)) Add alignment options for columns in a table generated from CSV.
-- [ ] ([#18](../../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
+- [x] ([#17](../../issues/17)) Add a mapping to go to fragment link location.
+- [x] ([#18](../../issues/18)) Add alignment options for columns in a table generated from CSV.
+- [x] ([#18](../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
 - [ ] Make numeric list items require a space between them and other content to prevent false positives.
 
 # Changelog

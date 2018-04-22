@@ -605,11 +605,11 @@ fun! mkdx#JumpToHeader()
   let link = ''
 
   while (col < len)
-    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|href="\([^"]\+\)"'
+    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|<a .*href="\([^"]\+\)".*>.*</a>'
     let tcol = match(line[col:], rgx)
     let matches   = matchlist(line[col:], rgx)
     let matchtext = get(matches, 0, '')
-    let addr      = get(matches, matchtext[0:3] == 'href' ? 2 : 1, '')
+    let addr      = get(matches, matchtext[0:1] == '<a' ? 2 : 1, '')
     let matchlen  = strlen(matchtext)
     if (matchlen < 1) | break | endif
 
@@ -617,7 +617,7 @@ fun! mkdx#JumpToHeader()
     let sps  = col - matchlen
     let eps  = col - 1
 
-    if (sps < cnum && eps > cnum && addr[0] == '#')
+    if (sps <= cnum && eps >= cnum && addr[0] == '#')
       let link = addr[1:]
       break
     elseif (addr[0] == '#')
@@ -638,10 +638,10 @@ fun! mkdx#JumpToHeader()
 
     if (link == hsh)
       if (g:mkdx#settings.links.fragment.jumplist)
-        normal! m'
+        normal! m'0
       endif
 
-      call cursor(lnum, colnum)
+      call cursor(lnum, 0)
       break
     endif
   endfor

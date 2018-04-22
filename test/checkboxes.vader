@@ -1,5 +1,8 @@
 Include: setup.vader
 
+Execute (Enable highlighting):
+  let g:mkdx#settings.highlight.enable = 1
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given markdown (Checkboxes):
@@ -44,10 +47,10 @@ Expect (A checkbox in pending state is added):
   [ ] checkbox
   [-] 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Execute (Set g:mkdx#settings.checkbox.initial_state = ' '):
   let g:mkdx#settings.checkbox.initial_state = ' '
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (An empty and a pending checkbox):
   [ ] checkbox
@@ -114,10 +117,10 @@ Expect (The update to be handled "incorrectly"):
       - [ ] checkbox
   - [ ] checkbox
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Execute (Set g:mkdx#settings.enter.malformed = 1):
   let g:mkdx#settings.enter.malformed = 1
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A malformed checklist):
   - [ ] checkbox
@@ -136,3 +139,4 @@ Expect (The update to be handled correctly):
       - [ ] checkbox
   - [ ] checkbox
 
+Include: teardown.vader

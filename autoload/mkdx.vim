@@ -561,17 +561,16 @@ fun! s:util.InsertLine(line, position)
   let @z = _z
 endfun
 
-fun! s:util.CenterString(str, length)
+fun! s:util.AlignString(str, align, length)
   let remaining = a:length - strlen(a:str)
 
-  if (remaining < 0)
-    return a:str[0:(a:length - 1)]
-  endif
+  if (remaining < 0) | return a:str[0:(a:length - 1)] | endif
 
-  let padleft  = repeat(' ', float2nr(floor(remaining / 2.0)))
-  let padright = repeat(' ', float2nr(ceil(remaining / 2.0)))
+  let center = !((a:align == 'right') || (a:align == 'left'))
+  let lrem   = center ? float2nr(floor(remaining / 2.0)) : (a:align == 'left' ? 0 : remaining)
+  let rrem   = center ? float2nr(ceil(remaining / 2.0))  : (remaining - lrem)
 
-  return padleft . a:str . padright
+  return repeat(' ', lrem) . a:str . repeat(' ', rrem)
 endfun
 
 """"" MAIN FUNCTIONALITY
@@ -792,7 +791,22 @@ fun! mkdx#Tableize() range
   let delimiter    = firstline[first_delimiter_pos]
   let lines        = getline(a:firstline, a:lastline)
   let col_maxlen   = {}
+  let col_align    = {}
+  let col_idx      = []
   let linecount    = range(0, len(lines) - 1)
+
+  for column in s:util.CsvRowToList(firstline)
+    call add(col_idx, column)
+    if (index(map(g:mkdx#settings.table.align.left, 'tolower(v:val)'), tolower(column)) > -1)
+      let col_align[column] = 'left'
+    elseif (index(map(g:mkdx#settings.table.align.right, 'tolower(v:val)'), tolower(column)) > -1)
+      let col_align[column] = 'right'
+    elseif (index(map(g:mkdx#settings.table.align.center, 'tolower(v:val)'), tolower(column)) > -1)
+      let col_align[column] = 'center'
+    else
+      let col_align[column] = g:mkdx#settings.table.align.default
+    endif
+  endfor
 
   for idx in linecount
     let lines[idx] = s:util.CsvRowToList(lines[idx])
@@ -806,18 +820,25 @@ fun! mkdx#Tableize() range
   endfor
 
   let ld  = ' ' . g:mkdx#settings.table.divider . ' '
-  let lhd = g:mkdx#settings.table.header_divider .  g:mkdx#settings.table.divider . g:mkdx#settings.table.header_divider
-
   for linec in linecount
     if !empty(filter(lines[linec], '!empty(v:val)'))
       call setline(a:firstline + linec,
-        \ ld[1:2] . join(map(lines[linec], 's:util.CenterString(v:val, col_maxlen[v:key])'), ld) . ld[0:1])
+        \ ld[1:2] . join(map(lines[linec], 's:util.AlignString(v:val, get(col_align, get(col_idx, v:key, ""), "center"), col_maxlen[v:key])'), ld) . ld[0:1])
     endif
   endfor
 
-  let hline = join(map(values(col_maxlen), 'repeat(g:mkdx#settings.table.header_divider, v:val)'), lhd)
+  let parts = []
+  for column in keys(col_maxlen)
+    let align  = tolower(get(col_align, get(col_idx, column, ''), g:mkdx#settings.table.align.default))
+    let len    = col_maxlen[column]
+    let lhs    = index(['right', 'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+    let rhs    = index(['left',  'center'], align) ? ':' : g:mkdx#settings.table.header_divider
 
-  call s:util.InsertLine(lhd[1:2] . hline . lhd[0:1], next_nonblank)
+    call add(parts, lhs . repeat(g:mkdx#settings.table.header_divider, col_maxlen[column]) . rhs)
+  endfor
+  let hline = join(parts, g:mkdx#settings.table.divider)
+
+  call s:util.InsertLine(g:mkdx#settings.table.divider . hline . g:mkdx#settings.table.divider, next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 

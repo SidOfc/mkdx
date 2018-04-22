@@ -194,6 +194,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-tokens-list|
     - |mkdx-setting-table-header-divider|
     - |mkdx-setting-table-divider|
+    - |mkdx-setting-table-align|
     - |mkdx-setting-enter-enable|
     - |mkdx-setting-enter-o|
     - |mkdx-setting-enter-shifto|
@@ -304,28 +305,36 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'restore_visual':          1,`
     `      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },`
     `      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },`
-    `      \ 'tokens':                  { 'enter': ['-', '*', '>'],`
-     `     \                              'bold': '**', 'italic': '*',`
-    `      \                              'list': '-', 'fence': '',`
+    `      \ 'tokens':                  { 'enter':  ['-', '*', '>'],`
+     `     \                              'bold':   '**', 'italic': '*',`
+    `      \                              'list':   '-',  'fence':  '',`
         `  \                              'header': '#' },`
     `      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],`
         `  \                              'update_tree': 2,`
         `  \                              'initial_state': ' ' },`
-    `      \ 'toc':                     { 'text': "TOC", 'list_token': '-',`
-    `      \                              'position': 0,`
-    `      \                              'details': {`
-    `      \                                 'enable': 0,`
+    `      \ 'toc':                     { 'text':       "TOC",`
+    `      \                              'list_token': '-',`
+    `      \                              'position':   0,`
+    `      \                              'details':    {`
+    `      \                                 'enable':  0,`
     `      \                                 'summary': '{{toc.text}}'`
     `      \                              }`
     `      \                            },`
     `      \ 'table':                   { 'divider': '|',`
-         ` \                              'header_divider': '-' },`
+         ` \                              'header_divider': '-',`
+        `  \                              'align': {`
+          `\                                 'left':    [],`
+          `\                                 'right':   [],`
+          `\                                 'center':  [],`
+          `\                                 'default': 'center'`
+          `\                              }`
+          `\                            },`
           `\ 'links':                   { 'external': {`
-          `\                                 'enable': 0,`
-          `\                                 'timeout': 3,`
-          `\                                 'host': '',`
-          `\                                 'relative': 1,`
-          `\                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'`
+          `\                                 'enable':     0,`
+          `\                                 'timeout':    3,`
+          `\                                 'host':       '',`
+          `\                                 'relative':   1,`
+          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'`
           `\                              },`
           `\                              'fragment': {`
           `\                                 'jumplist': 1`
@@ -575,6 +584,25 @@ Change the default header divider used in |mkdx-function-tableize|.
 `g:mkdx#settings.table.divider = '|'`                 *mkdx-setting-table-divider*
 
 Change the default divider used in |mkdx-function-tableize|.
+
+==============================================================================
+`g:mkdx#settings.table.align = {`                       *mkdx-setting-table-align*
+` \ 'left':    [],`
+` \ 'right':   [],`
+` \ 'center':  [],`
+` \ 'default': 'center' }`
+
+Control the alignment of content within table columns. Its value is a
+dictionary with keys `center`, `left`, `right` and `default`. The `default` value is
+used when a column name is not found in any of the `center`, `left` or `right` lists.
+
+If you were to add `name` to the `left` list, e.g. `{ 'left': ['name'] }` and the
+first row of your CSV has a column with the content `name`, that column will
+be _left aligned_ (`|:----|`). Any other column would be _centered_ (`|:---:|`)
+because they don't appear in any list so the `default` value `'center'` is used.
+
+All comparisons will be made after applying |toLower()| to the two strings
+being compared. This means column names are case-insensitive.
 
 ==============================================================================
 `g:mkdx#settings.enter.enable = 1`                     *mkdx-setting-enter-enable*
@@ -1352,7 +1380,9 @@ mkdx#Tableize()                                         *mkdx-function-tableize*
 
 Convert a visual selection of {CSV} or {TSV} data to a markdown table.
 The first nonblank line in the selection will be used as header for the table.
-At the moment, alignment of columns is limited to centering only.
+The column separator can be changed with |mkdx-setting-table-divider| and the
+header separator can be changed with |mkdx-setting-table-header-divider|.
+See |mkdx-setting-table-align| for alignment options.
 
 Visually selecting the following text:
 
@@ -1363,11 +1393,11 @@ Visually selecting the following text:
 
 Will produce this table:
 
-`       Name    | Age | Gender`
-`    =========================`
-`       John    | 23  |  Male`
-`    Catherline | 44  | Female`
-`      Manny    | 22  |  Male`
+`    |    Name    | Age | Gender |`
+`    |------------|-----|--------|`
+`    |    John    | 23  |  Male  |`
+`    | Catherline | 44  | Female |`
+`    |   Manny    | 22  |  Male  |`
 
 As of version `1.4.2`, |mkdx| also supports "quoted" CSV / TSV data.
 Another more complex example:

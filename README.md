@@ -70,6 +70,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstokenslist"><code>g:mkdx#settings.tokens.list</code></a></li>
         <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
         <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
+        <li><a href="#gmkdxsettingstablealign"><code>g:mkdx#settings.table.align</code></a></li>
         <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
         <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
         <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
@@ -431,13 +432,15 @@ As with all other mappings, all the *normal* mode mappings are repeatable.
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
 
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>,</kbd>.
-The first row will be used as a header.A separator will be inserted below the header.
-The divider (`|`) as well as the header divider can be changed with [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
-and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider). <strike>Currently, this is only a very simple function.
-It cannot handle quoted CSV yet. All it does is split rows by comma's (`,`).</strike> The above example contains a simple unqouted example but as of version _1.4.2_, quoted CSV is also supported.
+The first row will be used as a header. A separator will be inserted below the header. Default and specific column alignment options are also available, see: [`g:mkdx#settings.table.align`](#gmkdxsettingstablealign) for more.
+The divider (`|`) as well as the header divider (`-`) can be changed with [`g:mkdx#settings.table.divider`](#gmkdxsettingstabledivider)
+and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider). The above example contains a simple unqouted example but as of version _1.4.2_, quoted CSV is also supported.
 
 ```viml
 " :h mkdx-mapping-csv-to-markdown-table
+" :h mkdx-setting-table-align
+" :h mkdx-setting-table-divider
+" :h mkdx-setting-table-header-divider
 " :h mkdx-function-tableize
 ```
 
@@ -588,7 +591,14 @@ let g:mkdx#settings = {
       \                              }
       \                            },
       \ 'table':                   { 'divider': '|',
-      \                              'header_divider': '-' },
+      \                              'header_divider': '-',
+      \                              'align': {
+      \                                 'left':    [],
+      \                                 'center':  [],
+      \                                 'right':   [],
+      \                                 'default': 'center'
+      \                              }
+      \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'
@@ -867,7 +877,7 @@ let g:mkdx#settings = { 'tokens': { 'list': '-' } }
 
 ## `g:mkdx#settings.table.header_divider`
 
-You can change the separator used for table headings in markdown tables.
+Change the separator used for table headings in markdown tables.
 
 ```viml
 " :h mkdx-setting-table-header-divider
@@ -882,6 +892,33 @@ You can also change the separator used in markdown tables.
 " :h mkdx-setting-table-divider
 let g:mkdx#settings = { 'table': { 'divider': '|' } }
 ```
+
+## `g:mkdx#settings.table.align`
+
+Control the alignment of content within table columns.
+Its value is a dictionary with keys `center`, `left`, `right` and `default`.
+The `default` value is used when a column name is not found in any of the `center`, `left` or `right` lists.
+
+~~~viml
+  {
+    \ 'left':    [],
+    \ 'center':  [],
+    \ 'right':   [],
+    \ 'default': 'center'
+\ }
+~~~
+
+If you were to add `name` to the `left` list, e.g. `{ 'left': ['name'] }` and the first row of your CSV has a column with the content `name`, that column will be _left aligned_ (`|:----|`).
+Any other column would be _centered_ (`|:---:|`) because they do not appear in any list so the `default` value `'center'` is used.
+
+~~~viml
+" :h mkdx-setting-table-align
+let g:mkdx#settings = { 'table': { 'align': {
+        \ 'left':    [],
+        \ 'center':  [],
+        \ 'right':   [],
+        \ 'default': 'center' } } }
+~~~
 
 ## `g:mkdx#settings.enter.enable`
 

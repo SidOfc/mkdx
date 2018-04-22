@@ -279,3 +279,5 @@ Expect (Selection to be wrapped and the empty line maintained):
   check this ![example.png](example.png)
 
   some more text
+
+Include: teardown.vader

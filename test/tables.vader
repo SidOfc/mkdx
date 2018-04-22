@@ -14,7 +14,7 @@ Do (V5j<prefix>, (visually select the rows and convert)):
 
 Expect (A markdown table):
   |      Name       | Age | Gender  |
-  |-----------------|-----|---------|
+  |:---------------:|:---:|:-------:|
   |  Eric Cartman   | 10  | Unknown |
   | Kenny McCormick | 10  |  Male   |
   |   Stan Marsh    | 10  |  Male   |
@@ -34,9 +34,26 @@ Do (V5j<prefix>, (visually select the rows and convert)):
 
 Expect (A markdown table):
   |      Name       | Age | Gender  |
-  |-----------------|-----|---------|
+  |:---------------:|:---:|:-------:|
   |  Er'ic Cartman  | 10  | Unknown |
   | Kenny McCormick | 10  |  Male   |
   |   Stan Mar"sh   | 10  |  Male   |
   | K,le Brovlofski | 10  |  Male   |
 
+Execute (Change alignment of 'Name' and 'Age' columns to 'right'):
+  let g:mkdx#settings.table.align.right = ['name', 'age']
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Do (V5j<prefix>, (visually select the rows and convert)):
+  V5j ,
+
+Expect (A markdown table):
+  |            Name | Age | Gender  |
+  |----------------:|----:|:-------:|
+  |   Er'ic Cartman |  10 | Unknown |
+  | Kenny McCormick |  10 |  Male   |
+  |     Stan Mar"sh |  10 |  Male   |
+  | K,le Brovlofski |  10 |  Male   |
+
+Include: teardown.vader

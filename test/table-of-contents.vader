@@ -2,8 +2,11 @@ Include: setup.vader
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Execute (Reset settings):
+Execute (Disable TOC in <details />):
   let g:mkdx#settings.toc.details.enable = 0
+
+Execute (Change title to "Table of Contents"):
+  let g:mkdx#settings.toc.text = 'Table of Contents'
 
 Given (A file with headers):
   
@@ -90,3 +93,4 @@ Expect (An updated table of contents):
 Execute (Reset settings):
   let g:mkdx#settings.toc.details.enable = 0
 
+Include: teardown.vader

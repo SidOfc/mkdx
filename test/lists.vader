@@ -1,5 +1,8 @@
 Include: setup.vader
 
+Execute (Enable highlighting):
+  let g:mkdx#settings.highlight.enable = 1
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given markdown (Checklists):
@@ -168,3 +171,5 @@ Expect (List items are correctly incremented and new empty list item):
       2.2. subtask
       2.3. subtask
   3. hello
+
+Include: teardown.vader

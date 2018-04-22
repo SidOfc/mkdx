@@ -1,0 +1,6 @@
+Execute (Teardown):
+  let &sw             = g:vim_dev__vader_sw
+  let &autoindent     = g:vim_dev__vader_autoindent
+  let &ft             = g:vim_dev__vader_ft
+  let g:mkdx#settings = deepcopy(g:vim_dev__vader_settings)
+

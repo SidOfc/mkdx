@@ -21,11 +21,6 @@ settings and examples with default mappings.
 <ul>
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
-    <li><a href="#changelog">Changelog</a><ul>
-        <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
-        <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
-        <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
-    </ul></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
@@ -89,28 +84,14 @@ settings and examples with default mappings.
         <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
         <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
     </ul></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
+        <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
+        <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
 </ul>
 </details>
-
-# Changelog
-
-The latest changes will be visible in this list.
-See [CHANGELOG.md](CHANGELOG.md) for older changes.
-
-## 15-04-2018 VERSION 1.4.2
-
-- [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data
-
-## 08-04-2018 VERSION 1.4.1
-
-- [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
-
-## 08-04-2018 VERSION 1.4.0
-
-- Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
-- Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
 
 # Install
 
@@ -1098,6 +1079,10 @@ The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next)`. To disable it
 map <Plug> <Plug>(mkdx-checkbox-next)
 ```
 
+# Contributing
+
+Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRIBUTING.md) file for more information.
+
 # Roadmap
 
 - [ ] ([#17](../../../issues/17)) Add a mapping to go to fragment link location.
@@ -1105,6 +1090,21 @@ map <Plug> <Plug>(mkdx-checkbox-next)
 - [ ] ([#18](../../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
 - [ ] Make numeric list items require a space between them and other content to prevent false positives.
 
-# Contributing
+# Changelog
 
-Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRIBUTING.md) file for more information.
+The latest changes will be visible in this list.
+See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## 15-04-2018 VERSION 1.4.2
+
+- [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data
+
+## 08-04-2018 VERSION 1.4.1
+
+- [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
+
+## 08-04-2018 VERSION 1.4.0
+
+- Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
+- Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
+

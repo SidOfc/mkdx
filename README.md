@@ -133,10 +133,6 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
-Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
-The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
-In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
-
 ## Dead link detection
 
 ![mkdx dead detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
@@ -685,11 +681,12 @@ let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Mac
 ## `g:mkdx#settings.links.fragment.jumplist`
 
 Specify wether or not to add the cursor position _before jumping_ to the jumplist (`:h jumplist`).
-The jumplist allows you to jump back and forth between certain positions in code defined by "jumps".
 This setting is enabled by default, set it to `0` to disable.
 
 ~~~viml
 " :h mkdx-setting-links-fragment-jumplist
+" :h mkdx-function-jump-to-header
+" :h mkdx-plug-jump-to-header
 let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
 ~~~
 
@@ -988,10 +985,14 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 
 # Mappings
 
+Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
+The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
+In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+
 The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
 
-**Note:** *replace `-{n|v}` with just `-n` or `-v` when creating your own mappings*
+**Note:** _replace `-{n|v}` with just `-n` or `-v` when creating your own mappings_
 
 |description|modes|mapping|Execute|
 |----|----|-------|-------|

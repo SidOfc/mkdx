@@ -9,6 +9,7 @@ CONTENTS                                                         *mkdx-contents*
                                                                       *mkdx-toc*
     Introduction
     Helptags
+    Menu
 
     `g:mkdx#settings`
         `g:mkdx#settings.links.external.enable`
@@ -147,6 +148,17 @@ https://github.com/sidofc/mkdx/issues and PR's are welcome at
 https://github.com/sidofc/mkdx/pulls.
 
 ==============================================================================
+|MENU|                                                                 *mkdx-menu*
+
+|mkdx| also has |menu| support. The menu will become available under
+`:menu Plugin.mkdx` -- from there, the mappings and their respective commands
+can be found.
+
+NOTE: If you haven't opened a file with |filetype|=`markdown` before, the menu
+entries will not yet exist. Open a markdown file first before attempting to
+view the menu.
+
+==============================================================================
 HELPTAGS                                                         *mkdx-helptags*
 
 The helptags are split into 4 types, |mdx-settings|, |mkdx-highlighting|,
@@ -156,6 +168,7 @@ for functions. Below is a list of all helptags:
 
 - |mkdx.txt|, |mkdx|
 - |mkdx-contents|, |mkdx-toc|
+- |mkdx-menu|
 - |mkdx-introduction|
 - |mkdx-helptags|
 

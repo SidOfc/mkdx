@@ -134,6 +134,23 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
+## Using the menu
+
+The plugin comes with builtin `menu` support if your vim `has('menu')`.
+The menu will become available _after_ you've opened a file with a **filetype** of `markdown`.
+Actions can be executed from the menu in MacVim. More information about each mapping can be found in the Vim / Neovim versions.
+
+|MacVim|NeoVim / Vim|
+|------|------------|
+|![mkdx macvim menu](https://user-images.githubusercontent.com/3225058/34798278-b36d8be0-f65b-11e7-90c0-10904ea76820.png)|![mkdx neovim / vim menu](https://user-images.githubusercontent.com/3225058/34798254-9f685ff8-f65b-11e7-97ee-135d438b5a91.png)|
+
+To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
+
+~~~viml
+" :h mkdx-menu
+:menu Plugin.mkdx
+~~~
+
 ## Dead link detection
 
 ![mkdx dead detection](doc/gifs/vim-mkdx-find-dead-fragment-links.gif)
@@ -1114,7 +1131,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [ ] ([#17](../../../issues/17)) Add a mapping to go to fragment link location.
+- [x] ([#17](../../../issues/17)) Add a mapping to go to fragment link location.
 - [ ] ([#18](../../../issues/18)) Add alignment options for columns in a table generated from CSV.
 - [ ] ([#18](../../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
 - [ ] Make numeric list items require a space between them and other content to prevent false positives.

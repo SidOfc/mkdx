@@ -493,16 +493,16 @@ So instead the TOC itself will be rendered as HTML nested `<ul>` tags with `<li>
 <details>
 <summary>Click to expand example</summary>
 <ul>
-<li><a href="#mkdxvim--">mkdx.vim</a></li>
-<li><a href="#toc">TOC</a></li>
-<li><a href="#changelog">Changelog</a></li>
+<li><a href="">mkdx.vim</a></li>
+<li><a href="">TOC</a></li>
+<li><a href="">Changelog</a></li>
 <li><ul>
-<li><a href="#31-03-2018-version-110">31-03-2018 VERSION 1.1.0</a></li>
-<li><a href="#25-03-2018-version-102">25-03-2018 VERSION 1.0.2</a></li>
-<li><a href="#24-03-2018-version-101">24-03-2018 VERSION 1.0.1</a></li>
+<li><a href="">31-03-2018 VERSION 1.1.0</a></li>
+<li><a href="">25-03-2018 VERSION 1.0.2</a></li>
+<li><a href="">24-03-2018 VERSION 1.0.1</a></li>
 </ul></li>
-<li><a href="#install">Install</a></li>
-<li><a href="#examples">Examples</a></li>
+<li><a href="">Install</a></li>
+<li><a href="">Examples</a></li>
 </ul>
 </details>
 

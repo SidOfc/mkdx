@@ -141,7 +141,7 @@ fun! s:util.ListLinks()
     let len  = len(line)
 
     while (col < len)
-      if (!match(synIDattr(synID(lnum, 0, 0), 'name'), 'markdownCode'))
+        if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
         let tcol = match(line[col:], '\](\(#\?[^)]\+\))')
         let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#\?[^"]\+\)"')
         let html = href > -1
@@ -154,9 +154,6 @@ fun! s:util.ListLinks()
 
         call add(links, [lnum, col + (html ? 6 : 2), matchtext])
         let col += len(matchtext)
-      else
-        let col = len
-      endif
     endwhile
 
     let lnum += 1

@@ -1,3 +1,8 @@
+## 08-04-2018 VERSION 1.4.0
+
+- Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
+- Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
+
 ## 02-04-2018 VERSION 1.3.0
 
 - Added feature: [Dead fragment link detection](#dead-link-detection)

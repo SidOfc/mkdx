@@ -91,9 +91,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#27-04-2018-version-143">27-04-2018 VERSION 1.4.3</a></li>
         <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
         <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
-        <li><a href="#08-04-2018-version-140">08-04-2018 VERSION 1.4.0</a></li>
 </ul>
 </details>
 
@@ -601,7 +601,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3'
       \                               }
       \                            },
       \ 'highlight':               { 'enable': 0 }
@@ -721,7 +721,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.2' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1169,15 +1169,21 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [x] ([#17](../../issues/17)) Add a mapping to go to fragment link location.
-- [x] ([#18](../../issues/18)) Add alignment options for columns in a table generated from CSV.
-- [x] ([#18](../../issues/18)) Add alignment options for specific column names or indexes in a table generated from CSV.
-- [x] Make numeric list items require a space between them and other content to prevent false positives.
+- [ ] Insert any header fragment link in insert mode.
+- [ ] Improve testing environment.
+- [ ] Add more tests!
 
 # Changelog
 
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## 27-04-2018 VERSION 1.4.3
+
+- ([#17](../../issues/17)) Add a mapping to go to [fragment link location](#jump-to-header).
+- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for columns in a table generated from CSV.
+- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for specific column names or indexes in a table generated from CSV.
+- List items require a space after them to be recognized as a list item.
 
 ## 15-04-2018 VERSION 1.4.2
 
@@ -1186,9 +1192,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 08-04-2018 VERSION 1.4.1
 
 - [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
-
-## 08-04-2018 VERSION 1.4.0
-
-- Update [Dead link detection](#dead-link-detection) to include support for external and relative links.
-- Add [new settings](#gmkdxsettingslinksexternalenable) to control request timeout and relative link host etc.
-

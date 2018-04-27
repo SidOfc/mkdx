@@ -130,10 +130,10 @@ fun! s:util.AsyncDeadExternalToQF(...)
   return external
 endfun
 
-fun! s:util.ListExternalLinks()
+fun! s:util.ListLinks()
   let limit = line('$') + 1
   let lnum  = 1
-  let xtnal = []
+  let links = []
 
   while (lnum < limit)
     let line = getline(lnum)
@@ -141,55 +141,36 @@ fun! s:util.ListExternalLinks()
     let len  = len(line)
 
     while (col < len)
-      let tcol = match(line[col:], '\](\([^#][^)]\+\))')
-      let href = tcol > -1 ? -1 : match(line[col:], 'href="\([^#][^"]\+\)"')
-      let html = href > -1
-      if ((html && href < 0) || (!html && tcol < 0)) | break | endif
-      let col += html ? href : tcol
-      let rgx  = html ? 'href="\([^#][^"]\+\)"' : '\](\([^#][^)]\+\))'
+      if (!match(synIDattr(synID(lnum, 0, 0), 'name'), 'markdownCode'))
+        let tcol = match(line[col:], '\](\(#\?[^)]\+\))')
+        let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#\?[^"]\+\)"')
+        let html = href > -1
+        if ((html && href < 0) || (!html && tcol < 0)) | break | endif
+        let col += html ? href : tcol
+        let rgx  = html ? 'href="\(#\?[^"]\+\)"' : '\](\(#\?[^)]\+\))'
 
-      let matchtext = get(matchlist(line[col:], rgx), 1, -1)
-      if (matchtext == -1) | break | endif
+        let matchtext = get(matchlist(line[col:], rgx), 1, -1)
+        if (matchtext == -1) | break | endif
 
-      call add(xtnal, [lnum, col + (html ? 6 : 2), matchtext])
-      let col += len(matchtext)
+        call add(links, [lnum, col + (html ? 6 : 2), matchtext])
+        let col += len(matchtext)
+      else
+        let col = len
+      endif
     endwhile
 
     let lnum += 1
   endwhile
 
-  return xtnal
+  return links
+endfun
+
+fun! s:util.ListExternalLinks()
+  return filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
 endfun
 
 fun! s:util.ListFragmentLinks()
-  let limit = line('$') + 1
-  let lnum  = 1
-  let frags = []
-
-  while (lnum < limit)
-    let line = getline(lnum)
-    let col  = 0
-    let len  = len(line)
-
-    while (col < len)
-      let tcol = match(line[col:], '\](\(#[^)]\+\))')
-      let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#[^"]\+\)"')
-      let html = href > -1
-      if ((html && href < 0) || (!html && tcol < 0)) | break | endif
-      let col += html ? href : tcol
-      let rgx  = html ? 'href="\(#[^"]\+\)"' : '\](\(#[^)]\+\))'
-
-      let matchtext = get(matchlist(line[col:], rgx), 1, -1)
-      if (matchtext == -1) | break | endif
-
-      call add(frags, [lnum, col + (html ? 6 : 2), matchtext])
-      let col += len(matchtext)
-    endwhile
-
-    let lnum += 1
-  endwhile
-
-  return frags
+  return filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
 endfun
 
 fun! s:util.FindDeadFragmentLinks()
@@ -200,18 +181,8 @@ fun! s:util.FindDeadFragmentLinks()
   let frags   = s:util.ListFragmentLinks()
   let bufnum  = bufnr('%')
 
-  for [lnum, lvl, line] in src
-    let hsh = s:util.HeaderToHash(line)
-    let c   = get(headers, hsh, 0)
-    let sfx = c > 0 ? '-' . c : ''
-
-    if (c == 0)
-      let headers[hsh] = 1
-    else
-      let headers[hsh] += 1
-    endif
-
-    call add(hashes, '#' . hsh . sfx)
+  for [lnum, lvl, line, hash, sfx] in src
+    call add(hashes, '#' . hash . sfx)
   endfor
 
   for [lnum, column, hash] in frags
@@ -370,13 +341,20 @@ fun! s:util.ListHeaders()
   let headers = []
   let skip    = 0
   let bnum    = bufnr('%')
+  let hashes  = {}
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    let line = getline(lnum)
-    let lvl  = strlen(get(matchlist(line, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+    let header = getline(lnum)
+    let lvl    = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+    let hash   = s:util.HeaderToHash(header)
+    let hcount = get(hashes, hash, 0)
+    let final  = hash . (hcount > 0 ? '-' . hcount : '')
+    let hashes[hash] = hcount + 1
 
-    if (match(line, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip                     | endif
-    if (!skip && lvl > 0)                        | call add(headers, [lnum, lvl, line]) | endif
+    if (match(header, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
+    if (!skip && lvl > 0)
+        call add(headers, [lnum, lvl, header, hash, (hcount > 0 ? '-' . hcount : '')])
+    endif
   endfor
 
   return headers
@@ -402,10 +380,6 @@ fun! s:util.HeaderToATag(header, ...)
   let cheader = substitute(cheader, '\\<\(.*\)>', '\&lt;\1\&gt;', 'g')
   let cheader = substitute(cheader, '\\`\(.*\)\\`', '`\1`', 'g')
   return '<a href="#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . '">' . cheader . '</a>'
-endfun
-
-fun! mkdx#test(header, ...)
-  return s:util.HeaderToATag(a:header, get(a:000, 0, ''))
 endfun
 
 fun! s:util.HeaderToListItem(header, ...)
@@ -627,15 +601,8 @@ fun! mkdx#JumpToHeader()
   if (empty(link) && !empty(lnks)) | let link = lnks[0] | endif
   if (empty(link)) | return | endif
 
-  let headers = {}
-  for [lnum, colnum, header] in s:util.ListHeaders()
-    let hsh = s:util.HeaderToHash(header)
-    let c   = get(headers, hsh, 0)
-    let sfx = (c > 0) ? '-' . c : ''
-    let headers[hsh] = c == 0 ? 1 : headers[hsh] + 1
-    let hsh .= sfx
-
-    if (link == hsh)
+  for [lnum, colnum, header, hash, sfx] in s:util.ListHeaders()
+    if (link == (hash . sfx))
       if (g:mkdx#settings.links.fragment.jumplist)
         normal! m'0
       endif
@@ -1018,13 +985,10 @@ fun! mkdx#GenerateTOC(...)
     call add(contents, '<ul>')
   endif
 
-  for [lnum, lvl, line] in src
+  for [lnum, lvl, line, hsh, sfx] in src
     let curr += 1
-    let hsh = s:util.HeaderToHash(line)
-    let c   = get(headers, hsh, 0)
-    let sfx = (c > 0) ? '-' . c : ''
+    let headers[hsh] = sfx == '' ? 1 : headers[hsh] + 1
     let spc = repeat(repeat(' ', &sw), lvl)
-    let headers[hsh] = c == 0 ? 1 : headers[hsh] + 1
     let nextlvl    = get(src, curr, [0, lvl])[1]
     let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
 

@@ -474,7 +474,7 @@ fun! s:util.UpdateTaskList(...)
   let tasksilen             = len(tasks) - 1
   let [incompl, compl]      = g:mkdx#settings.checkbox.toggles[-2:-1]
   let empty                 = g:mkdx#settings.checkbox.toggles[0]
-  let tasks_lnums           = map(deepcopy(tasks), 'get(v:val, 0, -1)')
+  let tasks_lnums           = map(deepcopy(tasks), {idx, val -> get(val, 0, -1)})
 
   if (tdpt > 0)
     let nextupd = tdpt - 1
@@ -493,8 +493,8 @@ fun! s:util.UpdateTaskList(...)
           if (depth_diff == 1) | call add(substats, next_task[1]) | endif
         endfor
 
-        let completed = index(map(deepcopy(substats), 'v:val != "' . compl . '"'), 1) == -1
-        let unstarted = index(map(deepcopy(substats), 'v:val != "' . empty . '"'), 1) == -1
+        let completed = index(map(deepcopy(substats), {idx, val -> val != compl}), 1) == -1
+        let unstarted = index(map(deepcopy(substats), {idx, val -> val != empty}), 1) == -1
         let new_token = completed ? compl : (unstarted ? empty : incompl)
         if (force_status > -1 && !unstarted)
           if (force_status == 0) | let new_token = empty   | endif
@@ -621,10 +621,9 @@ fun! mkdx#QuickfixDeadLinks(...)
     endif
 
     if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-    if (dl > 0) | copen | else | cclose | endif
+    if (dl > 0) | copen           | else | cclose         | endif
     echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
     echohl None
-
   else
     return dead
   endif
@@ -644,7 +643,7 @@ fun! mkdx#ToggleToKbd(...)
   exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
   let oz = @z
   let ps = split(oz, ' ')
-  let @z = empty(ps) ? @z : join(map(ps, 's:util.ToggleMappingToKbd(v:val)'), ' ')
+  let @z = empty(ps) ? @z : join(map(ps, {idx, val -> s:util.ToggleMappingToKbd(val)}), ' ')
   exe 'normal! "z' . (match(ln, (oz . '$')) > -1 ? 'p' : 'P')
   let @z = r
 
@@ -761,11 +760,11 @@ fun! mkdx#Tableize() range
 
   for column in s:util.CsvRowToList(firstline)
     call add(col_idx, column)
-    if (index(map(g:mkdx#settings.table.align.left, 'tolower(v:val)'), tolower(column)) > -1)
+    if (index(map(g:mkdx#settings.table.align.left, {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'left'
-    elseif (index(map(g:mkdx#settings.table.align.right, 'tolower(v:val)'), tolower(column)) > -1)
+    elseif (index(map(g:mkdx#settings.table.align.right, {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'right'
-    elseif (index(map(g:mkdx#settings.table.align.center, 'tolower(v:val)'), tolower(column)) > -1)
+    elseif (index(map(g:mkdx#settings.table.align.center, {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'center'
     else
       let col_align[column] = g:mkdx#settings.table.align.default
@@ -785,9 +784,9 @@ fun! mkdx#Tableize() range
 
   let ld  = ' ' . g:mkdx#settings.table.divider . ' '
   for linec in linecount
-    if !empty(filter(lines[linec], '!empty(v:val)'))
+    if !empty(filter(lines[linec], {idx, val -> !empty(val)}))
       call setline(a:firstline + linec,
-        \ ld[1:2] . join(map(lines[linec], 's:util.AlignString(v:val, get(col_align, get(col_idx, v:key, ""), "center"), col_maxlen[v:key])'), ld) . ld[0:1])
+        \ ld[1:2] . join(map(lines[linec], {key, val -> s:util.AlignString(val, get(col_align, get(col_idx, key, ''), 'center'), col_maxlen[key])}), ld) . ld[0:1])
     endif
   endfor
 

@@ -545,6 +545,36 @@ fun! s:util.AlignString(str, align, length)
   return repeat(' ', lrem) . a:str . repeat(' ', rrem)
 endfun
 
+fun! s:util.HeadersToCompletions()
+  return map(s:util.ListHeaders(), {idx, val -> {'word': (val[3] . val[4]), 'menu': repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.AlignString(s:util.CleanHeader(val[2]), 'left', 50)}})
+endfun
+
+fun! s:util.ContextualComplete()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start - 1] != '#')
+    let start -= 1
+  endwhile
+
+  if (line[start - 1] != '#') | return [start, []] | endif
+
+  return [start, filter(s:util.HeadersToCompletions(), {idx, compl -> compl.word =~ ('^' . line[start:col])})]
+endfun
+
+fun! s:util.InsertCompletionHandler(...)
+  let default   = get(a:000, 0, '')
+  let [sl, cpl] = s:util.ContextualComplete()
+
+  if (!empty(cpl))
+    call complete(sl + 1, cpl)
+    return ''
+  else
+    return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
+  endif
+endfun
+
 """"" MAIN FUNCTIONALITY
 let s:HASH = type({})
 fun! mkdx#MergeSettings(...)
@@ -565,6 +595,25 @@ fun! mkdx#MergeSettings(...)
   endfor
 
   return c
+endfun
+
+fun! mkdx#InsertCtrlPHandler()
+  return s:util.InsertCompletionHandler('prev')
+endfun
+
+fun! mkdx#InsertCtrlNHandler()
+  return s:util.InsertCompletionHandler('next')
+endfun
+
+fun! mkdx#Complete(findstart, base)
+  if (a:findstart)
+    let s:util._user_compl = s:util.ContextualComplete()
+    return s:util._user_compl[0]
+  else
+    let tmp = s:util._user_compl[1]
+    unlet s:util._user_compl
+    return tmp
+  endif
 endfun
 
 fun! mkdx#JumpToHeader()

@@ -74,6 +74,8 @@ inoremap <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
 inoremap <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
 inoremap <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
 inoremap <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
+inoremap <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
+inoremap <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 
 if g:mkdx#settings.map.enable == 1
   let s:gv       = g:mkdx#settings.restore_visual == 1 ? 'gv' : ''
@@ -113,6 +115,11 @@ if g:mkdx#settings.map.enable == 1
         \ ['Backtick\ fenced\ code\ block',   0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
         \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA']
         \ ]
+
+  setlocal completefunc=mkdx#Complete
+  setlocal pumheight=15
+  imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+  imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r

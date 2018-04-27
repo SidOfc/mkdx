@@ -113,7 +113,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
     let has_http = url[0:3] == 'http'
 
     if (!skip_rel && !has_frag && !has_http && !has_prot)
-      let url = substitute(remote, '/+$', '', '') . '/' . substitute(url, '^/+', '', '')
+      let url = substitute(remote, '/\+$', '', '') . '/' . substitute(url, '^/\+', '', '')
     endif
 
     let cmd = 'curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"'

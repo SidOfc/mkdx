@@ -1169,7 +1169,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [ ] Insert any header fragment link in insert mode.
+- [ ] ([#22](../../issues/22)) Insert any header fragment link in insert mode.
 - [ ] Improve testing environment.
 - [ ] Add more tests!
 

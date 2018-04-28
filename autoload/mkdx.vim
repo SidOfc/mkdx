@@ -578,10 +578,29 @@ fun! s:util.InsertCompletionHandler(...)
 
   if (!empty(cpl))
     call complete(sl + 1, cpl)
-    return ''
+    return "\<C-P>"
   else
     return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
   endif
+endfun
+
+fun! s:util.IsInsideLink()
+  let col   = col('.')
+  let start = col
+  let line  = getline('.')
+  let len   = strlen(line)
+  let [mdlink, htmllink] = [0, 0]
+
+  while (start > 0 && line[start - 1] != ']' && line[start - 1] != ' ') | let start -= 1 | endwhile
+  let mdlink = line[(start - 1):start] == ']('
+
+  if (!mdlink)
+    let start = col
+    while (start > 0 && line[start - 1] != '"') | let start -= 1 | endwhile
+    let htmllink = line[(start - 7):(start - 3)] == 'href='
+  endif
+
+  return mdlink || htmllink
 endfun
 
 """"" MAIN FUNCTIONALITY
@@ -612,25 +631,6 @@ endfun
 
 fun! mkdx#InsertCtrlNHandler()
   return s:util.InsertCompletionHandler('next')
-endfun
-
-fun! s:util.IsInsideLink()
-  let col   = col('.')
-  let start = col
-  let line  = getline('.')
-  let len   = strlen(line)
-  let [mdlink, htmllink] = [0, 0]
-
-  while (start > 0 && line[start - 1] != ']' && line[start - 1] != ' ') | let start -= 1 | endwhile
-  let mdlink = line[(start - 1):start] == ']('
-
-  if (!mdlink)
-    let start = col
-    while (start > 0 && line[start - 1] != '"') | let start -= 1 | endwhile
-    let htmllink = line[(start - 7):(start - 3)] == 'href='
-  endif
-
-  return mdlink || htmllink
 endfun
 
 fun! mkdx#CompleteLink()

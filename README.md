@@ -142,7 +142,7 @@ This functionality uses Vim's builtin `complete` (`:h complete()`) and `complete
 Use <kbd>ctrl</kbd>+<kbd>n</kbd> to select the next entry and <kbd>ctrl</kbd>+<kbd>p</kbd> to select the previous entry.
 
 When not inside a link, fragment autocompletions will not be triggered and default autocompletion is used instead.
-To complete a fragment link outside of a header, type a `#` followed by <kbd>ctrl</kbd>+<kbd>n</kbd> or <kbd>ctrl</kbd>+<kbd>p</kbd>.
+To complete a fragment outside of a link, type a `#` followed by <kbd>ctrl</kbd>+<kbd>n</kbd> or <kbd>ctrl</kbd>+<kbd>p</kbd>.
 
 Insert mode autocompletions can be disabled by setting the value of [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete) to `0`.
 **note:** [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> mappings to be bound.
@@ -616,7 +616,11 @@ let g:mkdx#settings = {
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3'
-      \                               }
+      \                              },
+      \                              'fragment': {
+      \                                 'jumplist': 1,
+      \                                 'complete': 1
+      \                              }
       \                            },
       \ 'highlight':               { 'enable': 0 }
     \ }

@@ -28,11 +28,9 @@ settings and examples with default mappings.
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
-        <li><a href="#converting-from--to-lists-checklists-or-checkboxes">Converting from / to lists, checklists or checkboxes</a><ul>
-            <li><a href="#checkboxes">Checkboxes</a></li>
-            <li><a href="#lists">Lists</a></li>
-            <li><a href="#checklists">Checklists</a></li>
-        </ul></li>
+        <li><a href="#toggling-lines-from--to-task-items">Toggling lines from / to task items</a></li>
+        <li><a href="#toggling-lines-from--to-list-items">Toggling lines from / to list items</a></li>
+        <li><a href="#toggling-lines-from--to-checklist-items">Toggling lines from / to checklist items</a></li>
         <li><a href="#completing-checkboxes--checklists">Completing Checkboxes / Checklists</a></li>
         <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
         <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
@@ -82,11 +80,10 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
     </ul></li>
-    <li><a href="#mappings">Mappings</a></li>
-    <li><a href="#remapping-functionality">Remapping functionality</a></li>
-    <li><a href="#unmapping-functionality">Unmapping functionality</a><ul>
-        <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
-        <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
+    <li><a href="#mappings">Mappings</a><ul>
+        <li><a href="#remapping-functionality">Remapping functionality</a></li>
+        <li><a href="#unmapping-functionality-using-nop">Unmapping functionality using <code>&lt;Nop&gt;</code></a></li>
+        <li><a href="#unmapping-functionality-using-plug">Unmapping functionality using <code>&lt;Plug&gt;</code></a></li>
     </ul></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -242,13 +239,7 @@ the newly inserted item.
 " :h mkdx-function-enter-handler
 ```
 
-## Converting from / to lists, checklists or checkboxes
-
-In both normal and visual mode, lines can be toggled back and forth between either checkbox items,
-checklist items, or regular list items. In normal mode, the current line will be toggled.
-In visual mode, every line in the visual selection will be toggled.
-
-### Checkboxes
+## Toggling lines from / to task items
 
 ![mkdx toggle checkbox line](doc/gifs/vim-mkdx-toggle-checkbox-line.gif)
 
@@ -273,7 +264,7 @@ the checkbox would be inserted at the start of the line instead of after the lis
 " :h mkdx-function-toggle-checkbox-task
 ```
 
-### Lists
+## Toggling lines from / to list items
 
 ![mkdx toggle list line](doc/gifs/vim-mkdx-toggle-list-line.gif)
 
@@ -297,13 +288,13 @@ tokens other than [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist) were
 " :h mkdx-function-toggle-list
 ```
 
-### Checklists
+## Toggling lines from / to checklist items
 
 ![mkdx toggle checklist line](doc/gifs/vim-mkdx-toggle-checklist-line.gif)
 
 Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>.
 This will cause a [list token](#gmkdxsettingstokenslist) followed by a checkbox to be prepended before the line if it doesn't exist.
-If it is already present, it will be removed. Like [Checkboxes](#checkboxes), the initial state of the checkbox can be defined using: [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
+If it is already present, it will be removed. Like [Checkboxes](#completing-checkboxes--checklists), the initial state of the checkbox can be defined using: [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
 
 If the current line or selection is one or multiple list items, a checkbox with state of [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state) will be added:
 
@@ -1096,7 +1087,7 @@ The plugin checks if a mapping exists before creating it. If it exists, it will 
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
 
 The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
-To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
+To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality-using-nop).
 
 **Note:** _replace `-{n|v}` with just `-n` or `-v` when creating your own mappings_
 
@@ -1128,11 +1119,11 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert kbd shortcut|insert|<kbd>\<</kbd><kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
 
-# Remapping functionality
+## Remapping functionality
 
 `<Plug>` mappings can easily be remapped to any other key you prefer.
 When a `<Plug>(mkdx-*)` mapping is found, mkdx will not create the default mapping for that `<Plug>`.
-If you want to disable functionality, see: [Unmapping functionality](#unmapping-functionality).
+If you want to disable functionality, see: [Unmapping functionality](#unmapping-functionality-using-nop).
 
 ```viml
 " this will remap <leader>q in every filetype, not very handy in most cases
@@ -1157,12 +1148,7 @@ augroup Mkdx
 augroup END
 ```
 
-# Unmapping functionality
-
-In case some functionality gets in your way, you can unmap a specific function quite easily.
-There are two different methods we can use to prevent mkdx from creating any mapping:
-
-## Using `<Nop>`
+## Unmapping functionality using `<Nop>`
 
 If you want to unmap specific functionality, you'll have to define a mapping for it.
 This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
@@ -1182,7 +1168,7 @@ vmap <leader>= <Nop>
 The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
 by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping `<Plug>` mappings.
 
-## Using `<Plug>`
+## Unmapping functionality using `<Plug>`
 
 If you don't know what a `<Plug>` is, it is a builtin tool for plugin authors to provide a more
 "clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).

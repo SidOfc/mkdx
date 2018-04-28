@@ -23,30 +23,27 @@ settings and examples with default mappings.
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
-        <li><a href="#using-the-menu">Using the menu</a></li>
+        <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
-        <li><a href="#converting-from--to-lists-checklists-or-checkboxes">Converting from / to lists, checklists or checkboxes</a><ul>
-            <li><a href="#checkboxes">Checkboxes</a></li>
-            <li><a href="#lists">Lists</a></li>
-            <li><a href="#checklists">Checklists</a></li>
-        </ul></li>
+        <li><a href="#toggling-lines-from--to-task-items">Toggling lines from / to task items</a></li>
+        <li><a href="#toggling-lines-from--to-list-items">Toggling lines from / to list items</a></li>
+        <li><a href="#toggling-lines-from--to-checklist-items">Toggling lines from / to checklist items</a></li>
         <li><a href="#completing-checkboxes--checklists">Completing Checkboxes / Checklists</a></li>
         <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
         <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
         <li><a href="#toggling-quotes">Toggling Quotes</a></li>
-        <li><a href="#wrapping-text">Wrapping text</a><ul>
-            <li><a href="#as-a-link">As a link</a></li>
-            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
-        </ul></li>
+        <li><a href="#wrap-as-link">Wrap as link</a></li>
+        <li><a href="#wrap-as-bold--italic--inline-code--strikethrough">Wrap as bold / italic / inline-code / strikethrough</a></li>
         <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
         <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
+        <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></li>
     <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
@@ -55,6 +52,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
         <li><a href="#gmkdxsettingslinksfragmentjumplist"><code>g:mkdx#settings.links.fragment.jumplist</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentcomplete"><code>g:mkdx#settings.links.fragment.complete</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -82,11 +80,10 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
     </ul></li>
-    <li><a href="#mappings">Mappings</a></li>
-    <li><a href="#remapping-functionality">Remapping functionality</a></li>
-    <li><a href="#unmapping-functionality">Unmapping functionality</a><ul>
-        <li><a href="#using-nop">Using <code>&lt;Nop&gt;</code></a></li>
-        <li><a href="#using-plug">Using <code>&lt;Plug&gt;</code></a></li>
+    <li><a href="#mappings">Mappings</a><ul>
+        <li><a href="#remapping-functionality">Remapping functionality</a></li>
+        <li><a href="#unmapping-functionality-using-nop">Unmapping functionality using <code>&lt;Nop&gt;</code></a></li>
+        <li><a href="#unmapping-functionality-using-plug">Unmapping functionality using <code>&lt;Plug&gt;</code></a></li>
     </ul></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -136,21 +133,29 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
-## Using the menu
+## Insert mode fragment completion
 
-The plugin comes with builtin `menu` support if your vim `has('menu')`.
-The menu will become available _after_ you've opened a file with a **filetype** of `markdown`.
-Actions can be executed from the menu in MacVim. More information about each mapping can be found in the Vim / Neovim versions.
+![mkdx insert mode fragment completion](doc/gifs/vim-mkdx-insert-completions.gif)
 
-|MacVim|NeoVim / Vim|
-|------|------------|
-|![mkdx macvim menu](https://user-images.githubusercontent.com/3225058/34798278-b36d8be0-f65b-11e7-90c0-10904ea76820.png)|![mkdx neovim / vim menu](https://user-images.githubusercontent.com/3225058/34798254-9f685ff8-f65b-11e7-97ee-135d438b5a91.png)|
+When inside a link, typing a url that starts with a `#` will show a list of autocompletions based on the links of all the headers in the document.
+This functionality uses Vim's builtin `complete` (`:h complete()`) and `completefunc` (`:h completefunc`) for autocompletions.
+Use <kbd>ctrl</kbd>+<kbd>n</kbd> to select the next entry and <kbd>ctrl</kbd>+<kbd>p</kbd> to select the previous entry.
 
-To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
+When not inside a link, fragment autocompletions will not be triggered and default autocompletion is used instead.
+To complete a fragment outside of a link, type a `#` followed by <kbd>ctrl</kbd>+<kbd>n</kbd> or <kbd>ctrl</kbd>+<kbd>p</kbd>.
+
+Insert mode autocompletions can be disabled by setting the value of [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete) to `0`.
+**note:** [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> mappings to be bound.
 
 ~~~viml
-" :h mkdx-menu
-:menu Plugin.mkdx
+" :h mkdx-mapping-insert-completions
+" :h mkdx-function-insert-ctrl-n-handler
+" :h mkdx-function-insert-ctrl-p-handler
+" :h mkdx-function-complete-link
+" :h mkdx-function-complete
+" :h mkdx-plug-ctrl-n-compl
+" :h mkdx-plug-ctrl-p-compl
+" :h mkdx-plug-link-compl
 ~~~
 
 ## Dead link detection
@@ -234,13 +239,7 @@ the newly inserted item.
 " :h mkdx-function-enter-handler
 ```
 
-## Converting from / to lists, checklists or checkboxes
-
-In both normal and visual mode, lines can be toggled back and forth between either checkbox items,
-checklist items, or regular list items. In normal mode, the current line will be toggled.
-In visual mode, every line in the visual selection will be toggled.
-
-### Checkboxes
+## Toggling lines from / to task items
 
 ![mkdx toggle checkbox line](doc/gifs/vim-mkdx-toggle-checkbox-line.gif)
 
@@ -265,7 +264,7 @@ the checkbox would be inserted at the start of the line instead of after the lis
 " :h mkdx-function-toggle-checkbox-task
 ```
 
-### Lists
+## Toggling lines from / to list items
 
 ![mkdx toggle list line](doc/gifs/vim-mkdx-toggle-list-line.gif)
 
@@ -289,13 +288,13 @@ tokens other than [`g:mkdx#settings.tokens.list`](#gmkdxsettingstokenslist) were
 " :h mkdx-function-toggle-list
 ```
 
-### Checklists
+## Toggling lines from / to checklist items
 
 ![mkdx toggle checklist line](doc/gifs/vim-mkdx-toggle-checklist-line.gif)
 
 Checklists can be toggled using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>.
 This will cause a [list token](#gmkdxsettingstokenslist) followed by a checkbox to be prepended before the line if it doesn't exist.
-If it is already present, it will be removed. Like [Checkboxes](#checkboxes), the initial state of the checkbox can be defined using: [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
+If it is already present, it will be removed. Like [Checkboxes](#completing-checkboxes--checklists), the initial state of the checkbox can be defined using: [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state).
 
 If the current line or selection is one or multiple list items, a checkbox with state of [`g:mkdx#settings.checkbox.initial_state`](#gmkdxsettingscheckboxinitial_state) will be added:
 
@@ -392,9 +391,7 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 " :h mkdx-function-toggle-quote
 ```
 
-## Wrapping text
-
-### As a link
+## Wrap as link
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
@@ -410,7 +407,7 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 " :h mkdx-function-wrap-link
 ```
 
-### As bold / italic / inline-code / strikethrough
+## Wrap as bold / italic / inline-code / strikethrough
 
 **Normal mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
@@ -562,6 +559,23 @@ endfun
 nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
 ```
 
+## Using the menu
+
+The plugin comes with builtin `menu` support if your vim `has('menu')`.
+The menu will become available _after_ you've opened a file with a **filetype** of `markdown`.
+Actions can be executed from the menu in MacVim. More information about each mapping can be found in the Vim / Neovim versions.
+
+|MacVim|NeoVim / Vim|
+|------|------------|
+|![mkdx macvim menu](https://user-images.githubusercontent.com/3225058/34798278-b36d8be0-f65b-11e7-90c0-10904ea76820.png)|![mkdx neovim / vim menu](https://user-images.githubusercontent.com/3225058/34798254-9f685ff8-f65b-11e7-97ee-135d438b5a91.png)|
+
+To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
+
+~~~viml
+" :h mkdx-menu
+:menu Plugin.mkdx
+~~~
+
 # `g:mkdx#settings`
 
 All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
@@ -602,7 +616,11 @@ let g:mkdx#settings = {
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3'
-      \                               }
+      \                              },
+      \                              'fragment': {
+      \                                 'jumplist': 1,
+      \                                 'complete': 1
+      \                              }
       \                            },
       \ 'highlight':               { 'enable': 0 }
     \ }
@@ -736,10 +754,20 @@ This setting is enabled by default, set it to `0` to disable.
 let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
 ~~~
 
+## `g:mkdx#settings.links.fragment.complete`
+
+Autocomplete fragment links in [_insert_ mode](#insert-mode-fragment-completion).
+Set to `0` to disable, [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> to be mapped.
+
+```viml
+" :h mkdx-setting-links-fragment-complete
+let g:mkdx#settings = { 'links': { 'fragment': { 'complete': 1 } } }
+```
+
 ## `g:mkdx#settings.image_extension_pattern`
 
 Defines the extensions to search for when identifying the type of link that
-will be generated when [wrapping text in a link](#as-a-link). Setting it to an empty string
+will be generated when [wrapping text in a link](#wrap-as-link). Setting it to an empty string
 disables image wrapping and a regular empty markdown link will be used instead.
 
 ```viml
@@ -848,7 +876,7 @@ let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 ## `g:mkdx#settings.tokens.italic`
 
 This token is used for italicizing the current word under the cursor or a visual selection of text.
-See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-italic
@@ -858,7 +886,7 @@ let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
-See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-bold
@@ -1063,7 +1091,7 @@ The plugin checks if a mapping exists before creating it. If it exists, it will 
 In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
 
 The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
-To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality).
+To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality-using-nop).
 
 **Note:** _replace `-{n|v}` with just `-n` or `-v` when creating your own mappings_
 
@@ -1094,12 +1122,15 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert fenced code block|insert|<kbd>\~</kbd><kbd>\~</kbd><kbd>\~</kbd>|`<Plug>(mkdx-fence-tilde)`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd><kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
+|<kbd>ctrl</kbd>+<kbd>n</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>n</kbd>|`<Plug>(mkdx-ctrl-n-compl)`|
+|<kbd>ctrl</kbd>+<kbd>p</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>p</kbd>|`<Plug>(mkdx-ctrl-p-compl)`|
+|<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|
 
-# Remapping functionality
+## Remapping functionality
 
 `<Plug>` mappings can easily be remapped to any other key you prefer.
 When a `<Plug>(mkdx-*)` mapping is found, mkdx will not create the default mapping for that `<Plug>`.
-If you want to disable functionality, see: [Unmapping functionality](#unmapping-functionality).
+If you want to disable functionality, see: [Unmapping functionality](#unmapping-functionality-using-nop).
 
 ```viml
 " this will remap <leader>q in every filetype, not very handy in most cases
@@ -1124,12 +1155,7 @@ augroup Mkdx
 augroup END
 ```
 
-# Unmapping functionality
-
-In case some functionality gets in your way, you can unmap a specific function quite easily.
-There are two different methods we can use to prevent mkdx from creating any mapping:
-
-## Using `<Nop>`
+## Unmapping functionality using `<Nop>`
 
 If you want to unmap specific functionality, you'll have to define a mapping for it.
 This is required because the plugin maps its keys when opening a markdown file, so if you `unmap` something,
@@ -1149,7 +1175,7 @@ vmap <leader>= <Nop>
 The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
 by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping `<Plug>` mappings.
 
-## Using `<Plug>`
+## Unmapping functionality using `<Plug>`
 
 If you don't know what a `<Plug>` is, it is a builtin tool for plugin authors to provide a more
 "clear" and user-friendly plugin interface (and to create repeatable mappings with repeat.vim!).
@@ -1169,7 +1195,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [ ] Insert any header fragment link in insert mode.
+- [x] ([#22](../../issues/22)) Insert any header fragment link in insert mode.
 - [ ] Improve testing environment.
 - [ ] Add more tests!
 

@@ -545,6 +545,64 @@ fun! s:util.AlignString(str, align, length)
   return repeat(' ', lrem) . a:str . repeat(' ', rrem)
 endfun
 
+fun! s:util.TruncateString(str, len, ...)
+  let ending = get(a:000, 0, '..')
+  let endlen = strlen(ending)
+  return strlen(a:str) >= a:len ? (a:str[0:(a:len - 1 - endlen)] . ending) : a:str
+endfun
+
+fun! s:util.HeadersToCompletions()
+  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40)}})
+endfun
+
+fun! s:util.ContextualComplete()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start] != '#')
+    let start -= 1
+  endwhile
+
+  if (line[start] != '#') | return [start, []] | endif
+
+  let ln     = substitute(line[start:col], '-', '\\-', 'g')
+  let compls = s:util.HeadersToCompletions()
+
+  return [start, filter(compls, {idx, compl -> compl.word =~ ('^' . ln)})]
+endfun
+
+fun! s:util.InsertCompletionHandler(...)
+  let default   = get(a:000, 0, '')
+  let [sl, cpl] = s:util.ContextualComplete()
+
+  if (!empty(cpl))
+    call complete(sl + 1, cpl)
+    return "\<C-P>"
+  else
+    return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
+  endif
+endfun
+
+fun! s:util.IsInsideLink()
+  let col   = col('.')
+  let start = col
+  let line  = getline('.')
+  let len   = strlen(line)
+  let [mdlink, htmllink] = [0, 0]
+
+  while (start > 0 && line[start - 1] != ']' && line[start - 1] != ' ') | let start -= 1 | endwhile
+  let mdlink = line[(start - 1):start] == ']('
+
+  if (!mdlink)
+    let start = col
+    while (start > 0 && line[start - 1] != '"') | let start -= 1 | endwhile
+    let htmllink = line[(start - 7):(start - 3)] == 'href='
+  endif
+
+  return mdlink || htmllink
+endfun
+
 """"" MAIN FUNCTIONALITY
 let s:HASH = type({})
 fun! mkdx#MergeSettings(...)
@@ -565,6 +623,32 @@ fun! mkdx#MergeSettings(...)
   endfor
 
   return c
+endfun
+
+fun! mkdx#InsertCtrlPHandler()
+  return s:util.InsertCompletionHandler('prev')
+endfun
+
+fun! mkdx#InsertCtrlNHandler()
+  return s:util.InsertCompletionHandler('next')
+endfun
+
+fun! mkdx#CompleteLink()
+  if (s:util.IsInsideLink())
+    return "#\<C-X>\<C-U>\<C-P>"
+  endif
+  return '#'
+endfun
+
+fun! mkdx#Complete(findstart, base)
+  if (a:findstart)
+    let s:util._user_compl = s:util.ContextualComplete()
+    return s:util._user_compl[0]
+  else
+    let tmp = s:util._user_compl[1]
+    unlet s:util._user_compl
+    return tmp
+  endif
 endfun
 
 fun! mkdx#JumpToHeader()

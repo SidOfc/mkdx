@@ -27,6 +27,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.links.external.user_agent`
         `g:mkdx#settings.links.external.relative`
         `g:mkdx#settings.links.fragment.jumplist`
+        `g:mkdx#settings.links.fragment.complete`
         `g:mkdx#settings.image_extension_pattern`
         `g:mkdx#settings.restore_visual`
         `g:mkdx#settings.map.prefix`
@@ -60,6 +61,9 @@ CONTENTS                                                         *mkdx-contents*
         `mkdxCheckboxComplete`
 
     Plugs
+        <Plug>(mkdx-ctrl-n-compl)
+        <Plug>(mkdx-ctrl-p-compl)
+        <Plug>(mkdx-link-compl)
         <Plug>(mkdx-checkbox-next)
         <Plug>(mkdx-checkbox-prev)
         <Plug>(mkdx-promote-header)
@@ -95,6 +99,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-fence-backtick)
 
     Mappings
+        Insert link completion
         Insert fenced code block
         Insert `<kbd />` shortcut
         Toggle checkbox forward
@@ -137,6 +142,10 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleChecklist()
         mkdx#ToggleList()
         mkdx#ToggleToKbd()
+        mkdx#Complete()
+        mkdx#InsertCtrlNHandler()
+        mkdx#InsertCtrlPHandler()
+        mkdx#CompleteLink()
 
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
@@ -168,7 +177,7 @@ entries will not yet exist. Open a markdown file first before attempting to
 view the menu.
 
 ==============================================================================
-HELPTAGS                                                         *mkdx-helptags*
+HELPTAGS                                     *mkdx-tags* *mkdx-help* *mkdx-helptags*
 
 The helptags are split into 4 types, |mdx-settings|, |mkdx-highlighting|,
 |mdx-mappings| and |mdx-functions|. These are the category tags. Within each
@@ -179,7 +188,7 @@ for functions. Below is a list of all helptags:
 - |mkdx-contents|, |mkdx-toc|
 - |mkdx-menu|
 - |mkdx-introduction|
-- |mkdx-helptags|
+- |mkdx-helptags|, |mkdx-tags|, |mkdx-help|
 
 - |mkdx-settings|
     - |mkdx-setting-links-external-enable|
@@ -188,6 +197,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-links-external-rel|
     - |mkdx-setting-links-external-ua|
     - |mkdx-setting-links-fragment-jumplist|
+    - |mkdx-setting-links-fragment-complete|
     - |mkdx-setting-image-extension-pattern|
     - |mkdx-setting-restore-visual|
     - |mkdx-setting-map-prefix|
@@ -222,6 +232,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-highlight-checkbox-complete|
 
 - |mkdx-plugs|
+    - |mkdx-plug-ctrl-n-compl|
+    - |mkdx-plug-ctrl-p-compl|
+    - |mkdx-plug-link-compl|
     - |mkdx-plug-checkbox-next|
     - |mkdx-plug-checkbox-prev|
     - |mkdx-plug-promote-header|
@@ -259,6 +272,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-fence-backtick|
 
 - |mkdx-mappings|
+    - |mkdx-mapping-insert-link-completion|
     - |mkdx-mapping-insert-fenced-code-block|
     - |mkdx-mapping-insert-kbd-shortcut|
     - |mkdx-mapping-toggle-checkbox-forward|
@@ -302,6 +316,10 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-checklist|
     - |mkdx-function-toggle-list|
     - |mkdx-function-toggle-to-kbd|
+    - |mkdx-complete|
+    - |mkdx-insert-ctrl-n-handler|
+    - |mkdx-insert-ctrl-p-handler|
+    - |mkdx-complete-link|
 
 ==============================================================================
 `g:mkdx#settings = { ... }`                                        *mkdx-settings*
@@ -346,7 +364,8 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3'`
           `\                              },`
           `\                              'fragment': {`
-          `\                                 'jumplist': 1`
+          `\                                 'jumplist': 1,`
+          `\                                 'complete': 1`
           `\                              }`
           `\                            },`
          ` \ 'highlight':               { 'enable': 0 }`
@@ -379,6 +398,7 @@ let s:defaults.links.external.timeout    `=>`
 let s:defaults.links.external.relative   `=>`
 let s:defaults.links.external.user_agent `=>`
 let s:defaults.links.fragment.jumplist   `=>`
+let s:defaults.links.fragment.complete   `=>`
 let s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
 let s:defaults.restore_visual            `=>` g:mkdx#restore_visual
 let s:defaults.map.prefix                `=>` g:mkdx#map_prefix
@@ -472,6 +492,16 @@ jumping to a header in the document with |mkdx-function-jump-to-header|.
 The current cursor position will only be added to the |jumplist| when a valid
 link is found, otherwise nothing will happen and the |jumplist| remains
 untouched.
+
+==============================================================================
+`g:mkdx#settings.links.fragment.complete = `*mkdx-setting-links-fragment-complete*
+`    \ 1`
+
+Autocomplete fragment links in |Insert-mode|. Set to `0` to disable,
+|mkdx-setting-map-enable| must be enabled for <C-n> and <C-p> to be mapped.
+
+Fragment links are completed by scanning the document for headers and
+converting them to their respective hashes.
 
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
@@ -754,6 +784,21 @@ functions through <Plug> mappings. Every normal mode <Plug> is repeatable
 using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 
 ==============================================================================
+<Plug>(mkdx-ctrl-n-compl)                               *mkdx-plug-ctrl-n-compl*
+
+    `<C-R>=mkdx#InsertCtrlNHandler()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-ctrl-p-compl)                               *mkdx-plug-ctrl-p-compl*
+
+    `<C-R>=mkdx#InsertCtrlPHandler()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-link-compl)                                   *mkdx-plug-link-compl*
+
+    `mkdx#CompleteLink()`
+
+==============================================================================
 <Plug>(mkdx-checkbox-next)                             *mkdx-plug-checkbox-next*
 
     `:call mkdx#ToggleCheckboxState()<Cr>`
@@ -955,6 +1000,25 @@ and it is easier to understand "what" you unmapped, e.g:
 
 will result in the same as using regular `nmap` and `vmap`. For an overview of
 available <Plug> mappings that can be disabled, visit: |mkdx-plugs|.
+
+==============================================================================
+Insert link completion                     *mkdx-mapping-insert-link-completion*
+                                              #, #<C-x><C-u>, #<C-p> or #<C-n>
+
+This feature uses Vim's builtin |complete()| and |completefunc| commands.
+When inside a markdown (`[link](|)`) or HTML (`<a href="|"></a>`) link (where
+the "`|`" denotes cursor position), typing a `#` will show a list of
+autocompletions based on the headers in the current buffer.
+
+When not inside a link, fragment autocompletions will not be triggered and
+default autocompletion is used instead. To complete a fragment outside of a
+link, type a `#` followed by <C-n> or <C-p>.
+
+Insert mode autocompletions can be disabled by setting
+|mkdx-setting-links-fragment-complete| to `0`.
+
+NOTE: |mkdx-setting-map-enable| must be enabled for the <C-n> and <C-p>
+mappings to be bound.
 
 ==============================================================================
 Insert fenced code block                 *mkdx-mapping-insert-fenced-code-block*
@@ -1774,5 +1838,41 @@ Multiple space separated mappings in a visual selection
 will also be converted:
 
     `S-m S-p  =>  <kbd>shift</kbd>+<kbd>m</kbd> <kbd>shift</kbd>+<kbd>p</kbd>`
+
+==============================================================================
+mkdx#Complete({findstart}, {base})                      *mkdx-function-complete*
+
+This function will be executed by |completefunc| and will return completions
+relevant to the current context.
+
+==============================================================================
+mkdx#InsertCtrlNHandler()                  *mkdx-function-insert-ctrl-n-handler*
+
+Handles <C-n> completions in |Insert-mode| when in a recognized context and
+when |mkdx-setting-links-fragment-complete| is enabled (default on),
+otherwise default completions will be shown.
+
+==============================================================================
+mkdx#InsertCtrlPHandler()                  *mkdx-function-insert-ctrl-p-handler*
+
+Handles <C-p> completions in |Insert-mode| when in a recognized context and
+when |mkdx-setting-links-fragment-complete| is enabled (default on),
+otherwise default completions will be shown.
+
+==============================================================================
+mkdx#CompleteLink()                                *mkdx-function-complete-link*
+
+Every time a `#` character is typed in |Insert-mode|, check if the inserted
+character is inside a link within the URL attribute.
+
+Markdown ("`|`" is the cursor position):
+`   [link](#|)`
+
+HTML ("`|`" is the cursor position):
+`   <a href="#|">link</a>`
+
+Completions will update while typing.
+Completions will not work outside of a link context, if you want to complete a
+fragment link without it being in a header, use <C-n> or <C-p> instead.
 
 vim:tw=78:sw=4:ft=help:norl:

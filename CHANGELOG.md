@@ -1,3 +1,7 @@
+## 08-04-2018 VERSION 1.4.1
+
+- [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.
+
 ## 08-04-2018 VERSION 1.4.0
 
 - Update [Dead link detection](#dead-link-detection) to include support for external and relative links.

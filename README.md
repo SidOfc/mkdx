@@ -97,9 +97,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#28-04-2018-version-150">28-04-2018 VERSION 1.5.0</a></li>
         <li><a href="#27-04-2018-version-143">27-04-2018 VERSION 1.4.3</a></li>
         <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
-        <li><a href="#08-04-2018-version-141">08-04-2018 VERSION 1.4.1</a></li>
 </ul>
 </details>
 
@@ -624,7 +624,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.0'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -748,7 +748,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.0' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1204,17 +1204,22 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- [x] ([#22](../../issues/22)) Insert any header fragment link in insert mode.
-- [x] ([#24](../../issues/24)) Read named anchors (`<a id="some-fragment"></a>`) when [autocompleting fragments](#insert-mode-fragment-completion).
-- [x] ([#24](../../issues/24)) Detect named anchors in [dead link detection](#dead-link-detection).
-- [x] ([#24](../../issues/24)) Add ability to [jump](#jump-to-header) to named anchors.
-- [ ] Improve testing environment.
-- [ ] Add more tests!
+- Improve testing setup
+- Cleanup of code
+- Add more tests for all components
 
 # Changelog
 
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## 28-04-2018 VERSION 1.5.0
+
+- Add insert mode completion for [fragment links](#insert-mode-fragment-completion).
+- Add [setting](#gmkdxsettingslinksfragmentcomplete) to control completions.
+- Add support for anchor fragment links ([#24](../../issues/24)) (`<a id="hello"></a>` / `<a name="hello"></a>`) for [jumping](#jump-to-header), [detection](#dead-link-detection) and [completion](#insert-mode-fragment-completion).
+- Fix issue where double slashes in the URL would not be removed in external link checks.
+- Fix nested `<a></a>` tags in generated TOC links.
 
 ## 27-04-2018 VERSION 1.4.3
 
@@ -1226,7 +1231,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 15-04-2018 VERSION 1.4.2
 
 - [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data
-
-## 08-04-2018 VERSION 1.4.1
-
-- [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.

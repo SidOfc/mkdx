@@ -121,6 +121,7 @@ if g:mkdx#settings.map.enable == 1
   setlocal pumheight=15
   imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
   imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+  imap <buffer><silent> # <Plug>(mkdx-link-compl)
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r

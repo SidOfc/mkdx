@@ -81,6 +81,7 @@ inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
   setlocal pumheight=15
+  setlocal iskeyword+=\-
 endif
 
 if g:mkdx#settings.map.enable == 1

@@ -592,11 +592,11 @@ fun! s:util.TruncateString(str, len, ...)
 endfun
 
 fun! s:util.HeadersToCompletions()
-  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ('| header | ' . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40))}})
+  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40))}})
 endfun
 
 fun! s:util.IDAnchorLinksToCompletions()
-  return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ('| anchor | ' . val[2])}})
+  return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}})
 endfun
 
 fun! s:util.ContextualComplete()
@@ -619,10 +619,11 @@ endfun
 fun! s:util.InsertCompletionHandler(...)
   let default   = get(a:000, 0, '')
   let [sl, cpl] = s:util.ContextualComplete()
+  let cpl_count = len(cpl)
 
-  if (!empty(cpl))
+  if (cpl_count > 0)
     call complete(sl + 1, cpl)
-    return "\<C-P>"
+    return cpl_count == 1 ? '' : "\<C-P>"
   else
     return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
   endif

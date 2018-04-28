@@ -41,42 +41,42 @@ if exists('g:mkdx#checkbox_initial_state')  | let s:defaults.checkbox.initial_st
 let g:mkdx#settings = exists('g:mkdx#settings_initialized') ? g:mkdx#settings : mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
 let g:mkdx#settings_initialized = 1
 
-noremap         <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
-noremap         <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>
-noremap         <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
-noremap         <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckboxTask()<Cr>
-noremap         <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>
-noremap         <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr>
-noremap         <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>
-noremap         <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)<Cr>
-noremap         <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
-noremap         <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
-noremap         <Plug>(mkdx-jump-to-header)     :call      mkdx#JumpToHeader()<Cr>
-noremap         <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
-noremap         <Plug>(mkdx-quickfix-links)     :call      mkdx#QuickfixDeadLinks()<Cr>
-noremap         <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
-noremap         <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
-noremap         <Plug>(mkdx-update-toc)         :call      mkdx#UpdateTOC()<Cr>
-noremap         <Plug>(mkdx-gen-or-upd-toc)     :call      mkdx#GenerateOrUpdateTOC()<Cr>
-noremap         <Plug>(mkdx-text-italic-n)      :<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic, 'mkdx-text-italic-n')<Cr>
-noremap         <Plug>(mkdx-text-bold-n)        :<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold, 'mkdx-text-bold-n')<Cr>
-noremap         <Plug>(mkdx-text-inline-code-n) :<C-U>call mkdx#WrapText('n', '`', '`', 'mkdx-text-inline-code-n')<Cr>
-noremap         <Plug>(mkdx-text-strike-n)      :<C-U>call mkdx#WrapText('n', '<strike>', '</strike>', 'mkdx-text-strike-n')<Cr>
-noremap         <Plug>(mkdx-text-italic-v)      :<C-U>call mkdx#WrapText('v', g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic)<Cr>
-noremap         <Plug>(mkdx-text-bold-v)        :<C-U>call mkdx#WrapText('v', g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold)<Cr>
-noremap         <Plug>(mkdx-text-inline-code-v) :<C-U>call mkdx#WrapText('v', '`', '`')<Cr>
-noremap         <Plug>(mkdx-text-strike-v)      :<C-U>call mkdx#WrapText('v', '<strike>', '</strike>')<Cr>
-noremap         <Plug>(mkdx-toggle-to-kbd-n)    :call      mkdx#ToggleToKbd()<Cr>
-noremap         <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleToKbd('v')<Cr>
-noremap         <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
-noremap         <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
-inoremap        <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
-inoremap        <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
-inoremap        <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
-inoremap        <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
-inoremap        <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
-inoremap        <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
-inoremap <expr> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
+noremap         <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
+noremap         <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckboxTask()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr>
+noremap         <silent> <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>
+noremap         <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)<Cr>
+noremap         <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
+noremap         <silent> <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
+noremap         <silent> <Plug>(mkdx-jump-to-header)     :call      mkdx#JumpToHeader()<Cr>
+noremap         <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
+noremap         <silent> <Plug>(mkdx-quickfix-links)     :call      mkdx#QuickfixDeadLinks()<Cr>
+noremap         <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
+noremap         <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
+noremap         <silent> <Plug>(mkdx-update-toc)         :call      mkdx#UpdateTOC()<Cr>
+noremap         <silent> <Plug>(mkdx-gen-or-upd-toc)     :call      mkdx#GenerateOrUpdateTOC()<Cr>
+noremap         <silent> <Plug>(mkdx-text-italic-n)      :<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic, 'mkdx-text-italic-n')<Cr>
+noremap         <silent> <Plug>(mkdx-text-bold-n)        :<C-U>call mkdx#WrapText('n', g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold, 'mkdx-text-bold-n')<Cr>
+noremap         <silent> <Plug>(mkdx-text-inline-code-n) :<C-U>call mkdx#WrapText('n', '`', '`', 'mkdx-text-inline-code-n')<Cr>
+noremap         <silent> <Plug>(mkdx-text-strike-n)      :<C-U>call mkdx#WrapText('n', '<strike>', '</strike>', 'mkdx-text-strike-n')<Cr>
+noremap         <silent> <Plug>(mkdx-text-italic-v)      :<C-U>call mkdx#WrapText('v', g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic)<Cr>
+noremap         <silent> <Plug>(mkdx-text-bold-v)        :<C-U>call mkdx#WrapText('v', g:mkdx#settings.tokens.bold, g:mkdx#settings.tokens.bold)<Cr>
+noremap         <silent> <Plug>(mkdx-text-inline-code-v) :<C-U>call mkdx#WrapText('v', '`', '`')<Cr>
+noremap         <silent> <Plug>(mkdx-text-strike-v)      :<C-U>call mkdx#WrapText('v', '<strike>', '</strike>')<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-to-kbd-n)    :call      mkdx#ToggleToKbd()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleToKbd('v')<Cr>
+noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
+noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
+inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
+inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
+inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
+inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete

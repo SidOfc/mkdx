@@ -554,13 +554,15 @@ fun! s:util.ContextualComplete()
   let start = col
   let line  = getline('.')
 
-  while (start > 0 && line[start - 1] != '#')
+  while (start > 0 && line[start] != '#')
     let start -= 1
   endwhile
 
-  if (line[start - 1] != '#') | return [start, []] | endif
+  if (line[start] != '#') | return [start, []] | endif
+  let start += 1
+  echom 'line[' . start . ':' . col . '] " => "' . line[start:col] . '"'
 
-  return [start, filter(s:util.HeadersToCompletions(), {idx, compl -> compl.word =~ ('^' . line[start:col])})]
+  return [start, filter(s:util.HeadersToCompletions(), {idx, compl -> !empty(line[start:col]) || compl.word =~ ('^' . line[start:col])})]
 endfun
 
 fun! s:util.InsertCompletionHandler(...)

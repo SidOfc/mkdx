@@ -1205,6 +1205,9 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 # Roadmap
 
 - [x] ([#22](../../issues/22)) Insert any header fragment link in insert mode.
+- [ ] Read named anchors (`<a id="some-fragment"></a>`) when [autocompleting fragments](#insert-mode-fragment-completion).
+- [ ] Detect named anchors in [dead link detection](#dead-link-detection).
+- [ ] Add ability to [jump](#jump-to-header) to named anchors.
 - [ ] Improve testing environment.
 - [ ] Add more tests!
 

@@ -23,7 +23,7 @@ settings and examples with default mappings.
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
-        <li><a href="#using-the-menu">Using the menu</a></li>
+        <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
@@ -37,16 +37,15 @@ settings and examples with default mappings.
         <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
         <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
         <li><a href="#toggling-quotes">Toggling Quotes</a></li>
-        <li><a href="#wrapping-text">Wrapping text</a><ul>
-            <li><a href="#as-a-link">As a link</a></li>
-            <li><a href="#as-bold--italic--inline-code--strikethrough">As bold / italic / inline-code / strikethrough</a></li>
-        </ul></li>
+        <li><a href="#wrap-as-link">Wrap as link</a></li>
+        <li><a href="#wrap-as-bold--italic--inline-code--strikethrough">Wrap as bold / italic / inline-code / strikethrough</a></li>
         <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
         <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
+        <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></li>
     <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
@@ -55,6 +54,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingslinksexternalrelative"><code>g:mkdx#settings.links.external.relative</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaluser_agent"><code>g:mkdx#settings.links.external.user_agent</code></a></li>
         <li><a href="#gmkdxsettingslinksfragmentjumplist"><code>g:mkdx#settings.links.fragment.jumplist</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentcomplete"><code>g:mkdx#settings.links.fragment.complete</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -136,21 +136,29 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
-## Using the menu
+## Insert mode fragment completion
 
-The plugin comes with builtin `menu` support if your vim `has('menu')`.
-The menu will become available _after_ you've opened a file with a **filetype** of `markdown`.
-Actions can be executed from the menu in MacVim. More information about each mapping can be found in the Vim / Neovim versions.
+![mkdx insert mode fragment completion](doc/gifs/vim-mkdx-insert-completions.gif)
 
-|MacVim|NeoVim / Vim|
-|------|------------|
-|![mkdx macvim menu](https://user-images.githubusercontent.com/3225058/34798278-b36d8be0-f65b-11e7-90c0-10904ea76820.png)|![mkdx neovim / vim menu](https://user-images.githubusercontent.com/3225058/34798254-9f685ff8-f65b-11e7-97ee-135d438b5a91.png)|
+When inside a link, typing a url that starts with a `#` will show a list of autocompletions based on the links of all the headers in the document.
+This functionality uses Vim's builtin `complete` (`:h complete()`) and `completefunc` (`:h completefunc`) for autocompletions.
+Use <kbd>ctrl</kbd>+<kbd>n</kbd> to select the next entry and <kbd>ctrl</kbd>+<kbd>p</kbd> to select the previous entry.
 
-To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
+When not inside a link, fragment autocompletions will not be triggered and default autocompletion is used instead.
+To complete a fragment link outside of a header, type a `#` followed by <kbd>ctrl</kbd>+<kbd>n</kbd> or <kbd>ctrl</kbd>+<kbd>p</kbd>.
+
+Insert mode autocompletions can be disabled by setting the value of [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete) to `0`.
+**note:** [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> mappings to be bound.
 
 ~~~viml
-" :h mkdx-menu
-:menu Plugin.mkdx
+" :h mkdx-mapping-insert-completions
+" :h mkdx-function-insert-ctrl-n-handler
+" :h mkdx-function-insert-ctrl-p-handler
+" :h mkdx-function-complete-link
+" :h mkdx-function-complete
+" :h mkdx-plug-ctrl-n-compl
+" :h mkdx-plug-ctrl-p-compl
+" :h mkdx-plug-link-compl
 ~~~
 
 ## Dead link detection
@@ -392,9 +400,7 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 " :h mkdx-function-toggle-quote
 ```
 
-## Wrapping text
-
-### As a link
+## Wrap as link
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
@@ -410,7 +416,7 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 " :h mkdx-function-wrap-link
 ```
 
-### As bold / italic / inline-code / strikethrough
+## Wrap as bold / italic / inline-code / strikethrough
 
 **Normal mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
@@ -561,6 +567,23 @@ endfun
 " finally, map it -- in this case, I mapped it to overwrite the default action for toggling quickfix (<PREFIX>I)
 nnoremap <silent> <Leader>I :call <SID>MkdxFzfQuickfixHeaders()<Cr>
 ```
+
+## Using the menu
+
+The plugin comes with builtin `menu` support if your vim `has('menu')`.
+The menu will become available _after_ you've opened a file with a **filetype** of `markdown`.
+Actions can be executed from the menu in MacVim. More information about each mapping can be found in the Vim / Neovim versions.
+
+|MacVim|NeoVim / Vim|
+|------|------------|
+|![mkdx macvim menu](https://user-images.githubusercontent.com/3225058/34798278-b36d8be0-f65b-11e7-90c0-10904ea76820.png)|![mkdx neovim / vim menu](https://user-images.githubusercontent.com/3225058/34798254-9f685ff8-f65b-11e7-97ee-135d438b5a91.png)|
+
+To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
+
+~~~viml
+" :h mkdx-menu
+:menu Plugin.mkdx
+~~~
 
 # `g:mkdx#settings`
 
@@ -736,10 +759,20 @@ This setting is enabled by default, set it to `0` to disable.
 let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
 ~~~
 
+## `g:mkdx#settings.links.fragment.complete`
+
+Autocomplete fragment links in [_insert_ mode](#insert-mode-fragment-completion).
+Set to `0` to disable, [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> to be mapped.
+
+```viml
+" :h mkdx-setting-links-fragment-complete
+let g:mkdx#settings = { 'links': { 'fragment': { 'complete': 1 } } }
+```
+
 ## `g:mkdx#settings.image_extension_pattern`
 
 Defines the extensions to search for when identifying the type of link that
-will be generated when [wrapping text in a link](#as-a-link). Setting it to an empty string
+will be generated when [wrapping text in a link](#wrap-as-link). Setting it to an empty string
 disables image wrapping and a regular empty markdown link will be used instead.
 
 ```viml
@@ -848,7 +881,7 @@ let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 ## `g:mkdx#settings.tokens.italic`
 
 This token is used for italicizing the current word under the cursor or a visual selection of text.
-See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-italic
@@ -858,7 +891,7 @@ let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
-See [this section](#as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-bold

@@ -170,16 +170,53 @@ fun! s:util.ListFragmentLinks()
   return filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
 endfun
 
+fun! s:util.ListIDAnchorLinks()
+  let limit = line('$') + 1
+  let lnum  = 1
+  let links = []
+
+  while (lnum < limit)
+    let line = getline(lnum)
+    let col  = 0
+    let len  = len(line)
+
+    while (col < len)
+        if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
+        let id = match(line[col:], '\(name\|id\)="\([^"]\+\)"')
+        if (id < 0) | break | endif
+        let col += id
+
+        let matchtext = get(matchlist(line[col:], '\(name\|id\)="\([^"]\+\)"'), 2, -1)
+        if (matchtext == -1) | break | endif
+
+        call add(links, [lnum, col, matchtext])
+        let col += len(matchtext)
+    endwhile
+
+    let lnum += 1
+  endwhile
+
+  return links
+endfun
+
 fun! s:util.FindDeadFragmentLinks()
   let headers = {}
   let hashes  = []
   let dead    = []
   let src     = s:util.ListHeaders()
+  let anchors = s:util.ListIDAnchorLinks()
   let frags   = s:util.ListFragmentLinks()
   let bufnum  = bufnr('%')
 
   for [lnum, lvl, line, hash, sfx] in src
     call add(hashes, '#' . hash . sfx)
+  endfor
+
+  for [lnum, column, hash] in anchors
+    let _h = '#' . hash
+    if (index(hashes, _h) == -1)
+      call add(hashes, _h)
+    endif
   endfor
 
   for [lnum, column, hash] in frags
@@ -342,15 +379,18 @@ fun! s:util.ListHeaders()
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     let header = getline(lnum)
-    let lvl    = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
-    let hash   = s:util.HeaderToHash(header)
-    let hcount = get(hashes, hash, 0)
-    let final  = hash . (hcount > 0 ? '-' . hcount : '')
-    let hashes[hash] = hcount + 1
+    let skip   = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
 
-    if (match(header, '^\(\`\`\`\|\~\~\~\)') > -1) | let skip = !skip | endif
-    if (!skip && lvl > 0)
+    if (!skip)
+      let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+      if (lvl > 0)
+        let hash   = s:util.HeaderToHash(header)
+        let hcount = get(hashes, hash, 0)
+        let final  = hash . (hcount > 0 ? '-' . hcount : '')
+        let hashes[hash] = hcount + 1
+
         call add(headers, [lnum, lvl, header, hash, (hcount > 0 ? '-' . hcount : '')])
+      endif
     endif
   endfor
 
@@ -552,7 +592,11 @@ fun! s:util.TruncateString(str, len, ...)
 endfun
 
 fun! s:util.HeadersToCompletions()
-  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40)}})
+  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ('| header | ' . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40))}})
+endfun
+
+fun! s:util.IDAnchorLinksToCompletions()
+  return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ('| anchor | ' . val[2])}})
 endfun
 
 fun! s:util.ContextualComplete()
@@ -567,7 +611,7 @@ fun! s:util.ContextualComplete()
   if (line[start] != '#') | return [start, []] | endif
 
   let ln     = substitute(line[start:col], '-', '\\-', 'g')
-  let compls = s:util.HeadersToCompletions()
+  let compls = extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())
 
   return [start, filter(compls, {idx, compl -> compl.word =~ ('^' . ln)})]
 endfun
@@ -683,7 +727,15 @@ fun! mkdx#JumpToHeader()
   if (empty(link) && !empty(lnks)) | let link = lnks[0] | endif
   if (empty(link)) | return | endif
 
-  for [lnum, colnum, header, hash, sfx] in s:util.ListHeaders()
+  let headers = s:util.ListHeaders()
+
+  for [lnum, column, hash] in s:util.ListIDAnchorLinks()
+    if (index(headers, '#' . hash) == -1)
+      call add(headers, [lnum, column, 'anchor:' . hash, hash, ''])
+    endif
+  endfor
+
+  for [lnum, colnum, header, hash, sfx] in headers
     if (link == (hash . sfx))
       if (g:mkdx#settings.links.fragment.jumplist)
         normal! m'0
@@ -1068,7 +1120,7 @@ fun! mkdx#GenerateTOC(...)
 
   for [lnum, lvl, line, hsh, sfx] in src
     let curr += 1
-    let headers[hsh] = sfx == '' ? 1 : headers[hsh] + 1
+    let headers[hsh] = get(headers, hsh, -1) + 1
     let spc = repeat(repeat(' ', &sw), lvl)
     let nextlvl    = get(src, curr, [0, lvl])[1]
     let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'

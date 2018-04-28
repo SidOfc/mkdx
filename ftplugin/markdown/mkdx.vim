@@ -14,7 +14,7 @@ let s:defaults          = {
       \                                         'default': 'center' } },
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.4.3' },
-      \                              'fragment': { 'jumplist': 1 } },
+      \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
       \ 'highlight':               { 'enable': 0 }
     \ }
 
@@ -78,6 +78,11 @@ inoremap        <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<
 inoremap        <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 inoremap <expr> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
 
+if (g:mkdx#settings.links.fragment.complete)
+  setlocal completefunc=mkdx#Complete
+  setlocal pumheight=15
+endif
+
 if g:mkdx#settings.map.enable == 1
   let s:gv       = g:mkdx#settings.restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
@@ -117,11 +122,11 @@ if g:mkdx#settings.map.enable == 1
         \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA']
         \ ]
 
-  setlocal completefunc=mkdx#Complete
-  setlocal pumheight=15
-  imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
-  imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
-  imap <buffer><silent> # <Plug>(mkdx-link-compl)
+  if (g:mkdx#settings.links.fragment.complete)
+    imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+    imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+    imap <buffer><silent> # <Plug>(mkdx-link-compl)
+  endif
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r

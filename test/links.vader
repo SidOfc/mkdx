@@ -1,0 +1,112 @@
+Include: setup.vader
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given markdown (A small markdown document):
+  # With a header
+  
+  Some link to <a href="#and-another-one">another one</a>
+
+  # and another one
+
+  some more [text](#with-a-header) and a [dead](#dead-link) link
+
+Do (2jf#<prefix>j to jump to a fragment link):
+  gg02jf# j
+
+Then (Check cursor positioned on line: 5, col: 1):
+  Log 'line: ' . line('.') . ', col: ' . col('.')
+
+  AssertEqual 5, line('.')
+  AssertEqual 1, col('.')
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given markdown (A small markdown document):
+  # With a header
+  
+  Some link to <a href="#and-another-one">another one</a>
+
+  # and another one
+
+  some more [text](#with-a-header) and a [dead](#dead-link) link
+
+Do (6j2f#<prefix>j to attempt a jump to a [dead] fragment link):
+  gg06j2f# j
+
+Then (Check cursor positioned on line: 7, col: 47):
+  Log 'line: ' . line('.') . ', col: ' . col('.')
+
+  AssertEqual 7, line('.')
+  AssertEqual 47, col('.')
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given markdown (A small markdown document):
+  # With a header
+  
+  Some link to <a href="#and-another-one">another one</a>
+
+  # and another one
+
+  some more [text](#with-a-header) and a [dead](#dead-link) link
+
+Do (<prefix>L to check for dead links):
+   L
+
+Execute ("#dead-link" present in quickfix list):
+  let g:__mkdx_vader_entries = getqflist()
+  let g:__mkdx_vader_count   = len(g:__mkdx_vader_entries)
+  let g:__mkdx_vader_dead    = get(g:__mkdx_vader_entries, 0, {'text': ''})['text']
+
+  AssertEqual g:__mkdx_vader_count, 1
+  AssertEqual g:__mkdx_vader_dead,  '#dead-link'
+
+  normal! cclose
+
+  unlet g:__mkdx_vader_entries
+  unlet g:__mkdx_vader_count
+  unlet g:__mkdx_vader_dead
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given markdown (A small markdown document):
+  # With a header
+  
+  Some link to <a href="#and-another-one">another one</a>
+
+  # and another one
+
+  some more [text](#with-a-header) and a [dead](#dead-link) link
+
+Do (<prefix>L and select the first [dead] fragment link):
+  gg0 L\<cr>
+
+Then (Check cursor positioned on line: 7, col: 47):
+  Log 'line: ' . line('.') . ', col: ' . col('.')
+
+  AssertEqual 7, line('.')
+  AssertEqual 47, col('.')
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given markdown (Example with <a> tag with "id" or "name" attribute):
+
+  # with a header
+
+  <a id="goto-top"></a>
+  <a name="goto-bottom"></a>
+
+  Go to [top](#goto-top)
+  Go to [top](#goto-bottom)
+
+Do (<prefix>L to check for dead fragment links):
+   L
+
+Then (No dead fragments found):
+  AssertEqual 0, len(getqflist())
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Include: teardown.vader
+

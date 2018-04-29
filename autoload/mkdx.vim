@@ -1,5 +1,6 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
+let s:_has_curl              = executable('curl')
 let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
@@ -138,22 +139,22 @@ fun! s:util.ListLinks()
   while (lnum < limit)
     let line = getline(lnum)
     let col  = 0
-    let len  = len(line)
+    let len  = strlen(line)
 
     while (col < len)
         if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
-        let tcol = match(line[col:], '\](\(#\?[^)]\+\))')
-        let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#\?[^"]\+\)"')
+        let tcol = match(line[col:], '\](\([^)]\+\))')
+        let href = tcol > -1 ? -1 : match(line[col:], 'href="\([^"]\+\)"')
         let html = href > -1
         if ((html && href < 0) || (!html && tcol < 0)) | break | endif
         let col += html ? href : tcol
-        let rgx  = html ? 'href="\(#\?[^"]\+\)"' : '\](\(#\?[^)]\+\))'
+        let rgx  = html ? 'href="\([^"]\+\)"' : '\](\([^)]\+\))'
 
         let matchtext = get(matchlist(line[col:], rgx), 1, -1)
         if (matchtext == -1) | break | endif
 
         call add(links, [lnum, col + (html ? 6 : 2), matchtext])
-        let col += len(matchtext)
+        let col += strlen(matchtext)
     endwhile
 
     let lnum += 1
@@ -178,7 +179,7 @@ fun! s:util.ListIDAnchorLinks()
   while (lnum < limit)
     let line = getline(lnum)
     let col  = 0
-    let len  = len(line)
+    let len  = strlen(line)
 
     while (col < len)
         if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
@@ -190,7 +191,7 @@ fun! s:util.ListIDAnchorLinks()
         if (matchtext == -1) | break | endif
 
         call add(links, [lnum, col, matchtext])
-        let col += len(matchtext)
+        let col += strlen(matchtext)
     endwhile
 
     let lnum += 1
@@ -754,7 +755,7 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (g:mkdx#settings.links.external.enable && s:_can_async && executable('curl'))
+    if (g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
 

@@ -82,6 +82,7 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
   setlocal pumheight=15
   setlocal iskeyword+=\-
+  setlocal completeopt=noinsert,menuone
 endif
 
 if g:mkdx#settings.map.enable == 1

@@ -1,6 +1,8 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
+let s:_has_rg                = executable('rg')
+let s:_has_ag                = executable('ag')
 let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
@@ -11,6 +13,9 @@ let s:util.modifier_mappings = {
       \ 'meta': 'meta',
       \ 'shift': 'shift'
       \ }
+
+fun! s:util._(...)
+endfun
 
 fun! s:util.CsvRowToList(...)
   let line     = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
@@ -600,36 +605,6 @@ fun! s:util.IDAnchorLinksToCompletions()
   return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}})
 endfun
 
-fun! s:util.ContextualComplete()
-  let col   = col('.') - 2
-  let start = col
-  let line  = getline('.')
-
-  while (start > 0 && line[start] != '#')
-    let start -= 1
-  endwhile
-
-  if (line[start] != '#') | return [start, []] | endif
-
-  let ln     = substitute(line[start:col], '-', '\\-', 'g')
-  let compls = extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())
-
-  return [start, filter(compls, {idx, compl -> compl.word =~ ('^' . ln)})]
-endfun
-
-fun! s:util.InsertCompletionHandler(...)
-  let default   = get(a:000, 0, '')
-  let [sl, cpl] = s:util.ContextualComplete()
-  let cpl_count = len(cpl)
-
-  if (cpl_count > 0)
-    call complete(sl + 1, cpl)
-    return cpl_count == 1 ? '' : "\<C-P>"
-  else
-    return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
-  endif
-endfun
-
 fun! s:util.IsInsideLink()
   let col   = col('.')
   let start = col
@@ -647,6 +622,46 @@ fun! s:util.IsInsideLink()
   endif
 
   return mdlink || htmllink
+endfun
+
+fun! s:util.Grep(...)
+  let options = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
+                      \ 'done': s:util._, 'each': s:util._, 'file': expand('%')}, get(a:000, 0, {}))
+
+  return jobstart(
+        \ ['rg', options.pattern, options.file, '--only-matching', '--column'],
+        \ {'on_stdout': options.each, 'on_stderr': options.each, 'on_exit': options.done})
+endfun
+
+fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
+  for line in a:stream
+    let item = s:util.IdentifyGrepLink(line)
+    if (item.type == 'header')
+      let hash           = s:util.HeaderToHash(item.content)
+      let a:hashes[hash] = get(a:hashes, hash, -1) + 1
+      let suffix         = a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash])
+      let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
+      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content) . (a:hashes[hash] > 0 ? ' (' . a:hashes[hash] . ')' : ''), 40))})
+    elseif (item.type == 'anchor')
+      call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+    endif
+  endfor
+endfun
+
+fun! s:util.IdentifyGrepLink(input)
+  let parts = matchlist(a:input, '^\(\d\+\):\(\d\+\):\(.*\)$')[1:3]
+  let lnum  = str2nr(get(parts, 0, 1))
+  let cnum  = str2nr(get(parts, 1, 1))
+  let matched = get(parts, 2, '')
+
+  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }            | endif
+  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
+  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
+  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched }       | endif
+
+  return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun
 
 """"" MAIN FUNCTIONALITY
@@ -672,18 +687,47 @@ fun! mkdx#MergeSettings(...)
 endfun
 
 fun! mkdx#InsertCtrlPHandler()
-  return s:util.InsertCompletionHandler('prev')
+  return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-P>"
 endfun
 
 fun! mkdx#InsertCtrlNHandler()
-  return s:util.InsertCompletionHandler('next')
+  return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-N>"
 endfun
 
 fun! mkdx#CompleteLink()
   if (s:util.IsInsideLink())
-    return "#\<C-X>\<C-U>\<C-P>"
+    return "#\<C-X>\<C-U>"
   endif
   return '#'
+endfun
+
+fun! s:util.ContextualComplete()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start] != '#')
+    let start -= 1
+  endwhile
+
+  if (start < 0)          | return [0,     []] | endif
+  if (line[start] != '#') | return [start, []] | endif
+
+  if (s:_is_nvim && s:_has_rg)
+    let hashes = {}
+    let jid    = s:util.Grep({'pattern': '(name|id)="[^"]+"|^#{1,6}.*$',
+                            \ 'each': function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])})
+
+    sleep 10m
+
+    if complete_check()
+      call jobstop(jid)
+    endif
+
+    return [start, []]
+  else
+    return [start, extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())]
+  endif
 endfun
 
 fun! mkdx#Complete(findstart, base)
@@ -691,17 +735,14 @@ fun! mkdx#Complete(findstart, base)
     let s:util._user_compl = s:util.ContextualComplete()
     return s:util._user_compl[0]
   else
-    let tmp = s:util._user_compl[1]
-    unlet s:util._user_compl
-    return tmp
-  endif
+    return s:util._user_compl[1]
 endfun
 
 fun! mkdx#JumpToHeader()
   let [lnum, cnum] = getpos('.')[1:2]
   let line = getline(lnum)
   let col  = 0
-  let len  = len(line)
+  let len  = strlen(line)
   let lnks = []
   let link = ''
 

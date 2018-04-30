@@ -23,7 +23,7 @@ let s:util.grepopts = {
       \ 'ack':   { 'timeout': 120, 'opts': ['-H', '--column', '--nogroup'] },
       \ 'sift':  { 'timeout': 40,  'opts': ['-n', '--column', '--only-matching'] },
       \ 'grep':  { 'timeout': 120, 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] },
-      \ 'cgrep': { 'timeout': 60,  'opts': ['--regex-pcre', '--format="#f:#n:#,"'] }
+      \ 'cgrep': { 'timeout': 60,  'opts': ['--regex-pcre', '--format="#f:#n:#0"'] }
       \ }
 
 if (s:_has_rg)
@@ -40,7 +40,7 @@ else
   let s:util.grepcmd = 'grep'
 endif
 
-let s:_can_vimgrep_fmt = 1 || has_key(s:util.grepopts, s:util.grepcmd)
+let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
 
 echohl MoreMsg
 echo 's:util.grepcmd =' s:util.grepcmd
@@ -695,13 +695,16 @@ fun! s:util.IdentifyGrepLink(input)
   let lnum  = str2nr(get(parts, 0, 1))
   let cnum  = str2nr(get(parts, 1, 1))
   let matched = get(parts, 2, '')
+  let heof  = s:util.grepcmd == 'cgrep' ? -2 : -1
 
-  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }            | endif
-  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
-  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
-  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
-  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
-  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched }       | endif
+  " echo matched
+
+  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }              | endif
+  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] }   | endif
+  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] }   | endif
+  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] }   | endif
+  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] }   | endif
+  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched[0:heof] } | endif
 
   return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun
@@ -757,7 +760,7 @@ fun! s:util.ContextualComplete()
 
   if (s:_is_nvim && s:_can_vimgrep_fmt)
     let hashes = {}
-    let s:util._complete_jid = s:util.Grep({'pattern': '(name|id)="[^"]+"|^#{1,6}.*$',
+    let s:util._complete_jid = s:util.Grep({'pattern': '^#{1,6}.*$|(name|id)="[^"]+',
                                           \ 'each': function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])})
 
     exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'

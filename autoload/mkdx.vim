@@ -5,6 +5,7 @@ let s:_has_rg                = 0 && executable('rg')
 let s:_has_ag                = 0 && executable('ag')
 let s:_has_ack               = 0 && executable('ack')
 let s:_has_sift              = 0 && executable('sift')
+let s:_has_cgrep             = 1 && executable('cgrep')
 let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
@@ -17,11 +18,12 @@ let s:util.modifier_mappings = {
       \ }
 
 let s:util.grepopts = {
-      \ 'rg':   { 'timeout': 40,  'opts': ['--vimgrep'] },
-      \ 'ag':   { 'timeout': 60,  'opts': ['--vimgrep'] },
-      \ 'sift': { 'timeout': 40,  'opts': ['-n', '--column', '--only-matching'] },
-      \ 'ack':  { 'timeout': 120, 'opts': ['-H', '--column', '--nogroup'] },
-      \ 'grep': { 'timeout': 120, 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ 'rg':    { 'timeout': 40,  'opts': ['--vimgrep'] },
+      \ 'ag':    { 'timeout': 60,  'opts': ['--vimgrep'] },
+      \ 'ack':   { 'timeout': 120, 'opts': ['-H', '--column', '--nogroup'] },
+      \ 'sift':  { 'timeout': 40,  'opts': ['-n', '--column', '--only-matching'] },
+      \ 'grep':  { 'timeout': 120, 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] },
+      \ 'cgrep': { 'timeout': 60,  'opts': ['--regex-pcre', '--format="#f:#n:#,"'] }
       \ }
 
 if (s:_has_rg)
@@ -32,6 +34,8 @@ elseif (s:_has_ag)
   let s:util.grepcmd = 'ag'
 elseif (s:_has_ack)
   let s:util.grepcmd = 'ack'
+elseif (s:_has_cgrep)
+  let s:util.grepcmd = 'cgrep'
 else
   let s:util.grepcmd = 'grep'
 endif

@@ -1,8 +1,10 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
-let s:_has_rg                = executable('rg')
-let s:_has_ag                = executable('ag')
+let s:_has_rg                = 0 && executable('rg')
+let s:_has_ag                = 0 && executable('ag')
+let s:_has_ack               = 0 && executable('ack')
+let s:_has_sift              = 0 && executable('sift')
 let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
@@ -13,6 +15,32 @@ let s:util.modifier_mappings = {
       \ 'meta': 'meta',
       \ 'shift': 'shift'
       \ }
+
+let s:util.grepopts = {
+      \ 'rg':   { 'timeout': 40,  'opts': ['--vimgrep'] },
+      \ 'ag':   { 'timeout': 60,  'opts': ['--vimgrep'] },
+      \ 'sift': { 'timeout': 40,  'opts': ['-n', '--column', '--only-matching'] },
+      \ 'ack':  { 'timeout': 120, 'opts': ['-H', '--column', '--nogroup'] },
+      \ 'grep': { 'timeout': 120, 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ }
+
+if (s:_has_rg)
+  let s:util.grepcmd = 'rg'
+elseif (s:_has_sift)
+  let s:util.grepcmd = 'sift'
+elseif (s:_has_ag)
+  let s:util.grepcmd = 'ag'
+elseif (s:_has_ack)
+  let s:util.grepcmd = 'ack'
+else
+  let s:util.grepcmd = 'grep'
+endif
+
+let s:_can_vimgrep_fmt = 1 || has_key(s:util.grepopts, s:util.grepcmd)
+
+echohl MoreMsg
+echo 's:util.grepcmd =' s:util.grepcmd
+echohl None
 
 fun! s:util._(...)
 endfun
@@ -625,12 +653,21 @@ fun! s:util.IsInsideLink()
 endfun
 
 fun! s:util.Grep(...)
-  let options = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
-                      \ 'done': s:util._, 'each': s:util._, 'file': expand('%')}, get(a:000, 0, {}))
+  let grepopts = extend({'opts': [], 'timeout': 100, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
+  let options  = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
+                      \  'done': s:util._, 'each': s:util._, 'file': expand('%')},
+                      \ get(a:000, 0, {}))
+  let base = [s:util.grepcmd]
+  let base = extend(base, extend(grepopts.pat_flag, [options.pattern]))
+  call add(base, options.file)
+  let base = extend(base, grepopts.opts)
 
-  return jobstart(
-        \ ['rg', options.pattern, options.file, '--only-matching', '--column'],
-        \ {'on_stdout': options.each, 'on_stderr': options.each, 'on_exit': options.done})
+  echom '=============== Base len' len(base) '================'
+  for part in base
+    echom 'Part' part
+  endfor
+
+  return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
 endfun
 
 fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
@@ -641,7 +678,7 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
       let a:hashes[hash] = get(a:hashes, hash, -1) + 1
       let suffix         = a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash])
       let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
-      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content) . (a:hashes[hash] > 0 ? ' (' . a:hashes[hash] . ')' : ''), 40))})
+      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content), 35))})
     elseif (item.type == 'anchor')
       call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
     endif
@@ -649,7 +686,8 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
 endfun
 
 fun! s:util.IdentifyGrepLink(input)
-  let parts = matchlist(a:input, '^\(\d\+\):\(\d\+\):\(.*\)$')[1:3]
+  let ml    = matchlist(a:input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')
+  let parts = ml[2:5]
   let lnum  = str2nr(get(parts, 0, 1))
   let cnum  = str2nr(get(parts, 1, 1))
   let matched = get(parts, 2, '')
@@ -713,15 +751,15 @@ fun! s:util.ContextualComplete()
   if (start < 0)          | return [0,     []] | endif
   if (line[start] != '#') | return [start, []] | endif
 
-  if (s:_is_nvim && s:_has_rg)
+  if (s:_is_nvim && s:_can_vimgrep_fmt)
     let hashes = {}
-    let jid    = s:util.Grep({'pattern': '(name|id)="[^"]+"|^#{1,6}.*$',
-                            \ 'each': function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])})
+    let s:util._complete_jid = s:util.Grep({'pattern': '(name|id)="[^"]+"|^#{1,6}.*$',
+                                          \ 'each': function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])})
 
-    sleep 10m
+    exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
 
     if complete_check()
-      call jobstop(jid)
+      call jobstop(s:util._complete_jid)
     endif
 
     return [start, []]

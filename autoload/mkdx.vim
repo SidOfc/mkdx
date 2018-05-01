@@ -1,6 +1,14 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
-let s:_can_async             = s:_is_nvim || has('job')
+let s:_has_curl              = executable('curl')
+let s:_has_rg                = 1 && executable('rg')
+let s:_has_ag                = s:_has_rg    || executable('ag')
+let s:_has_cgrep             = s:_has_ag    || executable('cgrep')
+let s:_has_ack               = s:_has_cgrep || executable('ack')
+let s:_has_pt                = s:_has_ack   || executable('pt')
+let s:_has_ucg               = s:_has_pt    || executable('ucg')
+let s:_has_sift              = s:_has_ucg   || executable('sift')
+let s:_can_async             = s:_is_nvim   || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
@@ -10,6 +18,48 @@ let s:util.modifier_mappings = {
       \ 'meta': 'meta',
       \ 'shift': 'shift'
       \ }
+
+let s:util.grepopts = {
+      \ 'rg':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--vimgrep', '-o'] },
+      \ 'ag':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--vimgrep'] },
+      \ 'cgrep': { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
+      \ 'ack':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-H', '--column', '--nogroup'] },
+      \ 'pt':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
+      \ 'ucg':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--column'] },
+      \ 'sift':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-n', '--column', '--only-matching'] },
+      \ 'grep':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ }
+
+if (s:_has_rg)
+  let s:util.grepcmd = 'rg'
+elseif (s:_has_ag)
+  let s:util.grepcmd = 'ag'
+elseif (s:_has_cgrep)
+  let s:util.grepcmd = 'cgrep'
+elseif (s:_has_ack)
+  let s:util.grepcmd = 'ack'
+elseif (s:_has_pt)
+  let s:util.grepcmd = 'pt'
+elseif (s:_has_ucg)
+  let s:util.grepcmd = 'ucg'
+elseif (s:_has_sift)
+  let s:util.grepcmd = 'sift'
+else
+  let s:util.grepcmd = 'grep'
+endif
+
+let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
+
+fun! s:util._(...)
+endfun
 
 fun! s:util.CsvRowToList(...)
   let line     = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
@@ -138,22 +188,22 @@ fun! s:util.ListLinks()
   while (lnum < limit)
     let line = getline(lnum)
     let col  = 0
-    let len  = len(line)
+    let len  = strlen(line)
 
     while (col < len)
         if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
-        let tcol = match(line[col:], '\](\(#\?[^)]\+\))')
-        let href = tcol > -1 ? -1 : match(line[col:], 'href="\(#\?[^"]\+\)"')
+        let tcol = match(line[col:], '\](\([^)]\+\))')
+        let href = tcol > -1 ? -1 : match(line[col:], 'href="\([^"]\+\)"')
         let html = href > -1
         if ((html && href < 0) || (!html && tcol < 0)) | break | endif
         let col += html ? href : tcol
-        let rgx  = html ? 'href="\(#\?[^"]\+\)"' : '\](\(#\?[^)]\+\))'
+        let rgx  = html ? 'href="\([^"]\+\)"' : '\](\([^)]\+\))'
 
         let matchtext = get(matchlist(line[col:], rgx), 1, -1)
         if (matchtext == -1) | break | endif
 
         call add(links, [lnum, col + (html ? 6 : 2), matchtext])
-        let col += len(matchtext)
+        let col += strlen(matchtext)
     endwhile
 
     let lnum += 1
@@ -178,7 +228,7 @@ fun! s:util.ListIDAnchorLinks()
   while (lnum < limit)
     let line = getline(lnum)
     let col  = 0
-    let len  = len(line)
+    let len  = strlen(line)
 
     while (col < len)
         if (tolower(synIDattr(synID(lnum, 1, 0), 'name')) == 'markdowncode') | break | endif
@@ -190,7 +240,7 @@ fun! s:util.ListIDAnchorLinks()
         if (matchtext == -1) | break | endif
 
         call add(links, [lnum, col, matchtext])
-        let col += len(matchtext)
+        let col += strlen(matchtext)
     endwhile
 
     let lnum += 1
@@ -599,36 +649,6 @@ fun! s:util.IDAnchorLinksToCompletions()
   return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}})
 endfun
 
-fun! s:util.ContextualComplete()
-  let col   = col('.') - 2
-  let start = col
-  let line  = getline('.')
-
-  while (start > 0 && line[start] != '#')
-    let start -= 1
-  endwhile
-
-  if (line[start] != '#') | return [start, []] | endif
-
-  let ln     = substitute(line[start:col], '-', '\\-', 'g')
-  let compls = extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())
-
-  return [start, filter(compls, {idx, compl -> compl.word =~ ('^' . ln)})]
-endfun
-
-fun! s:util.InsertCompletionHandler(...)
-  let default   = get(a:000, 0, '')
-  let [sl, cpl] = s:util.ContextualComplete()
-  let cpl_count = len(cpl)
-
-  if (cpl_count > 0)
-    call complete(sl + 1, cpl)
-    return cpl_count == 1 ? '' : "\<C-P>"
-  else
-    return default == 'next' ? "\<C-N>" : (default == 'prev' ? "\<C-P>" : '')
-  endif
-endfun
-
 fun! s:util.IsInsideLink()
   let col   = col('.')
   let start = col
@@ -648,8 +668,64 @@ fun! s:util.IsInsideLink()
   return mdlink || htmllink
 endfun
 
+fun! s:util.Grep(...)
+  let grepopts = extend({'opts': [], 'timeout': 100, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
+  let options  = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
+                      \  'done': s:util._, 'each': s:util._, 'file': expand('%')},
+                      \ get(a:000, 0, {}))
+  let base = [s:util.grepcmd]
+  let base = extend(base, extend(grepopts.pat_flag, [options.pattern]))
+  call add(base, options.file)
+  let base = extend(base, grepopts.opts)
+
+  return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
+endfun
+
+fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
+  for line in a:stream
+    let item = s:util.IdentifyGrepLink(line)
+    if (item.type == 'header')
+      let hash           = s:util.HeaderToHash(item.content)
+      let a:hashes[hash] = get(a:hashes, hash, -1) + 1
+      let suffix         = a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash])
+      let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
+      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content), 35))})
+    elseif (item.type == 'anchor')
+      call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+    endif
+  endfor
+endfun
+
+fun! s:util.IdentifyGrepLink(input)
+  let input = s:util.grepcmd == 'cgrep' ? a:input[1:-2] : a:input
+  let ml    = matchlist(input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')
+  let parts = ml[2:5]
+  let lnum  = str2nr(get(parts, 0, 1))
+  let cnum  = str2nr(get(parts, 1, 1))
+  let matched = get(parts, 2, '')
+
+  if (index(['pt', 'ag', 'ucg', 'ack'], s:util.grepcmd) > -1)
+    let mtc = matchlist(matched[(cnum - 1):], '\(id\|name\)="[^"]\+"\|\]([^)]\+)\|^#\{1,6}.*$')
+    let tmp = get(mtc, 0, '')
+    let anc = index(['id', 'name'], get(mtc, 1, '')) > -1
+    let matched = empty(tmp) ? matched : (anc ? tmp[:-1] : tmp)
+  endif
+
+  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }            | endif
+  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
+  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
+  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched }       | endif
+
+  return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
+endfun
+
 """"" MAIN FUNCTIONALITY
 let s:HASH = type({})
+let s:LIST = type([])
+let s:INT  = type(1)
+let s:STR  = type('')
 fun! mkdx#MergeSettings(...)
   let a = get(a:000, 0, {})
   let b = get(a:000, 1, {})
@@ -671,18 +747,43 @@ fun! mkdx#MergeSettings(...)
 endfun
 
 fun! mkdx#InsertCtrlPHandler()
-  return s:util.InsertCompletionHandler('prev')
+  return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-P>"
 endfun
 
 fun! mkdx#InsertCtrlNHandler()
-  return s:util.InsertCompletionHandler('next')
+  return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-N>"
 endfun
 
 fun! mkdx#CompleteLink()
   if (s:util.IsInsideLink())
-    return "#\<C-X>\<C-U>\<C-P>"
+    return "#\<C-X>\<C-U>"
   endif
   return '#'
+endfun
+
+fun! s:util.ContextualComplete()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start] != '#')
+    let start -= 1
+  endwhile
+
+  if (line[start] != '#') | return [start, []] | endif
+
+  if (s:_is_nvim && s:_can_vimgrep_fmt)
+    let hashes = {}
+    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
+    let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
+    let s:util._complete_jid = s:util.Grep(opts)
+
+    exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
+
+    return [start, []]
+  else
+    return [start, extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())]
+  endif
 endfun
 
 fun! mkdx#Complete(findstart, base)
@@ -690,17 +791,14 @@ fun! mkdx#Complete(findstart, base)
     let s:util._user_compl = s:util.ContextualComplete()
     return s:util._user_compl[0]
   else
-    let tmp = s:util._user_compl[1]
-    unlet s:util._user_compl
-    return tmp
-  endif
+    return s:util._user_compl[1]
 endfun
 
 fun! mkdx#JumpToHeader()
   let [lnum, cnum] = getpos('.')[1:2]
   let line = getline(lnum)
   let col  = 0
-  let len  = len(line)
+  let len  = strlen(line)
   let lnks = []
   let link = ''
 
@@ -754,7 +852,7 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (g:mkdx#settings.links.external.enable && s:_can_async && executable('curl'))
+    if (g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
 

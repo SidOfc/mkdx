@@ -2,13 +2,13 @@
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
 let s:_has_rg                = 1 && executable('rg')
-let s:_has_ag                = 1 && executable('ag')
-let s:_has_cgrep             = 1 && executable('cgrep')
-let s:_has_ack               = 1 && executable('ack')
-let s:_has_pt                = 1 && executable('pt')
-let s:_has_ucg               = 1 && executable('ucg')
-let s:_has_sift              = 1 && executable('sift')
-let s:_can_async             = s:_is_nvim || has('job')
+let s:_has_ag                = s:_has_rg    || executable('ag')
+let s:_has_cgrep             = s:_has_ag    || executable('cgrep')
+let s:_has_ack               = s:_has_cgrep || executable('ack')
+let s:_has_pt                = s:_has_ack   || executable('pt')
+let s:_has_ucg               = s:_has_pt    || executable('ucg')
+let s:_has_sift              = s:_has_ucg   || executable('sift')
+let s:_can_async             = s:_is_nvim   || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',

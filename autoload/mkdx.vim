@@ -1,13 +1,13 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
-let s:_has_rg                = 0 && executable('rg')
-let s:_has_ag                = 0 && executable('ag')
-let s:_has_ack               = 0 && executable('ack')
-let s:_has_sift              = 0 && executable('sift')
-let s:_has_cgrep             = 0 && executable('cgrep')
-let s:_has_pt                = 0 && executable('pt')
+let s:_has_rg                = 1 && executable('rg')
+let s:_has_ag                = 1 && executable('ag')
+let s:_has_cgrep             = 1 && executable('cgrep')
+let s:_has_ack               = 1 && executable('ack')
+let s:_has_pt                = 1 && executable('pt')
 let s:_has_ucg               = 1 && executable('ucg')
+let s:_has_sift              = 1 && executable('sift')
 let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
@@ -20,20 +20,26 @@ let s:util.modifier_mappings = {
       \ }
 
 let s:util.grepopts = {
-      \ 'rg':    { 'timeout': 50,  'opts': ['--vimgrep'] },
-      \ 'ag':    { 'timeout': 50,  'opts': ['--vimgrep'] },
-      \ 'ack':   { 'timeout': 100, 'opts': ['-H', '--column', '--nogroup'] },
-      \ 'ucg':   { 'timeout': 50,  'opts': ['--column'] },
-      \ 'sift':  { 'timeout': 100, 'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'timeout': 100, 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] },
-      \ 'cgrep': { 'timeout': 50,  'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
-      \ 'pt':    { 'timeout': 50,  'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] }
+      \ 'rg':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--vimgrep', '-o'] },
+      \ 'ag':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--vimgrep'] },
+      \ 'cgrep': { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
+      \ 'ack':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-H', '--column', '--nogroup'] },
+      \ 'pt':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
+      \ 'ucg':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['--column'] },
+      \ 'sift':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-n', '--column', '--only-matching'] },
+      \ 'grep':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
 if (s:_has_rg)
   let s:util.grepcmd = 'rg'
-elseif (s:_has_sift)
-  let s:util.grepcmd = 'sift'
 elseif (s:_has_ag)
   let s:util.grepcmd = 'ag'
 elseif (s:_has_cgrep)
@@ -44,13 +50,11 @@ elseif (s:_has_pt)
   let s:util.grepcmd = 'pt'
 elseif (s:_has_ucg)
   let s:util.grepcmd = 'ucg'
+elseif (s:_has_sift)
+  let s:util.grepcmd = 'sift'
 else
   let s:util.grepcmd = 'grep'
 endif
-
-echohl MoreMsg
-echo s:util.grepcmd
-echohl None
 
 let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
 
@@ -674,11 +678,6 @@ fun! s:util.Grep(...)
   call add(base, options.file)
   let base = extend(base, grepopts.opts)
 
-  echom '=============== Base len' len(base) '================'
-  for part in base
-    echom 'Part' part
-  endfor
-
   return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
 endfun
 
@@ -698,37 +697,35 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
 endfun
 
 fun! s:util.IdentifyGrepLink(input)
-  let ml    = matchlist(a:input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')
+  let input = s:util.grepcmd == 'cgrep' ? a:input[1:-2] : a:input
+  let ml    = matchlist(input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')
   let parts = ml[2:5]
   let lnum  = str2nr(get(parts, 0, 1))
   let cnum  = str2nr(get(parts, 1, 1))
   let matched = get(parts, 2, '')
-  let cgroff  = s:util.grepcmd == 'cgrep' ? -2 : -1
 
-  if (index(['pt', 'ag', 'ack'], s:util.grepcmd))
-    let tmp = get(matchlist(matched[(cnum - 1):], '\(id\|name\)="[^"]\+"\|\]([^)]\+)\|^#\{1,6}.*$'), 0, '')
-    let matched = empty(tmp) ? matched : tmp
+  if (index(['pt', 'ag', 'ucg', 'ack'], s:util.grepcmd) > -1)
+    let mtc = matchlist(matched[(cnum - 1):], '\(id\|name\)="[^"]\+"\|\]([^)]\+)\|^#\{1,6}.*$')
+    let tmp = get(mtc, 0, '')
+    let anc = index(['id', 'name'], get(mtc, 1, '')) > -1
+    let matched = empty(tmp) ? matched : (anc ? tmp[:-1] : tmp)
   endif
 
-  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }                | endif
-  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] }     | endif
-  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] }     | endif
-  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] }     | endif
-  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] }     | endif
-  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched[0:cgroff] } | endif
+  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }            | endif
+  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
+  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
+  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched }       | endif
 
   return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun
 
-fun! mkdx#SetGrepCmd(cmd)
-  let s:util.grepcmd = a:cmd
-  echohl MoreMsg
-  echo 's:util.grepcmd =' a:cmd
-  echohl None
-endfun
-
 """"" MAIN FUNCTIONALITY
 let s:HASH = type({})
+let s:LIST = type([])
+let s:INT  = type(1)
+let s:STR  = type('')
 fun! mkdx#MergeSettings(...)
   let a = get(a:000, 0, {})
   let b = get(a:000, 1, {})
@@ -777,14 +774,11 @@ fun! s:util.ContextualComplete()
 
   if (s:_is_nvim && s:_can_vimgrep_fmt)
     let hashes = {}
-    let s:util._complete_jid = s:util.Grep({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
-                                          \ 'each': function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])})
+    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
+    let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
+    let s:util._complete_jid = s:util.Grep(opts)
 
     exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
-
-    if complete_check()
-      call jobstop(s:util._complete_jid)
-    endif
 
     return [start, []]
   else

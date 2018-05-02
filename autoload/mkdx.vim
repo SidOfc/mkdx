@@ -61,6 +61,26 @@ let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
 fun! s:util._(...)
 endfun
 
+fun! s:util.GrepLinkToQF(greplink, bufnr)
+  return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.CleanHeader(a:greplink.content)}
+endfun
+
+fun! s:util.EchoHeaderCount(...)
+  let total = len(getqflist())
+  if (total > 0) | echohl MoreMsg | else | echohl ErrorMsg | endif
+  echo total . ' header' . (total == 1 ? '' : 's')
+  echohl None
+  return total
+endfun
+
+fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
+  let qf_entries = map(filter(a:stream, {idx, line -> !empty(line)}),
+                     \ {idx, line -> s:util.GrepLinkToQF(s:util.IdentifyGrepLink(line), a:bufnr)})
+
+  if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
+  if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+endfun
+
 fun! s:util.CsvRowToList(...)
   let line     = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
   let len      = strlen(line) - 1
@@ -720,11 +740,11 @@ fun! s:util.IdentifyGrepLink(input)
   endif
 
   if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, '_col': cnum, 'col': cnum,     'content': '' }            | endif
+  if (matched[0]   == '#')    | return { 'type': 'header', 'lnum': lnum, '_col': cnum, 'col': cnum,     'content': matched }       | endif
   if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
   if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
   if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
   if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
-  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, '_col': cnum, 'col': cnum,     'content': matched }       | endif
 
   return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun
@@ -1176,26 +1196,23 @@ fun! mkdx#UpdateTOC()
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
-  let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
-
-  if (get(a:000, 0, 1))
-    let dl = len(qflist)
-
-    if (dl > 0)
-      call setqflist(qflist)
-      exe 'copen'
-      echohl MoreMsg
-    else
-      call setqflist([])
-      exe 'cclose'
-      echohl ErrorMsg
-    endif
-
-    echo dl . ' header' . (dl == 1 ? '' : 's')
-    echohl None
+  let open_qf = get(a:000, 0, 1)
+  if (open_qf && s:_can_vimgrep_fmt)
+    call setqflist([])
+    let current_bufnum       = bufnr('%')
+    let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
+                                          \ 'each': function(s:util.AddHeaderToQuickfix, [current_bufnum]),
+                                          \ 'done': function(s:util.EchoHeaderCount)})
   else
-    return qflist
-  endif
+    let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
+
+    if (open_qf)
+      call setqflist(qflist)
+      if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+    else
+      return qflist
+    endif
+  end
 endfun
 
 fun! mkdx#GenerateTOC(...)

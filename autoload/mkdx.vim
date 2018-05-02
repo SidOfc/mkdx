@@ -678,11 +678,16 @@ fun! s:util.Grep(...)
   call add(base, options.file)
   let base = extend(base, grepopts.opts)
 
-  return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
+  if (s:_is_nvim)
+    return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
+  elseif (s:_can_async)
+    return job_start(base, {'pty': 0, 'out_cb': options.each})
+  endif
 endfun
 
 fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
-  for line in a:stream
+  let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
+  for line in stream
     let item = s:util.IdentifyGrepLink(line)
     if (item.type == 'header')
       let hash           = s:util.HeaderToHash(item.content)
@@ -772,7 +777,7 @@ fun! s:util.ContextualComplete()
 
   if (line[start] != '#') | return [start, []] | endif
 
-  if (s:_is_nvim && s:_can_vimgrep_fmt)
+  if (s:_can_vimgrep_fmt)
     let hashes = {}
     let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])

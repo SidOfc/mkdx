@@ -1,0 +1,12 @@
+Include: setup.vader
+
+Include: components/checkboxes.vader
+Include: components/links.vader
+Include: components/lists.vader
+Include: components/table-of-contents.vader
+Include: components/tables.vader
+Include: components/toggles.vader
+Include: components/wrapping.vader
+
+Include: teardown.vader
+

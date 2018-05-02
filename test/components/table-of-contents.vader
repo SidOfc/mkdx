@@ -1,5 +1,3 @@
-Include: setup.vader
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Execute (Disable TOC in <details />):
@@ -92,5 +90,4 @@ Expect (An updated table of contents):
 
 Execute (Reset settings):
   let g:mkdx#settings.toc.details.enable = 0
-
-Include: teardown.vader
+  let g:mkdx#settings.toc.text = 'YOLO'

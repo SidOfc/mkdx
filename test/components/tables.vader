@@ -1,5 +1,3 @@
-Include: setup.vader
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (Some rows of unquoted CSV content):
@@ -55,5 +53,3 @@ Expect (A markdown table):
   | Kenny McCormick |  10 |  Male   |
   |     Stan Mar"sh |  10 |  Male   |
   | K,le Brovlofski |  10 |  Male   |
-
-Include: teardown.vader

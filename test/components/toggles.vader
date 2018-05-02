@@ -1,5 +1,3 @@
-Include: setup.vader
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (space separated inline text mapping):
@@ -141,5 +139,3 @@ Do (<prefix>ll<prefix>ll):
 
 Expect (The line to be unchanged):
   hello world
-
-Include: teardown.vader

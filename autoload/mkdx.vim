@@ -696,7 +696,10 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
       let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
       call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content), 35))})
     elseif (item.type == 'anchor')
-      call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+      let line_part = substitute(getline(item.lnum), '`.*`', '', 'g')[(item._col - 1):]
+      if (!empty(matchlist(line_part, '\(name\|id\)="[^"]\+"')))
+        call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+      endif
     endif
   endfor
 endfun
@@ -716,12 +719,12 @@ fun! s:util.IdentifyGrepLink(input)
     let matched = empty(tmp) ? matched : (anc ? tmp[:-1] : tmp)
   endif
 
-  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, 'col': cnum,     'content': '' }            | endif
-  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
-  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
-  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
-  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
-  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, 'col': cnum,     'content': matched }       | endif
+  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, '_col': cnum, 'col': cnum,     'content': '' }            | endif
+  if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
+  if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
+  if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
+  if (matched =~ '^#\{1,6} ') | return { 'type': 'header', 'lnum': lnum, '_col': cnum, 'col': cnum,     'content': matched }       | endif
 
   return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun

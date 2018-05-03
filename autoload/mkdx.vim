@@ -20,21 +20,21 @@ let s:util.modifier_mappings = {
       \ }
 
 let s:util.grepopts = {
-      \ 'rg':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'rg':    { 'timeout': 35,
       \            'opts': ['--vimgrep', '-o'] },
-      \ 'ag':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'ag':    { 'timeout': 35,
       \            'opts': ['--vimgrep'] },
-      \ 'cgrep': { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'cgrep': { 'timeout': 35,
       \            'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
-      \ 'ack':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'ack':   { 'timeout': 35,
       \            'opts': ['-H', '--column', '--nogroup'] },
-      \ 'pt':    { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'pt':    { 'timeout': 35,
       \            'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
-      \ 'ucg':   { 'timeout': 35, 'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'ucg':   { 'timeout': 35,
       \            'opts': ['--column'] },
-      \ 'sift':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'sift':  { 'timeout': 35,
       \            'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'timeout': 35,  'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+      \ 'grep':  { 'timeout': 35,
       \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
@@ -57,12 +57,36 @@ else
 endif
 
 let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
+let s:_testing         = 0
+
+fun! mkdx#testing(val)
+  let s:_testing = a:val == 1 ? 1 : 0
+endfun
 
 fun! s:util._(...)
 endfun
 
 fun! s:util.GrepLinkToQF(greplink, bufnr)
   return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.CleanHeader(a:greplink.content)}
+endfun
+
+fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
+  if (s:util._header_found) | return | endif
+  let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
+  for line in stream
+    let item = s:util.IdentifyGrepLink(line)
+    let hash = item.type == 'anchor' ? 'henk' : s:util.HeaderToHash(getline(item.lnum))
+    let a:hashes[hash] = get(a:hashes, hash, -1) + 1
+    let suffixed_hash  = hash . (a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash]))
+    if (a:link == suffixed_hash)
+      let s:util._header_found = 1
+      if (g:mkdx#settings.links.fragment.jumplist)
+        normal! m'0
+      endif
+      call cursor(item.lnum, 0)
+      break
+    endif
+  endfor
 endfun
 
 fun! s:util.EchoHeaderCount(...)
@@ -74,7 +98,8 @@ fun! s:util.EchoHeaderCount(...)
 endfun
 
 fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
-  let qf_entries = map(filter(a:stream, {idx, line -> !empty(line)}),
+  let stream     = type(a:stream) == s:LIST ? a:stream : [a:stream]
+  let qf_entries = map(filter(stream, {idx, line -> !empty(line)}),
                      \ {idx, line -> s:util.GrepLinkToQF(s:util.IdentifyGrepLink(line), a:bufnr)})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
@@ -800,7 +825,7 @@ fun! s:util.ContextualComplete()
 
   if (line[start] != '#') | return [start, []] | endif
 
-  if (s:_can_vimgrep_fmt)
+  if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
     let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
@@ -831,11 +856,12 @@ fun! mkdx#JumpToHeader()
   let link = ''
 
   while (col < len)
-    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|<a .*href="\([^"]\+\)".*>.*</a>'
+    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|<a .*\(name\|id\|href\)="\([^"]\+\)".*>.*</a>'
     let tcol = match(line[col:], rgx)
     let matches   = matchlist(line[col:], rgx)
     let matchtext = get(matches, 0, '')
-    let addr      = get(matches, matchtext[0:1] == '<a' ? 2 : 1, '')
+    let is_anchor = matchtext[0:1] == '<a'
+    let addr      = get(matches, is_anchor ? 3 : 1, '')
     let matchlen  = strlen(matchtext)
     if (matchlen < 1) | break | endif
 
@@ -843,35 +869,43 @@ fun! mkdx#JumpToHeader()
     let sps  = col - matchlen
     let eps  = col - 1
 
-    if (sps <= cnum && eps >= cnum && addr[0] == '#')
-      let link = addr[1:]
+    if (is_anchor && index(['name', 'id'], get(matches, 2, '')) > -1) | return | endif
+    if (sps <= cnum && eps >= cnum)
+      let link = addr[(addr[0] == '#' ? 1 : 0):]
       break
-    elseif (addr[0] == '#')
-      call add(lnks, addr[1:])
+    else
+      call add(lnks, addr[(addr[0] == '#' ? 1 : 0):])
     endif
   endwhile
 
   if (empty(link) && !empty(lnks)) | let link = lnks[0] | endif
   if (empty(link)) | return | endif
 
-  let headers = s:util.ListHeaders()
+  if (!s:_testing && s:_can_vimgrep_fmt)
+    let hashes                     = {}
+    let s:util._header_found       = 0
+    let s:util._jump_to_header_jid = s:util.Grep({'pattern': '^#{1,6} .*$|(name|id)="[^"]+"',
+                                                \ 'each': function(s:util.JumpToHeader, [link, hashes])})
+  else
+    let headers = s:util.ListHeaders()
 
-  for [lnum, column, hash] in s:util.ListIDAnchorLinks()
-    if (index(headers, '#' . hash) == -1)
-      call add(headers, [lnum, column, 'anchor:' . hash, hash, ''])
-    endif
-  endfor
-
-  for [lnum, colnum, header, hash, sfx] in headers
-    if (link == (hash . sfx))
-      if (g:mkdx#settings.links.fragment.jumplist)
-        normal! m'0
+    for [lnum, column, hash] in s:util.ListIDAnchorLinks()
+      if (index(headers, '#' . hash) == -1)
+        call add(headers, [lnum, column, hash, ''])
       endif
+    endfor
 
-      call cursor(lnum, 0)
-      break
-    endif
-  endfor
+    for [lnum, colnum, header, hash, sfx] in headers
+      if (link == (hash . sfx))
+        if (g:mkdx#settings.links.fragment.jumplist)
+          normal! m'0
+        endif
+
+        call cursor(lnum, 0)
+        break
+      endif
+    endfor
+  endif
 endfun
 
 fun! mkdx#QuickfixDeadLinks(...)
@@ -880,7 +914,7 @@ fun! mkdx#QuickfixDeadLinks(...)
     let dl = len(dead)
 
     call setqflist(dead)
-    if (g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
+    if (!s:_testing && g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
 
@@ -1197,7 +1231,7 @@ endfun
 
 fun! mkdx#QuickfixHeaders(...)
   let open_qf = get(a:000, 0, 1)
-  if (open_qf && s:_can_vimgrep_fmt)
+  if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
     let current_bufnum       = bufnr('%')
     let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',

@@ -94,6 +94,7 @@ settings and examples with default mappings.
         <li><a href="#unmapping-functionality-using-nop">Unmapping functionality using <code>&lt;Nop&gt;</code></a></li>
         <li><a href="#unmapping-functionality-using-plug">Unmapping functionality using <code>&lt;Plug&gt;</code></a></li>
     </ul></li>
+    <li><a href="#supported-grep-programs">Supported <code>grep</code> programs</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
@@ -1197,6 +1198,21 @@ The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next)`. To disable it
 ```viml
 map <Plug> <Plug>(mkdx-checkbox-next)
 ```
+
+# Supported `grep` programs
+
+When your vim `has('job')` or `has('nvim')`, mkdx will look for a grep program, the following are recognized:
+
+- [`rg`](https://github.com/BurntSushi/ripgrep)
+- [`ag`](https://github.com/ggreer/the_silver_searcher)
+- [`cgrep`](https://github.com/awgn/cgrep)
+- [`ack`](https://github.com/beyondgrep/ack2)
+- [`pt`](https://github.com/monochromegane/the_platinum_searcher)
+- [`ucg`](https://github.com/gvansickle/ucg)
+- [`sift`](https://github.com/svent/sift)
+
+The listed programs are searched in order, if a program is found, it will be used in [various](#insert-mode-fragment-completion) [different](#jump-to-header) places.
+This will prevent your editor from freezing and it'll be blazing fast compared to the builtin Vimscript fallbacks.
 
 # Contributing
 

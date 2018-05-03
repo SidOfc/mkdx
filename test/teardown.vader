@@ -9,3 +9,4 @@ Execute (Teardown):
   unlet g:vim_dev__vader_ft
   unlet g:vim_dev__vader_settings
 
+  call mkdx#testing(0)

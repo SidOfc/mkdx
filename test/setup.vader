@@ -1,12 +1,12 @@
 Execute (Setup):
-  let g:vim_dev__vader_ft = &ft
-  setf markdown
-  let g:vim_dev__vader_sw = &sw
-  set sw=4
-  let g:vim_dev__vader_autoindent = &autoindent
-  set autoindent
-  
   if (!exists('g:vim_dev__vader_settings'))
+    let g:vim_dev__vader_ft = &ft
+    setf markdown
+    let g:vim_dev__vader_sw = &sw
+    set sw=4
+    let g:vim_dev__vader_autoindent = &autoindent
+    set autoindent
+
     let g:vim_dev__vader_settings = deepcopy(g:mkdx#settings)
     let g:mkdx#settings = {
         \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
@@ -26,5 +26,7 @@ Execute (Setup):
         \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
         \ 'highlight':               { 'enable': 0 }
       \ }
+
+    call mkdx#testing(1)
   endif
 

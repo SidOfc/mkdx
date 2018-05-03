@@ -84,6 +84,7 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
         normal! m'0
       endif
       call cursor(item.lnum, 0)
+      redraw
       break
     endif
   endfor

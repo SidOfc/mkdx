@@ -625,7 +625,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -749,7 +749,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1230,6 +1230,12 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 05-05-2018 VERSION 1.5.1
+
+- [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available
+- [jumping to headers](#jump-to-header) uses a [grep program](#supported-grep-programs) and `job` when available
+- [insert autocompletion](#insert-mode-fragment-completion) uses a [grep program](#supported-grep-programs) and `job` when available
+
 ## 28-04-2018 VERSION 1.5.0
 
 - Add insert mode completion for [fragment links](#insert-mode-fragment-completion).
@@ -1244,7 +1250,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for columns in a table generated from CSV.
 - ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for specific column names or indexes in a table generated from CSV.
 - List items require a space after them to be recognized as a list item.
-
-## 15-04-2018 VERSION 1.4.2
-
-- [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data

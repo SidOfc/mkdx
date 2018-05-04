@@ -1,3 +1,7 @@
+## 15-04-2018 VERSION 1.4.2
+
+- [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data
+
 ## 08-04-2018 VERSION 1.4.1
 
 - [Dead link detection](#dead-link-detection) will now also scan any `href=""` attribute content.

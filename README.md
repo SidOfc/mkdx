@@ -1210,6 +1210,7 @@ When your vim `has('job')` or `has('nvim')`, mkdx will look for a grep program, 
 - [`pt`](https://github.com/monochromegane/the_platinum_searcher)
 - [`ucg`](https://github.com/gvansickle/ucg)
 - [`sift`](https://github.com/svent/sift)
+- `grep` / `ggrep`
 
 The listed programs are searched in order, if a program is found, it will be used in [various](#insert-mode-fragment-completion) [different](#jump-to-header) places.
 This will prevent your editor from freezing and it'll be blazing fast compared to the builtin Vimscript fallbacks.

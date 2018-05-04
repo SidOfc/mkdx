@@ -53,7 +53,7 @@ elseif (s:_has_ucg)
 elseif (s:_has_sift)
   let s:util.grepcmd = 'sift'
 else
-  let s:util.grepcmd = 'grep'
+  let s:util.grepcmd = executable('cgrep') ? 'cgrep' : 'grep'
 endif
 
 let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)

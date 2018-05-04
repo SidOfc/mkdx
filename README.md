@@ -659,8 +659,8 @@ To overwrite a setting while editing:
 
 ## `g:mkdx#settings.links.external.enable`
 
-Check external links in the background disabled by default.
-Requests will be sent using a `curl` command which looks like this:
+Check external links in the background is disabled by default.
+HTTP requests will be sent using a `curl` command with the following layout:
 
 ```sh
 curl -L -I -s --no-keepalive -o /dev/null -A [g:mkdx#settings.links.external.user_agent] -m [g:mkdx#settings.links.external.timeout] -w "%{http_code}" [URL]'

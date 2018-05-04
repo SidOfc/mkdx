@@ -98,9 +98,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#05-05-2018-version-151">05-05-2018 VERSION 1.5.1</a></li>
         <li><a href="#28-04-2018-version-150">28-04-2018 VERSION 1.5.0</a></li>
         <li><a href="#27-04-2018-version-143">27-04-2018 VERSION 1.4.3</a></li>
-        <li><a href="#15-04-2018-version-142">15-04-2018 VERSION 1.4.2</a></li>
 </ul>
 </details>
 

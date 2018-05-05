@@ -538,19 +538,20 @@ See the |mkdx-mappings| section to see how each mapping works.
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
 
-    - `[ ]` inactive
-    - `[-]` active
+    - `[ ]` unstarted
+    - `[-]` incomplete
     - `[x]` completed
 
 Note:
 
-There must be at least a minimum of 3 checkbox states. They are used by the
+There must be at least a minimum of 2 checkbox states. These are used by the
 checklist toggler which updates the state of parent tasks automatically.
-This is done by using one state that represents inactive status
-(`g:mkdx#settings.checkbox.toggles[0]`), another one for incomplete
-(`g:mkdx#settings.checkbox.toggles[-2]`) and finally, complete
-(`g:mkdx#settings.checkbox.toggles[-1]`). This is required because it needs to work
-according to user provided toggles list.
+The first of the provided states (`g:mkdx#settings.checkbox.toggles[0]`) will
+be used as `unstarted` value. The last of the provided states
+(`g:mkdx#settings.checkbox.toggles[-1]`) will be used as `completed` value.
+
+If the list contains more than 2 states, the second-to-last element
+(`g:mkdx#settings.checkbox.toggles[-2]`) will be used as `incomplete` value.
 
 ==============================================================================
 `g:mkdx#settings.checkbox.update_tree = 2`     *mkdx-setting-checkbox-update-tree*

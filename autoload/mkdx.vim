@@ -852,7 +852,7 @@ fun! mkdx#OnSettingModified(path, hash, key, value)
     call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
     call s:util.InfoMsg('info: did not update value of {' . sk . '}')
     let a:hash[a:key] = a:value.old
-    let helpkey       = len(yy) == 1 ? 'overrides' : join(yy[1:], '-')
+    let helpkey       = len(yy) == 1 ? 'overrides' : substitute(join(yy[1:], '-'), '_', '-', 'g')
     call s:util.InfoMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})

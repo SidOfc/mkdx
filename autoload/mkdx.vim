@@ -865,9 +865,9 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path)
-  call s:util.InfoMsg('info: did not update value of {' . join(a:path, '.') . '}')
+  call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
   let helpkey = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
-  call s:util.InfoMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
+  call s:util.CommentMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
 endfun
 
 fun! mkdx#OnSettingModified(path, hash, key, value)

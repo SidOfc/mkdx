@@ -118,6 +118,14 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   let sk = join(yy, '.')
   let er = []
   let et = 0
+  let hu = has_key(s:util.updaters, sk)
+  let s:util._last_time = get(s:util, '_last_time', localtime())
+  if ((localtime() - s:util._last_time) > 1)
+    unlet s:util._last_time
+    let   s:util._err_count = 0
+  else
+    let s:util._err_count = get(s:util, '_err_count', 0)
+  endif
 
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
@@ -128,8 +136,9 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (ch && (has_key(s:util.validations, sk) || has_key(s:util.validations, a:key)))
-    let er = s:util.validate(a:value.new, get(s:util.validations, sk, s:util.validations[a:key]))
+    let er = s:util.validate(a:value.new, get(s:util.validations, sk, get(s:util.validations, a:key, {})))
     if (!empty(er))
+      let s:util._err_count += len(er)
       for error in er
         call s:util.ErrorMsg(sk . ' ' . error)
       endfor
@@ -138,9 +147,10 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     endif
   endif
 
-  if (g:mkdx#settings.auto_update.enable && !et && empty(er) && ch && has_key(s:util.updaters, sk))
+  if (g:mkdx#settings.auto_update.enable && !et && empty(er) && ch && hu)
     let Updater = function(s:util.updaters[sk])
     call Updater(a:value.old, a:value.new)
+  elseif ((to != s:HASH) && (s:util._err_count == 0))
     echo ''
   endif
 endfun

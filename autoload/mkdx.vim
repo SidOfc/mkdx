@@ -1,4 +1,9 @@
 """"" UTILITY FUNCTIONS
+let s:HASH = type({})
+let s:LIST = type([])
+let s:INT  = type(1)
+let s:STR  = type('')
+
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
 let s:_has_rg                = 1 && executable('rg')
@@ -64,6 +69,152 @@ fun! mkdx#testing(val)
 endfun
 
 fun! s:util._(...)
+endfun
+
+fun! s:util.TypeString(tnum)
+  if (a:tnum == s:HASH)
+    return 'hash'
+  elseif (a:tnum == s:LIST)
+    return 'list'
+  elseif (a:tnum == s:INT)
+    return 'int'
+  elseif (a:tnum == s:STR)
+    return 'str'
+  endif
+  return 'unknown'
+endfun
+
+fun! s:util.ErrorMsg(str)
+  echohl ErrorMsg
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.InfoMsg(str)
+  echohl markdownHeadingDelimiter
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.SuccessMsg(str)
+  echohl MoreMsg
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.CommentMsg(str)
+  echohl Comment
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.ReplaceTOCText(old, new)
+  if (a:old == a:new)
+    echo ''
+    return
+  endif
+
+  let limit   = line('$')
+  let current = 1
+  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . a:old
+
+  while (current < limit)
+    let line = getline(current)
+    if (match(line, matcher) > -1) | break | endif
+    let current += 1
+  endwhile
+
+  silent! call mkdx#UpdateTOC({'text': a:old, 'details': getline(nextnonblank(current + 1)) =~ '^<details>'})
+  silent! update
+endfun
+
+fun! s:util.RepositionTOC(old, new)
+  if (a:old == a:new)
+    echo ''
+    return
+  endif
+
+  let limit   = line('$')
+  let current = 1
+  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . g:mkdx#settings.toc.text
+
+  while (current < limit)
+    let line = getline(current)
+    if (match(line, matcher) > -1) | break | endif
+    let current += 1
+  endwhile
+
+  let endc = nextnonblank(current + 1)
+  while (nextnonblank(endc) == endc)
+    let endc += 1
+    if (s:util.IsHeader(endc))
+      break
+    elseif (s:util.IsDetailsTag(endc))
+      let endc += 1
+      break
+    endif
+  endwhile
+
+  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
+  exe 'normal! :' . current . ',' . endc . 'd'
+  call mkdx#GenerateTOC()
+endfun
+
+fun! s:util.UpdateTOCStyle(old, new)
+  if (a:old != a:new)
+    silent! call mkdx#UpdateTOC({'details': a:new})
+  endif
+endfun
+
+fun! s:util.UpdateTOCSummary(old, new)
+  if (a:old != a:new && g:mkdx#settings.toc.details.enable)
+    silent! call mkdx#UpdateTOC()
+  endif
+endfun
+
+fun! s:util.UpdateHeaders(old, new)
+  if (a:old != a:new)
+    let skip = 0
+
+    for lnum in range(1, line('$'))
+      let line = getline(lnum)
+      let skip = match(line, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+      if (!skip && (line =~ ('^' . a:old . '\{1,6} ')))
+        call setline(lnum, substitute(line, '^' . a:old . '\{1,6}', '\=repeat("' . a:new . '", strlen(submatch(0)))', ''))
+      endif
+    endfor
+  endif
+endfun
+
+let s:util.validations = {
+      \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
+      \ }
+
+let s:util.updaters = {
+      \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
+      \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
+      \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
+      \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
+      \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders
+      \ }
+
+fun! s:util.validate(value, validations)
+  let errors = []
+  for validation in keys(a:validations)
+    if (validation == 'min_length')
+      let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
+      if (len < a:validations[validation][0])
+        call add(errors, a:validations[validation][1])
+      endif
+    endif
+  endfor
+  return errors
+endfun
+
+fun! s:util.DidNotUpdateValueAt(path)
+  call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
+  let helpkey = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
+  call s:util.CommentMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
 endfun
 
 fun! s:util.GrepLinkToQF(greplink, bufnr)
@@ -781,122 +932,6 @@ fun! s:util.IdentifyGrepLink(input)
 endfun
 
 """"" MAIN FUNCTIONALITY
-let s:HASH = type({})
-let s:LIST = type([])
-let s:INT  = type(1)
-let s:STR  = type('')
-
-fun! s:util.TypeString(tnum)
-  if (a:tnum == s:HASH)
-    return 'hash'
-  elseif (a:tnum == s:LIST)
-    return 'list'
-  elseif (a:tnum == s:INT)
-    return 'int'
-  elseif (a:tnum == s:STR)
-    return 'str'
-  endif
-  return 'unknown'
-endfun
-
-fun! s:util.ErrorMsg(str)
-  echohl ErrorMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.InfoMsg(str)
-  echohl markdownHeadingDelimiter
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.SuccessMsg(str)
-  echohl MoreMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.CommentMsg(str)
-  echohl Comment
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.ReplaceTOCText(old, new)
-  if (a:old == a:new)
-    echo ''
-    return
-  endif
-  let limit   = line('$')
-  let current = 1
-  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . a:old
-
-  while (current < limit)
-    let line = getline(current)
-    if (match(line, matcher) > -1) | break | endif
-    let current += 1
-  endwhile
-
-  silent! call mkdx#UpdateTOC({'text': a:old, 'details': getline(nextnonblank(current + 1)) =~ '^<details>'})
-  silent! update
-endfun
-
-fun! s:util.UpdateTOCStyle(old, new)
-  if (a:old != a:new)
-    silent! call mkdx#UpdateTOC({'details': a:new})
-  endif
-endfun
-
-fun! s:util.UpdateTOCSummary(old, new)
-  if (a:old != a:new && g:mkdx#settings.toc.details.enable)
-    silent! call mkdx#UpdateTOC()
-  endif
-endfun
-
-fun! s:util.UpdateHeaders(old, new)
-  if (a:old != a:new)
-    let skip = 0
-
-    for lnum in range(1, line('$'))
-      let line = getline(lnum)
-      let skip = match(line, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
-      if (!skip && (line =~ ('^' . a:old . '\{1,6} ')))
-        call setline(lnum, substitute(line, '^' . a:old . '\{1,6}', '\=repeat("' . a:new . '", strlen(submatch(0)))', ''))
-      endif
-    endfor
-  endif
-endfun
-
-let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
-      \ }
-
-let s:util.updaters = {
-      \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
-      \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
-      \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
-      \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders
-      \ }
-
-fun! s:util.validate(value, validations)
-  let errors = []
-  for validation in keys(a:validations)
-    if (validation == 'min_length')
-      let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
-      if (len < a:validations[validation][0])
-        call add(errors, a:validations[validation][1])
-      endif
-    endif
-  endfor
-  return errors
-endfun
-
-fun! s:util.DidNotUpdateValueAt(path)
-  call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
-  let helpkey = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
-  call s:util.CommentMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
-endfun
 
 fun! mkdx#OnSettingModified(path, hash, key, value)
   let to = type(a:value.old)

@@ -839,8 +839,10 @@ fun! s:util.ReplaceTOCText(old, new)
   let saved     = g:mkdx#settings.toc.details.enable
 
   let g:mkdx#settings.toc.details.enable = toc_style
-  call mkdx#UpdateTOC({'text': a:old})
+  silent! call mkdx#UpdateTOC({'text': a:old})
+  silent! update
   let g:mkdx#settings.toc.details.enable = saved
+  echo ''
 endfun
 
 let s:util.validations = {
@@ -1326,12 +1328,12 @@ fun! mkdx#GenerateOrUpdateTOC()
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
-      call mkdx#UpdateTOC()
+      silent! call mkdx#UpdateTOC()
       return
     endif
   endfor
 
-  call mkdx#GenerateTOC()
+  silent! call mkdx#GenerateTOC()
 endfun
 
 fun! mkdx#UpdateTOC(...)

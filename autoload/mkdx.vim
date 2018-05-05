@@ -111,6 +111,7 @@ endfun
 fun! s:util.OnSettingModified(path, hash, key, value)
   let to = type(a:value.old)
   let tn = type(a:value.new)
+  let ch = (to == tn) && (a:value.old != a:value.new)
   let yy = extend(deepcopy(a:path), [a:key])
   if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
   let yy[0] = 'g:' . yy[0]
@@ -126,8 +127,8 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     call s:util.DidNotUpdateValueAt(yy)
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
-  elseif (has_key(s:util.validations, sk))
-    let er = s:util.validate(a:value.new, s:util.validations[sk])
+  elseif (ch && (has_key(s:util.validations, sk) || has_key(s:util.validations, a:key)))
+    let er = s:util.validate(a:value.new, get(s:util.validations, sk, s:util.validations[a:key]))
     if (!empty(er))
       for error in er
         call s:util.ErrorMsg(sk . ' ' . error)
@@ -137,7 +138,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     endif
   endif
 
-  if (!et && empty(er) && has_key(s:util.updaters, sk))
+  if (!et && empty(er) && ch && has_key(s:util.updaters, sk))
     let Updater = function(s:util.updaters[sk])
     call Updater(a:value.old, a:value.new)
     echo ''
@@ -145,11 +146,6 @@ fun! s:util.OnSettingModified(path, hash, key, value)
 endfun
 
 fun! s:util.ReplaceTOCText(old, new)
-  if (a:old == a:new)
-    echo ''
-    return
-  endif
-
   let [current, endc, details] = s:util.GetTOCPositionAndStyle()
 
   silent! call mkdx#UpdateTOC({'text': a:old, 'details': details})
@@ -157,44 +153,41 @@ fun! s:util.ReplaceTOCText(old, new)
 endfun
 
 fun! s:util.RepositionTOC(old, new)
-  if (a:old == a:new)
-    echo ''
-    return
-  endif
-
   let [current, endc, details] = s:util.GetTOCPositionAndStyle()
   silent! exe 'normal! :' . current . ',' . endc . 'd'
   call mkdx#GenerateTOC(0, details)
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
-  if (a:old != a:new)
-    silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
-  endif
+  silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
 endfun
 
 fun! s:util.UpdateTOCSummary(old, new)
-  if (a:old != a:new && g:mkdx#settings.toc.details.enable)
-    silent! call mkdx#UpdateTOC()
-  endif
+  if (g:mkdx#settings.toc.details.enable) | silent! call mkdx#UpdateTOC() | endif
 endfun
 
 fun! s:util.UpdateHeaders(old, new)
-  if (a:old != a:new)
-    let skip = 0
+  let skip = 0
 
-    for lnum in range(1, line('$'))
-      let line = getline(lnum)
-      let skip = match(line, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
-      if (!skip && (line =~ ('^' . a:old . '\{1,6} ')))
-        call setline(lnum, substitute(line, '^' . a:old . '\{1,6}', '\=repeat("' . a:new . '", strlen(submatch(0)))', ''))
-      endif
-    endfor
-  endif
+  for lnum in range(1, line('$'))
+    let line = getline(lnum)
+    let skip = match(line, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+    if (!skip && (line =~ ('^' . a:old . '\{1,6} ')))
+      call setline(lnum, substitute(line, '^' . a:old . '\{1,6}', '\=repeat("' . a:new . '", strlen(submatch(0)))', ''))
+    endif
+  endfor
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2, 'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2], 'value must be >= 0 and <= 2'] },
+      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
+      \ 'enable':                                  { 'only_valid': [[0, 1], 'value can only be 0 or 1'] }
       \ }
 
 let s:util.updaters = {
@@ -211,6 +204,17 @@ fun! s:util.validate(value, validations)
     if (validation == 'min_length')
       let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
       if (len < a:validations[validation][0])
+        call add(errors, a:validations[validation][1])
+      endif
+    elseif (validation == 'between')
+      let [min, max] = a:validations[validation][0]
+      if (type(a:value) == s:INT)
+        if (a:value < min || a:value > max)
+          call add(errors, a:validations[validation][1])
+        endif
+      endif
+    elseif (validation == 'only_valid')
+      if (index(a:validations[validation][0], a:value) == -1)
         call add(errors, a:validations[validation][1])
       endif
     endif

@@ -525,7 +525,7 @@ fun! s:util.HeaderToListItem(header, ...)
 endfun
 
 fun! s:util.CleanHeader(header)
-  let h = substitute(a:header, '^[ #]\+\| \+$', '', 'g')
+  let h = substitute(a:header, '^[ ' . g:mkdx#settings.tokens.header . ']\+\| \+$', '', 'g')
   let h = substitute(h, '\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g')
   let h = substitute(h, '<a.*>\(.*\)</a>', '\1', 'g')
   return substitute(h, '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')

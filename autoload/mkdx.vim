@@ -823,8 +823,32 @@ fun! s:util.CommentMsg(str)
   echohl None
 endfun
 
+fun! s:util.ReplaceTOCText(old, new)
+  let limit   = line('$')
+  let current = 1
+  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . a:old
+
+  while (current < limit)
+    let line = getline(current)
+    if (match(line, matcher) > -1) | break | endif
+    let current += 1
+  endwhile
+
+  let toc_start = nextnonblank(current + 1)
+  let toc_style = getline(toc_start) =~ '^<details>' ? 1 : 0
+  let saved     = g:mkdx#settings.toc.details.enable
+
+  let g:mkdx#settings.toc.details.enable = toc_style
+  call mkdx#UpdateTOC({'text': a:old})
+  let g:mkdx#settings.toc.details.enable = saved
+endfun
+
 let s:util.validations = {
-      \ 'checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
+      \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
+      \ }
+
+let s:util.updaters = {
+      \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText
       \ }
 
 fun! s:util.validate(value, validations)
@@ -840,6 +864,12 @@ fun! s:util.validate(value, validations)
   return errors
 endfun
 
+fun! s:util.DidNotUpdateValueAt(path)
+  call s:util.InfoMsg('info: did not update value of {' . join(a:path, '.') . '}')
+  let helpkey = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
+  call s:util.InfoMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
+endfun
+
 fun! mkdx#OnSettingModified(path, hash, key, value)
   let to = type(a:value.old)
   let tn = type(a:value.new)
@@ -847,24 +877,28 @@ fun! mkdx#OnSettingModified(path, hash, key, value)
   if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
   let yy[0] = 'g:' . yy[0]
   let sk = join(yy, '.')
+
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
     call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
-    call s:util.InfoMsg('info: did not update value of {' . sk . '}')
     let a:hash[a:key] = a:value.old
-    let helpkey       = len(yy) == 1 ? 'overrides' : substitute(join(yy[1:], '-'), '_', '-', 'g')
-    call s:util.InfoMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
+    call s:util.DidNotUpdateValueAt(yy)
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (has_key(s:util.validations, sk))
     let errors = s:util.validate(a:value.new, s:util.validations[sk])
     if (!empty(errors))
       for error in errors
-        call s:util.ErrorMsg(ps . ' ' . error)
+        call s:util.ErrorMsg(sk . ' ' . error)
       endfor
-      call s:util.InfoMsg('info: did not update value of ' . ps)
+      call s:util.DidNotUpdateValueAt(yy)
       let a:hash[a:key] = a:value.old
     endif
+  endif
+
+  if (has_key(s:util.updaters, sk))
+    let Updater = function(s:util.updaters[sk])
+    call Updater(a:value.old, a:value.new)
   endif
 endfun
 
@@ -1297,13 +1331,14 @@ fun! mkdx#GenerateOrUpdateTOC()
   call mkdx#GenerateTOC()
 endfun
 
-fun! mkdx#UpdateTOC()
+fun! mkdx#UpdateTOC(...)
+  let opts   = get(a:000, 0, {'text': g:mkdx#settings.toc.text})
   let startc = -1
   let nnb    = -1
   let curpos = getpos('.')
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
+    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
       let startc = lnum
       break
     endif

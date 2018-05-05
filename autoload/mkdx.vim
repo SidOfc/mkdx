@@ -199,7 +199,7 @@ endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
   if (a:old != a:new)
-    silent! call mkdx#UpdateTOC({'details': a:new})
+    silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
   endif
 endfun
 
@@ -1403,7 +1403,7 @@ fun! mkdx#GenerateOrUpdateTOC()
 endfun
 
 fun! mkdx#UpdateTOC(...)
-  let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable}, get(a:000, 0, {}))
+  let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let startc = -1
   let nnb    = -1
   let curpos = getpos('.')
@@ -1417,6 +1417,7 @@ fun! mkdx#UpdateTOC(...)
 
   if (startc)
     let endc = nextnonblank(startc + 1)
+    let detl = getline(endc) =~ '^<details>' ? 1 : 0
     while (nextnonblank(endc) == endc)
       let endc += 1
       if (s:util.IsHeader(endc))
@@ -1429,7 +1430,7 @@ fun! mkdx#UpdateTOC(...)
     let endc -= 1
   endif
 
-  let details = opts.details > -1 ? opts.details : (getline(nextnonblank(startc + 1)) =~ '^<details>')
+  let details = (!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>') : opts.details
   let deleted = endc - startc + 1
   let curs_af = curpos[1] >= endc
   exe 'normal! :' . startc . ',' . endc . 'd'

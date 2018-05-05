@@ -38,8 +38,13 @@ if exists('g:mkdx#toc_list_token')          | let s:defaults.toc.list_token = g:
 if exists('g:mkdx#toc_text')                | let s:defaults.toc.text = g:mkdx#toc_text                             | endif
 if exists('g:mkdx#checkbox_initial_state')  | let s:defaults.checkbox.initial_state = g:mkdx#checkbox_initial_state | endif
 
-let g:mkdx#settings = exists('g:mkdx#settings_initialized') ? g:mkdx#settings : mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
-let g:mkdx#settings_initialized = 1
+if (!exists('g:mkdx#settings_initialized'))
+  let g:mkdx#settings             = mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
+  let g:mkdx#settings_initialized = 1
+
+  call dictwatcheradd(g:, 'mkdx#settings', function('mkdx#OnSettingModified', [[]]))
+  call mkdx#RecursivelyAddDictWatchers(g:mkdx#settings)
+endif
 
 noremap         <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
 noremap         <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>

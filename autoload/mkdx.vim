@@ -785,10 +785,105 @@ let s:HASH = type({})
 let s:LIST = type([])
 let s:INT  = type(1)
 let s:STR  = type('')
+
+fun! s:util.TypeString(tnum)
+  if (a:tnum == s:HASH)
+    return 'hash'
+  elseif (a:tnum == s:LIST)
+    return 'list'
+  elseif (a:tnum == s:INT)
+    return 'int'
+  elseif (a:tnum == s:STR)
+    return 'str'
+  endif
+  return 'unknown'
+endfun
+
+fun! s:util.ErrorMsg(str)
+  echohl ErrorMsg
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.InfoMsg(str)
+  echohl markdownHeadingDelimiter
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.SuccessMsg(str)
+  echohl MoreMsg
+  echo a:str
+  echohl None
+endfun
+
+fun! s:util.CommentMsg(str)
+  echohl Comment
+  echo a:str
+  echohl None
+endfun
+
+let s:util.validations = {
+      \ 'checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
+      \ }
+
+fun! s:util.validate(value, validations)
+  let errors = []
+  for validation in keys(a:validations)
+    if (validation == 'min_length')
+      let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
+      if (len < a:validations[validation][0])
+        call add(errors, a:validations[validation][1])
+      endif
+    endif
+  endfor
+  return errors
+endfun
+
+fun! mkdx#OnSettingModified(path, hash, key, value)
+  let to = type(a:value.old)
+  let tn = type(a:value.new)
+  let yy = extend(deepcopy(a:path), [a:key])
+  if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
+  let yy[0] = 'g:' . yy[0]
+  let sk = join(yy, '.')
+  if (to != tn)
+    let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
+    call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
+    call s:util.InfoMsg('info: did not update value of {' . sk . '}')
+    let a:hash[a:key] = a:value.old
+    let helpkey       = len(yy) == 1 ? 'overrides' : join(yy[1:], '-')
+    call s:util.InfoMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
+  elseif (to == s:HASH)
+    let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
+  elseif (has_key(s:util.validations, sk))
+    let errors = s:util.validate(a:value.new, s:util.validations[sk])
+    if (!empty(errors))
+      for error in errors
+        call s:util.ErrorMsg(ps . ' ' . error)
+      endfor
+      call s:util.InfoMsg('info: did not update value of ' . ps)
+      let a:hash[a:key] = a:value.old
+    endif
+  endif
+endfun
+
+fun! mkdx#RecursivelyAddDictWatchers(hash, ...)
+  let keypath = get(a:000, 0, [])
+  call dictwatcheradd(a:hash, '*', function('mkdx#OnSettingModified', [keypath]))
+  for key in keys(a:hash)
+    if (type(a:hash[key]) == s:HASH)
+      let newpath = extend(deepcopy(keypath), [key])
+      call mkdx#RecursivelyAddDictWatchers(a:hash[key], newpath)
+    endif
+  endfor
+endfun
+
 fun! mkdx#MergeSettings(...)
   let a = get(a:000, 0, {})
   let b = get(a:000, 1, {})
-  let c = {}
+  let o = get(a:000, 2, {'modify': 0})
+  let c = o.modify ? a : {}
 
   for akey in keys(a)
     if has_key(b, akey)

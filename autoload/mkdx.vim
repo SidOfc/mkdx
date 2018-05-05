@@ -172,7 +172,7 @@ endfun
 
 fun! s:util.GetRemoteUrl()
   if (!empty(g:mkdx#settings.links.external.host))
-    return g:mkdx#settings.links.external.host
+    return [g:mkdx#settings.links.external.host, '']
   endif
 
   let remote = system('git ls-remote --get-url 2>/dev/null')
@@ -183,23 +183,23 @@ fun! s:util.GetRemoteUrl()
     if (!v:shell_error && strlen(branch) > 0)
       let remote = substitute(substitute(remote[0:-2], '^\(\(https\?:\)\?//\|.*@\)\|\.git$', '', 'g'), ':', '/', 'g')
       let remote = (secure ? 'https' : 'http') . '://' . remote . '/blob/' . branch[2:-2] . '/'
-      return remote
+      return [remote, substitute(branch, '^ \+\| \+$', '', 'g')]
     endif
-    return ''
+    return ['', '']
   endif
-  return ''
+  return ['', '']
 endfun
 
 fun! s:util.AsyncDeadExternalToQF(...)
-  let resetqf  = get(a:000, 0, 1)
-  let prev_tot = get(a:000, 1, 0)
-  let _pt      = prev_tot
-  let external = s:util.ListExternalLinks()
-  let ext_len  = len(external)
-  let bufnum   = bufnr('%')
-  let total    = ext_len + prev_tot
-  let remote   = ext_len > 0 ? s:util.GetRemoteUrl() : ''
-  let skip_rel = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
+  let resetqf          = get(a:000, 0, 1)
+  let prev_tot         = get(a:000, 1, 0)
+  let _pt              = prev_tot
+  let external         = s:util.ListExternalLinks()
+  let ext_len          = len(external)
+  let bufnum           = bufnr('%')
+  let total            = ext_len + prev_tot
+  let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
+  let skip_rel         = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
 
   if (resetqf) | call setqflist([]) | endif
 
@@ -209,7 +209,12 @@ fun! s:util.AsyncDeadExternalToQF(...)
     let has_http = url[0:3] == 'http'
 
     if (!skip_rel && !has_frag && !has_http && !has_prot)
-      let url = substitute(remote, '/\+$', '', '') . '/' . substitute(url, '^/\+', '', '')
+      let tail = substitute(url, '^/\+', '', '')
+      let brsl = len(split(branch, '/')) - 1
+      if (brsl > 0 && tail[0:2] == '../')
+        let tail = repeat('../', brsl) . tail
+      endif
+      let url = substitute(remote, '/\+$', '', '') . '/' . tail
     endif
 
     let cmd = 'curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"'

@@ -150,17 +150,9 @@ fun! s:util.ReplaceTOCText(old, new)
     return
   endif
 
-  let limit   = line('$')
-  let current = 1
-  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . a:old
+  let [current, endc, details] = s:util.GetTOCPositionAndStyle()
 
-  while (current < limit)
-    let line = getline(current)
-    if (match(line, matcher) > -1) | break | endif
-    let current += 1
-  endwhile
-
-  silent! call mkdx#UpdateTOC({'text': a:old, 'details': getline(nextnonblank(current + 1)) =~ '^<details>'})
+  silent! call mkdx#UpdateTOC({'text': a:old, 'details': details})
   silent! update
 endfun
 
@@ -170,31 +162,9 @@ fun! s:util.RepositionTOC(old, new)
     return
   endif
 
-  let limit   = line('$')
-  let current = 1
-  let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . g:mkdx#settings.toc.text
-
-  while (current < limit)
-    let line = getline(current)
-    if (match(line, matcher) > -1) | break | endif
-    let current += 1
-  endwhile
-
-  let endc = nextnonblank(current + 1)
-  let detl = getline(endc) =~ '^<details>' ? 1 : 0
-  while (nextnonblank(endc) == endc)
-    let endc += 1
-    if (s:util.IsHeader(endc))
-      break
-    elseif (s:util.IsDetailsTag(endc))
-      let endc += 1
-      break
-    endif
-  endwhile
-
-  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
+  let [current, endc, details] = s:util.GetTOCPositionAndStyle()
   silent! exe 'normal! :' . current . ',' . endc . 'd'
-  call mkdx#GenerateTOC(0, detl)
+  call mkdx#GenerateTOC(0, details)
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
@@ -1402,13 +1372,11 @@ fun! mkdx#GenerateOrUpdateTOC()
   silent! call mkdx#GenerateTOC()
 endfun
 
-fun! mkdx#UpdateTOC(...)
+fun! s:util.GetTOCPositionAndStyle(...)
   let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let startc = -1
-  let nnb    = -1
-  let curpos = getpos('.')
 
-  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+  for lnum in range(1, line('$'))
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
       let startc = lnum
       break
@@ -1426,15 +1394,25 @@ fun! mkdx#UpdateTOC(...)
         break
       endif
     endwhile
-    let endc -= 1
+    if (nextnonblank(endc) == endc) | let endc -= 1 | endif
   endif
 
   let details = (!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>') : opts.details
-  let deleted = endc - startc + 1
-  let curs_af = curpos[1] >= endc
+
+  return [startc, endc, details]
+endfun
+
+fun! mkdx#UpdateTOC(...)
+  let opts                    = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
+  let curpos                  = getpos('.')
+  let [startc, endc, details] = s:util.GetTOCPositionAndStyle(opts)
+  let deleted                 = endc - startc + 1
+  let curs_af                 = curpos[1] >= endc
+
   exe 'normal! :' . startc . ',' . endc . 'd'
 
   let inslen = mkdx#GenerateTOC(1, details)
+
   call cursor(curpos[1] - (curs_af ? deleted - inslen : 0), curpos[2])
 endfun
 

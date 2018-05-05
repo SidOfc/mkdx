@@ -838,14 +838,8 @@ fun! s:util.ReplaceTOCText(old, new)
     let current += 1
   endwhile
 
-  let toc_start = nextnonblank(current + 1)
-  let toc_style = getline(toc_start) =~ '^<details>' ? 1 : 0
-  let saved     = g:mkdx#settings.toc.details.enable
-
-  let g:mkdx#settings.toc.details.enable = toc_style
-  silent! call mkdx#UpdateTOC({'text': a:old})
+  silent! call mkdx#UpdateTOC({'text': a:old, 'details': getline(nextnonblank(current + 1)) =~ '^<details>'})
   silent! update
-  let g:mkdx#settings.toc.details.enable = saved
   echo ''
 endfun
 
@@ -856,13 +850,28 @@ fun! s:util.UpdateTOCStyle(old, new)
   endif
 endfun
 
+fun! s:util.UpdateHeaders(old, new)
+  if (a:old != a:new)
+    let skip = 0
+
+    for lnum in range(1, line('$'))
+      let line = getline(lnum)
+      let skip = match(line, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+      if (!skip && (line =~ ('^' . a:old . '\{1,6} ')))
+        call setline(lnum, substitute(line, '^' . a:old . '\{1,6}', '\=repeat("' . a:new . '", strlen(submatch(0)))', ''))
+      endif
+    endfor
+  endif
+endfun
+
 let s:util.validations = {
       \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
       \ }
 
 let s:util.updaters = {
       \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
-      \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle
+      \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
+      \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders
       \ }
 
 fun! s:util.validate(value, validations)

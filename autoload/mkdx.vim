@@ -824,6 +824,10 @@ fun! s:util.CommentMsg(str)
 endfun
 
 fun! s:util.ReplaceTOCText(old, new)
+  if (a:old == a:new)
+    echo ''
+    return
+  endif
   let limit   = line('$')
   let current = 1
   let matcher = g:mkdx#settings.tokens.header . '\{1,6} ' . a:old
@@ -845,12 +849,20 @@ fun! s:util.ReplaceTOCText(old, new)
   echo ''
 endfun
 
+fun! s:util.UpdateTOCStyle(old, new)
+  if (a:old != a:new)
+    silent! call mkdx#UpdateTOC({'details': a:new})
+    echo ''
+  endif
+endfun
+
 let s:util.validations = {
       \ 'g:mkdx#settings.checkbox.toggles': { 'min_length': [2, 'value must be a list with at least 2 states'] }
       \ }
 
 let s:util.updaters = {
-      \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText
+      \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
+      \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle
       \ }
 
 fun! s:util.validate(value, validations)
@@ -1337,7 +1349,7 @@ fun! mkdx#GenerateOrUpdateTOC()
 endfun
 
 fun! mkdx#UpdateTOC(...)
-  let opts   = get(a:000, 0, {'text': g:mkdx#settings.toc.text})
+  let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable}, get(a:000, 0, {}))
   let startc = -1
   let nnb    = -1
   let curpos = getpos('.')
@@ -1350,7 +1362,7 @@ fun! mkdx#UpdateTOC(...)
   endfor
 
   if (startc)
-    let endc = startc + (nextnonblank(startc + 1) - startc)
+    let endc = nextnonblank(startc + 1)
     while (nextnonblank(endc) == endc)
       let endc += 1
       if (s:util.IsHeader(endc))
@@ -1363,10 +1375,12 @@ fun! mkdx#UpdateTOC(...)
     let endc -= 1
   endif
 
-  exe 'normal! :' . startc . ',' . endc . 'd'
+  let details = opts.details > -1 ? opts.details : (getline(nextnonblank(startc + 1)) =~ '^<details>')
   let deleted = endc - startc + 1
   let curs_af = curpos[1] >= endc
-  let inslen = mkdx#GenerateTOC(1)
+  exe 'normal! :' . startc . ',' . endc . 'd'
+
+  let inslen = mkdx#GenerateTOC(1, details)
   call cursor(curpos[1] - (curs_af ? deleted - inslen : 0), curpos[2])
 endfun
 
@@ -1391,22 +1405,24 @@ fun! mkdx#QuickfixHeaders(...)
 endfun
 
 fun! mkdx#GenerateTOC(...)
-  let toc_exst = get(a:000, 0, 0)
-  let contents = []
-  let cpos     = getpos('.')
-  let curspos  = cpos[1]
-  let header   = ''
-  let prevlvl  = 1
-  let skip     = 0
-  let headers  = {}
-  let src      = s:util.ListHeaders()
-  let srclen   = len(src)
-  let curr     = 0
-  let toc_pos = g:mkdx#settings.toc.position - 1
+  let toc_exst   = get(a:000, 0, 0)
+  let contents   = []
+  let cpos       = getpos('.')
+  let curspos    = cpos[1]
+  let header     = ''
+  let prevlvl    = 1
+  let skip       = 0
+  let headers    = {}
+  let src        = s:util.ListHeaders()
+  let srclen     = len(src)
+  let curr       = 0
+  let toc_pos    = g:mkdx#settings.toc.position - 1
   let after_info = get(src, toc_pos, -1)
-  let after_pos = toc_pos >= 0 && type(after_info) == type([])
+  let after_pos  = toc_pos >= 0 && type(after_info) == type([])
+  let detail_opt = get(a:000, 1, -1)
+  let do_details = detail_opt > -1 ? detail_opt : g:mkdx#settings.toc.details.enable
 
-  if (g:mkdx#settings.toc.details.enable)
+  if (do_details)
     let summary_text =
           \ empty(g:mkdx#settings.toc.details.summary)
           \ ? g:mkdx#settings.toc.text
@@ -1424,7 +1440,7 @@ fun! mkdx#GenerateTOC(...)
     let nextlvl    = get(src, curr, [0, lvl])[1]
     let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
 
-    if (g:mkdx#settings.toc.details.enable && lvl < prevlvl)
+    if (do_details && lvl < prevlvl)
       let clvl = prevlvl
       while (clvl > lvl)
         let clvl -= 1
@@ -1440,14 +1456,14 @@ fun! mkdx#GenerateTOC(...)
       let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
       call insert(contents, '')
       call insert(contents, header)
-      if (g:mkdx#settings.toc.details.enable)
+      if (do_details)
         call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
       else
         call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
       endif
     endif
 
-    if (g:mkdx#settings.toc.details.enable)
+    if (do_details)
       call add(contents, spc . '<li>' . s:util.HeaderToATag(line, sfx) . ending_tag)
     else
       call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
@@ -1462,7 +1478,7 @@ fun! mkdx#GenerateTOC(...)
 
       call insert(contents, '')
       call insert(contents, header)
-      if (g:mkdx#settings.toc.details.enable)
+      if (do_details)
         call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
       else
         call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
@@ -1472,7 +1488,7 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
-  if (g:mkdx#settings.toc.details.enable)
+  if (do_details)
     call add(contents, '</ul>')
     call add(contents, '</details>')
   endif

@@ -1417,7 +1417,6 @@ fun! mkdx#UpdateTOC(...)
 
   if (startc)
     let endc = nextnonblank(startc + 1)
-    let detl = getline(endc) =~ '^<details>' ? 1 : 0
     while (nextnonblank(endc) == endc)
       let endc += 1
       if (s:util.IsHeader(endc))

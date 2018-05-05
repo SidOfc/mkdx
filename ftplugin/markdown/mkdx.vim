@@ -15,7 +15,8 @@ let s:defaults          = {
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
-      \ 'highlight':               { 'enable': 0 }
+      \ 'highlight':               { 'enable': 0 },
+      \ 'auto_update':             { 'enable': 1 }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif

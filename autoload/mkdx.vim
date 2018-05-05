@@ -138,7 +138,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     endif
   endif
 
-  if (!et && empty(er) && ch && has_key(s:util.updaters, sk))
+  if (g:mkdx#settings.auto_update.enable && !et && empty(er) && ch && has_key(s:util.updaters, sk))
     let Updater = function(s:util.updaters[sk])
     call Updater(a:value.old, a:value.new)
     echo ''

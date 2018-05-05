@@ -108,6 +108,42 @@ fun! s:util.CommentMsg(str)
   echohl None
 endfun
 
+fun! s:util.OnSettingModified(path, hash, key, value)
+  let to = type(a:value.old)
+  let tn = type(a:value.new)
+  let yy = extend(deepcopy(a:path), [a:key])
+  if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
+  let yy[0] = 'g:' . yy[0]
+  let sk = join(yy, '.')
+  let er = []
+  let et = 0
+
+  if (to != tn)
+    let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
+    call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
+    let a:hash[a:key] = a:value.old
+    let et            = 1
+    call s:util.DidNotUpdateValueAt(yy)
+  elseif (to == s:HASH)
+    let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
+  elseif (has_key(s:util.validations, sk))
+    let er = s:util.validate(a:value.new, s:util.validations[sk])
+    if (!empty(er))
+      for error in er
+        call s:util.ErrorMsg(sk . ' ' . error)
+      endfor
+      call s:util.DidNotUpdateValueAt(yy)
+      let a:hash[a:key] = a:value.old
+    endif
+  endif
+
+  if (!et && empty(er) && has_key(s:util.updaters, sk))
+    let Updater = function(s:util.updaters[sk])
+    call Updater(a:value.old, a:value.new)
+    echo ''
+  endif
+endfun
+
 fun! s:util.ReplaceTOCText(old, new)
   if (a:old == a:new)
     echo ''
@@ -145,6 +181,7 @@ fun! s:util.RepositionTOC(old, new)
   endwhile
 
   let endc = nextnonblank(current + 1)
+  let detl = getline(endc) =~ '^<details>' ? 1 : 0
   while (nextnonblank(endc) == endc)
     let endc += 1
     if (s:util.IsHeader(endc))
@@ -157,7 +194,7 @@ fun! s:util.RepositionTOC(old, new)
 
   if (nextnonblank(endc) == endc) | let endc -= 1 | endif
   silent! exe 'normal! :' . current . ',' . endc . 'd'
-  call mkdx#GenerateTOC()
+  call mkdx#GenerateTOC(0, detl)
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
@@ -932,46 +969,13 @@ fun! s:util.IdentifyGrepLink(input)
 endfun
 
 """"" MAIN FUNCTIONALITY
-
-fun! mkdx#OnSettingModified(path, hash, key, value)
-  let to = type(a:value.old)
-  let tn = type(a:value.new)
-  let yy = extend(deepcopy(a:path), [a:key])
-  if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
-  let yy[0] = 'g:' . yy[0]
-  let sk = join(yy, '.')
-  let er = []
-  let et = 0
-
-  if (to != tn)
-    let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
-    call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
-    let a:hash[a:key] = a:value.old
-    let et            = 1
-    call s:util.DidNotUpdateValueAt(yy)
-  elseif (to == s:HASH)
-    let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
-  elseif (has_key(s:util.validations, sk))
-    let er = s:util.validate(a:value.new, s:util.validations[sk])
-    if (!empty(er))
-      for error in er
-        call s:util.ErrorMsg(sk . ' ' . error)
-      endfor
-      call s:util.DidNotUpdateValueAt(yy)
-      let a:hash[a:key] = a:value.old
-    endif
-  endif
-
-  if (!et && empty(er) && has_key(s:util.updaters, sk))
-    let Updater = function(s:util.updaters[sk])
-    call Updater(a:value.old, a:value.new)
-    echo ''
-  endif
+fun! mkdx#WatchGlobalSetting()
+  call dictwatcheradd(g:, 'mkdx#settings', function(s:util.OnSettingModified, [[]]))
 endfun
 
 fun! mkdx#RecursivelyAddDictWatchers(hash, ...)
   let keypath = get(a:000, 0, [])
-  call dictwatcheradd(a:hash, '*', function('mkdx#OnSettingModified', [keypath]))
+  call dictwatcheradd(a:hash, '*', function(s:util.OnSettingModified, [keypath]))
   for key in keys(a:hash)
     if (type(a:hash[key]) == s:HASH)
       let newpath = extend(deepcopy(keypath), [key])

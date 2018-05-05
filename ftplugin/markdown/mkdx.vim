@@ -42,7 +42,7 @@ if (!exists('g:mkdx#settings_initialized'))
   let g:mkdx#settings             = mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
   let g:mkdx#settings_initialized = 1
 
-  call dictwatcheradd(g:, 'mkdx#settings', function('mkdx#OnSettingModified', [[]]))
+  call mkdx#WatchGlobalSetting()
   call mkdx#RecursivelyAddDictWatchers(g:mkdx#settings)
 endif
 

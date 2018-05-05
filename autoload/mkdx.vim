@@ -156,7 +156,7 @@ fun! s:util.RepositionTOC(old, new)
   endwhile
 
   if (nextnonblank(endc) == endc) | let endc -= 1 | endif
-  exe 'normal! :' . current . ',' . endc . 'd'
+  silent! exe 'normal! :' . current . ',' . endc . 'd'
   call mkdx#GenerateTOC()
 endfun
 

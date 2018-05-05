@@ -840,13 +840,17 @@ fun! s:util.ReplaceTOCText(old, new)
 
   silent! call mkdx#UpdateTOC({'text': a:old, 'details': getline(nextnonblank(current + 1)) =~ '^<details>'})
   silent! update
-  echo ''
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
   if (a:old != a:new)
     silent! call mkdx#UpdateTOC({'details': a:new})
-    echo ''
+  endif
+endfun
+
+fun! s:util.UpdateTOCSummary(old, new)
+  if (a:old != a:new && g:mkdx#settings.toc.details.enable)
+    silent! call mkdx#UpdateTOC()
   endif
 endfun
 
@@ -871,6 +875,7 @@ let s:util.validations = {
 let s:util.updaters = {
       \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
       \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
+      \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
       \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders
       \ }
 
@@ -925,6 +930,7 @@ fun! mkdx#OnSettingModified(path, hash, key, value)
   if (!et && empty(er) && has_key(s:util.updaters, sk))
     let Updater = function(s:util.updaters[sk])
     call Updater(a:value.old, a:value.new)
+    echo ''
   endif
 endfun
 

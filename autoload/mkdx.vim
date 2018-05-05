@@ -877,18 +877,21 @@ fun! mkdx#OnSettingModified(path, hash, key, value)
   if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
   let yy[0] = 'g:' . yy[0]
   let sk = join(yy, '.')
+  let er = []
+  let et = 0
 
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
     call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
     let a:hash[a:key] = a:value.old
+    let et            = 1
     call s:util.DidNotUpdateValueAt(yy)
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (has_key(s:util.validations, sk))
-    let errors = s:util.validate(a:value.new, s:util.validations[sk])
-    if (!empty(errors))
-      for error in errors
+    let er = s:util.validate(a:value.new, s:util.validations[sk])
+    if (!empty(er))
+      for error in er
         call s:util.ErrorMsg(sk . ' ' . error)
       endfor
       call s:util.DidNotUpdateValueAt(yy)
@@ -896,7 +899,7 @@ fun! mkdx#OnSettingModified(path, hash, key, value)
     endif
   endif
 
-  if (has_key(s:util.updaters, sk))
+  if (!et && empty(er) && has_key(s:util.updaters, sk))
     let Updater = function(s:util.updaters[sk])
     call Updater(a:value.old, a:value.new)
   endif

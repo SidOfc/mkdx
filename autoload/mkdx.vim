@@ -88,6 +88,18 @@ fun! s:util.log(str, ...)
   echohl None
 endfun
 
+fun! s:util.add_dict_watchers(hash, ...)
+  let keypath = get(a:000, 0, [])
+
+  call dictwatcheradd(a:hash, '*', function(s:util.OnSettingModified, [keypath]))
+  for key in keys(a:hash)
+    if (type(a:hash[key]) == s:HASH)
+      let newpath = extend(deepcopy(keypath), [key])
+      call s:util.add_dict_watchers(a:hash[key], newpath)
+    endif
+  endfor
+endfun
+
 fun! s:util.OnSettingModified(path, hash, key, value)
   let to = type(a:value.old)
   let tn = type(a:value.new)
@@ -540,7 +552,7 @@ fun! s:util.ListHeaders()
   let bnum    = bufnr('%')
   let hashes  = {}
 
-  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+  for lnum in range(1, line('$'))
     let header = getline(lnum)
     let skip   = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
 
@@ -866,19 +878,11 @@ fun! s:util.IdentifyGrepLink(input)
 endfun
 
 """"" MAIN FUNCTIONALITY
-fun! mkdx#WatchGlobalSetting()
-  call dictwatcheradd(g:, 'mkdx#settings', function(s:util.OnSettingModified, [[]]))
-endfun
-
-fun! mkdx#RecursivelyAddDictWatchers(hash, ...)
-  let keypath = get(a:000, 0, [])
-  call dictwatcheradd(a:hash, '*', function(s:util.OnSettingModified, [keypath]))
-  for key in keys(a:hash)
-    if (type(a:hash[key]) == s:HASH)
-      let newpath = extend(deepcopy(keypath), [key])
-      call mkdx#RecursivelyAddDictWatchers(a:hash[key], newpath)
-    endif
-  endfor
+fun! mkdx#guard_settings()
+  if (exists('*dictwatcheradd'))
+    call dictwatcheradd(g:, 'mkdx#settings', function(s:util.OnSettingModified, [[]]))
+    call s:util.add_dict_watchers(g:mkdx#settings)
+  endif
 endfun
 
 fun! mkdx#MergeSettings(...)
@@ -1287,7 +1291,7 @@ endfun
 fun! mkdx#GenerateOrUpdateTOC()
   silent! call repeat#set("\<Plug>(mkdx-gen-or-upd-toc)")
 
-  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+  for lnum in range(1, line('$'))
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
       call mkdx#UpdateTOC()
       return

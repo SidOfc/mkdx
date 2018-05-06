@@ -595,7 +595,7 @@ fun! s:util.ToggleLineType(line, type)
   if (a:type == 'list')
     " if a:line is a list item, remove the list marker and return
     if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' *', '\1', '')
+      return substitute(a:line, '^\( *\)' . li_re, '\1', '')
     endif
 
     " if a:line isn't a list item, turn it into one
@@ -625,13 +625,13 @@ fun! s:util.ToggleLineType(line, type)
     if (match(a:line, '^ *\[.\]') > -1) | return substitute(a:line, '^\( *\)\[.\] *', '\1', '') | endif
 
     " if a:line is a checklist item, remove the checkbox and return
-    if (match(a:line, '^ *' . li_re . ' \[.\]') > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' \(\[.\]\)', '\1\2', '')
+    if (match(a:line, '^ *' . li_re . '\[.\]') > -1)
+      return substitute(a:line, '^\( *\)' . li_re . '\(\[.\]\)', '\1\2', '')
     endif
 
     " if a:line is a list item, add a checkbox with a state of g:mkdx#settings.checkbox.initial_state
     if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
+      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . '] ', '')
     endif
     " otherwise, if it isn't a checkbox item, turn it into one
     return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#settings.checkbox.initial_state . '] ', '')

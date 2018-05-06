@@ -15,7 +15,8 @@ let s:defaults          = {
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
-      \ 'highlight':               { 'enable': 0 }
+      \ 'highlight':               { 'enable': 0 },
+      \ 'auto_update':             { 'enable': 1 }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif
@@ -38,8 +39,15 @@ if exists('g:mkdx#toc_list_token')          | let s:defaults.toc.list_token = g:
 if exists('g:mkdx#toc_text')                | let s:defaults.toc.text = g:mkdx#toc_text                             | endif
 if exists('g:mkdx#checkbox_initial_state')  | let s:defaults.checkbox.initial_state = g:mkdx#checkbox_initial_state | endif
 
-let g:mkdx#settings = exists('g:mkdx#settings_initialized') ? g:mkdx#settings : mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
-let g:mkdx#settings_initialized = 1
+if (!exists('g:mkdx#settings_initialized'))
+  let g:mkdx#settings             = mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
+  let g:mkdx#settings_initialized = 1
+
+  if (exists('*dictwatcheradd'))
+    call mkdx#WatchGlobalSetting()
+    call mkdx#RecursivelyAddDictWatchers(g:mkdx#settings)
+  endif
+endif
 
 noremap         <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
 noremap         <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>

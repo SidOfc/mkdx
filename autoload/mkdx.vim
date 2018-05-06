@@ -171,6 +171,15 @@ fun! s:util.UpdateTOCSummary(old, new)
   if (g:mkdx#settings.toc.details.enable) | silent! call mkdx#UpdateTOC() | endif
 endfun
 
+fun! s:util.UpdateFencedCodeBlocks(old, new)
+  for lnum in range(1, line('$'))
+    let line = getline(lnum)
+    if (match(line, '^' . repeat('\' . a:old, 3)) > -1)
+      call setline(lnum, repeat(a:new, 3) . line[3:])
+    endif
+  endfor
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -184,15 +193,16 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,      'value must be a list with at least 2 states'] },
-      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2], 'value must be >= 0 and <= 2'] },
-      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
-      \ 'enable':                                  { 'only_valid': [[0, 1], 'value can only be 0 or 1'] }
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,          'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],     'value must be >= 0 and <= 2'] },
+      \ 'g:mkdx#settings.tokens.fence':            { 'only_valid': [['`', '~'], "value can only be '`' or '~'"] },
+      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
+      \ 'enable':                                  { 'only_valid': [[0, 1],     'value can only be 0 or 1'] }
       \ }
 
 let s:util.updaters = {
@@ -200,7 +210,8 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
       \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
       \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
-      \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders
+      \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders,
+      \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks
       \ }
 
 fun! s:util.validate(value, validations)

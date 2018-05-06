@@ -1,9 +1,4 @@
 """"" UTILITY FUNCTIONS
-let s:HASH = type({})
-let s:LIST = type([])
-let s:INT  = type(1)
-let s:STR  = type('')
-
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
 let s:_has_rg                = 1 && executable('rg')
@@ -69,41 +64,26 @@ fun! mkdx#testing(val)
 endfun
 
 fun! s:util._(...)
+  return get(a:000, 0, '')
 endfun
 
-fun! s:util.TypeString(tnum)
-  if (a:tnum == s:HASH)
-    return 'hash'
-  elseif (a:tnum == s:LIST)
-    return 'list'
-  elseif (a:tnum == s:INT)
-    return 'int'
-  elseif (a:tnum == s:STR)
-    return 'str'
-  endif
-  return 'unknown'
+let s:HASH = type({})
+let s:LIST = type([])
+let s:INT  = type(1)
+let s:STR  = type('')
+let s:FUNC = type(s:util._)
+
+fun! s:util.TypeString(t)
+  return (a:t == s:HASH) ? 'hash'
+     \ : (a:t == s:LIST) ? 'list'
+     \ : (a:t == s:INT)  ? 'int'
+     \ : (a:t == s:STR)  ? 'str'
+     \ : (a:t == s:FUNC) ? 'func' : 'unknown'
 endfun
 
-fun! s:util.ErrorMsg(str)
-  echohl ErrorMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.InfoMsg(str)
-  echohl markdownHeadingDelimiter
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.SuccessMsg(str)
-  echohl MoreMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.CommentMsg(str)
-  echohl Comment
+fun! s:util.log(str, ...)
+  let opts = extend({'hl': 'Comment'}, get(a:000, 0, {}))
+  exe 'echohl ' . opts.hl
   echo a:str
   echohl None
 endfun
@@ -130,7 +110,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
 
-    call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
+    call s:util.log('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}', {'hl': 'ErrorMsg'})
 
     let a:hash[a:key]      = a:value.old
     let et                 = 1
@@ -144,7 +124,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     if (!empty(er))
       let s:util._err_count += len(er)
       for error in er
-        call s:util.ErrorMsg(sk . ' ' . error)
+        call s:util.log(sk . ' ' . error, {'hl': 'ErrorMsg'})
       endfor
       call s:util.DidNotUpdateValueAt(yy)
       let a:hash[a:key] = a:value.old
@@ -237,17 +217,13 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path, ...)
-  call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
+  call s:util.log('info: did not update value of {' . join(a:path, '.') . '}')
 
   let helpkey  = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
   let code     = get(a:000, 0, '')
   let helptags = join(extend(['mkdx-setting-' . helpkey, 'mkdx-errors'], !empty(code) ? [code] : []), ', ')
 
-  call s:util.CommentMsg('help: ' . helptags)
-endfun
-
-fun! s:util.GrepLinkToQF(greplink, bufnr)
-  return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.CleanHeader(a:greplink.content)}
+  call s:util.log('help: ' . helptags)
 endfun
 
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
@@ -255,7 +231,7 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
-    let hash = item.type == 'anchor' ? item.content : s:util.HeaderToHash(getline(item.lnum))
+    let hash = item.type == 'anchor' ? item.content : s:util.transform(tolower(getline(item.lnum)), ['clean-header', 'header-to-hash'])
     let a:hashes[hash] = get(a:hashes, hash, -1) + 1
     let suffixed_hash  = hash . (a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash]))
     if (a:link == suffixed_hash)
@@ -270,21 +246,19 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   endfor
 endfun
 
-fun! s:util.EchoHeaderCount(...)
+fun! s:util.EchoQuickfixCount(subject, ...)
   let total = len(getqflist())
-  if (total > 0) | echohl MoreMsg | else | echohl ErrorMsg | endif
-  echo total . ' header' . (total == 1 ? '' : 's')
-  echohl None
+  call s:util.log(total . ' ' . (total == 1 ? a:subject : a:subject . 's'), {'hl': (total > 0) ? 'MoreMsg' : 'ErrorMsg'})
   return total
 endfun
 
 fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
   let stream     = type(a:stream) == s:LIST ? a:stream : [a:stream]
-  let qf_entries = map(filter(stream, {idx, line -> !empty(line)}),
-                     \ {idx, line -> s:util.GrepLinkToQF(s:util.IdentifyGrepLink(line), a:bufnr)})
+  let TQF        = {gl -> {'lnum': gl.lnum, 'bufnr': a:bufnr, 'text': s:util.transform(gl.content, ['clean-header'])}}
+  let qf_entries = map(filter(stream, {idx, line -> !empty(line)}), {idx, line -> TQF(s:util.IdentifyGrepLink(line))})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
-  if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+  if (s:util.EchoQuickfixCount('header')) | copen | else | cclose | endif
 endfun
 
 fun! s:util.CsvRowToList(...)
@@ -345,9 +319,8 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
     if (qflen == 1) | copen | endif
   endif
 
-  if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-  echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
-  echohl None
+  call s:util.log(qflen . '/' . total . ' dead fragment link' . (qflen == 1 ? '' : 's'), {'hl': (qflen > 0 ? 'ErrorMsg' : 'MoreMsg')})
+  if (qflen > 0) | copen | else | cclose | endif
 endfun
 
 fun! s:util.GetRemoteUrl()
@@ -374,7 +347,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let resetqf          = get(a:000, 0, 1)
   let prev_tot         = get(a:000, 1, 0)
   let _pt              = prev_tot
-  let external         = s:util.ListExternalLinks()
+  let external         = filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
   let ext_len          = len(external)
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
@@ -443,14 +416,6 @@ fun! s:util.ListLinks()
   return links
 endfun
 
-fun! s:util.ListExternalLinks()
-  return filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
-endfun
-
-fun! s:util.ListFragmentLinks()
-  return filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
-endfun
-
 fun! s:util.ListIDAnchorLinks()
   let limit = line('$') + 1
   let lnum  = 1
@@ -486,7 +451,7 @@ fun! s:util.FindDeadFragmentLinks()
   let dead    = []
   let src     = s:util.ListHeaders()
   let anchors = s:util.ListIDAnchorLinks()
-  let frags   = s:util.ListFragmentLinks()
+  let frags   = filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
   let bufnum  = bufnr('%')
 
   for [lnum, lvl, line, hash, sfx] in src
@@ -540,19 +505,6 @@ fun! s:util.WrapSelectionOrWord(...)
   return zz
 endfun
 
-fun! s:util.IsDetailsTag(lnum)
-  return substitute(getline(a:lnum), '[ \t]\+', '', 'g') == '</details>'
-endfun
-
-fun! s:util.IsHeader(lnum)
-  return match(getline(a:lnum), '^[ \t]*#\{1,6}') > -1
-endfun
-
-fun! s:util.IsImage(str)
-  if (empty(g:mkdx#settings.image_extension_pattern)) | return 0 | endif
-  return match(get(split(a:str, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
-endfun
-
 fun! s:util.ToggleMappingToKbd(str)
   let input = a:str
   let parts = split(input, '[-\+]')
@@ -582,76 +534,6 @@ fun! s:util.ToggleMappingToKbd(str)
   return join(out, '+')
 endfun
 
-fun! s:util.ToggleTokenAtStart(line, token, ...)
-  let line   = a:line
-  let tok_re = '^' . a:token . ' '
-
-  if (match(line, tok_re) > -1)
-    return substitute(line, tok_re, '', '')
-  elseif (!empty(line))
-    return get(a:000, 0, a:token) . ' ' . line
-  else
-    return line
-  endif
-endfun
-
-fun! s:util.ToggleLineType(line, type)
-  if (empty(a:line)) | return a:line | endif
-
-  let li_re = '\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\) '
-
-  if (a:type == 'list')
-    " if a:line is a list item, remove the list marker and return
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' *', '\1', '')
-    endif
-
-    " if a:line isn't a list item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', '')
-  elseif (a:type == 'checklist')
-    " if a:line is a checklist item, remove the checklist marker and return
-    if (match(a:line, '^ *' . li_re . ' *\[.\]') > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' *\[.\] *', '\1', '')
-    endif
-
-    " if a:line is a checkbox, replace it with g:mkdx#settings.tokens.list followed
-    " by a space and the checkbox with checkbox state intact
-    if (match(a:line, '^ *\[.\]') > -1)
-      return substitute(a:line, '^\( *\)\[\(.\)\]', '\1' . g:mkdx#settings.tokens.list . ' [\2]', '')
-    endif
-
-    " if a:line is a regular list item, replace it with the respective list
-    " token and a checkbox with state of g:mkdx#settings.checkbox.initial_state
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
-    endif
-
-    " if it isn't one of the above, turn it into a checklist item
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' [' . g:mkdx#settings.checkbox.initial_state . '] ', '')
-  elseif (a:type == 'checkbox')
-    " if a:line is a checkbox, remove the checkbox and return
-    if (match(a:line, '^ *\[.\]') > -1) | return substitute(a:line, '^\( *\)\[.\] *', '\1', '') | endif
-
-    " if a:line is a checklist item, remove the checkbox and return
-    if (match(a:line, '^ *' . li_re . ' \[.\]') > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' \(\[.\]\)', '\1\2', '')
-    endif
-
-    " if a:line is a list item, add a checkbox with a state of g:mkdx#settings.checkbox.initial_state
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
-    endif
-    " otherwise, if it isn't a checkbox item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#settings.checkbox.initial_state . '] ', '')
-  elseif (a:type == 'off')
-    " if a:line is either a list, checklist or checkbox item, remove the
-    " marking while maintaining whitespace
-    return substitute(a:line, '^\( *\)\(' . li_re . ' \?\)\?\(\[.\]\)\? *', '\1', '')
-  endif
-
-  return a:line
-endfun
-
 fun! s:util.ListHeaders()
   let headers = []
   let skip    = 0
@@ -665,7 +547,7 @@ fun! s:util.ListHeaders()
     if (!skip)
       let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
       if (lvl > 0)
-        let hash   = s:util.HeaderToHash(header)
+        let hash   = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
         let hcount = get(hashes, hash, 0)
         let final  = hash . (hcount > 0 ? '-' . hcount : '')
         let hashes[hash] = hcount + 1
@@ -678,46 +560,69 @@ fun! s:util.ListHeaders()
   return headers
 endfun
 
-fun! s:util.HeaderToQF(key, value)
-  return {'bufnr': bufnr('%'), 'lnum': a:value[0], 'level': a:value[1],
-        \ 'text': repeat(g:mkdx#settings.tokens.header, a:value[1]) . ' ' . s:util.CleanHeader(a:value[2])}
+fun! s:util.ToggleLineType(line, type)
+  if (empty(a:line)) | return a:line | endif
+
+  let li_re = '\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\) '
+  let li_st = '^ *' . li_re
+  let repl  = ['', '', '']
+
+  if (a:type == 'list')
+    let repl = (match(a:line, li_st) > -1 ? ['^\( *\)' . li_re, '\1', ''] : ['^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', ''])
+    return substitute(a:line, repl[0], repl[1], repl[2])
+  elseif (a:type == 'checkbox' || a:type == 'checklist')
+    let repl = (match(a:line, '^ *\[.\]') > -1
+                  \ ? ['^\( *\)\[.\] *', '\1', '']
+                  \ : (match(a:line, li_st . '\[.\]') > -1
+                        \ ? ['^\( *\)' . li_re . '\(\[.\]\) ', (a:type == 'checklist' ? '\1' : '\1\2 '), '']
+                        \ : (match(a:line, li_st) > -1
+                              \ ? ['^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . '] ', '']
+                              \ : ['^\( *\)', '\1' . (a:type == 'checklist' ? g:mkdx#settings.tokens.list . ' ' : '') . '[' . g:mkdx#settings.checkbox.initial_state . '] ', ''])))
+  elseif (a:type == 'off')
+    let repl = ['^\( *\)\(' . li_re . ' \?\)\?\(\[.\]\)\? *', '\1', '']
+  endif
+
+  return substitute(a:line, repl[0], repl[1], repl[2])
+endfun
+
+let s:util.transformations = {
+      \ 'trailing-space': [[' \+$', '', 'g']],
+      \ 'escape-tags':    [['>', '\&gt;', 'g'], ['<', '\&lt;', 'g']],
+      \ 'header-to-html': [['\\\@<!`\(.*\)\\\@<!`', '<code>\1</code>', 'g'],
+      \                    ['<code>\(.*\)</code>', '\="<code>" . s:util.transform(submatch(1), ["escape-tags"]) . "</code>"', 'g'],
+      \                    ['\\<\(.*\)>', '\&lt;\1\&gt;', 'g'], ['\\`\(.*\)\\`', '`\1`', 'g']],
+      \ 'clean-header':   [['^[ {{tokens.header}}]\+\| \+$', '', 'g'], ['\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g'],
+      \                    ['<a.*>\(.*\)</a>', '\1', 'g'], ['!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g']],
+      \ 'header-to-hash': [['`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g'], ['<kbd>\(.*\)<\/kbd>', '\1', 'g'],
+      \                    ['[^0-9a-z_\- ]\+', '', 'g'], [' ', '-', 'g']],
+      \ 'toggle-quote':   [['^\(> \)\?', '\=(submatch(1) == "> " ? "" : "> ")', '']]
+      \ }
+
+fun! s:util.transform(line, to, ...)
+  let [curr, transforms, Cb] = [a:line, (type(a:to) == s:STR ? [a:to] : deepcopy(a:to)), get(a:000, 0, s:util._)]
+
+  for name in transforms
+    for [rgx, rpl, flg] in get(s:util.transformations, name, [])
+      if (name == 'clean-header') | let rgx = substitute(rgx, '{{tokens.header}}', g:mkdx#settings.tokens.header, '') | endif
+      let curr = substitute(curr, rgx, rpl, flg)
+    endfor
+  endfor
+
+  return Cb(curr)
 endfun
 
 fun! s:util.FormatTOCHeader(level, content, ...)
-  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(a:content, get(a:000, 0, ''))
-endfun
+  let hsh = s:util.transform(tolower(a:content), ['clean-header', 'header-to-hash']) . get(a:000, 0, '')
+  let hdr = s:util.transform(a:content, ['clean-header', 'trailing-space'], {str -> '[' . str . '](#' . hsh . ')'})
 
-fun! s:util.EscapeTags(str)
-  return substitute(substitute(a:str, '<', '\&lt;', 'g'), '>', '\&gt;', 'g')
+  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . hdr
 endfun
 
 fun! s:util.HeaderToATag(header, ...)
-  let cheader = substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g')
-  let cheader = substitute(cheader, '\\\@<!`\(.*\)\\\@<!`', '<code>\1</code>', 'g')
-  let cheader = substitute(cheader, '<code>\(.*\)</code>', '\="<code>" . s:util.EscapeTags(submatch(1)) . "</code>"', 'g')
-  let cheader = substitute(cheader, '\\<\(.*\)>', '\&lt;\1\&gt;', 'g')
-  let cheader = substitute(cheader, '\\`\(.*\)\\`', '`\1`', 'g')
-  return '<a href="#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . '">' . cheader . '</a>'
-endfun
+  let hsh = s:util.transform(tolower(a:header), ['clean-header', 'header-to-hash']) . get(a:000, 0, '')
 
-fun! s:util.HeaderToListItem(header, ...)
-  return '[' . substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g') . '](#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . ')'
-endfun
-
-fun! s:util.CleanHeader(header)
-  let h = substitute(a:header, '^[ ' . g:mkdx#settings.tokens.header . ']\+\| \+$', '', 'g')
-  let h = substitute(h, '\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g')
-  let h = substitute(h, '<a.*>\(.*\)</a>', '\1', 'g')
-  return substitute(h, '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
-endfun
-
-fun! s:util.HeaderToHash(header)
-  let h = tolower(s:util.CleanHeader(a:header))
-  let h = substitute(h, '`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g')
-  let h = substitute(h, '<kbd>\(.*\)<\/kbd>', '\1', 'g')
-  let h = substitute(h, '[^0-9a-z_\- ]\+', '', 'g')
-  let h = substitute(h, ' ', '-', 'g')
-  return h
+  return s:util.transform(a:header, ['clean-header', 'trailing-space', 'header-to-html'],
+                        \ {str -> '<a href="#' . hsh . '">' . str . '</a>'})
 endfun
 
 fun! s:util.TaskItem(linenum)
@@ -873,7 +778,7 @@ fun! s:util.TruncateString(str, len, ...)
 endfun
 
 fun! s:util.HeadersToCompletions()
-  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40))}})
+  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}})
 endfun
 
 fun! s:util.IDAnchorLinksToCompletions()
@@ -921,15 +826,15 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
     if (item.type == 'header')
-      let hash           = s:util.HeaderToHash(item.content)
+      let hash           = s:util.transform(tolower(item.content), ['clean-header', 'header-to-hash'])
       let a:hashes[hash] = get(a:hashes, hash, -1) + 1
       let suffix         = a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash])
       let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
-      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content), 35))})
+      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 35))})
     elseif (item.type == 'anchor')
       let line_part = substitute(getline(item.lnum), '`.*`', '', 'g')[(item._col - 1):]
       if (!empty(matchlist(line_part, '\(name\|id\)="[^"]\+"')))
-        call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+        call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 40))})
       endif
     endif
   endfor
@@ -1115,11 +1020,8 @@ fun! mkdx#QuickfixDeadLinks(...)
     if (!s:_testing && g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
-
-    if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-    if (dl > 0) | copen           | else | cclose         | endif
-    echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
-    echohl None
+    call s:util.log(dl . '/' . total . ' dead fragment link' . (dl == 1 ? '' : 's'), {'hl': (dl > 0 ? 'ErrorMsg' : 'MoreMsg')})
+    if (dl > 0) | copen | else | cclose | endif
   else
     return dead
   endif
@@ -1136,7 +1038,7 @@ fun! mkdx#ToggleToKbd(...)
   let r  = @z
   let ln = getline('.')
 
-  exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
+  silent! exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
   let oz = @z
   let ps = split(oz, ' ')
   let @z = empty(ps) ? @z : join(map(ps, {idx, val -> s:util.ToggleMappingToKbd(val)}), ' ')
@@ -1188,7 +1090,7 @@ fun! mkdx#WrapLink(...) range
 
   if (m == 'v')
     normal! gv"zy
-    let img = s:util.IsImage(@z)
+    let img = empty(g:mkdx#settings.image_extension_pattern) ? 0 : (match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1)
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
@@ -1218,7 +1120,8 @@ fun! mkdx#ToggleCheckboxTask()
 endfun
 
 fun! mkdx#ToggleQuote()
-  call setline('.', s:util.ToggleTokenAtStart(getline('.'), '>'))
+  let line = getline('.')
+  if (!empty(line)) | call setline('.', s:util.transform(getline('.'), ['toggle-quote'])) | endif
   silent! call repeat#set("\<Plug>(mkdx-toggle-quote)")
 endfun
 
@@ -1386,12 +1289,12 @@ fun! mkdx#GenerateOrUpdateTOC()
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
-      silent! call mkdx#UpdateTOC()
+      call mkdx#UpdateTOC()
       return
     endif
   endfor
 
-  silent! call mkdx#GenerateTOC()
+  call mkdx#GenerateTOC()
 endfun
 
 fun! s:util.GetTOCPositionAndStyle(...)
@@ -1409,9 +1312,10 @@ fun! s:util.GetTOCPositionAndStyle(...)
     let endc = nextnonblank(startc + 1)
     while (nextnonblank(endc) == endc)
       let endc += 1
-      if (s:util.IsHeader(endc))
+      let endl  = getline(endc)
+      if (match(endl, '^[ \t]*#\{1,6}') > -1)
         break
-      elseif (s:util.IsDetailsTag(endc))
+      elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
         let endc += 1
         break
       endif
@@ -1431,7 +1335,7 @@ fun! mkdx#UpdateTOC(...)
   let deleted                 = endc - startc + 1
   let curs_af                 = curpos[1] >= endc
 
-  exe 'normal! :' . startc . ',' . endc . 'd'
+  silent! exe 'normal! :' . startc . ',' . endc . 'd'
 
   let inslen = mkdx#GenerateTOC(1, details)
 
@@ -1439,19 +1343,21 @@ fun! mkdx#UpdateTOC(...)
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
-  let open_qf = get(a:000, 0, 1)
+  let open_qf  = get(a:000, 0, 1)
+  let curr_buf = bufnr('%')
   if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
-    let current_bufnum       = bufnr('%')
     let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
-                                          \ 'each': function(s:util.AddHeaderToQuickfix, [current_bufnum]),
-                                          \ 'done': function(s:util.EchoHeaderCount)})
+                                          \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
+                                          \ 'done': function(s:util.EchoQuickfixCount, ['header'])})
   else
-    let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
+    let qflist = map(s:util.ListHeaders(),
+          \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],
+                    \ 'text': repeat(g:mkdx#settings.tokens.header, v[1]) . ' ' . s:util.transform(v[2], ['clean-header']) }})
 
     if (open_qf)
       call setqflist(qflist)
-      if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+      if (s:util.EchoQuickfixCount('header')) | copen | else | cclose | endif
     else
       return qflist
     endif
@@ -1475,6 +1381,8 @@ fun! mkdx#GenerateTOC(...)
   let after_pos  = toc_pos >= 0 && type(after_info) == type([])
   let detail_opt = get(a:000, 1, -1)
   let do_details = detail_opt > -1 ? detail_opt : g:mkdx#settings.toc.details.enable
+  let LI = {prevlvl, spc, hdr, prfx, ending -> add(contents, (do_details ? (spc . '<li>' . s:util.HeaderToATag(hdr, prfx) . ending)
+                                                                       \ : s:util.FormatTOCHeader(prevlvl - 1, hdr, prfx)))}
 
   if (do_details)
     let summary_text =
@@ -1503,55 +1411,29 @@ fun! mkdx#GenerateTOC(...)
     endif
 
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
-      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.HeaderToHash(header)
-      let hc     = get(headers, csh, 0)
-      let hsf    = (hc > 0) ? '-' . hc : ''
-      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
-      call insert(contents, '')
-      call insert(contents, header)
-      if (do_details)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
-      else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
-      endif
+      let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+      let headers[csh] = get(headers, csh, -1) + 1
+      let contents     = extend([header, ''], contents)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
     endif
 
-    if (do_details)
-      call add(contents, spc . '<li>' . s:util.HeaderToATag(line, sfx) . ending_tag)
-    else
-      call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
-    endif
+    call LI(lvl, spc, line, sfx, ending_tag)
 
     if (empty(header) && curr == srclen)
-      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.HeaderToHash(header)
-      let hc     = get(headers, csh, 0)
-      let hsf    = (hc > 0) ? '-' . hc : ''
-      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
-
-      call insert(contents, '')
-      call insert(contents, header)
-      if (do_details)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
-      else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
-      endif
+      let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+      let headers[csh] = get(headers, csh, -1) + 1
+      let contents     = extend([header, ''], contents)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
     endif
 
     let prevlvl = lvl
   endfor
 
-  if (do_details)
-    call add(contents, '</ul>')
-    call add(contents, '</details>')
-  endif
+  if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
-  if (!toc_exst && after_pos)
-    let c = after_info[0] - 1
-  else
-    let c = curspos - 1
-  endif
+  let c = (!toc_exst && after_pos) ? : (after_info[0] - 1) : (curspos - 1)
 
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif

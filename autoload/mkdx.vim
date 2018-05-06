@@ -1390,7 +1390,7 @@ fun! mkdx#GenerateTOC(...)
   if (do_details && prevlvl > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
-  let c = (!get(a:000, 0, 0) && after_pos) ? : (after_info[0] - 1) : (cpos[1] - 1)
+  let c = (!get(a:000, 0, 0) && after_pos) ? (after_info[0] - 1) : (cpos[1] - 1)
 
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif

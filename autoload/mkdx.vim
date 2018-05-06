@@ -75,7 +75,7 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
-    let hash = item.type == 'anchor' ? 'henk' : s:util.HeaderToHash(getline(item.lnum))
+    let hash = item.type == 'anchor' ? item.content : s:util.HeaderToHash(getline(item.lnum))
     let a:hashes[hash] = get(a:hashes, hash, -1) + 1
     let suffixed_hash  = hash . (a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash]))
     if (a:link == suffixed_hash)

@@ -1402,13 +1402,7 @@ fun! mkdx#GenerateTOC(...)
     let nextlvl    = get(src, curr, [0, lvl])[1]
     let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
 
-    if (do_details && lvl < prevlvl)
-      let clvl = prevlvl
-      while (clvl > lvl)
-        let clvl -= 1
-        call add(contents, repeat(repeat(' ', &sw), clvl) . '</ul></li>')
-      endwhile
-    endif
+    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
 
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
@@ -1431,6 +1425,7 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
+  if (do_details && prevlvl > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
   let c = (!toc_exst && after_pos) ? : (after_info[0] - 1) : (curspos - 1)

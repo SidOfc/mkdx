@@ -1165,9 +1165,9 @@ fun! mkdx#Tableize() range
     call add(col_idx, column)
     if (index(map(deepcopy(g:mkdx#settings.table.align.left), {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'left'
-    elseif (index(deepcopy(map(g:mkdx#settings.table.align.right), {idx, val -> tolower(val)}), tolower(column)) > -1)
+    elseif (index(map(deepcopy(g:mkdx#settings.table.align.right), {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'right'
-    elseif (index(deepcopy(map(g:mkdx#settings.table.align.center), {idx, val -> tolower(val)}), tolower(column)) > -1)
+    elseif (index(map(deepcopy(g:mkdx#settings.table.align.center), {idx, val -> tolower(val)}), tolower(column)) > -1)
       let col_align[column] = 'center'
     else
       let col_align[column] = g:mkdx#settings.table.align.default

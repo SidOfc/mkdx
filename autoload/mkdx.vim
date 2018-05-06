@@ -591,57 +591,25 @@ fun! s:util.ToggleLineType(line, type)
   if (empty(a:line)) | return a:line | endif
 
   let li_re = '\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\) '
+  let li_st = '^ *' . li_re
+  let repl  = ['', '', '']
 
   if (a:type == 'list')
-    " if a:line is a list item, remove the list marker and return
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re, '\1', '')
-    endif
-
-    " if a:line isn't a list item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', '')
-  elseif (a:type == 'checklist')
-    " if a:line is a checklist item, remove the checklist marker and return
-    if (match(a:line, '^ *' . li_re . ' *\[.\]') > -1)
-      return substitute(a:line, '^\( *\)' . li_re . ' *\[.\] *', '\1', '')
-    endif
-
-    " if a:line is a checkbox, replace it with g:mkdx#settings.tokens.list followed
-    " by a space and the checkbox with checkbox state intact
-    if (match(a:line, '^ *\[.\]') > -1)
-      return substitute(a:line, '^\( *\)\[\(.\)\]', '\1' . g:mkdx#settings.tokens.list . ' [\2]', '')
-    endif
-
-    " if a:line is a regular list item, replace it with the respective list
-    " token and a checkbox with state of g:mkdx#settings.checkbox.initial_state
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line, '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . ']', '')
-    endif
-
-    " if it isn't one of the above, turn it into a checklist item
-    return substitute(a:line, '^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' [' . g:mkdx#settings.checkbox.initial_state . '] ', '')
-  elseif (a:type == 'checkbox')
-    " if a:line is a checkbox, remove the checkbox and return
-    if (match(a:line, '^ *\[.\]') > -1) | return substitute(a:line, '^\( *\)\[.\] *', '\1', '') | endif
-
-    " if a:line is a checklist item, remove the checkbox and return
-    if (match(a:line, '^ *' . li_re . '\[.\]') > -1)
-      return substitute(a:line, '^\( *\)' . li_re . '\(\[.\]\)', '\1\2', '')
-    endif
-
-    " if a:line is a list item, add a checkbox with a state of g:mkdx#settings.checkbox.initial_state
-    if (match(a:line, '^ *' . li_re) > -1)
-      return substitute(a:line,  '^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . '] ', '')
-    endif
-    " otherwise, if it isn't a checkbox item, turn it into one
-    return substitute(a:line, '^\( *\)', '\1' . '[' . g:mkdx#settings.checkbox.initial_state . '] ', '')
+    let repl = (match(a:line, li_st) > -1 ? ['^\( *\)' . li_re, '\1', ''] : ['^\( *\)', '\1' . g:mkdx#settings.tokens.list . ' ', ''])
+    return substitute(a:line, repl[0], repl[1], repl[2])
+  elseif (a:type == 'checkbox' || a:type == 'checklist')
+    let repl = (match(a:line, '^ *\[.\]') > -1
+                  \ ? ['^\( *\)\[.\] *', '\1', '']
+                  \ : (match(a:line, li_st . '\[.\]') > -1
+                        \ ? ['^\( *\)' . li_re . '\(\[.\]\) ', (a:type == 'checklist' ? '\1' : '\1\2 '), '']
+                        \ : (match(a:line, li_st) > -1
+                              \ ? ['^\( *\)' . li_re, '\1\2 [' . g:mkdx#settings.checkbox.initial_state . '] ', '']
+                              \ : ['^\( *\)', '\1' . (a:type == 'checklist' ? g:mkdx#settings.tokens.list . ' ' : '') . '[' . g:mkdx#settings.checkbox.initial_state . '] ', ''])))
   elseif (a:type == 'off')
-    " if a:line is either a list, checklist or checkbox item, remove the
-    " marking while maintaining whitespace
-    return substitute(a:line, '^\( *\)\(' . li_re . ' \?\)\?\(\[.\]\)\? *', '\1', '')
+    let repl = ['^\( *\)\(' . li_re . ' \?\)\?\(\[.\]\)\? *', '\1', '']
   endif
 
-  return a:line
+  return substitute(a:line, repl[0], repl[1], repl[2])
 endfun
 
 let s:util.transformations = {
@@ -1443,6 +1411,8 @@ fun! mkdx#GenerateTOC(...)
   let after_pos  = toc_pos >= 0 && type(after_info) == type([])
   let detail_opt = get(a:000, 1, -1)
   let do_details = detail_opt > -1 ? detail_opt : g:mkdx#settings.toc.details.enable
+  let LI = {prevlvl, spc, hdr, prfx, ending -> add(contents, (do_details ? (spc . '<li>' . s:util.HeaderToATag(hdr, prfx) . ending)
+                                                                       \ : s:util.FormatTOCHeader(prevlvl - 1, hdr, prfx)))}
 
   if (do_details)
     let summary_text =
@@ -1471,54 +1441,29 @@ fun! mkdx#GenerateTOC(...)
     endif
 
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
-      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+      let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
       let headers[csh] = get(headers, csh, -1) + 1
-      let hsf    = (headers[csh] > 0) ? '-' . headers[csh] : ''
-      call insert(contents, '')
-      call insert(contents, header)
-      if (do_details)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
-      else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
-      endif
+      let contents     = extend([header, ''], contents)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
     endif
 
-    if (do_details)
-      call add(contents, spc . '<li>' . s:util.HeaderToATag(line, sfx) . ending_tag)
-    else
-      call add(contents, s:util.FormatTOCHeader(lvl - 1, line, sfx))
-    endif
+    call LI(lvl, spc, line, sfx, ending_tag)
 
     if (empty(header) && curr == srclen)
-      let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
-      let hc     = get(headers, csh, 0)
-      let hsf    = (hc > 0) ? '-' . hc : ''
-      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
-
-      call insert(contents, '')
-      call insert(contents, header)
-      if (do_details)
-        call add(contents, spc . '<li>' . s:util.HeaderToATag(header, hsf) . '</li>')
-      else
-        call add(contents, s:util.FormatTOCHeader(prevlvl - 1, header, hsf))
-      endif
+      let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
+      let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+      let headers[csh] = get(headers, csh, -1) + 1
+      let contents     = extend([header, ''], contents)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
     endif
 
     let prevlvl = lvl
   endfor
 
-  if (do_details)
-    call add(contents, '</ul>')
-    call add(contents, '</details>')
-  endif
+  if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
-  if (!toc_exst && after_pos)
-    let c = after_info[0] - 1
-  else
-    let c = curspos - 1
-  endif
+  let c = (!toc_exst && after_pos) ? : (after_info[0] - 1) : (curspos - 1)
 
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif

@@ -1369,13 +1369,10 @@ fun! mkdx#QuickfixHeaders(...)
 endfun
 
 fun! mkdx#GenerateTOC(...)
-  let toc_exst   = get(a:000, 0, 0)
   let contents   = []
   let cpos       = getpos('.')
-  let curspos    = cpos[1]
   let header     = ''
   let prevlvl    = 1
-  let skip       = 0
   let headers    = {}
   let src        = s:util.ListHeaders()
   let srclen     = len(src)
@@ -1389,14 +1386,11 @@ fun! mkdx#GenerateTOC(...)
                                                                        \ : s:util.FormatTOCHeader(prevlvl - 1, hdr, prfx)))}
 
   if (do_details)
-    let summary_text =
-          \ empty(g:mkdx#settings.toc.details.summary)
-          \ ? g:mkdx#settings.toc.text
-          \ : substitute(g:mkdx#settings.toc.details.summary, '{{toc.text}}', g:mkdx#settings.toc.text, 'g')
+    let summary_text = (empty(g:mkdx#settings.toc.details.summary)
+                         \ ? g:mkdx#settings.toc.text
+                         \ : substitute(g:mkdx#settings.toc.details.summary, '{{toc.text}}', g:mkdx#settings.toc.text, 'g'))
 
-    call add(contents, '<details>')
-    call add(contents, '<summary>' . summary_text . '</summary>')
-    call add(contents, '<ul>')
+    call extend(contents, ['<details>', '<summary>' . summary_text . '</summary>', '<ul>'])
   endif
 
   for [lnum, lvl, line, hsh, sfx] in src
@@ -1408,7 +1402,7 @@ fun! mkdx#GenerateTOC(...)
 
     if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
 
-    if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
+    if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
       let headers[csh] = get(headers, csh, -1) + 1
@@ -1432,7 +1426,7 @@ fun! mkdx#GenerateTOC(...)
   if (do_details && prevlvl > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
-  let c = (!toc_exst && after_pos) ? : (after_info[0] - 1) : (curspos - 1)
+  let c = (!get(a:000, 0, 0) && after_pos) ? : (after_info[0] - 1) : (cpos[1] - 1)
 
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif

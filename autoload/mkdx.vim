@@ -250,10 +250,6 @@ fun! s:util.DidNotUpdateValueAt(path, ...)
   call s:util.CommentMsg('help: ' . helptags)
 endfun
 
-fun! s:util.GrepLinkToQF(greplink, bufnr)
-  return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.transform(a:greplink.content, ['clean-header'])}
-endfun
-
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   if (s:util._header_found) | return | endif
   let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
@@ -284,8 +280,8 @@ endfun
 
 fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
   let stream     = type(a:stream) == s:LIST ? a:stream : [a:stream]
-  let qf_entries = map(filter(stream, {idx, line -> !empty(line)}),
-                     \ {idx, line -> s:util.GrepLinkToQF(s:util.IdentifyGrepLink(line), a:bufnr)})
+  let TQF        = {gl -> {'lnum': gl.lnum, 'bufnr': a:bufnr, 'text': s:util.transform(gl.content, ['clean-header'])}}
+  let qf_entries = map(filter(stream, {idx, line -> !empty(line)}), {idx, line -> TQF(s:util.IdentifyGrepLink(line))})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
   if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
@@ -565,17 +561,30 @@ fun! s:util.ToggleMappingToKbd(str)
   return join(out, '+')
 endfun
 
-fun! s:util.ToggleTokenAtStart(line, token, ...)
-  let line   = a:line
-  let tok_re = '^' . a:token . ' '
+fun! s:util.ListHeaders()
+  let headers = []
+  let skip    = 0
+  let bnum    = bufnr('%')
+  let hashes  = {}
 
-  if (match(line, tok_re) > -1)
-    return substitute(line, tok_re, '', '')
-  elseif (!empty(line))
-    return get(a:000, 0, a:token) . ' ' . line
-  else
-    return line
-  endif
+  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
+    let header = getline(lnum)
+    let skip   = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+
+    if (!skip)
+      let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+      if (lvl > 0)
+        let hash   = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+        let hcount = get(hashes, hash, 0)
+        let final  = hash . (hcount > 0 ? '-' . hcount : '')
+        let hashes[hash] = hcount + 1
+
+        call add(headers, [lnum, lvl, header, hash, (hcount > 0 ? '-' . hcount : '')])
+      endif
+    endif
+  endfor
+
+  return headers
 endfun
 
 fun! s:util.ToggleLineType(line, type)
@@ -635,32 +644,6 @@ fun! s:util.ToggleLineType(line, type)
   return a:line
 endfun
 
-fun! s:util.ListHeaders()
-  let headers = []
-  let skip    = 0
-  let bnum    = bufnr('%')
-  let hashes  = {}
-
-  for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
-    let header = getline(lnum)
-    let skip   = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
-
-    if (!skip)
-      let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
-      if (lvl > 0)
-        let hash   = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
-        let hcount = get(hashes, hash, 0)
-        let final  = hash . (hcount > 0 ? '-' . hcount : '')
-        let hashes[hash] = hcount + 1
-
-        call add(headers, [lnum, lvl, header, hash, (hcount > 0 ? '-' . hcount : '')])
-      endif
-    endif
-  endfor
-
-  return headers
-endfun
-
 let s:util.transformations = {
       \ 'trailing-space': [[' \+$', '', 'g']],
       \ 'escape-tags':    [['>', '\&gt;', 'g'], ['<', '\&lt;', 'g']],
@@ -670,7 +653,8 @@ let s:util.transformations = {
       \ 'clean-header':   [['^[ {{tokens.header}}]\+\| \+$', '', 'g'], ['\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g'],
       \                    ['<a.*>\(.*\)</a>', '\1', 'g'], ['!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g']],
       \ 'header-to-hash': [['`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g'], ['<kbd>\(.*\)<\/kbd>', '\1', 'g'],
-      \                    ['[^0-9a-z_\- ]\+', '', 'g'], [' ', '-', 'g']]
+      \                    ['[^0-9a-z_\- ]\+', '', 'g'], [' ', '-', 'g']],
+      \ 'toggle-quote':   [['^\(> \)\?', '\=(submatch(1) == "> " ? "" : "> ")', '']]
       \ }
 
 fun! s:util.transform(line, to, ...)
@@ -1198,7 +1182,8 @@ fun! mkdx#ToggleCheckboxTask()
 endfun
 
 fun! mkdx#ToggleQuote()
-  call setline('.', s:util.ToggleTokenAtStart(getline('.'), '>'))
+  let line = getline('.')
+  if (!empty(line)) | call setline('.', s:util.transform(getline('.'), ['toggle-quote'])) | endif
   silent! call repeat#set("\<Plug>(mkdx-toggle-quote)")
 endfun
 

@@ -632,7 +632,8 @@ let g:mkdx#settings = {
       \                                 'complete': 1
       \                              }
       \                            },
-      \ 'highlight':               { 'enable': 0 }
+      \ 'highlight':               { 'enable': 0 },
+      \ 'auto_update':             { 'enable': 0 }
     \ }
 ```
 
@@ -1090,8 +1091,16 @@ You can see it in action in the [Completing checkboxes / checklists](#completing
 ```viml
 " :h mkdx-setting-highlight-enable
 " :h mkdx-highlighting
-" set to 1 to enable.
 let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
+```
+
+## `g:mkdx#settings.auto_update.enable`
+
+This setting controls wether or not to update the document after changing certain variables.
+
+```viml
+" :h mkdx-setting-auto-update-enable
+let g:mkdx#settings = { 'auto_update': { 'enable': 1 } }
 ```
 
 # Mappings

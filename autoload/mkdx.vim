@@ -270,7 +270,7 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   endfor
 endfun
 
-fun! s:util.EchoHeaderCount(...)
+fun! s:util.EchoQuickfixCount(...)
   let total = len(getqflist())
   if (total > 0) | echohl MoreMsg | else | echohl ErrorMsg | endif
   echo total . ' header' . (total == 1 ? '' : 's')
@@ -284,7 +284,7 @@ fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
   let qf_entries = map(filter(stream, {idx, line -> !empty(line)}), {idx, line -> TQF(s:util.IdentifyGrepLink(line))})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
-  if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+  if (s:util.EchoQuickfixCount()) | copen | else | cclose | endif
 endfun
 
 fun! s:util.CsvRowToList(...)
@@ -1411,7 +1411,7 @@ fun! mkdx#QuickfixHeaders(...)
     call setqflist([])
     let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
                                           \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
-                                          \ 'done': function(s:util.EchoHeaderCount)})
+                                          \ 'done': function(s:util.EchoQuickfixCount)})
   else
     let qflist = map(s:util.ListHeaders(),
           \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],
@@ -1419,7 +1419,7 @@ fun! mkdx#QuickfixHeaders(...)
 
     if (open_qf)
       call setqflist(qflist)
-      if (s:util.EchoHeaderCount()) | copen | else | cclose | endif
+      if (s:util.EchoQuickfixCount()) | copen | else | cclose | endif
     else
       return qflist
     endif

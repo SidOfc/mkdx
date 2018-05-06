@@ -1,6 +1,6 @@
 # mkdx.vim [![GitHub tag](https://img.shields.io/github/tag/SidOfc/mkdx.svg?label=version)](https://github.com/SidOfc/mkdx/releases) [![GitHub issues](https://img.shields.io/github/issues/SidOfc/mkdx.svg)](https://github.com/SidOfc/mkdx/issues)
 
-~~~mkdx
+```mkdx
           888b     d888 888    d8P  8888888b. Y88b   d88P    888     888 8888888 888b     d888
   , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P     888     888   888   8888b   d8888  |\ - ,
  / = / |  88888b.d88888 888  d8P    888    888  Y88o88P      888     888   888   88888b.d88888  | \ = \
@@ -9,7 +9,7 @@
  \ = \ |  888  Y8P  888 888  Y88b   888    888  d88888b        Y88o88P     888   888  Y8P  888  | / = /
   ' - \|  888   "   888 888   Y88b  888  .d88P d88P Y88b  d8b   Y888P      888   888   "   888  |/ - '
           888       888 888    Y88b 8888888P" d88P   Y88b Y8P    Y8P     8888888 888       888
-~~~
+```
 
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
@@ -159,7 +159,7 @@ To complete a fragment outside of a link, type a `#` followed by <kbd>ctrl</kbd>
 Insert mode autocompletions can be disabled by setting the value of [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete) to `0`.
 **note:** [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> mappings to be bound.
 
-~~~viml
+```viml
 " :h mkdx-mapping-insert-completions
 " :h mkdx-function-insert-ctrl-n-handler
 " :h mkdx-function-insert-ctrl-p-handler
@@ -168,7 +168,7 @@ Insert mode autocompletions can be disabled by setting the value of [`g:mkdx#set
 " :h mkdx-plug-ctrl-n-compl
 " :h mkdx-plug-ctrl-p-compl
 " :h mkdx-plug-link-compl
-~~~
+```
 
 ## Dead link detection
 
@@ -463,12 +463,12 @@ Before performing a jump, the current cursor position will be added to the jumpl
 This allows you to jump back and forth between that header and the selected link using <kbd>\`</kbd><kbd>\`</kbd>.
 This behaviour can be disabled by overriding [`g:mkdx#settings.links.fragment.jumplist`](#gmkdxsettingslinksfragmentjumplist).
 
-~~~viml
+```viml
 " :h mkdx-setting-links-fragment-jumplist
 " :h mkdx-plug-jump-to-header
 " :h mkdx-function-jump-to-header
 " :h mkdx-mapping-jump-to-header
-~~~
+```
 
 ## Generate or update TOC
 
@@ -583,10 +583,10 @@ Actions can be executed from the menu in MacVim. More information about each map
 
 To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
 
-~~~viml
+```viml
 " :h mkdx-menu
 :menu Plugin.mkdx
-~~~
+```
 
 # `g:mkdx#settings`
 
@@ -760,12 +760,12 @@ let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Mac
 Specify wether or not to add the cursor position _before jumping_ to the jumplist (`:h jumplist`).
 This setting is enabled by default, set it to `0` to disable.
 
-~~~viml
+```viml
 " :h mkdx-setting-links-fragment-jumplist
 " :h mkdx-function-jump-to-header
 " :h mkdx-plug-jump-to-header
 let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
-~~~
+```
 
 ## `g:mkdx#settings.links.fragment.complete`
 
@@ -940,26 +940,26 @@ Control the alignment of content within table columns.
 Its value is a dictionary with keys `center`, `left`, `right` and `default`.
 The `default` value is used when a column name is not found in any of the `center`, `left` or `right` lists.
 
-~~~viml
+```viml
   {
     \ 'left':    [],
     \ 'center':  [],
     \ 'right':   [],
     \ 'default': 'center'
 \ }
-~~~
+```
 
 If you were to add `name` to the `left` list, e.g. `{ 'left': ['name'] }` and the first row of your CSV has a column with the content `name`, that column will be _left aligned_ (`|:----|`).
 Any other column would be _centered_ (`|:---:|`) because they do not appear in any list so the `default` value `'center'` is used.
 
-~~~viml
+```viml
 " :h mkdx-setting-table-align
 let g:mkdx#settings = { 'table': { 'align': {
         \ 'left':    [],
         \ 'center':  [],
         \ 'right':   [],
         \ 'default': 'center' } } }
-~~~
+```
 
 ## `g:mkdx#settings.enter.enable`
 

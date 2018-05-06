@@ -374,7 +374,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let resetqf          = get(a:000, 0, 1)
   let prev_tot         = get(a:000, 1, 0)
   let _pt              = prev_tot
-  let external         = s:util.ListExternalLinks()
+  let external         = filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
   let ext_len          = len(external)
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
@@ -443,14 +443,6 @@ fun! s:util.ListLinks()
   return links
 endfun
 
-fun! s:util.ListExternalLinks()
-  return filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
-endfun
-
-fun! s:util.ListFragmentLinks()
-  return filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
-endfun
-
 fun! s:util.ListIDAnchorLinks()
   let limit = line('$') + 1
   let lnum  = 1
@@ -486,7 +478,7 @@ fun! s:util.FindDeadFragmentLinks()
   let dead    = []
   let src     = s:util.ListHeaders()
   let anchors = s:util.ListIDAnchorLinks()
-  let frags   = s:util.ListFragmentLinks()
+  let frags   = filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
   let bufnum  = bufnr('%')
 
   for [lnum, lvl, line, hash, sfx] in src
@@ -538,19 +530,6 @@ fun! s:util.WrapSelectionOrWord(...)
   let zz = @z
   let @z = _r
   return zz
-endfun
-
-fun! s:util.IsDetailsTag(lnum)
-  return substitute(getline(a:lnum), '[ \t]\+', '', 'g') == '</details>'
-endfun
-
-fun! s:util.IsHeader(lnum)
-  return match(getline(a:lnum), '^[ \t]*#\{1,6}') > -1
-endfun
-
-fun! s:util.IsImage(str)
-  if (empty(g:mkdx#settings.image_extension_pattern)) | return 0 | endif
-  return match(get(split(a:str, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
 endfun
 
 fun! s:util.ToggleMappingToKbd(str)
@@ -1188,7 +1167,7 @@ fun! mkdx#WrapLink(...) range
 
   if (m == 'v')
     normal! gv"zy
-    let img = s:util.IsImage(@z)
+    let img = empty(g:mkdx#settings.image_extension_pattern) ? 0 : (match(get(split(@z, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1)
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
@@ -1409,9 +1388,10 @@ fun! s:util.GetTOCPositionAndStyle(...)
     let endc = nextnonblank(startc + 1)
     while (nextnonblank(endc) == endc)
       let endc += 1
-      if (s:util.IsHeader(endc))
+      let endl  = getline(endc)
+      if (match(endl, '^[ \t]*#\{1,6}') > -1)
         break
-      elseif (s:util.IsDetailsTag(endc))
+      elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
         let endc += 1
         break
       endif

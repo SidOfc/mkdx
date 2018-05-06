@@ -1,9 +1,4 @@
 """"" UTILITY FUNCTIONS
-let s:HASH = type({})
-let s:LIST = type([])
-let s:INT  = type(1)
-let s:STR  = type('')
-
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
 let s:_has_rg                = 1 && executable('rg')
@@ -69,7 +64,14 @@ fun! mkdx#testing(val)
 endfun
 
 fun! s:util._(...)
+  return get(a:000, 0, '')
 endfun
+
+let s:HASH = type({})
+let s:LIST = type([])
+let s:INT  = type(1)
+let s:STR  = type('')
+let s:FUNC = type(s:util._)
 
 fun! s:util.TypeString(tnum)
   if (a:tnum == s:HASH)
@@ -80,6 +82,8 @@ fun! s:util.TypeString(tnum)
     return 'int'
   elseif (a:tnum == s:STR)
     return 'str'
+  elseif (a:tnum == s:FUNC)
+    return 'func'
   endif
   return 'unknown'
 endfun
@@ -247,7 +251,7 @@ fun! s:util.DidNotUpdateValueAt(path, ...)
 endfun
 
 fun! s:util.GrepLinkToQF(greplink, bufnr)
-  return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.CleanHeader(a:greplink.content)}
+  return {'lnum': a:greplink.lnum, 'bufnr': a:bufnr, 'text': s:util.transform(a:greplink.content, ['clean-header'])}
 endfun
 
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
@@ -255,7 +259,7 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
-    let hash = item.type == 'anchor' ? item.content : s:util.HeaderToHash(getline(item.lnum))
+    let hash = item.type == 'anchor' ? item.content : s:util.transform(tolower(getline(item.lnum)), ['clean-header', 'header-to-hash'])
     let a:hashes[hash] = get(a:hashes, hash, -1) + 1
     let suffixed_hash  = hash . (a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash]))
     if (a:link == suffixed_hash)
@@ -644,7 +648,7 @@ fun! s:util.ListHeaders()
     if (!skip)
       let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
       if (lvl > 0)
-        let hash   = s:util.HeaderToHash(header)
+        let hash   = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
         let hcount = get(hashes, hash, 0)
         let final  = hash . (hcount > 0 ? '-' . hcount : '')
         let hashes[hash] = hcount + 1
@@ -657,46 +661,43 @@ fun! s:util.ListHeaders()
   return headers
 endfun
 
-fun! s:util.HeaderToQF(key, value)
-  return {'bufnr': bufnr('%'), 'lnum': a:value[0], 'level': a:value[1],
-        \ 'text': repeat(g:mkdx#settings.tokens.header, a:value[1]) . ' ' . s:util.CleanHeader(a:value[2])}
+let s:util.transformations = {
+      \ 'trailing-space': [[' \+$', '', 'g']],
+      \ 'escape-tags':    [['>', '\&gt;', 'g'], ['<', '\&lt;', 'g']],
+      \ 'header-to-html': [['\\\@<!`\(.*\)\\\@<!`', '<code>\1</code>', 'g'],
+      \                    ['<code>\(.*\)</code>', '\="<code>" . s:util.transform(submatch(1), ["escape-tags"]) . "</code>"', 'g'],
+      \                    ['\\<\(.*\)>', '\&lt;\1\&gt;', 'g'], ['\\`\(.*\)\\`', '`\1`', 'g']],
+      \ 'clean-header':   [['^[ {{tokens.header}}]\+\| \+$', '', 'g'], ['\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g'],
+      \                    ['<a.*>\(.*\)</a>', '\1', 'g'], ['!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g']],
+      \ 'header-to-hash': [['`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g'], ['<kbd>\(.*\)<\/kbd>', '\1', 'g'],
+      \                    ['[^0-9a-z_\- ]\+', '', 'g'], [' ', '-', 'g']]
+      \ }
+
+fun! s:util.transform(line, to, ...)
+  let [curr, transforms, Cb] = [a:line, (type(a:to) == s:STR ? [a:to] : deepcopy(a:to)), get(a:000, 0, s:util._)]
+
+  for name in transforms
+    for [rgx, rpl, flg] in get(s:util.transformations, name, [])
+      if (name == 'clean-header') | let rgx = substitute(rgx, '{{tokens.header}}', g:mkdx#settings.tokens.header, '') | endif
+      let curr = substitute(curr, rgx, rpl, flg)
+    endfor
+  endfor
+
+  return Cb(curr)
 endfun
 
 fun! s:util.FormatTOCHeader(level, content, ...)
-  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . s:util.HeaderToListItem(a:content, get(a:000, 0, ''))
-endfun
+  let hsh = s:util.transform(tolower(a:content), ['clean-header', 'header-to-hash']) . get(a:000, 0, '')
+  let hdr = s:util.transform(a:content, ['clean-header', 'trailing-space'], {str -> '[' . str . '](#' . hsh . ')'})
 
-fun! s:util.EscapeTags(str)
-  return substitute(substitute(a:str, '<', '\&lt;', 'g'), '>', '\&gt;', 'g')
+  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . hdr
 endfun
 
 fun! s:util.HeaderToATag(header, ...)
-  let cheader = substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g')
-  let cheader = substitute(cheader, '\\\@<!`\(.*\)\\\@<!`', '<code>\1</code>', 'g')
-  let cheader = substitute(cheader, '<code>\(.*\)</code>', '\="<code>" . s:util.EscapeTags(submatch(1)) . "</code>"', 'g')
-  let cheader = substitute(cheader, '\\<\(.*\)>', '\&lt;\1\&gt;', 'g')
-  let cheader = substitute(cheader, '\\`\(.*\)\\`', '`\1`', 'g')
-  return '<a href="#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . '">' . cheader . '</a>'
-endfun
+  let hsh = s:util.transform(tolower(a:header), ['clean-header', 'header-to-hash']) . get(a:000, 0, '')
 
-fun! s:util.HeaderToListItem(header, ...)
-  return '[' . substitute(s:util.CleanHeader(a:header), ' \+$', '', 'g') . '](#' . s:util.HeaderToHash(a:header) . get(a:000, 0, '') . ')'
-endfun
-
-fun! s:util.CleanHeader(header)
-  let h = substitute(a:header, '^[ ' . g:mkdx#settings.tokens.header . ']\+\| \+$', '', 'g')
-  let h = substitute(h, '\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g')
-  let h = substitute(h, '<a.*>\(.*\)</a>', '\1', 'g')
-  return substitute(h, '!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g')
-endfun
-
-fun! s:util.HeaderToHash(header)
-  let h = tolower(s:util.CleanHeader(a:header))
-  let h = substitute(h, '`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g')
-  let h = substitute(h, '<kbd>\(.*\)<\/kbd>', '\1', 'g')
-  let h = substitute(h, '[^0-9a-z_\- ]\+', '', 'g')
-  let h = substitute(h, ' ', '-', 'g')
-  return h
+  return s:util.transform(a:header, ['clean-header', 'trailing-space', 'header-to-html'],
+                        \ {str -> '<a href="#' . hsh . '">' . str . '</a>'})
 endfun
 
 fun! s:util.TaskItem(linenum)
@@ -852,7 +853,7 @@ fun! s:util.TruncateString(str, len, ...)
 endfun
 
 fun! s:util.HeadersToCompletions()
-  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.CleanHeader(val[2]), 40))}})
+  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}})
 endfun
 
 fun! s:util.IDAnchorLinksToCompletions()
@@ -900,15 +901,15 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
     if (item.type == 'header')
-      let hash           = s:util.HeaderToHash(item.content)
+      let hash           = s:util.transform(tolower(item.content), ['clean-header', 'header-to-hash'])
       let a:hashes[hash] = get(a:hashes, hash, -1) + 1
       let suffix         = a:hashes[hash] == 0 ? '' : ('-' . a:hashes[hash])
       let lvl            = '<h' . strlen(matchlist(item.content, '^#\{1,6}')[0]) . '>'
-      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.CleanHeader(item.content), 35))})
+      call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 35))})
     elseif (item.type == 'anchor')
       let line_part = substitute(getline(item.lnum), '`.*`', '', 'g')[(item._col - 1):]
       if (!empty(matchlist(line_part, '\(name\|id\)="[^"]\+"')))
-        call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.CleanHeader(item.content), 40))})
+        call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 40))})
       endif
     endif
   endfor
@@ -1365,12 +1366,12 @@ fun! mkdx#GenerateOrUpdateTOC()
 
   for lnum in range((getpos('^')[1] + 1), getpos('$')[1])
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . g:mkdx#settings.toc.text) > -1)
-      silent! call mkdx#UpdateTOC()
+      call mkdx#UpdateTOC()
       return
     endif
   endfor
 
-  silent! call mkdx#GenerateTOC()
+  call mkdx#GenerateTOC()
 endfun
 
 fun! s:util.GetTOCPositionAndStyle(...)
@@ -1419,15 +1420,17 @@ fun! mkdx#UpdateTOC(...)
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
-  let open_qf = get(a:000, 0, 1)
+  let open_qf  = get(a:000, 0, 1)
+  let curr_buf = bufnr('%')
   if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
-    let current_bufnum       = bufnr('%')
     let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
-                                          \ 'each': function(s:util.AddHeaderToQuickfix, [current_bufnum]),
+                                          \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
                                           \ 'done': function(s:util.EchoHeaderCount)})
   else
-    let qflist = map(s:util.ListHeaders(), s:util.HeaderToQF)
+    let qflist = map(s:util.ListHeaders(),
+          \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],
+                    \ 'text': repeat(g:mkdx#settings.tokens.header, v[1]) . ' ' . s:util.transform(v[2], ['clean-header']) }})
 
     if (open_qf)
       call setqflist(qflist)
@@ -1484,10 +1487,9 @@ fun! mkdx#GenerateTOC(...)
 
     if (empty(header) && (lnum >= curspos || (curr > toc_pos && after_pos)))
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.HeaderToHash(header)
-      let hc     = get(headers, csh, 0)
-      let hsf    = (hc > 0) ? '-' . hc : ''
-      let headers[csh] = hc == 0 ? 1 : headers[csh] + 1
+      let csh    = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+      let headers[csh] = get(headers, csh, -1) + 1
+      let hsf    = (headers[csh] > 0) ? '-' . headers[csh] : ''
       call insert(contents, '')
       call insert(contents, header)
       if (do_details)
@@ -1505,7 +1507,7 @@ fun! mkdx#GenerateTOC(...)
 
     if (empty(header) && curr == srclen)
       let header = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
-      let csh    = s:util.HeaderToHash(header)
+      let csh    = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
       let hc     = get(headers, csh, 0)
       let hsf    = (hc > 0) ? '-' . hc : ''
       let headers[csh] = hc == 0 ? 1 : headers[csh] + 1

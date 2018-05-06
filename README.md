@@ -88,6 +88,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
+        <li><a href="#gmkdxsettingsauto_updateenable"><code>g:mkdx#settings.auto_update.enable</code></a></li>
     </ul></li>
     <li><a href="#mappings">Mappings</a><ul>
         <li><a href="#remapping-functionality">Remapping functionality</a></li>

@@ -781,14 +781,6 @@ fun! s:util.TruncateString(str, len, ...)
   return strlen(a:str) >= a:len ? (a:str[0:(a:len - 1 - strlen(ending))] . ending) : a:str
 endfun
 
-fun! s:util.HeadersToCompletions()
-  return map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}})
-endfun
-
-fun! s:util.IDAnchorLinksToCompletions()
-  return map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}})
-endfun
-
 fun! s:util.IsInsideLink()
   let col   = col('.')
   let start = col
@@ -931,7 +923,9 @@ fun! s:util.ContextualComplete()
 
     return [start, []]
   else
-    return [start, extend(s:util.HeadersToCompletions(), s:util.IDAnchorLinksToCompletions())]
+    return [start, extend(
+          \ map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}}),
+          \ map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}}))]
   endif
 endfun
 

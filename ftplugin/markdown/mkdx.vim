@@ -42,11 +42,7 @@ if exists('g:mkdx#checkbox_initial_state')  | let s:defaults.checkbox.initial_st
 if (!exists('g:mkdx#settings_initialized'))
   let g:mkdx#settings             = mkdx#MergeSettings(s:defaults, exists('g:mkdx#settings') ? g:mkdx#settings : {})
   let g:mkdx#settings_initialized = 1
-
-  if (exists('*dictwatcheradd'))
-    call mkdx#WatchGlobalSetting()
-    call mkdx#RecursivelyAddDictWatchers(g:mkdx#settings)
-  endif
+  call mkdx#guard_settings()
 endif
 
 noremap         <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>

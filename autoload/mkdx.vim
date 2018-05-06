@@ -94,8 +94,7 @@ fun! s:util.add_dict_watchers(hash, ...)
   call dictwatcheradd(a:hash, '*', function(s:util.OnSettingModified, [keypath]))
   for key in keys(a:hash)
     if (type(a:hash[key]) == s:HASH)
-      let newpath = extend(deepcopy(keypath), [key])
-      call s:util.add_dict_watchers(a:hash[key], newpath)
+      call s:util.add_dict_watchers(a:hash[key], extend(deepcopy(keypath), [key]))
     endif
   endfor
 endfun
@@ -274,9 +273,8 @@ fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
 endfun
 
 fun! s:util.CsvRowToList(...)
-  let line     = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
-  let len      = strlen(line) - 1
-  let colcount = range(0, len)
+  let line = substitute(get(a:000, 0, getline('.')), '^\s\+|\s\+$', '', 'g')
+  let len  = strlen(line) - 1
 
   if (len < 1) | return [] | endif
 
@@ -285,7 +283,7 @@ fun! s:util.CsvRowToList(...)
   let currcol  = ""
   let result   = []
 
-  for idx in colcount
+  for idx in range(0, len)
     let char = line[idx]
     if (escaped)
       let currcol .= char
@@ -356,9 +354,7 @@ fun! s:util.GetRemoteUrl()
 endfun
 
 fun! s:util.AsyncDeadExternalToQF(...)
-  let resetqf          = get(a:000, 0, 1)
   let prev_tot         = get(a:000, 1, 0)
-  let _pt              = prev_tot
   let external         = filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
   let ext_len          = len(external)
   let bufnum           = bufnr('%')
@@ -366,7 +362,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
   let skip_rel         = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
 
-  if (resetqf) | call setqflist([]) | endif
+  if (get(a:000, 0, 1)) | call setqflist([]) | endif
 
   for [lnum, column, url] in external
     let has_frag = url[0]   == '#'
@@ -461,20 +457,13 @@ fun! s:util.FindDeadFragmentLinks()
   let headers = {}
   let hashes  = []
   let dead    = []
-  let src     = s:util.ListHeaders()
-  let anchors = s:util.ListIDAnchorLinks()
   let frags   = filter(s:util.ListLinks(), {idx, val -> val[2][0] == '#'})
   let bufnum  = bufnr('%')
 
-  for [lnum, lvl, line, hash, sfx] in src
-    call add(hashes, '#' . hash . sfx)
-  endfor
-
-  for [lnum, column, hash] in anchors
+  for [lnum, lvl, line, hash, sfx] in s:util.ListHeaders() | call add(hashes, '#' . hash . sfx) | endfor
+  for [lnum, column, hash] in s:util.ListIDAnchorLinks()
     let _h = '#' . hash
-    if (index(hashes, _h) == -1)
-      call add(hashes, _h)
-    endif
+    if (index(hashes, _h) == -1) | call add(hashes, _h) | endif
   endfor
 
   for [lnum, column, hash] in frags
@@ -507,9 +496,8 @@ fun! s:util.WrapSelectionOrWord(...)
     call cursor(elnum, ecol)
   else
     normal! "zdiw
-    let nl = virtcol('.') == strlen(getline('.'))
     let @z = start . @z . end
-    exe 'normal! "z' . (nl ? 'p' : 'P')
+    exe 'normal! "z' . ((virtcol('.') == strlen(getline('.'))) ? 'p' : 'P')
   endif
 
   let zz = @z
@@ -524,7 +512,6 @@ fun! s:util.ToggleMappingToKbd(str)
   let ilen  = len(parts) - 1
   let idx   = 0
   let out   = []
-  let res   = -1
 
   for key in parts
     if (match(key, '/kbd') > -1)
@@ -549,7 +536,6 @@ endfun
 fun! s:util.ListHeaders()
   let headers = []
   let skip    = 0
-  let bnum    = bufnr('%')
   let hashes  = {}
 
   for lnum in range(1, line('$'))
@@ -559,12 +545,10 @@ fun! s:util.ListHeaders()
     if (!skip)
       let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
       if (lvl > 0)
-        let hash   = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
-        let hcount = get(hashes, hash, 0)
-        let final  = hash . (hcount > 0 ? '-' . hcount : '')
-        let hashes[hash] = hcount + 1
+        let hash         = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
+        let hashes[hash] = get(hashes, hash, -1) + 1
 
-        call add(headers, [lnum, lvl, header, hash, (hcount > 0 ? '-' . hcount : '')])
+        call add(headers, [lnum, lvl, header, hash, (hashes[hash] > 0 ? '-' . hashes[hash] : '')])
       endif
     endif
   endfor
@@ -648,12 +632,11 @@ fun! s:util.TaskItem(linenum)
 endfun
 
 fun! s:util.TasksToCheck(linenum)
-  let lnum              = type(a:linenum) == type(0) ? a:linenum : line(a:linenum)
-  let cnum              = col('.')
-  let current           = s:util.TaskItem(lnum)
-  let [ctkn, cind, cln] = current
-  let startc            = lnum
-  let items             = []
+  let lnum    = type(a:linenum) == type(0) ? a:linenum : line(a:linenum)
+  let cnum    = col('.')
+  let current = s:util.TaskItem(lnum)
+  let startc  = lnum
+  let items   = []
 
   while (prevnonblank(startc) == startc)
     let indent = s:util.TaskItem(startc)[1]
@@ -661,7 +644,7 @@ fun! s:util.TasksToCheck(linenum)
     let startc -= 1
   endwhile
 
-  if (cind == -1) | return | endif
+  if (current[1] == -1) | return | endif
 
   while (nextnonblank(startc) == startc)
     let [token, indent, line] = s:util.TaskItem(startc)
@@ -696,13 +679,12 @@ endfun
 
 fun! s:util.NextListNumber(current, depth, ...)
   let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
-  let tdot  = match(curr, '\.$') > -1
   let parts = split(curr, '\.')
   let incr  = get(a:000, 0, 0)
   let incr  = incr < 0 ? incr : 1
 
   if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
-  return join(parts, '.') . (tdot ? '.' : '')
+  return join(parts, '.') . ((match(curr, '\.$') > -1) ? '.' : '')
 endfun
 
 fun! s:util.UpdateTaskList(...)
@@ -785,8 +767,7 @@ endfun
 
 fun! s:util.TruncateString(str, len, ...)
   let ending = get(a:000, 0, '..')
-  let endlen = strlen(ending)
-  return strlen(a:str) >= a:len ? (a:str[0:(a:len - 1 - endlen)] . ending) : a:str
+  return strlen(a:str) >= a:len ? (a:str[0:(a:len - 1 - strlen(ending))] . ending) : a:str
 endfun
 
 fun! s:util.HeadersToCompletions()
@@ -853,21 +834,18 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
 endfun
 
 fun! s:util.IdentifyGrepLink(input)
-  let input = s:util.grepcmd == 'cgrep' ? a:input[1:-2] : a:input
-  let ml    = matchlist(input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')
-  let parts = ml[2:5]
-  let lnum  = str2nr(get(parts, 0, 1))
-  let cnum  = str2nr(get(parts, 1, 1))
+  let input   = s:util.grepcmd == 'cgrep' ? a:input[1:-2] : a:input
+  let parts   = matchlist(input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')[2:5]
+  let lnum    = str2nr(get(parts, 0, 1))
+  let cnum    = str2nr(get(parts, 1, 1))
   let matched = get(parts, 2, '')
 
   if (index(['pt', 'ag', 'ucg', 'ack'], s:util.grepcmd) > -1)
-    let mtc = matchlist(matched[(cnum - 1):], '\(id\|name\)="[^"]\+"\|\]([^)]\+)\|^#\{1,6}.*$')
-    let tmp = get(mtc, 0, '')
-    let anc = index(['id', 'name'], get(mtc, 1, '')) > -1
-    let matched = empty(tmp) ? matched : (anc ? tmp[:-1] : tmp)
+    let mtc     = matchlist(matched[(cnum - 1):], '\(id\|name\)="[^"]\+"\|\]([^)]\+)\|^#\{1,6}.*$')
+    let tmp     = get(mtc, 0, '')
+    let matched = empty(tmp) ? matched : ((index(['id', 'name'], get(mtc, 1, '')) > -1) ? tmp[:-1] : tmp)
   endif
 
-  if (empty(matched))         | return { 'type': 'blank',  'lnum': lnum, '_col': cnum, 'col': cnum,     'content': '' }            | endif
   if (matched[0]   == '#')    | return { 'type': 'header', 'lnum': lnum, '_col': cnum, 'col': cnum,     'content': matched }       | endif
   if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
   if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
@@ -936,7 +914,7 @@ fun! s:util.ContextualComplete()
     let hashes = {}
     let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
-    let s:util._complete_jid = s:util.Grep(opts)
+    call s:util.Grep(opts)
 
     exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
 
@@ -963,21 +941,18 @@ fun! mkdx#JumpToHeader()
   let link = ''
 
   while (col < len)
-    let rgx  = '\[[^\]]\+\](\([^)]\+\))\|<a .*\(name\|id\|href\)="\([^"]\+\)".*>.*</a>'
-    let tcol = match(line[col:], rgx)
-    let matches   = matchlist(line[col:], rgx)
-    let matchtext = get(matches, 0, '')
-    let is_anchor = matchtext[0:1] == '<a'
-    let addr      = get(matches, is_anchor ? 3 : 1, '')
-    let matchlen  = strlen(matchtext)
+    let rgx        = '\[[^\]]\+\](\([^)]\+\))\|<a .*\(name\|id\|href\)="\([^"]\+\)".*>.*</a>'
+    let tcol       = match(line[col:], rgx)
+    let matches    = matchlist(line[col:], rgx)
+    let matchtext  = get(matches, 0, '')
+    let is_anchor  = matchtext[0:1] == '<a'
+    let addr       = get(matches, is_anchor ? 3 : 1, '')
+    let matchlen   = strlen(matchtext)
+    let col       += tcol + 1 + matchlen
+
     if (matchlen < 1) | break | endif
-
-    let col += tcol + 1 + matchlen
-    let sps  = col - matchlen
-    let eps  = col - 1
-
     if (is_anchor && index(['name', 'id'], get(matches, 2, '')) > -1) | return | endif
-    if (sps <= cnum && eps >= cnum)
+    if ((col - matchlen) <= cnum && (col - 1) >= cnum)
       let link = addr[(addr[0] == '#' ? 1 : 0):]
       break
     else
@@ -989,10 +964,10 @@ fun! mkdx#JumpToHeader()
   if (empty(link)) | return | endif
 
   if (!s:_testing && s:_can_vimgrep_fmt)
-    let hashes                     = {}
-    let s:util._header_found       = 0
-    let s:util._jump_to_header_jid = s:util.Grep({'pattern': '^#{1,6} .*$|(name|id)="[^"]+"',
-                                                \ 'each': function(s:util.JumpToHeader, [link, hashes])})
+    let hashes               = {}
+    let s:util._header_found = 0
+    call s:util.Grep({'pattern': '^#{1,6} .*$|(name|id)="[^"]+"',
+                    \ 'each': function(s:util.JumpToHeader, [link, hashes])})
   else
     let headers = s:util.ListHeaders()
 
@@ -1032,8 +1007,7 @@ fun! mkdx#QuickfixDeadLinks(...)
 endfun
 
 fun! mkdx#InsertFencedCodeBlock(...)
-  let style = !empty(g:mkdx#settings.tokens.fence) ? g:mkdx#settings.tokens.fence : get(a:000, 0, '`')
-  let delim = repeat(style, 3)
+  let delim = repeat(!empty(g:mkdx#settings.tokens.fence) ? g:mkdx#settings.tokens.fence : get(a:000, 0, '`'), 3)
   return delim . '' . delim
 endfun
 
@@ -1148,18 +1122,14 @@ fun! mkdx#ToggleHeader(...)
 endfun
 
 fun! mkdx#Tableize() range
-  let next_nonblank       = nextnonblank(a:firstline)
-  let firstline           = getline(next_nonblank)
-  let first_delimiter_pos = match(firstline, '[,\t]')
+  let next_nonblank = nextnonblank(a:firstline)
+  let firstline     = getline(next_nonblank)
 
-  if (first_delimiter_pos < 0) | return | endif
+  if (match(firstline, '[,\t]') < 0) | return | endif
 
-  let delimiter    = firstline[first_delimiter_pos]
-  let lines        = getline(a:firstline, a:lastline)
-  let col_maxlen   = {}
-  let col_align    = {}
-  let col_idx      = []
-  let linecount    = range(0, len(lines) - 1)
+  let lines                                   = getline(a:firstline, a:lastline)
+  let [col_maxlen, col_align, col_idx, parts] = [{}, {}, [], []]
+  let [linecount, ld]                         = [range(0, len(lines) - 1), ' ' . g:mkdx#settings.table.divider . ' ']
 
   for column in s:util.CsvRowToList(firstline)
     call add(col_idx, column)
@@ -1185,7 +1155,6 @@ fun! mkdx#Tableize() range
     endfor
   endfor
 
-  let ld  = ' ' . g:mkdx#settings.table.divider . ' '
   for linec in linecount
     if !empty(filter(lines[linec], {idx, val -> !empty(val)}))
       call setline(a:firstline + linec,
@@ -1193,18 +1162,15 @@ fun! mkdx#Tableize() range
     endif
   endfor
 
-  let parts = []
   for column in keys(col_maxlen)
-    let align  = tolower(get(col_align, get(col_idx, column, ''), g:mkdx#settings.table.align.default))
-    let len    = col_maxlen[column]
-    let lhs    = index(['right', 'center'], align) ? ':' : g:mkdx#settings.table.header_divider
-    let rhs    = index(['left',  'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+    let align = tolower(get(col_align, get(col_idx, column, ''), g:mkdx#settings.table.align.default))
+    let lhs   = index(['right', 'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+    let rhs   = index(['left',  'center'], align) ? ':' : g:mkdx#settings.table.header_divider
 
     call add(parts, lhs . repeat(g:mkdx#settings.table.header_divider, col_maxlen[column]) . rhs)
   endfor
-  let hline = join(parts, g:mkdx#settings.table.divider)
 
-  call s:util.InsertLine(g:mkdx#settings.table.divider . hline . g:mkdx#settings.table.divider, next_nonblank)
+  call s:util.InsertLine(g:mkdx#settings.table.divider . join(parts, g:mkdx#settings.table.divider) . g:mkdx#settings.table.divider, next_nonblank)
   call cursor(a:lastline + 1, 1)
 endfun
 
@@ -1261,24 +1227,22 @@ fun! mkdx#EnterHandler()
     let t       = get(results, 2, '')
     let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
     let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
-    let quote   = len > 0 ? line[0] == '>' : 0
     let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
     let incr    = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\) '), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
-    let qu_str  = quote ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
-    let ast_bld = match(line, '^ *\*\*') > -1
+    let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
 
     if (at_end && match(line, '^>\? *[0-9.]\+ ') > -1)
       call s:util.UpdateListNumbers(lnum, incr, (remove ? -1 : 1))
     endif
 
-    if (remove)  | call setline('.', '')                                                      | endif
-    if (upd_tl)  | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
-    if (remove)  | return ''                                                                  | endif
-    if (ast_bld) | return "\n"                                                                | endif
-    if (!at_end) | return "\n"                                                                | endif
-    if (tcb)     | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
+    if (remove)                                   | call setline('.', '')                                                      | endif
+    if (upd_tl)                                   | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
+    if (remove)                                   | return ''                                                                  | endif
+    if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n"                                                                | endif
+    if (tcb)                                      | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
+
     return ("\n"
       \ . qu_str
       \ . (match(t, '[0-9.]\+') > -1 ? s:util.NextListNumber(t, incr > -1 ? incr : 0) : t)
@@ -1336,14 +1300,12 @@ fun! mkdx#UpdateTOC(...)
   let opts                    = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let curpos                  = getpos('.')
   let [startc, endc, details] = s:util.GetTOCPositionAndStyle(opts)
-  let deleted                 = endc - startc + 1
-  let curs_af                 = curpos[1] >= endc
 
   silent! exe 'normal! :' . startc . ',' . endc . 'd'
 
   let inslen = mkdx#GenerateTOC(1, details)
 
-  call cursor(curpos[1] - (curs_af ? deleted - inslen : 0), curpos[2])
+  call cursor(curpos[1] - (curpos[1] >= endc ? endc - startc - inslen + 1 : 0), curpos[2])
 endfun
 
 fun! mkdx#QuickfixHeaders(...)
@@ -1351,9 +1313,9 @@ fun! mkdx#QuickfixHeaders(...)
   let curr_buf = bufnr('%')
   if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
-    let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
-                                          \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
-                                          \ 'done': function(s:util.EchoQuickfixCount, ['header'])})
+    call s:util.Grep({'pattern': '^#{1,6} .*$',
+                    \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
+                    \ 'done': function(s:util.EchoQuickfixCount, ['header'])})
   else
     let qflist = map(s:util.ListHeaders(),
           \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],
@@ -1394,14 +1356,12 @@ fun! mkdx#GenerateTOC(...)
   endif
 
   for [lnum, lvl, line, hsh, sfx] in src
-    let curr += 1
-    let headers[hsh] = get(headers, hsh, -1) + 1
-    let spc = repeat(repeat(' ', &sw), lvl)
-    let nextlvl    = get(src, curr, [0, lvl])[1]
-    let ending_tag = (nextlvl > lvl) ? '<ul>' : '</li>'
+    let curr         += 1
+    let headers[hsh]  = get(headers, hsh, -1) + 1
+    let spc           = repeat(repeat(' ', &sw), lvl)
+    let ending_tag    = (get(src, curr, [0, lvl])[1] > lvl) ? '<ul>' : '</li>'
 
     if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
-
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
@@ -1411,7 +1371,6 @@ fun! mkdx#GenerateTOC(...)
     endif
 
     call LI(lvl, spc, line, sfx, ending_tag)
-
     if (empty(header) && curr == srclen)
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])

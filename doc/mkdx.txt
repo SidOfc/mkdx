@@ -54,6 +54,9 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.toc.details.summary`
         `g:mkdx#settings.highlight.enable`
 
+    Errors
+       Type
+
     Highlighting
         `mkdxListItem`
         `mkdxCheckboxEmpty`
@@ -224,6 +227,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-toc-details-enable|
     - |mkdx-setting-toc-details-summary|
     - |mkdx-setting-highlight-enable|
+
+- |mkdx-errors|
+    - |mkdx-error-type|
 
 - |mkdx-highlighting|
     - |mkdx-highlight-list-item|
@@ -747,6 +753,32 @@ checkboxes. The scheme goes as follows:
 
 See the section |mkdx-highlighting| for details about how to customize the
 colors.
+
+==============================================================================
+|ERRORS|                                                             *mkdx-errors*
+
+Whenever a setting in `g:mkdx#settings` is updated, the new value will be
+validated before being set. If the value passes validations, it will be
+updated, otherwise an error will be thrown.
+
+Every error contains at least 2 helptags, the first one is related to the
+place the error occured (if you tried to set `g:mkdx#settings.enter.enable` to
+`5`, you would get |mkdx-setting-enter-enable|). The second helptag refers to
+this heading: |mkdx-errors|. If there is a third helptag, it refers to the type
+of the error, e.g. setting it to `'5'` would show |mkdx-error-type| as
+the second helptag.
+
+Every setting can be overwritten in any way as long as the format remains
+valid. The errors try to point you in the right direction be as descriptive
+as possible. An error is also not critical, the bad value will be rolled back
+and no harm will be done :)
+
+==============================================================================
+Type                                                           *mkdx-error-type*
+
+This error occurs whenever you try to set a setting in `g:mkdx#settings` that
+does not equal the current type of that setting. When this happens, mkdx will
+not apply the new value and instead, roll back to the old value.
 
 ==============================================================================
 HIGHLIGHTING                                                 *mkdx-highlighting*

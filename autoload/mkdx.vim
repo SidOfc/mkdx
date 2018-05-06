@@ -129,10 +129,14 @@ fun! s:util.OnSettingModified(path, hash, key, value)
 
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
+
     call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
-    let a:hash[a:key] = a:value.old
-    let et            = 1
-    call s:util.DidNotUpdateValueAt(yy)
+
+    let a:hash[a:key]      = a:value.old
+    let et                 = 1
+    let s:util._err_count += 1
+
+    call s:util.DidNotUpdateValueAt(yy, 'mkdx-error-type')
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (ch && (has_key(s:util.validations, sk) || has_key(s:util.validations, a:key)))
@@ -189,7 +193,7 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2, 'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,      'value must be a list with at least 2 states'] },
       \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2], 'value must be >= 0 and <= 2'] },
       \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
       \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1], 'value can only be 0 or 1'] },
@@ -232,10 +236,14 @@ fun! s:util.validate(value, validations)
   return errors
 endfun
 
-fun! s:util.DidNotUpdateValueAt(path)
+fun! s:util.DidNotUpdateValueAt(path, ...)
   call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
-  let helpkey = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
-  call s:util.CommentMsg('help: mkdx-setting-' . helpkey . ', ' . 'mkdx-errors-setting-type')
+
+  let helpkey  = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
+  let code     = get(a:000, 0, '')
+  let helptags = join(extend(['mkdx-setting-' . helpkey, 'mkdx-errors'], !empty(code) ? [code] : []), ', ')
+
+  call s:util.CommentMsg('help: ' . helptags)
 endfun
 
 fun! s:util.GrepLinkToQF(greplink, bufnr)

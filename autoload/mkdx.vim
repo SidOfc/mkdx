@@ -73,41 +73,17 @@ let s:INT  = type(1)
 let s:STR  = type('')
 let s:FUNC = type(s:util._)
 
-fun! s:util.TypeString(tnum)
-  if (a:tnum == s:HASH)
-    return 'hash'
-  elseif (a:tnum == s:LIST)
-    return 'list'
-  elseif (a:tnum == s:INT)
-    return 'int'
-  elseif (a:tnum == s:STR)
-    return 'str'
-  elseif (a:tnum == s:FUNC)
-    return 'func'
-  endif
-  return 'unknown'
+fun! s:util.TypeString(t)
+  return (a:t == s:HASH) ? 'hash'
+     \ : (a:t == s:LIST) ? 'list'
+     \ : (a:t == s:INT)  ? 'int'
+     \ : (a:t == s:STR)  ? 'str'
+     \ : (a:t == s:FUNC) ? 'func' : 'unknown'
 endfun
 
-fun! s:util.ErrorMsg(str)
-  echohl ErrorMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.InfoMsg(str)
-  echohl markdownHeadingDelimiter
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.SuccessMsg(str)
-  echohl MoreMsg
-  echo a:str
-  echohl None
-endfun
-
-fun! s:util.CommentMsg(str)
-  echohl Comment
+fun! s:util.log(str, ...)
+  let opts = extend({'hl': 'Comment'}, get(a:000, 0, {}))
+  exe 'echohl ' . opts.hl
   echo a:str
   echohl None
 endfun
@@ -134,7 +110,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
 
-    call s:util.ErrorMsg('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}')
+    call s:util.log('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}', {'hl': 'ErrorMsg'})
 
     let a:hash[a:key]      = a:value.old
     let et                 = 1
@@ -148,7 +124,7 @@ fun! s:util.OnSettingModified(path, hash, key, value)
     if (!empty(er))
       let s:util._err_count += len(er)
       for error in er
-        call s:util.ErrorMsg(sk . ' ' . error)
+        call s:util.log(sk . ' ' . error, {'hl': 'ErrorMsg'})
       endfor
       call s:util.DidNotUpdateValueAt(yy)
       let a:hash[a:key] = a:value.old
@@ -241,13 +217,13 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path, ...)
-  call s:util.CommentMsg('info: did not update value of {' . join(a:path, '.') . '}')
+  call s:util.log('info: did not update value of {' . join(a:path, '.') . '}')
 
   let helpkey  = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
   let code     = get(a:000, 0, '')
   let helptags = join(extend(['mkdx-setting-' . helpkey, 'mkdx-errors'], !empty(code) ? [code] : []), ', ')
 
-  call s:util.CommentMsg('help: ' . helptags)
+  call s:util.log('help: ' . helptags)
 endfun
 
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
@@ -270,11 +246,9 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   endfor
 endfun
 
-fun! s:util.EchoQuickfixCount(...)
+fun! s:util.EchoQuickfixCount(subject, ...)
   let total = len(getqflist())
-  if (total > 0) | echohl MoreMsg | else | echohl ErrorMsg | endif
-  echo total . ' header' . (total == 1 ? '' : 's')
-  echohl None
+  call s:util.log(total . ' ' . (total == 1 ? a:subject : a:subject . 's'), {'hl': (total > 0) ? 'MoreMsg' : 'ErrorMsg'})
   return total
 endfun
 
@@ -284,7 +258,7 @@ fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
   let qf_entries = map(filter(stream, {idx, line -> !empty(line)}), {idx, line -> TQF(s:util.IdentifyGrepLink(line))})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
-  if (s:util.EchoQuickfixCount()) | copen | else | cclose | endif
+  if (s:util.EchoQuickfixCount('header')) | copen | else | cclose | endif
 endfun
 
 fun! s:util.CsvRowToList(...)
@@ -345,9 +319,8 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
     if (qflen == 1) | copen | endif
   endif
 
-  if (qflen > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-  echo qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's')
-  echohl None
+  call s:util.log(qflen . '/' . total . ' dead fragment link' . (qflen == 1 ? '' : 's'), {'hl': (qflen > 0 ? 'ErrorMsg' : 'MoreMsg')})
+  if (qflen > 0) | copen | else | cclose | endif
 endfun
 
 fun! s:util.GetRemoteUrl()
@@ -1047,11 +1020,8 @@ fun! mkdx#QuickfixDeadLinks(...)
     if (!s:_testing && g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif
-
-    if (dl > 0) | echohl ErrorMsg | else | echohl MoreMsg | endif
-    if (dl > 0) | copen           | else | cclose         | endif
-    echo dl . '/' . total ' dead fragment link' . (dl == 1 ? '' : 's')
-    echohl None
+    call s:util.log(dl . '/' . total . ' dead fragment link' . (dl == 1 ? '' : 's'), {'hl': (dl > 0 ? 'ErrorMsg' : 'MoreMsg')})
+    if (dl > 0) | copen | else | cclose | endif
   else
     return dead
   endif
@@ -1379,7 +1349,7 @@ fun! mkdx#QuickfixHeaders(...)
     call setqflist([])
     let s:util._headerqf_jid = s:util.Grep({'pattern': '^#{1,6} .*$',
                                           \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
-                                          \ 'done': function(s:util.EchoQuickfixCount)})
+                                          \ 'done': function(s:util.EchoQuickfixCount, ['header'])})
   else
     let qflist = map(s:util.ListHeaders(),
           \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],
@@ -1387,7 +1357,7 @@ fun! mkdx#QuickfixHeaders(...)
 
     if (open_qf)
       call setqflist(qflist)
-      if (s:util.EchoQuickfixCount()) | copen | else | cclose | endif
+      if (s:util.EchoQuickfixCount('header')) | copen | else | cclose | endif
     else
       return qflist
     endif

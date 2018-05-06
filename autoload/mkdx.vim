@@ -1068,7 +1068,7 @@ fun! mkdx#ToggleToKbd(...)
   let r  = @z
   let ln = getline('.')
 
-  exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
+  silent! exe 'normal! ' . (m == 'n' ? '"zdiW' : 'gv"zd')
   let oz = @z
   let ps = split(oz, ' ')
   let @z = empty(ps) ? @z : join(map(ps, {idx, val -> s:util.ToggleMappingToKbd(val)}), ' ')
@@ -1365,7 +1365,7 @@ fun! mkdx#UpdateTOC(...)
   let deleted                 = endc - startc + 1
   let curs_af                 = curpos[1] >= endc
 
-  exe 'normal! :' . startc . ',' . endc . 'd'
+  silent! exe 'normal! :' . startc . ',' . endc . 'd'
 
   let inslen = mkdx#GenerateTOC(1, details)
 

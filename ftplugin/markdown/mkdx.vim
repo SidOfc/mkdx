@@ -16,7 +16,8 @@ let s:defaults          = {
       \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
       \ 'highlight':               { 'enable': 0 },
-      \ 'auto_update':             { 'enable': 1 }
+      \ 'auto_update':             { 'enable': 1 },
+      \ 'fold':                    { 'enable': 1, 'components': ['toc'] }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif
@@ -87,6 +88,11 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal pumheight=15
   setlocal iskeyword+=\-
   setlocal completeopt=noinsert,menuone
+endif
+
+if (g:mkdx#settings.fold.enable)
+  setlocal foldmethod=expr
+  setlocal foldexpr=mkdx#fold(v:lnum)
 endif
 
 if g:mkdx#settings.map.enable == 1

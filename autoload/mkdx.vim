@@ -159,8 +159,10 @@ endfun
 
 fun! s:util.RepositionTOC(old, new)
   let [current, endc, details] = s:util.GetTOCPositionAndStyle()
+  let s:util._updating_toc     = 1
   silent! exe 'normal! :' . current . ',' . endc . 'd'
   call mkdx#GenerateTOC(0, details)
+  let s:util._updating_toc = 0
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
@@ -887,6 +889,17 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
+let s:util._current_toc = [1, 1, 0]
+
+fun! mkdx#fold(lnum)
+  if ((a:lnum == 1) || s:util._updating_toc)
+    let s:util._current_toc = s:util.GetTOCPositionAndStyle()
+    let s:util._current_toc[0] += 2
+    let s:util._current_toc[1] -= (empty(getline(s:util._current_toc[1])) ? 1 : 0)
+  endif
+  if (a:lnum >= s:util._current_toc[0] && a:lnum <= s:util._current_toc[1]) | return '1'  | endif
+endfun
+
 fun! mkdx#InsertCtrlPHandler()
   return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-P>"
 endfun
@@ -1304,11 +1317,13 @@ endfun
 fun! mkdx#UpdateTOC(...)
   let opts                    = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let curpos                  = getpos('.')
+  let s:util._updating_toc    = 1
   let [startc, endc, details] = s:util.GetTOCPositionAndStyle(opts)
 
   silent! exe 'normal! :' . startc . ',' . endc . 'd'
 
-  let inslen = mkdx#GenerateTOC(1, details)
+  let inslen               = mkdx#GenerateTOC(1, details)
+  let s:util._updating_toc = 0
 
   call cursor(curpos[1] - (curpos[1] >= endc ? endc - startc - inslen + 1 : 0), curpos[2])
 endfun
@@ -1395,11 +1410,7 @@ fun! mkdx#GenerateTOC(...)
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif
 
-  for item in contents
-    call append(c, item)
-    let c += 1
-  endfor
-
+  call append(c, contents)
   call setpos('.', cpos)
   return len(contents)
 endfun

@@ -159,10 +159,8 @@ endfun
 
 fun! s:util.RepositionTOC(old, new)
   let [current, endc, details] = s:util.GetTOCPositionAndStyle()
-  let s:util._updating_toc     = 1
   silent! exe 'normal! :' . current . ',' . endc . 'd'
   call mkdx#GenerateTOC(0, details)
-  let s:util._updating_toc = 0
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
@@ -904,6 +902,7 @@ fun! mkdx#fold(lnum, ...)
     let s:util._current_toc = s:util.GetTOCPositionAndStyle()
     let s:util._current_toc[0] += 2
     let s:util._current_toc[1] -= (empty(getline(s:util._current_toc[1])) ? 1 : 0)
+    let s:util._updating_toc = 0
   endif
   if (a:lnum >= s:util._current_toc[0] && a:lnum <= s:util._current_toc[1]) | return '1'  | endif
 endfun
@@ -1326,13 +1325,11 @@ endfun
 fun! mkdx#UpdateTOC(...)
   let opts                    = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let curpos                  = getpos('.')
-  let s:util._updating_toc    = 1
   let [startc, endc, details] = s:util.GetTOCPositionAndStyle(opts)
 
   silent! exe 'normal! :' . startc . ',' . endc . 'd'
 
-  let inslen               = mkdx#GenerateTOC(1, details)
-  let s:util._updating_toc = 0
+  let inslen = mkdx#GenerateTOC(1, details)
 
   call cursor(curpos[1] - (curpos[1] >= endc ? endc - startc - inslen + 1 : 0), curpos[2])
 endfun
@@ -1360,6 +1357,7 @@ fun! mkdx#QuickfixHeaders(...)
 endfun
 
 fun! mkdx#GenerateTOC(...)
+  let s:util._updating_toc = 1
   let contents   = []
   let cpos       = getpos('.')
   let header     = ''

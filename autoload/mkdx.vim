@@ -898,17 +898,14 @@ fun! s:util.get_lines_starting_with(pat)
               \ {_, lnum -> lnum > -1})
 endfun
 
-fun! mkdx#fold(lnum)
-  let isfirst = a:lnum == 1
-  if (isfirst || s:util._updating_toc)
+fun! mkdx#fold(lnum, ...)
+  if (a:lnum == 1 || s:util._updating_toc)
     let s:util._current_fences = s:util.get_lines_starting_with('^\~\~\~\|\`\`\`')
     let s:util._current_toc = s:util.GetTOCPositionAndStyle()
     let s:util._current_toc[0] += 2
     let s:util._current_toc[1] -= (empty(getline(s:util._current_toc[1])) ? 1 : 0)
   endif
   if (a:lnum >= s:util._current_toc[0] && a:lnum <= s:util._current_toc[1]) | return '1'  | endif
-
-endif
 endfun
 
 fun! mkdx#InsertCtrlPHandler()
@@ -1297,32 +1294,33 @@ endfun
 fun! s:util.GetTOCPositionAndStyle(...)
   let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let startc = -1
+  let found  = 0
 
   for lnum in range(1, line('$'))
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
       let startc = lnum
+      let found  = 1
       break
     endif
   endfor
 
-  if (startc)
-    let endc = nextnonblank(startc + 1)
-    while (nextnonblank(endc) == endc)
+  if (!found) | return [-1, -1, -1] | endif
+
+  let endc = nextnonblank(startc + 1)
+  while (nextnonblank(endc) == endc)
+    let endc += 1
+    let endl  = getline(endc)
+    if (match(endl, '^[ \t]*#\{1,6}') > -1)
+      break
+    elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
       let endc += 1
-      let endl  = getline(endc)
-      if (match(endl, '^[ \t]*#\{1,6}') > -1)
-        break
-      elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
-        let endc += 1
-        break
-      endif
-    endwhile
-    if (nextnonblank(endc) == endc) | let endc -= 1 | endif
-  endif
+      break
+    endif
+  endwhile
 
-  let details = (!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>') : opts.details
-
-  return [startc, endc, details]
+  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
+  return [startc, endc, ((!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>')
+                                                          \ : opts.details)]
 endfun
 
 fun! mkdx#UpdateTOC(...)

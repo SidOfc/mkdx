@@ -1,11 +1,8 @@
 Execute (Setup):
   if (!exists('g:vim_dev__vader_settings'))
+    " set the filetype to initialize settings merge with settings from $MYVIMRC
     let g:vim_dev__vader_ft = &ft
     setf markdown
-    let g:vim_dev__vader_sw = &sw
-    set sw=4
-    let g:vim_dev__vader_autoindent = &autoindent
-    set autoindent
 
     let g:vim_dev__vader_settings = deepcopy(g:mkdx#settings)
     let g:mkdx#settings = {

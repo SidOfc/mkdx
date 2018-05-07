@@ -889,15 +889,26 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
-let s:util._current_toc = [1, 1, 0]
+let s:util._current_toc    = [1, 1, 0]
+let s:util._current_fences = []
+
+fun! s:util.get_lines_starting_with(pat)
+  return filter(map(range(1, line('$')),
+                  \ {_, lnum -> (match(getline(lnum), a:pat) > -1) ? lnum : -1}),
+              \ {_, lnum -> lnum > -1})
+endfun
 
 fun! mkdx#fold(lnum)
-  if ((a:lnum == 1) || s:util._updating_toc)
+  let isfirst = a:lnum == 1
+  if (isfirst || s:util._updating_toc)
+    let s:util._current_fences = s:util.get_lines_starting_with('^\~\~\~\|\`\`\`')
     let s:util._current_toc = s:util.GetTOCPositionAndStyle()
     let s:util._current_toc[0] += 2
     let s:util._current_toc[1] -= (empty(getline(s:util._current_toc[1])) ? 1 : 0)
   endif
   if (a:lnum >= s:util._current_toc[0] && a:lnum <= s:util._current_toc[1]) | return '1'  | endif
+
+endif
 endfun
 
 fun! mkdx#InsertCtrlPHandler()

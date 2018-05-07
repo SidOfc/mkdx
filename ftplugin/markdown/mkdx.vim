@@ -136,6 +136,7 @@ if g:mkdx#settings.map.enable == 1
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
+    setlocal autoindent
     imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
 
     if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)

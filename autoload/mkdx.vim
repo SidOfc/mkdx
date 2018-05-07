@@ -1203,11 +1203,13 @@ fun! mkdx#Tableize() range
 endfun
 
 fun! mkdx#OHandler()
+  let s:util._update_folds = 1
   normal A
   startinsert!
 endfun
 
 fun! mkdx#ShiftOHandler()
+  let s:util._update_folds = 1
   let lnum = line('.')
   let line = getline(lnum)
   let len  = strlen(line)

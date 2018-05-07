@@ -17,7 +17,7 @@ let s:defaults          = {
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
       \ 'highlight':               { 'enable': 0 },
       \ 'auto_update':             { 'enable': 1 },
-      \ 'fold':                    { 'enable': 1, 'components': ['toc'] }
+      \ 'fold':                    { 'enable': 1, 'components': ['toc', 'fence'] }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif

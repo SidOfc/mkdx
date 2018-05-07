@@ -887,24 +887,27 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
-let s:util._current_toc    = [1, 1, 0]
-let s:util._current_fences = []
-
 fun! s:util.get_lines_starting_with(pat)
   return filter(map(range(1, line('$')),
                   \ {_, lnum -> (match(getline(lnum), a:pat) > -1) ? lnum : -1}),
               \ {_, lnum -> lnum > -1})
 endfun
 
-fun! mkdx#fold(lnum, ...)
-  if (a:lnum == 1 || s:util._updating_toc)
-    let s:util._current_fences = s:util.get_lines_starting_with('^\~\~\~\|\`\`\`')
-    let s:util._current_toc = s:util.GetTOCPositionAndStyle()
-    let s:util._current_toc[0] += 2
-    let s:util._current_toc[1] -= (empty(getline(s:util._current_toc[1])) ? 1 : 0)
-    let s:util._updating_toc = 0
+let s:util._folds = []
+
+fun! mkdx#fold(lnum)
+  if (a:lnum == 1 || s:util._update_folds)
+    let s:util._update_folds = 0
+    let toc_pos              = s:util.GetTOCPositionAndStyle()[0:1]
+    let code_blocks          = s:util.get_lines_starting_with('^\~\~\~\|^\`\`\`')
+    let len_cblocks          = len(code_blocks) - 1
+    let s:util._folds        = map(range(0, (len_cblocks - (len_cblocks % 2)), 2),
+                                 \ {idx, val -> [code_blocks[val], code_blocks[val + 1]]})
+
+    call insert(s:util._folds, [toc_pos[0] + 2, toc_pos[1] - (empty(getline(toc_pos[1])) ? 1 : 0)])
   endif
-  if (a:lnum >= s:util._current_toc[0] && a:lnum <= s:util._current_toc[1]) | return '1'  | endif
+
+  for [sln, eln] in s:util._folds | if (a:lnum >= sln && a:lnum <= eln) | return '1' | endif | endfor
 endfun
 
 fun! mkdx#InsertCtrlPHandler()
@@ -1357,7 +1360,7 @@ fun! mkdx#QuickfixHeaders(...)
 endfun
 
 fun! mkdx#GenerateTOC(...)
-  let s:util._updating_toc = 1
+  let s:util._update_folds = 1
   let contents   = []
   let cpos       = getpos('.')
   let header     = ''

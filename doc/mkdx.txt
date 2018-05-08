@@ -773,7 +773,7 @@ Likewise, updating the header token instantly updates all headers:
 
 `:let g:mkdx#settings.tokens.header = '@'`
 
-Will automatically change all the headers to start with an `'@` symbol.
+Will automatically change all the headers to start with an `@` symbol.
 
 Full list of instant-updated settings:
 

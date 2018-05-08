@@ -180,6 +180,13 @@ fun! s:util.UpdateFencedCodeBlocks(old, new)
   endfor
 endfun
 
+fun! s:util.UpdateFolds(old, new)
+  let s:util._fold_fence = index(a:new, 'fence') > -1
+  let s:util._fold_toc   = index(a:new, 'toc')   > -1
+
+  normal! zx
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -211,7 +218,8 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
       \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
       \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders,
-      \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks
+      \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks,
+      \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds
       \ }
 
 fun! s:util.validate(value, validations)
@@ -893,18 +901,24 @@ fun! s:util.get_lines_starting_with(pat)
               \ {_, lnum -> lnum > -1})
 endfun
 
-let s:util._folds = []
-
 fun! mkdx#fold(lnum)
   if (a:lnum == 1 || s:util._update_folds)
+    let s:util._folds        = []
     let s:util._update_folds = 0
-    let toc_pos              = s:util.GetTOCPositionAndStyle()[0:1]
-    let code_blocks          = s:util.get_lines_starting_with('^\~\~\~\|^\`\`\`')
-    let len_cblocks          = len(code_blocks) - 1
-    let s:util._folds        = map(range(0, (len_cblocks - (len_cblocks % 2)), 2),
-                                 \ {idx, val -> [code_blocks[val], code_blocks[val + 1]]})
+    let s:util._fold_fence   = get(s:util, '_fold_fence', index(g:mkdx#settings.fold.components, 'fence') > -1)
+    let s:util._fold_toc     = get(s:util, '_fold_toc',   index(g:mkdx#settings.fold.components, 'toc')   > -1)
 
-    call insert(s:util._folds, [toc_pos[0] + 2, toc_pos[1] - (empty(getline(toc_pos[1])) ? 1 : 0)])
+    if (s:util._fold_fence)
+      let code_blocks = s:util.get_lines_starting_with('^\~\~\~\|^\`\`\`')
+      let len_cblocks = len(code_blocks) - 1
+      let s:util._folds = map(range(0, (len_cblocks - (len_cblocks % 2)), 2),
+                            \ {idx, val -> [code_blocks[val], code_blocks[val + 1]]})
+    endif
+
+    if (s:util._fold_toc)
+      let toc_pos = s:util.GetTOCPositionAndStyle()[0:1]
+      call insert(s:util._folds, [toc_pos[0] + 2, toc_pos[1] - (empty(getline(toc_pos[1])) ? 1 : 0)])
+    endif
   endif
 
   for [sln, eln] in s:util._folds | if (a:lnum >= sln && a:lnum <= eln) | return '1' | endif | endfor

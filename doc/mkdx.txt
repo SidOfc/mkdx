@@ -152,6 +152,10 @@ CONTENTS                                                         *mkdx-contents*
 
     Errors
        Type
+       Minimum length
+       Between
+       Only valid
+       Only list
 
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
@@ -233,9 +237,6 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-auto-update-enable|
     - |mkdx-setting-fold-enable|
     - |mkdx-setting-fold-components|
-
-- |mkdx-errors|
-    - |mkdx-error-type|
 
 - |mkdx-highlighting|
     - |mkdx-highlight-list-item|
@@ -332,6 +333,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-insert-ctrl-n-handler|
     - |mkdx-function-insert-ctrl-p-handler|
     - |mkdx-function-complete-link|
+
+- |mkdx-errors|
+    - |mkdx-error-type|
+    - |mkdx-error-min-length|
+    - |mkdx-error-between|
+    - |mkdx-error-only-valid|
+    - |mkdx-error-only-list|
 
 ==============================================================================
 `g:mkdx#settings = { ... }`                                        *mkdx-settings*
@@ -517,6 +525,14 @@ Autocomplete fragment links in |Insert-mode|. Set to `0` to disable,
 Fragment links are completed by scanning the document for headers and
 converting them to their respective hashes.
 
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal completefunc=mkdx#Complete`
+    `setlocal pumheight=15`
+    `setlocal iskeyword+=\-`
+    `setlocal completeopt=noinsert,menuone`
+
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
     `\ 'a\?png\|jpe\?g\|gif'`
@@ -549,6 +565,8 @@ See the |mkdx-mappings| section to see how each mapping works.
 `g:mkdx#settings.checkbox.toggles =              ` *mkdx-setting-checkbox-toggles*
     `\ [' ', '-', 'x']`
 
+(minimum list length: `2`)
+
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
 
@@ -569,6 +587,8 @@ If the list contains more than 2 states, the second-to-last element
 
 ==============================================================================
 `g:mkdx#settings.checkbox.update_tree = 2`     *mkdx-setting-checkbox-update-tree*
+
+(valid values: `0`, `1`, `2`)
 
 With this setting on, checkboxes that are toggled within checklists (lists of
 checkboxes) cause parent and child list items to be updated automatically.
@@ -603,12 +623,14 @@ This list identifies which tokens at the start of a string are identified as a
 ==============================================================================
 `g:mkdx#settings.tokens.fence = ''`                    *mkdx-setting-tokens-fence*
 
+(valid values: `'```'`, `'~'`)
+
 This setting allows you to override the fence style that is used when typing
 three backticks or tilde characters. By default it is empty which means that
 the typed key defines the fence style (so tildes are used when typing tildes,
 ditto for backticks).
 
-The fence style can be set to '~' or '`'. This will cause both tildes and
+The fence style can be set to `'~'` or `'```'`. This will cause both tildes and
 backticks to use the same style.
 
 ==============================================================================
@@ -664,6 +686,12 @@ being compared. This means column names are case-insensitive.
 When pressing <enter> in insert mode, this handles appending of new list items
 in lists. See |mkdx-setting-tokens-list| for a list of supported list tokens.
 Examples can be found at |mkdx-function-enter-handler|.
+
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal formatoptions-=r`
+    `setlocal autoindent`
 
 ==============================================================================
 `g:mkdx#settings.enter.o`                                   *mkdx-setting-enter-o*
@@ -818,8 +846,16 @@ There are two kinds of folding that mkdx can do.
 Folding can be disabled for {fence} and {toc} individually by changing
 |mkdx-setting-fold-components|.
 
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal foldmethod=expr`
+    `setlocal foldexpr=mkdx#fold(v:lnum)`
+
 ==============================================================================
 `g:mkdx#settings.fold.coponents = ['toc', 'fence'] `*mkdx-setting-fold-components*
+
+(valid list entries: `'toc'`, `'fence'`)
 
 Defines what to fold, it must be a {list} consisting of the components you
 want to enable. At the moment, the list can have two values:
@@ -1964,12 +2000,12 @@ Whenever a setting in `g:mkdx#settings` is updated, the new value will be
 validated before being set. If the value passes validations, it will be
 updated, otherwise an error will be thrown.
 
-Every error contains at least 2 helptags, the first one is related to the
-place the error occured (if you tried to set `g:mkdx#settings.enter.enable` to
-`5`, you would get |mkdx-setting-enter-enable|). The second helptag refers to
-this heading: |mkdx-errors|. If there is a third helptag, it refers to the type
-of the error, e.g. setting it to `'5'` would show |mkdx-error-type| as
-the second helptag.
+Every error contains at least 1 helptag. This would point to the setting that
+you tried to modify. If you set `g:mkdx#settings.tokens.fence` to `5`, the first
+helptag would be `mkdx-setting-tokens-fence`.
+
+When a validation fails, a more specific error code will be given that can be
+found in the sections below.
 
 Every setting can be overwritten in any way as long as the format remains
 valid. The errors try to point you in the right direction be as descriptive
@@ -1982,5 +2018,58 @@ Type                                                           *mkdx-error-type*
 This error occurs whenever you try to set a setting in `g:mkdx#settings` that
 does not equal the current type of that setting. When this happens, mkdx will
 not apply the new value and instead, roll back to the old value.
+
+==============================================================================
+Minimum length                                           *mkdx-error-min-length*
+
+Given a {list} or a {string}, this validation fails if either |len()| or
+|strlen()| (respectively) fails based on a defined {length}. The description of
+the error includes the minimum length the setting should have.
+
+For strings, this can be defined as:
+
+`   strlen(string) < length`
+
+For lists, this can be defined as:
+
+`   len(list) < length`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Between                                                     *mkdx-error-between*
+
+Given an {integer} value, checks if it is between a defined {min} and {max}
+value. The check is inclusive for both {min} and {max} values:
+
+`   integer < min || integer > max`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Only valid                                               *mkdx-error-only-valid*
+
+Given a {value} this validation will fail when {value} is not in the defined
+{options}. This check only works for primitive values such as numbers and
+strings.
+
+`   index(options, value) == -1`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Only list                                                 *mkdx-error-only-list*
+
+Like |mkdx-error-only-valid| but for lists of values. Given a {list}
+containing some values, checks if all values in the {list} match that of an
+option in this specific validation:
+
+`  len(filter(list, {idx, value -> index(valid, value) == -1})) > 0`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
 
 vim:tw=78:sw=4:ft=help:norl:

@@ -253,9 +253,8 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path, ...)
-  let helptags = extend(['mkdx-errors'], get(a:000, 0, []))
+  let helptags = extend((len(a:path) == 1) ? [] : ['mkdx-setting-' . substitute(join(a:path[1:], '-'), '_', '-', 'g')], get(a:000, 0, []))
 
-  call extend(helptags, (len(a:path) == 1) ? [] : ['mkdx-setting-' . substitute(join(a:path[1:], '-'), '_', '-', 'g')])
   call s:util.log('info: did not update value of {' . join(a:path, '.') . '}')
   call s:util.log('help: ' . join(helptags, ', '))
 endfun

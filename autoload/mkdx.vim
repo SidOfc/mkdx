@@ -200,16 +200,17 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,          'value must be a list with at least 2 states'] },
-      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],     'value must be >= 0 and <= 2'] },
-      \ 'g:mkdx#settings.tokens.fence':            { 'only_valid': [['`', '~'], "value can only be '`' or '~'"] },
-      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'enable':                                  { 'only_valid': [[0, 1],     'value can only be 0 or 1'] }
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,                'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],           'value must be >= 0 and <= 2'] },
+      \ 'g:mkdx#settings.tokens.fence':            { 'only_valid': [['`', '~'],       "value can only be '`' or '~'"] },
+      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
+      \ 'g:mkdx#settings.fold.components':         { 'only_list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
+      \ 'enable':                                  { 'only_valid': [[0, 1],           'value can only be 0 or 1'] }
       \ }
 
 let s:util.updaters = {
@@ -227,19 +228,23 @@ fun! s:util.validate(value, validations)
   for validation in keys(a:validations)
     if (validation == 'min_length')
       let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
-      if (len < a:validations[validation][0])
-        call add(errors, a:validations[validation][1])
+      if (len < a:validations.min_length[0])
+        call add(errors, a:validations.min_length[1])
       endif
     elseif (validation == 'between')
-      let [min, max] = a:validations[validation][0]
+      let [min, max] = a:validations.between[0]
       if (type(a:value) == s:INT)
         if (a:value < min || a:value > max)
-          call add(errors, a:validations[validation][1])
+          call add(errors, a:validations.between[1])
         endif
       endif
     elseif (validation == 'only_valid')
       if (index(a:validations[validation][0], a:value) == -1)
-        call add(errors, a:validations[validation][1])
+        call add(errors, a:validations.only_valid[1])
+      endif
+    elseif (validation == 'only_list')
+      if (len(filter(a:validations.only_list[0], {idx, itm -> !index(a:validations.only_list[0], itm)})) > 0)
+        call add(errors, a:validations.only_list[1])
       endif
     endif
   endfor

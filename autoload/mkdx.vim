@@ -121,23 +121,31 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
 
+    if (s:util._err_count > 0)
+      echo ' '
+    endif
+
     call s:util.log('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}', {'hl': 'ErrorMsg'})
+    call s:util.DidNotUpdateValueAt(yy, ['mkdx-error-type'])
 
     let a:hash[a:key]      = a:value.old
     let et                 = 1
     let s:util._err_count += 1
-
-    call s:util.DidNotUpdateValueAt(yy, 'mkdx-error-type')
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (ch && (has_key(s:util.validations, sk) || has_key(s:util.validations, a:key)))
     let er = s:util.validate(a:value.new, get(s:util.validations, sk, get(s:util.validations, a:key, {})))
     if (!empty(er))
       let s:util._err_count += len(er)
-      for error in er
+      let validation_tags    = []
+      for [error, validation] in er
+        if (s:util._err_count > 1)
+          echo ' '
+        endif
         call s:util.log(sk . ' ' . error, {'hl': 'ErrorMsg'})
+        call add(validation_tags, 'mkdx-error-' . validation)
       endfor
-      call s:util.DidNotUpdateValueAt(yy)
+      call s:util.DidNotUpdateValueAt(yy, validation_tags)
       let a:hash[a:key] = a:value.old
     endif
   endif
@@ -200,17 +208,10 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,                'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min-length': [2,                'value must be a list with at least 2 states'] },
       \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],           'value must be >= 0 and <= 2'] },
-      \ 'g:mkdx#settings.tokens.fence':            { 'only_valid': [['`', '~'],       "value can only be '`' or '~'"] },
-      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1],           'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.fold.components':         { 'only_list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
-      \ 'enable':                                  { 'only_valid': [[0, 1],           'value can only be 0 or 1'] }
+      \ 'g:mkdx#settings.tokens.fence':            { 'only-valid': [['`', '~'],       "value can only be '`' or '~'"] },
+      \ 'g:mkdx#settings.fold.components':         { 'only-list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
       \ }
 
 let s:util.updaters = {
@@ -226,25 +227,25 @@ let s:util.updaters = {
 fun! s:util.validate(value, validations)
   let errors = []
   for validation in keys(a:validations)
-    if (validation == 'min_length')
+    let [boundary, msg] = a:validations[validation]
+    if (validation == 'min-length')
       let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
-      if (len < a:validations.min_length[0])
-        call add(errors, a:validations.min_length[1])
+      if (len < boundary)
+        call add(errors, [msg, validation])
       endif
     elseif (validation == 'between')
-      let [min, max] = a:validations.between[0]
       if (type(a:value) == s:INT)
-        if (a:value < min || a:value > max)
-          call add(errors, a:validations.between[1])
+        if (a:value < boundary[0] || a:value > boundary[1])
+          call add(errors, [msg, validation])
         endif
       endif
-    elseif (validation == 'only_valid')
-      if (index(a:validations[validation][0], a:value) == -1)
-        call add(errors, a:validations.only_valid[1])
+    elseif (validation == 'only-valid')
+      if (index(boundary, a:value) == -1)
+        call add(errors, [msg, validation])
       endif
-    elseif (validation == 'only_list')
-      if (len(filter(a:validations.only_list[0], {idx, itm -> !index(a:validations.only_list[0], itm)})) > 0)
-        call add(errors, a:validations.only_list[1])
+    elseif (validation == 'only-list')
+      if (len(filter(boundary, {idx, itm -> !index(boundary, itm)})) > 0)
+        call add(errors, [msg, validation])
       endif
     endif
   endfor
@@ -252,13 +253,11 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path, ...)
+  let helptags = extend(['mkdx-errors'], get(a:000, 0, []))
+
+  call extend(helptags, (len(a:path) == 1) ? [] : ['mkdx-setting-' . substitute(join(a:path[1:], '-'), '_', '-', 'g')])
   call s:util.log('info: did not update value of {' . join(a:path, '.') . '}')
-
-  let helpkey  = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
-  let code     = get(a:000, 0, '')
-  let helptags = join(extend(['mkdx-setting-' . helpkey, 'mkdx-errors'], !empty(code) ? [code] : []), ', ')
-
-  call s:util.log('help: ' . helptags)
+  call s:util.log('help: ' . join(helptags, ', '))
 endfun
 
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
@@ -384,7 +383,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
   let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
-  let skip_rel         = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
+  let skip_rel         = g:mkdx#settings.links.external.relative ? 1 : (ext_len > 0 && empty(remote))
 
   if (get(a:000, 0, 1)) | call setqflist([]) | endif
 

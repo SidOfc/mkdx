@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.5.1`
+`Version: 1.6.0`
 
 `               888b     d888 888    d8P  8888888b. Y88b   d88P`
 `       , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P   |\ - ,`
@@ -381,7 +381,7 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'timeout':    3,`
           `\                                 'host':       '',`
           `\                                 'relative':   1,`
-          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1'`
+          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0'`
           `\                              },`
           `\                              'fragment': {`
           `\                                 'jumplist': 1,`
@@ -488,7 +488,7 @@ safely append or remove a trailing `/` from your host.
 ==============================================================================
 `g:mkdx#settings.links.external.user_agent =`     *mkdx-setting-links-external-ua*
 ` \ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1)' .`
-` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.5.1'`
+` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.6.0'`
 
 Specify an actual user agent to prevent being blocked from a website.
 If you don't like being `Chrome/9001` then feel free to change it

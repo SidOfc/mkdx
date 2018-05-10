@@ -202,7 +202,6 @@ fun! s:util.ToggleFolds(old, new)
       setlocal foldexpr=mkdx#fold(v:lnum)
     endif
   else
-    setlocal foldmethod=
     setlocal foldexpr=
   endif
 
@@ -303,7 +302,7 @@ fun! s:util.validate(value, validations)
         call add(errors, [msg, validation])
       endif
     elseif (validation == 'only-list')
-      if (len(filter(boundary, {idx, itm -> !index(boundary, itm)})) > 0)
+      if (len(filter(copy(a:value), {idx, itm -> index(boundary, itm) == -1})) > 0)
         call add(errors, [msg, validation])
       endif
     endif

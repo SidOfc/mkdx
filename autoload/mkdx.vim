@@ -121,23 +121,31 @@ fun! s:util.OnSettingModified(path, hash, key, value)
   if (to != tn)
     let [tos, tns] = [s:util.TypeString(to), s:util.TypeString(tn)]
 
+    if (s:util._err_count > 0)
+      echo ' '
+    endif
+
     call s:util.log('mkdx: {' . sk . '} value must be of type {' . tos . '}, got {' . tns . '}', {'hl': 'ErrorMsg'})
+    call s:util.DidNotUpdateValueAt(yy, ['mkdx-error-type'])
 
     let a:hash[a:key]      = a:value.old
     let et                 = 1
     let s:util._err_count += 1
-
-    call s:util.DidNotUpdateValueAt(yy, 'mkdx-error-type')
   elseif (to == s:HASH)
     let a:hash[a:key] = mkdx#MergeSettings(a:value.old, a:value.new, {'modify': 1})
   elseif (ch && (has_key(s:util.validations, sk) || has_key(s:util.validations, a:key)))
     let er = s:util.validate(a:value.new, get(s:util.validations, sk, get(s:util.validations, a:key, {})))
     if (!empty(er))
       let s:util._err_count += len(er)
-      for error in er
+      let validation_tags    = []
+      for [error, validation] in er
+        if (s:util._err_count > 1)
+          echo ' '
+        endif
         call s:util.log(sk . ' ' . error, {'hl': 'ErrorMsg'})
+        call add(validation_tags, 'mkdx-error-' . validation)
       endfor
-      call s:util.DidNotUpdateValueAt(yy)
+      call s:util.DidNotUpdateValueAt(yy, validation_tags)
       let a:hash[a:key] = a:value.old
     endif
   endif
@@ -180,6 +188,68 @@ fun! s:util.UpdateFencedCodeBlocks(old, new)
   endfor
 endfun
 
+fun! s:util.UpdateFolds(old, new)
+  let s:util._fold_fence = index(a:new, 'fence') > -1
+  let s:util._fold_toc   = index(a:new, 'toc')   > -1
+
+  normal! zx
+endfun
+
+fun! s:util.ToggleFolds(old, new)
+  if (a:new)
+    if (&foldexpr != 'mkdx#fold(v:lnum)')
+      setlocal foldmethod=expr
+      setlocal foldexpr=mkdx#fold(v:lnum)
+    endif
+  else
+    setlocal foldexpr=
+  endif
+
+  normal! zx
+endfun
+
+fun! s:util.ToggleCompletions(old, new)
+  if (a:new)
+    if (&completefunc != 'mkdx#Complete')
+      setlocal completefunc=mkdx#Complete
+      setlocal pumheight=15
+      setlocal iskeyword+=\-
+      if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)'))
+        imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+      endif
+      if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)'))
+        imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+      endif
+      if (!hasmapto('<Plug>(mkdx-link-compl)'))
+        imap <buffer><silent> # <Plug>(mkdx-link-compl)
+      endif
+    endif
+  else
+    setlocal completefunc=
+    setlocal pumheight=0
+    setlocal iskeyword-=\-
+  endif
+endfun
+
+fun! s:util.ToggleEnter(old, new)
+  if (a:new)
+    setlocal formatoptions-=r
+    setlocal autoindent
+
+    if (!hasmapto('<Plug>(mkdx-enter)'))
+      imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
+      nmap <buffer><silent> o <Plug>(mkdx-o)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-shift-o)') && g:mkdx#settings.enter.shifto)
+      nmap <buffer><silent> O <Plug>(mkdx-shift-o)
+    end
+  endif
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -193,16 +263,10 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min_length': [2,          'value must be a list with at least 2 states'] },
-      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],     'value must be >= 0 and <= 2'] },
-      \ 'g:mkdx#settings.tokens.fence':            { 'only_valid': [['`', '~'], "value can only be '`' or '~'"] },
-      \ 'g:mkdx#settings.enter.o':                 { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.shifto':            { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.enter.malformed':         { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.external.relative': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.jumplist': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'g:mkdx#settings.links.fragment.complete': { 'only_valid': [[0, 1],     'value can only be 0 or 1'] },
-      \ 'enable':                                  { 'only_valid': [[0, 1],     'value can only be 0 or 1'] }
+      \ 'g:mkdx#settings.checkbox.toggles':        { 'min-length': [2,                'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],           'value must be >= 0 and <= 2'] },
+      \ 'g:mkdx#settings.tokens.fence':            { 'only-valid': [['`', '~'],       "value can only be '`' or '~'"] },
+      \ 'g:mkdx#settings.fold.components':         { 'only-list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
       \ }
 
 let s:util.updaters = {
@@ -211,27 +275,35 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
       \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
       \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders,
-      \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks
+      \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks,
+      \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds,
+      \ 'g:mkdx#settings.fold.enable': s:util.ToggleFolds,
+      \ 'g:mkdx#settings.links.fragment.complete': s:util.ToggleCompletions,
+      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter
       \ }
 
 fun! s:util.validate(value, validations)
   let errors = []
   for validation in keys(a:validations)
-    if (validation == 'min_length')
+    let [boundary, msg] = a:validations[validation]
+    if (validation == 'min-length')
       let len = type(a:value) == s:STR ? strlen(a:value) : len(a:value)
-      if (len < a:validations[validation][0])
-        call add(errors, a:validations[validation][1])
+      if (len < boundary)
+        call add(errors, [msg, validation])
       endif
     elseif (validation == 'between')
-      let [min, max] = a:validations[validation][0]
       if (type(a:value) == s:INT)
-        if (a:value < min || a:value > max)
-          call add(errors, a:validations[validation][1])
+        if (a:value < boundary[0] || a:value > boundary[1])
+          call add(errors, [msg, validation])
         endif
       endif
-    elseif (validation == 'only_valid')
-      if (index(a:validations[validation][0], a:value) == -1)
-        call add(errors, a:validations[validation][1])
+    elseif (validation == 'only-valid')
+      if (index(boundary, a:value) == -1)
+        call add(errors, [msg, validation])
+      endif
+    elseif (validation == 'only-list')
+      if (len(filter(copy(a:value), {idx, itm -> index(boundary, itm) == -1})) > 0)
+        call add(errors, [msg, validation])
       endif
     endif
   endfor
@@ -239,13 +311,10 @@ fun! s:util.validate(value, validations)
 endfun
 
 fun! s:util.DidNotUpdateValueAt(path, ...)
+  let helptags = extend((len(a:path) == 1) ? [] : ['mkdx-setting-' . substitute(join(a:path[1:], '-'), '_', '-', 'g')], get(a:000, 0, []))
+
   call s:util.log('info: did not update value of {' . join(a:path, '.') . '}')
-
-  let helpkey  = len(a:path) == 1 ? 'overrides' : substitute(join(a:path[1:], '-'), '_', '-', 'g')
-  let code     = get(a:000, 0, '')
-  let helptags = join(extend(['mkdx-setting-' . helpkey, 'mkdx-errors'], !empty(code) ? [code] : []), ', ')
-
-  call s:util.log('help: ' . helptags)
+  call s:util.log('help: ' . join(helptags, ', '))
 endfun
 
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
@@ -371,7 +440,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
   let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
-  let skip_rel         = g:mkdx#settings.links.external.relative == 0 ? 1 : (ext_len > 0 && empty(remote))
+  let skip_rel         = g:mkdx#settings.links.external.relative ? 1 : (ext_len > 0 && empty(remote))
 
   if (get(a:000, 0, 1)) | call setqflist([]) | endif
 
@@ -887,16 +956,47 @@ fun! mkdx#MergeSettings(...)
   return c
 endfun
 
+fun! s:util.get_lines_starting_with(pat)
+  return filter(map(range(1, line('$')),
+                  \ {_, lnum -> (match(getline(lnum), a:pat) > -1) ? lnum : -1}),
+              \ {_, lnum -> lnum > -1})
+endfun
+
+fun! mkdx#fold(lnum)
+  if (a:lnum == 1 || s:util._update_folds)
+    let s:util._folds        = []
+    let s:util._update_folds = 0
+    let s:util._fold_fence   = get(s:util, '_fold_fence', index(g:mkdx#settings.fold.components, 'fence') > -1)
+    let s:util._fold_toc     = get(s:util, '_fold_toc',   index(g:mkdx#settings.fold.components, 'toc')   > -1)
+
+    if (s:util._fold_fence)
+      let code_blocks = s:util.get_lines_starting_with('^\~\~\~\|^\`\`\`')
+      let len_cblocks = len(code_blocks) - 1
+      let s:util._folds = map(range(0, (len_cblocks - (len_cblocks % 2)), 2),
+                            \ {idx, val -> [code_blocks[val], code_blocks[val + 1]]})
+    endif
+
+    if (s:util._fold_toc)
+      let toc_pos = s:util.GetTOCPositionAndStyle()[0:1]
+      call insert(s:util._folds, [toc_pos[0] + 2, toc_pos[1] - (empty(getline(toc_pos[1])) ? 1 : 0)])
+    endif
+  endif
+
+  for [sln, eln] in s:util._folds | if (a:lnum >= sln && a:lnum <= eln) | return '1' | endif | endfor
+endfun
+
 fun! mkdx#InsertCtrlPHandler()
+  if (!g:mkdx#settings.links.fragment.complete) | return "\<C-P>" | endif
   return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-P>"
 endfun
 
 fun! mkdx#InsertCtrlNHandler()
+  if (!g:mkdx#settings.links.fragment.complete) | return "\<C-N>" | endif
   return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-N>"
 endfun
 
 fun! mkdx#CompleteLink()
-  if (s:util.IsInsideLink())
+  if (g:mkdx#settings.links.fragment.complete && s:util.IsInsideLink())
     return "#\<C-X>\<C-U>"
   endif
   return '#'
@@ -1180,49 +1280,59 @@ fun! mkdx#Tableize() range
 endfun
 
 fun! mkdx#OHandler()
-  normal A
+  if (!g:mkdx#settings.enter.o || !g:mkdx#settings.enter.enable)
+    normal! o
+  else
+    let s:util._update_folds = g:mkdx#settings.fold.enable
+    normal A
+  endif
   startinsert!
 endfun
 
 fun! mkdx#ShiftOHandler()
-  let lnum = line('.')
-  let line = getline(lnum)
-  let len  = strlen(line)
-  let qstr = ''
-  let bld  = match(line, '^ *\*\*') > -1
-  let quot = len > 0 ? line[0] == '>' : 0
-
-  if (!bld && quot)
-    let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
-    let line = line[strlen(qstr):]
-  endif
-
-  let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\) '), 1, -1)
-  let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\) '), 1, -1)
-
-  if (lin != -1)
-    let esc  = lin == '*' ? '\*' : lin
-    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
-    exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
-    call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
-  elseif (lis != -1)
-    let esc  = lis == '*' ? '\*' : lis
-    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
-    exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
-  elseif (quot)
-    let suff = !empty(matchlist(line, '^ *\[.\]'))
-    exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
-  else
+  if (!g:mkdx#settings.enter.shifto || !g:mkdx#settings.enter.enable)
     normal! O
+  else
+    let s:util._update_folds = g:mkdx#settings.fold.enable
+    let lnum = line('.')
+    let line = getline(lnum)
+    let len  = strlen(line)
+    let qstr = ''
+    let bld  = match(line, '^ *\*\*') > -1
+    let quot = len > 0 ? line[0] == '>' : 0
+
+    if (!bld && quot)
+      let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
+      let line = line[strlen(qstr):]
+    endif
+
+    let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
+    let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\) '), 1, -1)
+
+    if (lin != -1)
+      let esc  = lin == '*' ? '\*' : lin
+      let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
+      exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+      call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
+    elseif (lis != -1)
+      let esc  = lis == '*' ? '\*' : lis
+      let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
+      exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+    elseif (quot)
+      let suff = !empty(matchlist(line, '^ *\[.\]'))
+      exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
+    else
+      normal! O
+    endif
   endif
 
   startinsert!
 endfun
 
 fun! mkdx#EnterHandler()
-  let lnum    = line('.')
-  let cnum    = virtcol('.')
-  let line    = getline(lnum)
+  let lnum = line('.')
+  let cnum = virtcol('.')
+  let line = getline(lnum)
 
   if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strlen(line)
@@ -1273,32 +1383,33 @@ endfun
 fun! s:util.GetTOCPositionAndStyle(...)
   let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
   let startc = -1
+  let found  = 0
 
   for lnum in range(1, line('$'))
     if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
       let startc = lnum
+      let found  = 1
       break
     endif
   endfor
 
-  if (startc)
-    let endc = nextnonblank(startc + 1)
-    while (nextnonblank(endc) == endc)
+  if (!found) | return [-1, -1, -1] | endif
+
+  let endc = nextnonblank(startc + 1)
+  while (nextnonblank(endc) == endc)
+    let endc += 1
+    let endl  = getline(endc)
+    if (match(endl, '^[ \t]*#\{1,6}') > -1)
+      break
+    elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
       let endc += 1
-      let endl  = getline(endc)
-      if (match(endl, '^[ \t]*#\{1,6}') > -1)
-        break
-      elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
-        let endc += 1
-        break
-      endif
-    endwhile
-    if (nextnonblank(endc) == endc) | let endc -= 1 | endif
-  endif
+      break
+    endif
+  endwhile
 
-  let details = (!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>') : opts.details
-
-  return [startc, endc, details]
+  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
+  return [startc, endc, ((!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>')
+                                                          \ : opts.details)]
 endfun
 
 fun! mkdx#UpdateTOC(...)
@@ -1336,6 +1447,7 @@ fun! mkdx#QuickfixHeaders(...)
 endfun
 
 fun! mkdx#GenerateTOC(...)
+  let s:util._update_folds = 1
   let contents   = []
   let cpos       = getpos('.')
   let header     = ''
@@ -1395,11 +1507,7 @@ fun! mkdx#GenerateTOC(...)
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif
 
-  for item in contents
-    call append(c, item)
-    let c += 1
-  endfor
-
+  call append(c, contents)
   call setpos('.', cpos)
   return len(contents)
 endfun

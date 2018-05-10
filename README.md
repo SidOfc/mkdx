@@ -32,6 +32,7 @@ settings and examples with default mappings.
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
+        <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
@@ -89,6 +90,8 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
         <li><a href="#gmkdxsettingsauto_updateenable"><code>g:mkdx#settings.auto_update.enable</code></a></li>
+        <li><a href="#gmkdxsettingsfoldenable"><code>g:mkdx#settings.fold.enable</code></a></li>
+        <li><a href="#gmkdxsettingsfoldcomponents"><code>g:mkdx#settings.fold.components</code></a></li>
     </ul></li>
     <li><a href="#mappings">Mappings</a><ul>
         <li><a href="#remapping-functionality">Remapping functionality</a></li>
@@ -99,9 +102,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#10-05-2018-version-160">10-05-2018 VERSION 1.6.0</a></li>
         <li><a href="#05-05-2018-version-151">05-05-2018 VERSION 1.5.1</a></li>
         <li><a href="#28-04-2018-version-150">28-04-2018 VERSION 1.5.0</a></li>
-        <li><a href="#27-04-2018-version-143">27-04-2018 VERSION 1.4.3</a></li>
     </ul></li>
 </ul>
 </details>
@@ -145,6 +148,14 @@ git clone https://github.com/SidOfc/mkdx
 
 # Examples
 
+## Folds
+
+![mkdx fold table of contents and fenced code-blocks](doc/gifs/vim-mkdx-folds.gif)
+
+Folding in mkdx can be enabled by setting [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable) to `1`.
+Both the table of contents and fenced code blocks can be folded independently as well, see [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents) for more information.
+We also see a tiny bit of [auto update](#gmkdxsettingsauto_updateenable) in this example, that shows that the new value gets applied instantly.
+
 ## Insert mode fragment completion
 
 ![mkdx insert mode fragment completion](doc/gifs/vim-mkdx-insert-completions.gif)
@@ -183,7 +194,7 @@ will come to your rescue. It will compare all fragment links in the document to 
 Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
 
 External links will also be checked, your (n/m/g)vim must support either Vim's `job` or Neovim's `job-control` in order for this to be enabled.
-Also, `curl` and `git` will also be used to send requests or create an absolute path for relative links.
+`curl` and `git` will also be used to send requests or create an absolute path for relative links.
 See [`g:mkdx#settings.links.external.enable`](#gmkdxsettingslinksexternalenable) for more information and other settings.
 
 ```viml
@@ -627,7 +638,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -752,7 +763,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -771,6 +782,8 @@ let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
 
 Autocomplete fragment links in [_insert_ mode](#insert-mode-fragment-completion).
 Set to `0` to disable, [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> to be mapped.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-links-fragment-complete
@@ -858,6 +871,8 @@ let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
 
 If you want to use a different style for markdown headings (h1, h2, etc...).
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-tokens-header
 let g:mkdx#settings = { 'tokens': { 'header': '#' } }
@@ -880,6 +895,8 @@ using tildes and typing backticks results in a code block using backticks.
 
 This value can be set to a `` ` `` or a `~` character. When set, the same style will always be used for
 fenced code blocks.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-tokens-fence
@@ -968,6 +985,7 @@ When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not
 or just do a regular enter. unordered lists and numbered lists are both handled correctly.
 
 **NOTE:** When this setting is enabled, mkdx will execute a `setlocal formatoptions-=r` to prevent duplicate list markers from being inserted.
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-enter-enable
@@ -1013,6 +1031,7 @@ let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
 
 Defines the text to use for the table of contents header itself.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 ```viml
 " :h mkdx-setting-toc-text
 let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
@@ -1033,6 +1052,8 @@ The position at which to place the TOC, `0` is used for cursor.
 If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
 e.g. setting it to `1` will cause it to be the first heading of your document.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-position
 let g:mkdx#settings = { 'toc': { 'position': 0 } }
@@ -1044,6 +1065,8 @@ This setting controls wether the generated TOC will be output as a regular _mark
 See: [Generate or update TOC as `<details>`](#generate-or-update-toc-as-details) for an example.
 By default, this option is disabled. To use it, set it's value to `1` instead.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-details-enable
 let g:mkdx#settings = { 'toc': { 'details': { 'enable': 0 } } }
@@ -1054,6 +1077,8 @@ let g:mkdx#settings = { 'toc': { 'details': { 'enable': 0 } } }
 With [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable) set to `1`, a `<summary>` tag will also be
 generated inside the resulting `<details>` tag. This tag contains the text that will be displayed next to the "▶".
 The default value has a special placeholder `{{toc.text}}`. This will be replaced with the value of [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext) upon generation.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-toc-details-summary
@@ -1099,10 +1124,48 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 ## `g:mkdx#settings.auto_update.enable`
 
 This setting controls wether or not to update the document after changing certain variables.
+Currently, this only works if your vim `has('*dictwatcheradd')`.
+
+The following settings are automatically updated:
+
+- [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext)
+- [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition)
+- [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable)
+- [`g:mkdx#settings.toc.details.summary`](#gmkdxsettingstocdetailssummary)
+- [`g:mkdx#settings.tokens.header`](#gmkdxsettingstokensheader)
+- [`g:mkdx#settings.tokens.fence`](#gmkdxsettingstokensfence)
+- [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable)
+- [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable)
+- [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents)
+- [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete)
 
 ```viml
 " :h mkdx-setting-auto-update-enable
 let g:mkdx#settings = { 'auto_update': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.fold.enable`
+
+Controls wether or not to fold fenced (<code>\`\`\`</code> / `~~~`) code blocks and / or the table of contents (when generated by mkdx).
+Behaviour can be controlled using [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents). Folding is disabled by default, set it to `1` to enable it.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
+```viml
+" :h mkdx-setting-fold-enable
+:let g:mkdx#settings = { 'fold': { 'enable': 0 } }
+```
+
+## `g:mkdx#settings.fold.components`
+
+Controls which components to fold when [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable) is enabled.
+Currently, two components can be folded, `'toc'` and `'fence'`. items can be added and removed from the list as needed.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
+```viml
+" :h mkdx-setting-fold-components
+:let g:mkdx#settings = { 'fold': { 'components': ['toc', 'fence'] } }
 ```
 
 # Mappings
@@ -1241,6 +1304,27 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 10-05-2018 VERSION 1.6.0
+
+- Fix: Handle URLS starting with "../../" correctly.
+- Fix: Removed hardcoded hashtag as header identifier in function.
+- Fix: ([#35](../../pull/35)) Generating a TOC in the details didn't generate the final closing tags.
+- Fix: ([#40](../../pull/40)) Shift-o (`O`) prepending a list item to a line starting with a number.
+- Fix: ([#39](../../pull/39)) Set `autoindent`, it is enabled by default in Neovim but disabled by default in Vim.
+- Add: ([#41](../../pull/41)) Fold support for the table of contents and fenced code blocks (opt-in).
+    - Add setting to enable folding: `g:mkdx#settings.fold.enable = 0`.
+    - Add setting to modify what is folded: `g:mkdx#settings.fold.components = ['toc', 'fence']`.
+- NEOVIM
+    - Add: ([#32](../../pull/32)) `dictionarywatcher` that watches settings and immediately updates the document, this includes:
+        - TOC text - (`:let g:mkdx#settings.toc.text = 'string'`).
+        - TOC position - (`:let g:mkdx#settings.toc.position = 2`).
+        - TOC style - (`:let g:mkdx#settings.toc.details.enable = 1`).
+        - TOC summary - (`:let g:mkdx#settings.toc.details.summary = 'new string'`).
+        - Header style - (`:let g:mkdx#settings.tokens.header = '@'`).
+        - Fence style - (`:let g:mkdx#settings.tokens.fence = '~'`).
+        - Folds - (`:let g:mkdx#settings.tokens.components = ['toc']`).
+    - Add: setting to control auto-updates: `g:mkdx#settings.auto_update.enable = 1`.
+
 ## 05-05-2018 VERSION 1.5.1
 
 - [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available
@@ -1254,10 +1338,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Add support for anchor fragment links ([#24](../../issues/24)) (`<a id="hello"></a>` / `<a name="hello"></a>`) for [jumping](#jump-to-header), [detection](#dead-link-detection) and [completion](#insert-mode-fragment-completion).
 - Fix issue where double slashes in the URL would not be removed in external link checks.
 - Fix nested `<a></a>` tags in generated TOC links.
-
-## 27-04-2018 VERSION 1.4.3
-
-- ([#17](../../issues/17)) Add a mapping to go to [fragment link location](#jump-to-header).
-- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for columns in a table generated from CSV.
-- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for specific column names or indexes in a table generated from CSV.
-- List items require a space after them to be recognized as a list item.

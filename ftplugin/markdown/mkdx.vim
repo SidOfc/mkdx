@@ -13,10 +13,11 @@ let s:defaults          = {
       \                              'align': { 'left': [], 'center': [], 'right': [],
       \                                         'default': 'center' } },
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' },
+      \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
       \ 'highlight':               { 'enable': 0 },
-      \ 'auto_update':             { 'enable': 1 }
+      \ 'auto_update':             { 'enable': 1 },
+      \ 'fold':                    { 'enable': 0, 'components': ['toc', 'fence'] }
     \ }
 
 if exists('g:mkdx#map_prefix')              | let s:defaults.map.prefix = g:mkdx#map_prefix                         | endif
@@ -86,7 +87,11 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
   setlocal pumheight=15
   setlocal iskeyword+=\-
-  setlocal completeopt=noinsert,menuone
+endif
+
+if (g:mkdx#settings.fold.enable)
+  setlocal foldmethod=expr
+  setlocal foldexpr=mkdx#fold(v:lnum)
 endif
 
 if g:mkdx#settings.map.enable == 1
@@ -129,15 +134,26 @@ if g:mkdx#settings.map.enable == 1
         \ ]
 
   if (g:mkdx#settings.links.fragment.complete)
-    imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
-    imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
-    imap <buffer><silent> # <Plug>(mkdx-link-compl)
+    if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)'))
+      imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)'))
+      imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-link-compl)'))
+      imap <buffer><silent> # <Plug>(mkdx-link-compl)
+    endif
   endif
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
     setlocal autoindent
-    imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+
+    if (!hasmapto('<Plug>(mkdx-enter)'))
+      imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+    endif
 
     if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
       nmap <buffer><silent> o <Plug>(mkdx-o)

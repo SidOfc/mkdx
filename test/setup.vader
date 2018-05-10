@@ -1,11 +1,8 @@
 Execute (Setup):
   if (!exists('g:vim_dev__vader_settings'))
+    " set the filetype to initialize settings merge with settings from $MYVIMRC
     let g:vim_dev__vader_ft = &ft
     setf markdown
-    let g:vim_dev__vader_sw = &sw
-    set sw=4
-    let g:vim_dev__vader_autoindent = &autoindent
-    set autoindent
 
     let g:vim_dev__vader_settings = deepcopy(g:mkdx#settings)
     let g:mkdx#settings = {
@@ -22,10 +19,11 @@ Execute (Setup):
         \                              'align': { 'left': [], 'center': [], 'right': [],
         \                                         'default': 'center' } },
         \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-        \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1' },
+        \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0' },
         \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
         \ 'highlight':               { 'enable': 0 },
-        \ 'auto_update':             { 'enable': 1 }
+        \ 'auto_update':             { 'enable': 1 },
+        \ 'fold':                    { 'enable': 0, 'components': ['toc', 'fence'] }
       \ }
 
     call mkdx#testing(1)

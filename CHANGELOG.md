@@ -1,3 +1,10 @@
+## 27-04-2018 VERSION 1.4.3
+
+- ([#17](../../issues/17)) Add a mapping to go to [fragment link location](#jump-to-header).
+- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for columns in a table generated from CSV.
+- ([#18](../../issues/18)) Add [alignment options](#gmkdxsettingstablealign) for specific column names or indexes in a table generated from CSV.
+- List items require a space after them to be recognized as a list item.
+
 ## 15-04-2018 VERSION 1.4.2
 
 - [Convert CSV to table](#convert-csv-to-table) now also supports quoted CSV and TSV data

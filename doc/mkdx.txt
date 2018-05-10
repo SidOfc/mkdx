@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.5.1`
+`Version: 1.6.0`
 
 `               888b     d888 888    d8P  8888888b. Y88b   d88P`
 `       , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P   |\ - ,`
@@ -54,9 +54,8 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.toc.details.summary`
         `g:mkdx#settings.highlight.enable`
         `g:mkdx#settings.auto_update.enable`
-
-    Errors
-       Type
+        `g:mkdx#settings.fold.enable`
+        `g:mkdx#settings.fold.components`
 
     Highlighting
         `mkdxListItem`
@@ -151,6 +150,13 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#InsertCtrlPHandler()
         mkdx#CompleteLink()
 
+    Errors
+       Type
+       Minimum length
+       Between
+       Only valid
+       Only list
+
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
 
@@ -229,9 +235,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-toc-details-summary|
     - |mkdx-setting-highlight-enable|
     - |mkdx-setting-auto-update-enable|
-
-- |mkdx-errors|
-    - |mkdx-error-type|
+    - |mkdx-setting-fold-enable|
+    - |mkdx-setting-fold-components|
 
 - |mkdx-highlighting|
     - |mkdx-highlight-list-item|
@@ -324,10 +329,17 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-checklist|
     - |mkdx-function-toggle-list|
     - |mkdx-function-toggle-to-kbd|
-    - |mkdx-complete|
-    - |mkdx-insert-ctrl-n-handler|
-    - |mkdx-insert-ctrl-p-handler|
-    - |mkdx-complete-link|
+    - |mkdx-function-complete|
+    - |mkdx-function-insert-ctrl-n-handler|
+    - |mkdx-function-insert-ctrl-p-handler|
+    - |mkdx-function-complete-link|
+
+- |mkdx-errors|
+    - |mkdx-error-type|
+    - |mkdx-error-min-length|
+    - |mkdx-error-between|
+    - |mkdx-error-only-valid|
+    - |mkdx-error-only-list|
 
 ==============================================================================
 `g:mkdx#settings = { ... }`                                        *mkdx-settings*
@@ -369,7 +381,7 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'timeout':    3,`
           `\                                 'host':       '',`
           `\                                 'relative':   1,`
-          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.5.1'`
+          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0'`
           `\                              },`
           `\                              'fragment': {`
           `\                                 'jumplist': 1,`
@@ -377,7 +389,8 @@ at the bottom of every setting section. The default settings hash:
           `\                              }`
           `\                            },`
          ` \ 'highlight':               { 'enable': 0 },`
-         ` \ 'auto_update':             { 'enable': 0 }`
+         ` \ 'auto_update':             { 'enable': 1 },`
+          `\ 'fold':                    { 'enable': 0, 'components': ['toc', 'fence'] }`
     `    \ }`
 
 To overwrite a setting, simply write it as seen above:
@@ -401,38 +414,38 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
-let s:defaults.links.external.enable     `=>`
-let s:defaults.links.external.host       `=>`
-let s:defaults.links.external.timeout    `=>`
-let s:defaults.links.external.relative   `=>`
-let s:defaults.links.external.user_agent `=>`
-let s:defaults.links.fragment.jumplist   `=>`
-let s:defaults.links.fragment.complete   `=>`
-let s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
-let s:defaults.restore_visual            `=>` g:mkdx#restore_visual
-let s:defaults.map.prefix                `=>` g:mkdx#map_prefix
-let s:defaults.map.enable                `=>` g:mkdx#map_keys
-let s:defaults.checkbox.toggles          `=>` g:mkdx#checkbox_toggles
-let s:defaults.checkbox.update_tree      `=>` g:mkdx#checklist_update_tree
-let s:defaults.checkbox.initial_state    `=>` g:mkdx#checkbox_initial_state
-let s:defaults.table.header_divider      `=>` g:mkdx#table_header_divider
-let s:defaults.table.divider             `=>` g:mkdx#table_divider
-let s:defaults.tokens.header             `=>` g:mkdx#header_style
-let s:defaults.tokens.enter              `=>` g:mkdx#list_tokens
-let s:defaults.tokens.fence              `=>` g:mkdx#fence_style
-let s:defaults.tokens.bold               `=>` g:mkdx#bold_token
-let s:defaults.tokens.italic             `=>` g:mkdx#italic_token
-let s:defaults.tokens.list               `=>` g:mkdx#list_token
-let s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
-let s:defaults.enter.malformed           `=>` g:mkdx#handle_malformed_indent
-let s:defaults.enter.o                   `=>`
-let s:defaults.enter.shifto              `=>`
-let s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
-let s:defaults.toc.text                  `=>` g:mkdx#toc_text
-let s:defaults.toc.position              `=>`
-let s:defaults.toc.details.enable        `=>`
-let s:defaults.toc.details.summary       `=>`
-let s:defaults.highlight.enable          `=>`
+s:defaults.links.external.enable     `=>`
+s:defaults.links.external.host       `=>`
+s:defaults.links.external.timeout    `=>`
+s:defaults.links.external.relative   `=>`
+s:defaults.links.external.user_agent `=>`
+s:defaults.links.fragment.jumplist   `=>`
+s:defaults.links.fragment.complete   `=>`
+s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
+s:defaults.restore_visual            `=>` g:mkdx#restore_visual
+s:defaults.map.prefix                `=>` g:mkdx#map_prefix
+s:defaults.map.enable                `=>` g:mkdx#map_keys
+s:defaults.checkbox.toggles          `=>` g:mkdx#checkbox_toggles
+s:defaults.checkbox.update_tree      `=>` g:mkdx#checklist_update_tree
+s:defaults.checkbox.initial_state    `=>` g:mkdx#checkbox_initial_state
+s:defaults.table.header_divider      `=>` g:mkdx#table_header_divider
+s:defaults.table.divider             `=>` g:mkdx#table_divider
+s:defaults.tokens.header             `=>` g:mkdx#header_style
+s:defaults.tokens.enter              `=>` g:mkdx#list_tokens
+s:defaults.tokens.fence              `=>` g:mkdx#fence_style
+s:defaults.tokens.bold               `=>` g:mkdx#bold_token
+s:defaults.tokens.italic             `=>` g:mkdx#italic_token
+s:defaults.tokens.list               `=>` g:mkdx#list_token
+s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
+s:defaults.enter.malformed           `=>` g:mkdx#handle_malformed_indent
+s:defaults.enter.o                   `=>`
+s:defaults.enter.shifto              `=>`
+s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
+s:defaults.toc.text                  `=>` g:mkdx#toc_text
+s:defaults.toc.position              `=>`
+s:defaults.toc.details.enable        `=>`
+s:defaults.toc.details.summary       `=>`
+s:defaults.highlight.enable          `=>`
 
 ==============================================================================
 `g:mkdx#settings.links.external.enable = 0`   *mkdx-setting-links-external-enable*
@@ -475,7 +488,7 @@ safely append or remove a trailing `/` from your host.
 ==============================================================================
 `g:mkdx#settings.links.external.user_agent =`     *mkdx-setting-links-external-ua*
 ` \ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1)' .`
-` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.5.1'`
+` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.6.0'`
 
 Specify an actual user agent to prevent being blocked from a website.
 If you don't like being `Chrome/9001` then feel free to change it
@@ -512,6 +525,14 @@ Autocomplete fragment links in |Insert-mode|. Set to `0` to disable,
 Fragment links are completed by scanning the document for headers and
 converting them to their respective hashes.
 
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal completefunc=mkdx#Complete`
+    `setlocal pumheight=15`
+    `setlocal iskeyword+=\-`
+    `setlocal completeopt=noinsert,menuone`
+
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
     `\ 'a\?png\|jpe\?g\|gif'`
@@ -544,6 +565,8 @@ See the |mkdx-mappings| section to see how each mapping works.
 `g:mkdx#settings.checkbox.toggles =              ` *mkdx-setting-checkbox-toggles*
     `\ [' ', '-', 'x']`
 
+(minimum list length: `2`)
+
 This option allows you to specify different states to use for toggling
 checkboxes. Special characters must be escaped! The default list contains:
 
@@ -564,6 +587,8 @@ If the list contains more than 2 states, the second-to-last element
 
 ==============================================================================
 `g:mkdx#settings.checkbox.update_tree = 2`     *mkdx-setting-checkbox-update-tree*
+
+(valid values: `0`, `1`, `2`)
 
 With this setting on, checkboxes that are toggled within checklists (lists of
 checkboxes) cause parent and child list items to be updated automatically.
@@ -598,12 +623,14 @@ This list identifies which tokens at the start of a string are identified as a
 ==============================================================================
 `g:mkdx#settings.tokens.fence = ''`                    *mkdx-setting-tokens-fence*
 
+(valid values: `'```'`, `'~'`)
+
 This setting allows you to override the fence style that is used when typing
 three backticks or tilde characters. By default it is empty which means that
 the typed key defines the fence style (so tildes are used when typing tildes,
 ditto for backticks).
 
-The fence style can be set to '~' or '`'. This will cause both tildes and
+The fence style can be set to `'~'` or `'```'`. This will cause both tildes and
 backticks to use the same style.
 
 ==============================================================================
@@ -659,6 +686,12 @@ being compared. This means column names are case-insensitive.
 When pressing <enter> in insert mode, this handles appending of new list items
 in lists. See |mkdx-setting-tokens-list| for a list of supported list tokens.
 Examples can be found at |mkdx-function-enter-handler|.
+
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal formatoptions-=r`
+    `setlocal autoindent`
 
 ==============================================================================
 `g:mkdx#settings.enter.o`                                   *mkdx-setting-enter-o*
@@ -773,7 +806,7 @@ Likewise, updating the header token instantly updates all headers:
 
 `:let g:mkdx#settings.tokens.header = '@'`
 
-Will automatically change all the headers to start with an `'@` symbol.
+Will automatically change all the headers to start with an `@` symbol.
 
 Full list of instant-updated settings:
 
@@ -783,32 +816,54 @@ Full list of instant-updated settings:
 - `g:mkdx#settings.toc.details.summary`
 - `g:mkdx#settings.toc.position`
 - `g:mkdx#settings.tokens.header`
+- `g:mkdx#settings.tokens.fence`
+- `g:mkdx#settings.fold.components`
 
 ==============================================================================
-|ERRORS|                                                             *mkdx-errors*
+`g:mkdx#settings.fold.enable = 0`                       *mkdx-setting-fold-enable*
 
-Whenever a setting in `g:mkdx#settings` is updated, the new value will be
-validated before being set. If the value passes validations, it will be
-updated, otherwise an error will be thrown.
+Defined wether or not to enable folding.
+There are two kinds of folding that mkdx can do.
 
-Every error contains at least 2 helptags, the first one is related to the
-place the error occured (if you tried to set `g:mkdx#settings.enter.enable` to
-`5`, you would get |mkdx-setting-enter-enable|). The second helptag refers to
-this heading: |mkdx-errors|. If there is a third helptag, it refers to the type
-of the error, e.g. setting it to `'5'` would show |mkdx-error-type| as
-the second helptag.
+1) Fold fenced code blocks, e.g:
+    `~~~viml`
+    `:let g:mkdx#settings.fold.enable = 1`
+    `~~~`
 
-Every setting can be overwritten in any way as long as the format remains
-valid. The errors try to point you in the right direction be as descriptive
-as possible. An error is also not critical, the bad value will be rolled back
-and no harm will be done :)
+2) The table of contents generated by mkdx:
+   `# TOC`
+
+    `- Introduction`
+
+3) The table of contents generated inside `<details>...</details>` tags:
+   `# TOC`
+
+   `<details>`
+   `  <summary>Click to expand TOC</summary>`
+     `...`
+   `</details>`
+
+Folding can be disabled for {fence} and {toc} individually by changing
+|mkdx-setting-fold-components|.
+
+This setting modifies some functionality using `setlocal`.
+The overrides include:
+
+    `setlocal foldmethod=expr`
+    `setlocal foldexpr=mkdx#fold(v:lnum)`
 
 ==============================================================================
-Type                                                           *mkdx-error-type*
+`g:mkdx#settings.fold.coponents = ['toc', 'fence'] `*mkdx-setting-fold-components*
 
-This error occurs whenever you try to set a setting in `g:mkdx#settings` that
-does not equal the current type of that setting. When this happens, mkdx will
-not apply the new value and instead, roll back to the old value.
+(valid list entries: `'toc'`, `'fence'`)
+
+Defines what to fold, it must be a {list} consisting of the components you
+want to enable. At the moment, the list can have two values:
+
+`'toc'`   => Fold the table of contents (when generated or recognized by mkdx).
+`'fence'` => Fold fenced (``` or ~~~ blocks) code-blocks.
+
+|mkdx-setting-fold-enable| must be set to `1` for this setting to work.
 
 ==============================================================================
 HIGHLIGHTING                                                 *mkdx-highlighting*
@@ -1453,9 +1508,9 @@ This function wraps around both ways: h1 to h6 and h6 to h1.
 
 When {increment} is 1:
 
-    ## Hello    ` => ` # Hello
-    # Hello     ` => ` Hello
-    Hello       ` =>  `###### Hello
+    ## Hello    `  => ` # Hello
+    # Hello     `  => ` Hello
+    Hello       `  =>  `###### Hello
 
 When {increment} is 0 (default):
 
@@ -1937,5 +1992,84 @@ HTML ("`|`" is the cursor position):
 Completions will update while typing.
 Completions will not work outside of a link context, if you want to complete a
 fragment link without it being in a header, use <C-n> or <C-p> instead.
+
+==============================================================================
+|ERRORS|                                                             *mkdx-errors*
+
+Whenever a setting in `g:mkdx#settings` is updated, the new value will be
+validated before being set. If the value passes validations, it will be
+updated, otherwise an error will be thrown.
+
+Every error contains at least 1 helptag. This would point to the setting that
+you tried to modify. If you set `g:mkdx#settings.tokens.fence` to `5`, the first
+helptag would be `mkdx-setting-tokens-fence`.
+
+When a validation fails, a more specific error code will be given that can be
+found in the sections below.
+
+Every setting can be overwritten in any way as long as the format remains
+valid. The errors try to point you in the right direction be as descriptive
+as possible. An error is also not critical, the bad value will be rolled back
+and no harm will be done :)
+
+==============================================================================
+Type                                                           *mkdx-error-type*
+
+This error occurs whenever you try to set a setting in `g:mkdx#settings` that
+does not equal the current type of that setting. When this happens, mkdx will
+not apply the new value and instead, roll back to the old value.
+
+==============================================================================
+Minimum length                                           *mkdx-error-min-length*
+
+Given a {list} or a {string}, this validation fails if either |len()| or
+|strlen()| (respectively) fails based on a defined {length}. The description of
+the error includes the minimum length the setting should have.
+
+For strings, this can be defined as:
+
+`   strlen(string) < length`
+
+For lists, this can be defined as:
+
+`   len(list) < length`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Between                                                     *mkdx-error-between*
+
+Given an {integer} value, checks if it is between a defined {min} and {max}
+value. The check is inclusive for both {min} and {max} values:
+
+`   integer < min || integer > max`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Only valid                                               *mkdx-error-only-valid*
+
+Given a {value} this validation will fail when {value} is not in the defined
+{options}. This check only works for primitive values such as numbers and
+strings.
+
+`   index(options, value) == -1`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
+
+==============================================================================
+Only list                                                 *mkdx-error-only-list*
+
+Like |mkdx-error-only-valid| but for lists of values. Given a {list}
+containing some values, checks if all values in the {list} match that of an
+option in this specific validation:
+
+`  len(filter(list, {idx, value -> index(valid, value) == -1})) > 0`
+
+The error will point out what valid options are in the context of the variable
+that you are trying to modify.
 
 vim:tw=78:sw=4:ft=help:norl:

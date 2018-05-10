@@ -183,7 +183,7 @@ will come to your rescue. It will compare all fragment links in the document to 
 Now you can safely change a header, if you want to know if you broke anything you know the mapping :)
 
 External links will also be checked, your (n/m/g)vim must support either Vim's `job` or Neovim's `job-control` in order for this to be enabled.
-Also, `curl` and `git` will also be used to send requests or create an absolute path for relative links.
+`curl` and `git` will also be used to send requests or create an absolute path for relative links.
 See [`g:mkdx#settings.links.external.enable`](#gmkdxsettingslinksexternalenable) for more information and other settings.
 
 ```viml

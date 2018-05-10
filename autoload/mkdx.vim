@@ -195,6 +195,62 @@ fun! s:util.UpdateFolds(old, new)
   normal! zx
 endfun
 
+fun! s:util.ToggleFolds(old, new)
+  if (a:new)
+    if (&foldexpr != 'mkdx#fold(v:lnum)')
+      setlocal foldmethod=expr
+      setlocal foldexpr=mkdx#fold(v:lnum)
+    endif
+  else
+    setlocal foldmethod=
+    setlocal foldexpr=
+  endif
+
+  normal! zx
+endfun
+
+fun! s:util.ToggleCompletions(old, new)
+  if (a:new)
+    if (&completefunc != 'mkdx#Complete')
+      setlocal completefunc=mkdx#Complete
+      setlocal pumheight=15
+      setlocal iskeyword+=\-
+      if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)'))
+        imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+      endif
+      if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)'))
+        imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+      endif
+      if (!hasmapto('<Plug>(mkdx-link-compl)'))
+        imap <buffer><silent> # <Plug>(mkdx-link-compl)
+      endif
+    endif
+  else
+    setlocal completefunc=
+    setlocal pumheight=0
+    setlocal iskeyword-=\-
+  endif
+endfun
+
+fun! s:util.ToggleEnter(old, new)
+  if (a:new)
+    setlocal formatoptions-=r
+    setlocal autoindent
+
+    if (!hasmapto('<Plug>(mkdx-enter)'))
+      imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
+      nmap <buffer><silent> o <Plug>(mkdx-o)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-shift-o)') && g:mkdx#settings.enter.shifto)
+      nmap <buffer><silent> O <Plug>(mkdx-shift-o)
+    end
+  endif
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -221,7 +277,10 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
       \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders,
       \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks,
-      \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds
+      \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds,
+      \ 'g:mkdx#settings.fold.enable': s:util.ToggleFolds,
+      \ 'g:mkdx#settings.links.fragment.complete': s:util.ToggleCompletions,
+      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter
       \ }
 
 fun! s:util.validate(value, validations)
@@ -928,15 +987,17 @@ fun! mkdx#fold(lnum)
 endfun
 
 fun! mkdx#InsertCtrlPHandler()
+  if (!g:mkdx#settings.links.fragment.complete) | return "\<C-P>" | endif
   return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-P>"
 endfun
 
 fun! mkdx#InsertCtrlNHandler()
+  if (!g:mkdx#settings.links.fragment.complete) | return "\<C-N>" | endif
   return getline('.')[col('.') - 2] == '#' ? "\<C-X>\<C-U>" : "\<C-N>"
 endfun
 
 fun! mkdx#CompleteLink()
-  if (s:util.IsInsideLink())
+  if (g:mkdx#settings.links.fragment.complete && s:util.IsInsideLink())
     return "#\<C-X>\<C-U>"
   endif
   return '#'
@@ -1220,42 +1281,50 @@ fun! mkdx#Tableize() range
 endfun
 
 fun! mkdx#OHandler()
-  let s:util._update_folds = 1
-  normal A
+  if (!g:mkdx#settings.enter.o || !g:mkdx#settings.enter.enable)
+    normal! o
+  else
+    let s:util._update_folds = g:mkdx#settings.fold.enable
+    normal A
+  endif
   startinsert!
 endfun
 
 fun! mkdx#ShiftOHandler()
-  let s:util._update_folds = 1
-  let lnum = line('.')
-  let line = getline(lnum)
-  let len  = strlen(line)
-  let qstr = ''
-  let bld  = match(line, '^ *\*\*') > -1
-  let quot = len > 0 ? line[0] == '>' : 0
-
-  if (!bld && quot)
-    let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
-    let line = line[strlen(qstr):]
-  endif
-
-  let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
-  let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\) '), 1, -1)
-
-  if (lin != -1)
-    let esc  = lin == '*' ? '\*' : lin
-    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
-    exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
-    call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
-  elseif (lis != -1)
-    let esc  = lis == '*' ? '\*' : lis
-    let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
-    exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
-  elseif (quot)
-    let suff = !empty(matchlist(line, '^ *\[.\]'))
-    exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
-  else
+  if (!g:mkdx#settings.enter.shifto || !g:mkdx#settings.enter.enable)
     normal! O
+  else
+    let s:util._update_folds = g:mkdx#settings.fold.enable
+    let lnum = line('.')
+    let line = getline(lnum)
+    let len  = strlen(line)
+    let qstr = ''
+    let bld  = match(line, '^ *\*\*') > -1
+    let quot = len > 0 ? line[0] == '>' : 0
+
+    if (!bld && quot)
+      let qstr = quot ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
+      let line = line[strlen(qstr):]
+    endif
+
+    let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
+    let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\) '), 1, -1)
+
+    if (lin != -1)
+      let esc  = lin == '*' ? '\*' : lin
+      let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
+      exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+      call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
+    elseif (lis != -1)
+      let esc  = lis == '*' ? '\*' : lis
+      let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
+      exe 'normal! O' . qstr . lis . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
+    elseif (quot)
+      let suff = !empty(matchlist(line, '^ *\[.\]'))
+      exe 'normal! O' . qstr . (strlen(qstr) > 1 ? '' : ' ') . (suff ? '[' . g:mkdx#settings.checkbox.initial_state . '] ' : '')
+    else
+      normal! O
+    endif
   endif
 
   startinsert!

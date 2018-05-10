@@ -87,7 +87,6 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
   setlocal pumheight=15
   setlocal iskeyword+=\-
-  setlocal completeopt=noinsert,menuone
 endif
 
 if (g:mkdx#settings.fold.enable)
@@ -135,15 +134,26 @@ if g:mkdx#settings.map.enable == 1
         \ ]
 
   if (g:mkdx#settings.links.fragment.complete)
-    imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
-    imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
-    imap <buffer><silent> # <Plug>(mkdx-link-compl)
+    if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)'))
+      imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)'))
+      imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-link-compl)'))
+      imap <buffer><silent> # <Plug>(mkdx-link-compl)
+    endif
   endif
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
     setlocal autoindent
-    imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+
+    if (!hasmapto('<Plug>(mkdx-enter)'))
+      imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
+    endif
 
     if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
       nmap <buffer><silent> o <Plug>(mkdx-o)

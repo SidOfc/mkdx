@@ -1330,9 +1330,9 @@ fun! mkdx#ShiftOHandler()
 endfun
 
 fun! mkdx#EnterHandler()
-  let lnum    = line('.')
-  let cnum    = virtcol('.')
-  let line    = getline(lnum)
+  let lnum = line('.')
+  let cnum = virtcol('.')
+  let line = getline(lnum)
 
   if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strlen(line)

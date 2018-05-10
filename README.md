@@ -32,6 +32,7 @@ settings and examples with default mappings.
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#examples">Examples</a><ul>
+        <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
@@ -89,6 +90,8 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
         <li><a href="#gmkdxsettingsauto_updateenable"><code>g:mkdx#settings.auto_update.enable</code></a></li>
+        <li><a href="#gmkdxsettingsfoldenable"><code>g:mkdx#settings.fold.enable</code></a></li>
+        <li><a href="#gmkdxsettingsfoldcomponents"><code>g:mkdx#settings.fold.components</code></a></li>
     </ul></li>
     <li><a href="#mappings">Mappings</a><ul>
         <li><a href="#remapping-functionality">Remapping functionality</a></li>
@@ -144,6 +147,14 @@ git clone https://github.com/SidOfc/mkdx
 ```
 
 # Examples
+
+## Folds
+
+![mkdx fold table of contents and fenced code-blocks](doc/gifs/vim-mkdx-folds.gif)
+
+Folding in mkdx can be enabled by setting [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable) to `1`.
+Both the table of contents and fenced code blocks can be folded independently as well, see [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents) for more information.
+We also see a tiny bit of [auto update](#gmkdxsettingsauto_updateenable) in this example, that shows that the new value gets applied instantly.
 
 ## Insert mode fragment completion
 
@@ -772,6 +783,8 @@ let g:mkdx#settings = { 'links': { 'fragment': { 'jumplist': 1 } } }
 Autocomplete fragment links in [_insert_ mode](#insert-mode-fragment-completion).
 Set to `0` to disable, [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable) must be enabled for <kbd>ctrl</kbd>+<kbd>n</kbd> and <kbd>ctrl</kbd>+<kbd>p</kbd> to be mapped.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-links-fragment-complete
 let g:mkdx#settings = { 'links': { 'fragment': { 'complete': 1 } } }
@@ -857,6 +870,8 @@ let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
 ## `g:mkdx#settings.tokens.header`
 
 If you want to use a different style for markdown headings (h1, h2, etc...).
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-tokens-header
@@ -968,6 +983,7 @@ When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not
 or just do a regular enter. unordered lists and numbered lists are both handled correctly.
 
 **NOTE:** When this setting is enabled, mkdx will execute a `setlocal formatoptions-=r` to prevent duplicate list markers from being inserted.
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-enter-enable
@@ -1013,6 +1029,7 @@ let g:mkdx#settings = { 'enter': { 'malformed': 1 } }
 
 Defines the text to use for the table of contents header itself.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 ```viml
 " :h mkdx-setting-toc-text
 let g:mkdx#settings = { 'toc': { 'text': 'TOC' } }
@@ -1033,6 +1050,8 @@ The position at which to place the TOC, `0` is used for cursor.
 If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
 e.g. setting it to `1` will cause it to be the first heading of your document.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-position
 let g:mkdx#settings = { 'toc': { 'position': 0 } }
@@ -1044,6 +1063,8 @@ This setting controls wether the generated TOC will be output as a regular _mark
 See: [Generate or update TOC as `<details>`](#generate-or-update-toc-as-details) for an example.
 By default, this option is disabled. To use it, set it's value to `1` instead.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-details-enable
 let g:mkdx#settings = { 'toc': { 'details': { 'enable': 0 } } }
@@ -1054,6 +1075,8 @@ let g:mkdx#settings = { 'toc': { 'details': { 'enable': 0 } } }
 With [`g:mkdx#settings.toc.details.enable`](#gmkdxsettingstocdetailsenable) set to `1`, a `<summary>` tag will also be
 generated inside the resulting `<details>` tag. This tag contains the text that will be displayed next to the "▶".
 The default value has a special placeholder `{{toc.text}}`. This will be replaced with the value of [`g:mkdx#settings.toc.text`](#gmkdxsettingstoctext) upon generation.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-toc-details-summary
@@ -1099,10 +1122,35 @@ let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 ## `g:mkdx#settings.auto_update.enable`
 
 This setting controls wether or not to update the document after changing certain variables.
+Currently, this only works if your vim `has('*dictwatcheradd')`.
 
 ```viml
 " :h mkdx-setting-auto-update-enable
 let g:mkdx#settings = { 'auto_update': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.fold.enable`
+
+Controls wether or not to fold fenced (<code>\`\`\`</code> / `~~~`) code blocks and / or the table of contents (when generated by mkdx).
+Behaviour can be controlled using [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents). Folding is disabled by default, set it to `1` to enable it.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
+```viml
+" :h mkdx-setting-fold-enable
+:let g:mkdx#settings = { 'fold': { 'enable': 0 } }
+```
+
+## `g:mkdx#settings.fold.components`
+
+Controls which components to fold when [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable) is enabled.
+Currently, two components can be folded, `'toc'` and `'fence'`. items can be added and removed from the list as needed.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
+```viml
+" :h mkdx-setting-fold-components
+:let g:mkdx#settings = { 'fold': { 'components': ['toc', 'fence'] } }
 ```
 
 # Mappings

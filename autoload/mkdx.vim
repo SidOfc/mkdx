@@ -1,14 +1,7 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
-let s:_has_rg                = 1 && executable('rg')
-let s:_has_ag                = s:_has_rg    || executable('ag')
-let s:_has_cgrep             = s:_has_ag    || executable('cgrep')
-let s:_has_ack               = s:_has_cgrep || executable('ack')
-let s:_has_pt                = s:_has_ack   || executable('pt')
-let s:_has_ucg               = s:_has_pt    || executable('ucg')
-let s:_has_sift              = s:_has_ucg   || executable('sift')
-let s:_can_async             = s:_is_nvim   || has('job')
+let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
@@ -38,24 +31,13 @@ let s:util.grepopts = {
       \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
-if (s:_has_rg)
-  let s:util.grepcmd = 'rg'
-elseif (s:_has_ag)
-  let s:util.grepcmd = 'ag'
-elseif (s:_has_cgrep)
-  let s:util.grepcmd = 'cgrep'
-elseif (s:_has_ack)
-  let s:util.grepcmd = 'ack'
-elseif (s:_has_pt)
-  let s:util.grepcmd = 'pt'
-elseif (s:_has_ucg)
-  let s:util.grepcmd = 'ucg'
-elseif (s:_has_sift)
-  let s:util.grepcmd = 'sift'
-else
-  let s:util.grepcmd = executable('cgrep') ? 'cgrep' : 'grep'
-endif
+fun! s:util.set_grep()
+  for tool in ['rg', 'ag', 'cgrep', 'ack', 'pt', 'ucg', 'sift', 'ggrep', 'grep']
+    if (executable(tool)) | return tool | endif
+  endfor
+endfun
 
+let s:util.grepcmd     = s:util.set_grep()
 let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
 let s:_testing         = 0
 

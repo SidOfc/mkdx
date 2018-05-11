@@ -13,22 +13,14 @@ let s:util.modifier_mappings = {
       \ }
 
 let s:util.grepopts = {
-      \ 'rg':    { 'timeout': 35,
-      \            'opts': ['--vimgrep', '-o'] },
-      \ 'ag':    { 'timeout': 35,
-      \            'opts': ['--vimgrep'] },
-      \ 'cgrep': { 'timeout': 35,
-      \            'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
-      \ 'ack':   { 'timeout': 35,
-      \            'opts': ['-H', '--column', '--nogroup'] },
-      \ 'pt':    { 'timeout': 35,
-      \            'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
-      \ 'ucg':   { 'timeout': 35,
-      \            'opts': ['--column'] },
-      \ 'sift':  { 'timeout': 35,
-      \            'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'timeout': 35,
-      \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ 'rg':    { 'opts': ['--vimgrep', '-o'] },
+      \ 'ag':    { 'opts': ['--vimgrep'] },
+      \ 'cgrep': { 'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
+      \ 'ack':   { 'opts': ['-H', '--column', '--nogroup'] },
+      \ 'pt':    { 'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
+      \ 'ucg':   { 'opts': ['--column'] },
+      \ 'sift':  { 'opts': ['-n', '--column', '--only-matching'] },
+      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
 fun! s:util.set_grep()
@@ -852,7 +844,7 @@ fun! s:util.IsInsideLink()
 endfun
 
 fun! s:util.Grep(...)
-  let grepopts = extend({'opts': [], 'timeout': 100, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
+  let grepopts = extend({'opts': [], 'timeout': 50, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
   let options  = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
                       \  'done': s:util._, 'each': s:util._, 'file': expand('%')},
                       \ get(a:000, 0, {}))
@@ -997,11 +989,11 @@ fun! s:util.ContextualComplete()
 
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
-    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
+    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"', 'timeout': 50}, get(s:util.grepopts, s:util.grepcmd, {}))
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
 
-    exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
+    exe 'sleep' . opts.timeout . 'm'
 
     return [start, []]
   else

@@ -62,6 +62,13 @@ CONTENTS                                                         *mkdx-contents*
         `mkdxCheckboxEmpty`
         `mkdxCheckboxPending`
         `mkdxCheckboxComplete`
+        `mkdxTable`
+        `mkdxTableDelimiter`
+        `mkdxTableAlign`
+        `mkdxTableHeader`
+        `mkdxTableHeaderDelimiter`
+        `mkdxTableCaption`
+        `mkdxTableCaptionDelimiter`
 
     Plugs
         <Plug>(mkdx-ctrl-n-compl)
@@ -243,6 +250,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-highlight-checkbox-empty|
     - |mkdx-highlight-checkbox-pending|
     - |mkdx-highlight-checkbox-complete|
+    - |mkdx-highlight-table|
+    - |mkdx-highlight-table-delimiter|
+    - |mkdx-highlight-table-align|
+    - |mkdx-highlight-table-header|
+    - |mkdx-highlight-table-header-delimiter|
+    - |mkdx-highlight-table-caption|
+    - |mkdx-highlight-table-caption-delimiter|
 
 - |mkdx-plugs|
     - |mkdx-plug-ctrl-n-compl|
@@ -778,10 +792,10 @@ by default.
 ==============================================================================
 `g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*
 
-Enables state-specific highlighting for checkboxes.
-Setting this will override the syntax highlighting for list item markers (`-`,
-`*` or `1.1.` for example) in addition to providing highlighting for
-checkboxes. The scheme goes as follows:
+Enables state-specific highlighting for checkboxes and generic highlighting
+for tables. Setting this will override the syntax highlighting for list item
+markers (`-`, `*` or `1.1.` for example) in addition to providing highlighting for
+checkboxes and tables. The scheme goes as follows:
 
 - Empty / unstarted checkboxes are colored red
 - In progress checkboxes are colored orange
@@ -893,6 +907,39 @@ To override the colors for a highlight group, see: |highlight|.
 `mkdxCheckboxComplete`                          *mkdx-highlight-checkbox-complete*
 
     `highlight default link mkdxCheckboxComplete gitcommitSelectedFile`
+
+==============================================================================
+`mkdxTable`                                                 *mkdx-highlight-table*
+
+==============================================================================
+`mkdxTableDelimiter`                              *mkdx-highlight-table-delimiter*
+
+  `highlight default link mkdxTableDelimiter Delimiter`
+
+==============================================================================
+`mkdxTableAlign`                                      *mkdx-highlight-table-align*
+
+  `highlight default link mkdxTableAlign Identifier`
+
+==============================================================================
+`mkdxTableHeader`                                    *mkdx-highlight-table-header*
+
+  `highlight default link mkdxTableHeader Constant`
+
+==============================================================================
+`mkdxTableHeadDelimiter`                     *mkdx-highlight-table-head-delimiter*
+
+  `highlight default link mkdxTableHeadDelimiter Delimiter`
+
+==============================================================================
+`mkdxTableCaption`                                  *mkdx-highlight-table-caption*
+
+  `highlight default link mkdxTableCaption Comment`
+
+==============================================================================
+`mkdxTableCaptionDelimiter`               *mkdx-highlight-table-caption-delimiter*
+
+  `highlight default link mkdxTableCaptionDelimiter Delimiter`
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*

@@ -224,6 +224,29 @@ fun! s:util.ToggleEnter(old, new)
   endif
 endfun
 
+let s:util.mkdx_loadpath = get(filter(split(&rtp, ','), {idx, plugin -> match(plugin, 'mkdx/\?$') > -1}), 0, '')
+let s:util.mkdx_loadpath = !empty(s:util.mkdx_loadpath) ? substitute(s:util.mkdx_loadpath, '/\+$', '', 'g') : s:util.mkdx_loadpath
+let s:util.syn_loadpath  = join([s:util.mkdx_loadpath, 'after/syntax/markdown/mkdx.vim'], '/')
+
+fun! s:util.ToggleHighlight(old, new)
+  if (a:new)
+    exe 'so ' . s:util.syn_loadpath
+  else
+    highlight clear mkdxTable
+    highlight clear mkdxTableDelimiter
+    highlight clear mkdxTableAlign
+    highlight clear mkdxTableHeader
+    highlight clear mkdxTableHeadDelimiter
+    highlight clear mkdxTableCaption
+    highlight clear mkdxListItem
+    highlight clear mkdxCheckboxEmpty
+    highlight clear mkdxCheckboxPending
+    highlight clear mkdxCheckboxComplete
+    highlight clear mkdxTildeFence
+    setf markdown
+  endif
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -253,7 +276,8 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds,
       \ 'g:mkdx#settings.fold.enable': s:util.ToggleFolds,
       \ 'g:mkdx#settings.links.fragment.complete': s:util.ToggleCompletions,
-      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter
+      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter,
+      \ 'g:mkdx#settings.highlight.enable': s:util.ToggleHighlight
       \ }
 
 fun! s:util.validate(value, validations)

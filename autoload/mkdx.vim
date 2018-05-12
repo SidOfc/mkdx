@@ -407,7 +407,7 @@ fun! s:util.ExtractCurlHttpCode(data, ...)
     if (qflen == 1) | copen | endif
   endif
 
-  call s:util.log(qflen . '/' . total . ' dead fragment link' . (qflen == 1 ? '' : 's'), {'hl': (qflen > 0 ? 'ErrorMsg' : 'MoreMsg')})
+  call s:util.log(qflen . '/' . total . ' dead link' . (qflen == 1 ? '' : 's'), {'hl': (qflen > 0 ? 'ErrorMsg' : 'MoreMsg')})
   if (qflen > 0) | copen | else | cclose | endif
 endfun
 
@@ -438,7 +438,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
   let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
-  let skip_rel         = g:mkdx#settings.links.external.relative ? 1 : (ext_len > 0 && empty(remote))
+  let skip_rel         = !g:mkdx#settings.links.external.relative ? 1 : (ext_len > 0 && empty(remote))
 
   if (get(a:000, 0, 1)) | call setqflist([]) | endif
 

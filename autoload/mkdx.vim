@@ -63,7 +63,7 @@ fun! s:util.log(str, ...)
 endfun
 
 fun! s:util.add_dict_watchers(hash, ...)
-  let keypath = get(a:000, 0, [])
+  let keypath  = get(a:000, 0, [])
 
   call dictwatcheradd(a:hash, '*', function(s:util.OnSettingModified, [keypath]))
   for key in keys(a:hash)
@@ -76,15 +76,16 @@ endfun
 fun! s:util.OnSettingModified(path, hash, key, value)
   let to = type(a:value.old)
   let tn = type(a:value.new)
-  let ch = (to == tn) && (a:value.old != a:value.new)
   let yy = extend(deepcopy(a:path), [a:key])
   if (yy[0] != 'mkdx#settings') | let yy = extend(['mkdx#settings'], yy) | endif
   let yy[0] = 'g:' . yy[0]
   let sk = join(yy, '.')
+  let ch = (yy[-1] == 'enable') || ((to == tn) && (a:value.old != a:value.new))
   let er = []
   let et = 0
   let hu = has_key(s:util.updaters, sk)
   let s:util._last_time = get(s:util, '_last_time', localtime())
+
   if ((localtime() - s:util._last_time) > 1)
     unlet s:util._last_time
     let   s:util._err_count = 0

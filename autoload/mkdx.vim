@@ -1,14 +1,7 @@
 """"" UTILITY FUNCTIONS
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
-let s:_has_rg                = 1 && executable('rg')
-let s:_has_ag                = s:_has_rg    || executable('ag')
-let s:_has_cgrep             = s:_has_ag    || executable('cgrep')
-let s:_has_ack               = s:_has_cgrep || executable('ack')
-let s:_has_pt                = s:_has_ack   || executable('pt')
-let s:_has_ucg               = s:_has_pt    || executable('ucg')
-let s:_has_sift              = s:_has_ucg   || executable('sift')
-let s:_can_async             = s:_is_nvim   || has('job')
+let s:_can_async             = s:_is_nvim || has('job')
 let s:util                   = {}
 let s:util.modifier_mappings = {
       \ 'C': 'ctrl',
@@ -20,42 +13,23 @@ let s:util.modifier_mappings = {
       \ }
 
 let s:util.grepopts = {
-      \ 'rg':    { 'timeout': 35,
-      \            'opts': ['--vimgrep', '-o'] },
-      \ 'ag':    { 'timeout': 35,
-      \            'opts': ['--vimgrep'] },
-      \ 'cgrep': { 'timeout': 35,
-      \            'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
-      \ 'ack':   { 'timeout': 35,
-      \            'opts': ['-H', '--column', '--nogroup'] },
-      \ 'pt':    { 'timeout': 35,
-      \            'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
-      \ 'ucg':   { 'timeout': 35,
-      \            'opts': ['--column'] },
-      \ 'sift':  { 'timeout': 35,
-      \            'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'timeout': 35,
-      \            'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ 'rg':    { 'opts': ['--vimgrep', '-o'] },
+      \ 'ag':    { 'opts': ['--vimgrep'] },
+      \ 'cgrep': { 'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
+      \ 'ack':   { 'opts': ['-H', '--column', '--nogroup'] },
+      \ 'pt':    { 'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
+      \ 'ucg':   { 'opts': ['--column'] },
+      \ 'sift':  { 'opts': ['-n', '--column', '--only-matching'] },
+      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
-if (s:_has_rg)
-  let s:util.grepcmd = 'rg'
-elseif (s:_has_ag)
-  let s:util.grepcmd = 'ag'
-elseif (s:_has_cgrep)
-  let s:util.grepcmd = 'cgrep'
-elseif (s:_has_ack)
-  let s:util.grepcmd = 'ack'
-elseif (s:_has_pt)
-  let s:util.grepcmd = 'pt'
-elseif (s:_has_ucg)
-  let s:util.grepcmd = 'ucg'
-elseif (s:_has_sift)
-  let s:util.grepcmd = 'sift'
-else
-  let s:util.grepcmd = executable('cgrep') ? 'cgrep' : 'grep'
-endif
+fun! s:util.set_grep()
+  for tool in ['rg', 'ag', 'cgrep', 'ack', 'pt', 'ucg', 'sift', 'ggrep', 'grep']
+    if (executable(tool)) | return tool | endif
+  endfor
+endfun
 
+let s:util.grepcmd     = s:util.set_grep()
 let s:_can_vimgrep_fmt = has_key(s:util.grepopts, s:util.grepcmd)
 let s:_testing         = 0
 
@@ -250,6 +224,29 @@ fun! s:util.ToggleEnter(old, new)
   endif
 endfun
 
+let s:util.mkdx_loadpath = get(filter(split(&rtp, ','), {idx, plugin -> match(plugin, 'mkdx/\?$') > -1}), 0, '')
+let s:util.mkdx_loadpath = !empty(s:util.mkdx_loadpath) ? substitute(s:util.mkdx_loadpath, '/\+$', '', 'g') : s:util.mkdx_loadpath
+let s:util.syn_loadpath  = join([s:util.mkdx_loadpath, 'after/syntax/markdown/mkdx.vim'], '/')
+
+fun! s:util.ToggleHighlight(old, new)
+  if (a:new)
+    exe 'so ' . s:util.syn_loadpath
+  else
+    highlight clear mkdxTable
+    highlight clear mkdxTableDelimiter
+    highlight clear mkdxTableAlign
+    highlight clear mkdxTableHeader
+    highlight clear mkdxTableHeadDelimiter
+    highlight clear mkdxTableCaption
+    highlight clear mkdxListItem
+    highlight clear mkdxCheckboxEmpty
+    highlight clear mkdxCheckboxPending
+    highlight clear mkdxCheckboxComplete
+    highlight clear mkdxTildeFence
+    setf markdown
+  endif
+endfun
+
 fun! s:util.UpdateHeaders(old, new)
   let skip = 0
 
@@ -279,7 +276,8 @@ let s:util.updaters = {
       \ 'g:mkdx#settings.fold.components': s:util.UpdateFolds,
       \ 'g:mkdx#settings.fold.enable': s:util.ToggleFolds,
       \ 'g:mkdx#settings.links.fragment.complete': s:util.ToggleCompletions,
-      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter
+      \ 'g:mkdx#settings.enter.enable': s:util.ToggleEnter,
+      \ 'g:mkdx#settings.highlight.enable': s:util.ToggleHighlight
       \ }
 
 fun! s:util.validate(value, validations)
@@ -870,7 +868,7 @@ fun! s:util.IsInsideLink()
 endfun
 
 fun! s:util.Grep(...)
-  let grepopts = extend({'opts': [], 'timeout': 100, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
+  let grepopts = extend({'opts': [], 'timeout': 50, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
   let options  = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
                       \  'done': s:util._, 'each': s:util._, 'file': expand('%')},
                       \ get(a:000, 0, {}))
@@ -1015,11 +1013,11 @@ fun! s:util.ContextualComplete()
 
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
-    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'}, get(s:util.grepopts, s:util.grepcmd, {}))
+    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"', 'timeout': 50}, get(s:util.grepopts, s:util.grepcmd, {}))
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
 
-    exe 'sleep' . get(s:util.grepopts, s:util.grepcmd, {'timeout': 100}).timeout . 'm'
+    exe 'sleep' . opts.timeout . 'm'
 
     return [start, []]
   else

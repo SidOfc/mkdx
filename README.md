@@ -1087,15 +1087,8 @@ let g:mkdx#settings = { 'toc': { 'details': { 'summary': 'Click to expand {{toc.
 
 ## `g:mkdx#settings.highlight.enable`
 
-This setting enables state-specific highlighting for checkboxes.
-It will also override the default markdown syntax highlighting scheme to better accomodate the colors used.
+This setting enables state-specific highlighting for checkboxes and tables.
 The highlighting is linked to the `gitcommit*` family of highlight groups (and Comment for list items), full list:
-
-- `Comment` is used for list items, e.g. items starting with `-`, `*`, `1.`
-- `gitcommitUnmergedFile` is used for empty checkboxes: `[ ]`
-- `gitcommitBranch` is used for pending / in-progress checkboxes: `[-]`
-- `gitcommitSelectedFile` is used for completed checkboxes: `[x]`
-
 If you want to change the highlighting groups, `link` them to different groups:
 
 ```viml
@@ -1114,6 +1107,8 @@ highlight link mkdxListItem jsOperator
 Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
 You can see it in action in the [Completing checkboxes / checklists](#completing-checkboxes--checklists) examples.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-highlight-enable
@@ -1138,6 +1133,7 @@ The following settings are automatically updated:
 - [`g:mkdx#settings.fold.enable`](#gmkdxsettingsfoldenable)
 - [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents)
 - [`g:mkdx#settings.links.fragment.complete`](#gmkdxsettingslinksfragmentcomplete)
+- [`g:mkdx#settings.highlight.enable`](#gmkdxsettingshighlightenable)
 
 ```viml
 " :h mkdx-setting-auto-update-enable

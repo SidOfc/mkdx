@@ -76,6 +76,7 @@ noremap         <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleT
 noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
 inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
 inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
@@ -151,6 +152,10 @@ if g:mkdx#settings.map.enable == 1
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
     setlocal autoindent
+
+    if (!hasmapto('<Plug>(mkdx-shift-enter)'))
+      imap <buffer><silent> <S-CR> <Plug>(mkdx-shift-enter)
+    endif
 
     if (!hasmapto('<Plug>(mkdx-enter)'))
       imap <buffer><silent> <Cr> <Plug>(mkdx-enter)

@@ -1328,6 +1328,11 @@ fun! mkdx#ShiftOHandler()
   startinsert!
 endfun
 
+fun! mkdx#ShiftEnterHandler()
+  let rem = matchlist(getline('.'), '^ *\(\%([0-9.]\+\|[-*>]\)\%( \+\[.\]\)\? *\|\[.\] *\)')
+  return "\n" . repeat(' ', strlen(get(rem, 1, '')))
+endfun
+
 fun! mkdx#EnterHandler()
   let lnum = line('.')
   let cnum = virtcol('.')

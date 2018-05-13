@@ -2,7 +2,7 @@ if exists('b:did_ftplugin') | finish | else | let b:did_ftplugin = 1 | endif
 let s:defaults          = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1, 'shifto': 1 },
+      \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
       \                              'list': '-', 'fence': '', 'header': '#' },
@@ -76,6 +76,7 @@ noremap         <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleT
 noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
 inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
 inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
@@ -151,6 +152,10 @@ if g:mkdx#settings.map.enable == 1
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
     setlocal autoindent
+
+    if (!hasmapto('<Plug>(mkdx-shift-enter)') && g:mkdx#settings.enter.shift)
+      imap <buffer><silent> <S-CR> <Plug>(mkdx-shift-enter)
+    endif
 
     if (!hasmapto('<Plug>(mkdx-enter)'))
       imap <buffer><silent> <Cr> <Plug>(mkdx-enter)

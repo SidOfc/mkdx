@@ -1328,6 +1328,12 @@ fun! mkdx#ShiftOHandler()
   startinsert!
 endfun
 
+fun! mkdx#ShiftEnterHandler()
+  if (!g:mkdx#settings.enter.shift) | return "\n" | endif
+  let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')
+  return "\n" . get(rem, 1, '') . repeat(' ', strlen(get(rem, 2, '')))
+endfun
+
 fun! mkdx#EnterHandler()
   let lnum = line('.')
   let cnum = virtcol('.')
@@ -1354,7 +1360,7 @@ fun! mkdx#EnterHandler()
     if (remove)                                   | call setline('.', '')                                                      | endif
     if (upd_tl)                                   | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
     if (remove)                                   | return ''                                                                  | endif
-    if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n"                                                                | endif
+    if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n" . qu_str                                                       | endif
     if (tcb)                                      | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
 
     return ("\n"

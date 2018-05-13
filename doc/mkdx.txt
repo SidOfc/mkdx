@@ -45,6 +45,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.table.divider`
         `g:mkdx#settings.enter.enable`
         `g:mkdx#settings.enter.o`
+        `g:mkdx#settings.enter.shift`
         `g:mkdx#settings.enter.shifto`
         `g:mkdx#settings.enter.malformed`
         `g:mkdx#settings.toc.text`
@@ -110,6 +111,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-toggle-to-kbd-v)
         <Plug>(mkdx-o)
         <Plug>(mkdx-shift-o)
+        <Plug>(mkdx-shift-enter)
         <Plug>(mkdx-enter)
         <Plug>(mkdx-insert-kbd)
         <Plug>(mkdx-fence-tilde)
@@ -147,6 +149,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleHeader()
         mkdx#JumpToHeader()
         mkdx#Tableize()
+        mkdx#ShiftEnterHandler()
         mkdx#EnterHandler()
         mkdx#OHandler()
         mkdx#ShiftOHandler()
@@ -163,6 +166,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#InsertCtrlNHandler()
         mkdx#InsertCtrlPHandler()
         mkdx#CompleteLink()
+        mkdx#fold()
 
     Errors
        Type
@@ -240,6 +244,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-table-align|
     - |mkdx-setting-enter-enable|
     - |mkdx-setting-enter-o|
+    - |mkdx-setting-enter-shift|
     - |mkdx-setting-enter-shifto|
     - |mkdx-setting-enter-malformed|
     - |mkdx-setting-toc-text|
@@ -308,6 +313,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-o|
     - |mkdx-plug-shift-o|
     - |mkdx-plug-enter|
+    - |mkdx-plug-shift-enter|
     - |mkdx-plug-insert-kbd|
     - |mkdx-plug-fence-tilde|
     - |mkdx-plug-fence-backtick|
@@ -345,6 +351,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-jump-to-header|
     - |mkdx-function-tableize|
     - |mkdx-function-enter-handler|
+    - |mkdx-function-shift-enter-handler|
     - |mkdx-function-o-handler|
     - |mkdx-function-shift-o-handler|
     - |mkdx-function-generate-toc|
@@ -361,6 +368,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-insert-ctrl-n-handler|
     - |mkdx-function-insert-ctrl-p-handler|
     - |mkdx-function-complete-link|
+    - |mkdx-function-fold|
 
 - |mkdx-errors|
     - |mkdx-error-type|
@@ -378,7 +386,8 @@ at the bottom of every setting section. The default settings hash:
     `let g:mkdx#settings = {`
     `      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',`
     `      \ 'restore_visual':          1,`
-    `      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },`
+    `      \ 'enter':                   { 'enable': 1, 'shift': 0, 'o': 1,`
+    `      \                              'shifto': 1, 'malformed': 1 },`
     `      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },`
     `      \ 'tokens':                  { 'enter':  ['-', '*', '>'],`
      `     \                              'bold':   '**', 'italic': '*',`
@@ -468,6 +477,7 @@ s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
 s:defaults.enter.malformed           `=>` g:mkdx#handle_malformed_indent
 s:defaults.enter.o                   `=>`
 s:defaults.enter.shifto              `=>`
+s:defaults.enter.shift               `=>`
 s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
 s:defaults.toc.text                  `=>` g:mkdx#toc_text
 s:defaults.toc.position              `=>`
@@ -722,6 +732,37 @@ The overrides include:
     `setlocal autoindent`
 
 ==============================================================================
+`g:mkdx#settings.enter.shift = 0`                       *mkdx-setting-enter-shift*
+
+Disabled by default, set to `1` to enable.
+When <s-enter> is pressed in a list item, everything after the cursor position
+is added to a new line below the current line. This line will not be a list
+item and instead, the cursor is indented to the start of the text on the
+previous line, e.g:
+
+    `- a list item`
+    `- a list item<s-enter>`
+    `- a list item`
+
+Will produce:
+
+    `- a list item`
+    `- a list item`
+      `<cursor>`
+    `- a list item`
+
+Instead of what would happen on a normal <enter>:
+
+    `- a list item`
+    `- a list item`
+    `- <cursor>`
+    `- a list item`
+
+Note the missing `-` list marker when <s-enter> is used. Other list styles
+defined in |mkdx-setting-tokens-list| and checkboxes are also recognized.
+See |mkdx-function-shift-enter-handler| for more information.
+
+==============================================================================
 `g:mkdx#settings.enter.o`                                   *mkdx-setting-enter-o*
 
 This setting also enables `o` to act like `<enter>` in the middle of lists /
@@ -807,9 +848,11 @@ by default.
 `g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*
 
 Enables state-specific highlighting for checkboxes and generic highlighting
-for tables. Setting this will override the syntax highlighting for list item
-markers (`-`, `*` or `1.1.` for example) in addition to providing highlighting for
-checkboxes and tables. The scheme goes as follows:
+for tables, kbd tags, bold-italics and inline-code. Setting this will override
+the syntax highlighting for list item markers (`-`, `*` or `1.1.` for example) in
+addition to providing highlighting for checkboxes and tables.
+
+The scheme goes as follows:
 
 - Empty / unstarted checkboxes are colored red
 - In progress checkboxes are colored orange
@@ -850,29 +893,7 @@ Full list of instant-updated settings:
 ==============================================================================
 `g:mkdx#settings.fold.enable = 0`                       *mkdx-setting-fold-enable*
 
-Defined wether or not to enable folding.
-There are two kinds of folding that mkdx can do.
-
-1) Fold fenced code blocks, e.g:
-    `~~~viml`
-    `:let g:mkdx#settings.fold.enable = 1`
-    `~~~`
-
-2) The table of contents generated by mkdx:
-   `# TOC`
-
-    `- Introduction`
-
-3) The table of contents generated inside `<details>...</details>` tags:
-   `# TOC`
-
-   `<details>`
-   `  <summary>Click to expand TOC</summary>`
-     `...`
-   `</details>`
-
-Folding can be disabled for {fence} and {toc} individually by changing
-|mkdx-setting-fold-components|.
+Defined wether or not to enable folding. See |mkdx-function-fold| for examples.
 
 This setting modifies some functionality using `setlocal`.
 The overrides include:
@@ -1154,6 +1175,11 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `<C-R>=mkdx#EnterHandler()<Cr>`
 
 ==============================================================================
+<Plug>(mkdx-shift-enter)                                 *mkdx-plug-shift-enter*
+
+    `<C-R>=mkdx#ShiftEnterHandler()<Cr>`
+
+==============================================================================
 <Plug>(mkdx-insert-kbd)                                   *mkdx-plug-insert-kbd*
 
     `<kbd></kbd>2hcit`
@@ -1366,8 +1392,10 @@ patterns are identified as list tokens:
 
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
 - Any token present in |mkdx-setting-tokens-list|
+- All of the above, but inside a quoted block e.g: `> 1. list item`
 
-For examples, see |mkdx-function-enter-handler|.
+For examples, see |mkdx-function-enter-handler| and
+|mkdx-function-shift-enter-handler|.
 
 ==============================================================================
 Generate or update table of contents       *mkdx-mapping-generate-or-update-toc*
@@ -1686,6 +1714,45 @@ Will produce this table:
   `| Kenny McCormick | 10  |  Male   |`
   `|   Stan Mar"sh   | 10  |  Male   |`
   `| K,le Brovlofski | 10  |  Male   |`
+
+==============================================================================
+mkdx#ShiftEnterHandler()                     *mkdx-function-shift-enter-handler*
+
+When |mkdx-setting-enter-enable| is enabled,
+this function is intended to be used to continue writing text in the same list
+item on a new line. When <s-enter> is pressed within a list as defined by
+|mkdx-function-enter-handler|, instead of prepending a new list token, the
+line will be indented past the list token on the previous line to match the
+indent level of the text on that line.
+
+Given this example list (cursor represented by "`|`"):
+
+`   - list item 1`
+`   - list item 2|  <== <s-enter>`
+`   - list item 3`
+
+Will produce the following result:
+
+`   - list item 1`
+`   - list item 2`
+     `|`
+`   - list item 3`
+
+It also works for nested list items, within block quotes (`>`), inside
+numbered lists and checklists, e.g:
+
+(cursor represented by "`|`"):
+
+`   - [-] list item 1`
+    `   - [-] list item 1.1|  <== <s-enter>`
+`   - [ ] list item 2`
+
+Will produce the following result:
+
+`   - [-] list item 1`
+    `   - [-] list item 1.1`
+             `|`
+`   - [ ] list item 2`
 
 ==============================================================================
 mkdx#EnterHandler()                                *mkdx-function-enter-handler*
@@ -2071,6 +2138,37 @@ HTML ("`|`" is the cursor position):
 Completions will update while typing.
 Completions will not work outside of a link context, if you want to complete a
 fragment link without it being in a header, use <C-n> or <C-p> instead.
+
+==============================================================================
+mkdx#fold({lnum})                                           *mkdx-function-fold*
+
+Folding is disabled by default.
+This function should be called by 'foldexpr' with {lnum} set.
+When |mkdx-setting-fold-enable| is enabled, 'foldmethod' will be set to `expr`
+and 'foldexpr' will be set to `mkdx#fold(v:lnum)`.
+
+There are two kinds of folds that mkdx understands:
+
+1) Fold fenced code blocks, e.g:
+    `~~~viml`
+    `:let g:mkdx#settings.fold.enable = 1`
+    `~~~`
+
+2) The table of contents generated by mkdx:
+   `# TOC`
+
+   `- Introduction`
+
+3) The table of contents generated inside `<details>...</details>` tags:
+   `# TOC`
+
+   `<details>`
+   `  <summary>Click to expand TOC</summary>`
+     `...`
+   `</details>`
+
+Folding can be disabled for {fence} and {toc} individually by changing
+|mkdx-setting-fold-components|.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

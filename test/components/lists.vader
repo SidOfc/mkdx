@@ -1,5 +1,6 @@
-Execute (Enable highlighting):
+Execute (Enable required settings):
   let g:mkdx#settings.highlight.enable = 1
+  let g:mkdx#settings.enter.shift      = 1
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -69,6 +70,96 @@ Expect (An empty list item):
   - list 
   item
   - list item
+
+Do (<shift>+<enter> in the middle of list item performs indented <enter>):
+  6la\<s-cr>
+
+Expect (An empty list item):
+  - list 
+    item
+  - list item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested markdown list):
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
+Do (<enter> in the middle of list item performs regular <enter>):
+  2j8la\<cr>
+
+Expect (An empty list item):
+  1. task
+  2. task
+      2.1. 
+      subtask
+      2.2. subtask
+  3. hello
+
+Do (<shift>+<enter> in the middle of list item performs indented <enter>):
+  2j11la\<s-cr>
+
+Expect (An empty list item):
+  1. task
+  2. task
+      2.1. sub
+           task
+      2.2. subtask
+  3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested markdown list in a quote block):
+  > 1. task
+  > 2. task
+  >     2.1. subtask
+  >     2.2. subtask
+  > 3. hello
+
+Do (<enter> in the middle of list item performs regular <enter>):
+  2j10la\<cr>
+
+Expect (An empty list item):
+  > 1. task
+  > 2. task
+  >     2.1. 
+  >     subtask
+  >     2.2. subtask
+  > 3. hello
+
+Do (<shift>+<enter> in the middle of list item performs indented <enter>):
+  2j13la\<s-cr>
+
+Expect (An empty list item):
+  > 1. task
+  > 2. task
+  >     2.1. sub
+  >          task
+  >     2.2. subtask
+  > 3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested markdown check-list in a quote block):
+  > 1. [ ] task
+  > 2. [-] task
+  >     2.1. [x] subtask
+  >     2.2. [-] subtask
+  > 3. [ ] hello
+
+Do (<shift>+<enter> in the middle of list item performs indented <enter>):
+  2jA\<s-cr>hello
+
+Expect (An empty list item):
+  > 1. [ ] task
+  > 2. [-] task
+  >     2.1. [x] subtask
+  >              hello
+  >     2.2. [-] subtask
+  > 3. [ ] hello
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

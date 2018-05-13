@@ -20,7 +20,8 @@ let s:util.grepopts = {
       \ 'pt':    { 'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
       \ 'ucg':   { 'opts': ['--column'] },
       \ 'sift':  { 'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] },
+      \ 'ggrep': { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
       \ }
 
 fun! s:util.set_grep()
@@ -56,9 +57,9 @@ fun! s:util.TypeString(t)
 endfun
 
 fun! s:util.log(str, ...)
-  let opts = extend({'hl': 'Comment'}, get(a:000, 0, {}))
+  let opts = extend({'hl': 'Comment', 'log': 0}, get(a:000, 0, {}))
   exe 'echohl ' . opts.hl
-  echo a:str
+  exe 'echo' . (opts.log ? 'm' : '') . " '" . a:str . "'"
   echohl None
 endfun
 
@@ -894,7 +895,7 @@ fun! s:util.HeadersAndAnchorsToHashCompletions(hashes, jid, stream, ...)
       call complete_add({'word': ('#' . hash . suffix), 'menu': ("\t| header | " . lvl . ' ' . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 35))})
     elseif (item.type == 'anchor')
       let line_part = substitute(getline(item.lnum), '`.*`', '', 'g')[(item._col - 1):]
-      if (!empty(matchlist(line_part, '\(name\|id\)="[^"]\+"')))
+      if (!empty(matchlist(line_part, '\%(name\|id\)="[^"]\+"')))
         call complete_add({'word': ('#' . item.content), 'menu': ("\t| anchor | <a>  " . s:util.TruncateString(s:util.transform(item.content, ['clean-header']), 40))})
       endif
     endif
@@ -906,6 +907,8 @@ fun! s:util.IdentifyGrepLink(input)
   let parts   = matchlist(input, '^\(.*:\)\?\(\d\+\):\(\d\+\):\(.*\)$')[2:5]
   let lnum    = str2nr(get(parts, 0, 1))
   let cnum    = str2nr(get(parts, 1, 1))
+  let cnum    = match(s:util.grepcmd, 'grep$') > -1 ? (cnum - (line2byte(lnum) - 2)) : cnum
+
   let matched = get(parts, 2, '')
 
   if (index(['pt', 'ag', 'ucg', 'ack'], s:util.grepcmd) > -1)

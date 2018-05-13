@@ -17,11 +17,11 @@ let s:util.grepopts = {
       \ 'ag':    { 'opts': ['--vimgrep'] },
       \ 'cgrep': { 'opts': ['--regex-pcre', '--format="#f:#n:#0"'] },
       \ 'ack':   { 'opts': ['-H', '--column', '--nogroup'] },
-      \ 'pt':    { 'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': ['-e'] },
+      \ 'pt':    { 'opts': ['--nocolor', '--column', '--numbers', '--nogroup'], 'pat_flag': '-e' },
       \ 'ucg':   { 'opts': ['--column'] },
       \ 'sift':  { 'opts': ['-n', '--column', '--only-matching'] },
-      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] },
-      \ 'ggrep': { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': ['-E'] }
+      \ 'grep':  { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': '-E' },
+      \ 'ggrep': { 'opts': ['-o', '--line-number', '--byte-offset'], 'pat_flag': '-E' }
       \ }
 
 fun! s:util.set_grep()
@@ -867,14 +867,11 @@ fun! s:util.IsInsideLink()
 endfun
 
 fun! s:util.Grep(...)
-  let grepopts = extend({'opts': [], 'timeout': 50, 'pat_flag': []}, get(s:util.grepopts, s:util.grepcmd, {}))
-  let options  = extend({'pattern': 'href="[^"]+"|\]\([^\(]+\)|^#{1,6}.*\$',
-                      \  'done': s:util._, 'each': s:util._, 'file': expand('%')},
-                      \ get(a:000, 0, {}))
-  let base = [s:util.grepcmd]
-  let base = extend(base, extend(grepopts.pat_flag, [options.pattern]))
-  call add(base, options.file)
-  let base = extend(base, grepopts.opts)
+  let options  = extend({'pattern': '', 'done': s:util._, 'each': s:util._, 'file': expand('%'),
+                       \ 'opts': [], 'pat_flag': ''}, get(a:000, 0, {}))
+  let base     = extend(filter([s:util.grepcmd, options.pat_flag, options.pattern, options.file],
+                             \ {idx, arg -> !empty(arg)}),
+                      \ options.opts)
 
   if (s:_is_nvim)
     return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
@@ -1014,11 +1011,11 @@ fun! s:util.ContextualComplete()
 
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
-    let opts = extend({'pattern': '^#{1,6}.*$|(name|id)="[^"]+"', 'timeout': 50}, get(s:util.grepopts, s:util.grepcmd, {}))
+    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'})
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
 
-    exe 'sleep' . opts.timeout . 'm'
+    sleep 50m
 
     return [start, []]
   else
@@ -1070,8 +1067,11 @@ fun! mkdx#JumpToHeader()
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes               = {}
     let s:util._header_found = 0
-    call s:util.Grep({'pattern': '^#{1,6} .*$|(name|id)="[^"]+"',
-                    \ 'each': function(s:util.JumpToHeader, [link, hashes])})
+    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}),
+                    \ {'pattern': '^#{1,6}.*$|(name|id)="[^"]+"',
+                     \ 'each': function(s:util.JumpToHeader, [link, hashes])})
+
+    call s:util.Grep(opts)
   else
     let headers = s:util.ListHeaders()
 
@@ -1428,9 +1428,10 @@ fun! mkdx#QuickfixHeaders(...)
   let curr_buf = bufnr('%')
   if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
-    call s:util.Grep({'pattern': '^#{1,6} .*$',
-                    \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
-                    \ 'done': function(s:util.EchoQuickfixCount, ['header'])})
+    call s:util.Grep(extend(get(s:util.grepopts, s:util.grepcmd, {}),
+                         \ {'pattern': '^#{1,6} .*$',
+                           \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
+                           \ 'done': function(s:util.EchoQuickfixCount, ['header'])}))
   else
     let qflist = map(s:util.ListHeaders(),
           \ {k, v -> {'bufnr': curr_buf, 'lnum': v[0], 'level': v[1],

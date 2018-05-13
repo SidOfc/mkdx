@@ -79,6 +79,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
         <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
         <li><a href="#gmkdxsettingstablealign"><code>g:mkdx#settings.table.align</code></a></li>
+        <li><a href="#gmkdxsettingsentershift"><code>g:mkdx#settings.enter.shift</code></a></li>
         <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
         <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
         <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
@@ -255,11 +256,16 @@ editing a markdown list. This happens on any <kbd>enter</kbd> in _insert_ mode o
 Additionally, if the list item contains a checkbox (`[ ]` - any state possible) that will also be appended to
 the newly inserted item.
 
+Sometimes, you might need to write a multi-line list item, this can be achieved by enabling [`g:mkdx#settings.enter.shift`](#gmkdxsettingsentershift).
+Once enabled, pressing <kbd>shift</kbd>+<kbd>enter</kbd> will place the cursor on a new line, indented to where the text started on the previous line.
+
 ```viml
 " :h mkdx-mapping-list-items
 " :h mkdx-setting-enter-enable
+" :h mkdx-setting-enter-shift
 " :h mkdx-setting-tokens-list
 " :h mkdx-function-enter-handler
+" :h mkdx-function-shift-enter-handler
 ```
 
 ## Toggling lines from / to task items
@@ -978,6 +984,60 @@ let g:mkdx#settings = { 'table': { 'align': {
         \ 'default': 'center' } } }
 ```
 
+## `g:mkdx#settings.enter.shift`
+
+When enabled, pressing <kbd>shift</kbd>+<kbd>enter</kbd> will indent the next line upto the level of the text on the current line.
+No list tokens will be prepended. This is useful when you want to write a multi-line list item and want to start at the correct indentation level.
+For example, given this list (cursor indicated by a "`|`" character):
+
+```markdown
+- [ ] a list item
+- [ ] a list item|
+- [ ] a list item
+```
+
+Pressing <kbd>shift</kbd>+<kbd>enter</kbd> will produce:
+
+```markdown
+- [ ] a list item
+- [ ] a list item
+      |
+- [ ] a list item
+```
+
+This works for any list type supported by mkdx. When <kbd>shift</kbd>+<kbd>enter</kbd> is pressed while not at the end of the line,
+the text after the cursor position is carried over to the next line at the correct indentation.
+
+**Note**: this setting is _disabled_ by default due to the sketchy handling of <kbd>shift</kbd>+<kbd>enter</kbd> in different terminal emulators.
+Some emulators send the same codes for <kbd>enter</kbd> and <kbd>shift</kbd>+<kbd>enter</kbd> which means (n)vim cannot distinguish one from another.
+This can usually be fixed by setting them manually for your emulator, included from this [SO answer](https://stackoverflow.com/a/42461580/2224331):
+
+> I managed to correct my terminal key-code for <kbd>Shift</kbd>+<kbd>Enter</kbd>
+> by sending the key-code Vim apparently expects. Depending on your terminal,
+> _(Adding <kbd>Ctrl</kbd>+<kbd>Enter</kbd> as a bonus!)_
+>
+> **[iTerm2](https://www.iterm2.com/)**, open _Preferences_ → _Profiles_ → _Keys_ → _[+] (Add)_ →
+> - _Keyboard shortcut:_ (Hit <kbd>Shift</kbd>+<kbd>Enter</kbd>)
+> - _Action:_ _Send Escape Sequence_
+> - _Esc+_ `[[13;2u`
+>   Repeat for <kbd>Ctrl</kbd>+<kbd>Enter</kbd>, with sequence: `[[13;5u`
+>
+> **[urxvt](http://software.schmorp.de/pkg/rxvt-unicode.html)**, append to your `.Xresources` file:
+>
+>     URxvt.keysym.S-Return:     \033[13;2u
+>     URxvt.keysym.C-Return:     \033[13;5u
+>
+> **[Alacritty](https://github.com/jwilm/alacritty)**, under `key_bindings`, add following to your `~/.config/alacritty/alacritty.yml`:
+>
+>     - { key: Return,   mods: Shift,   chars: "\x1b\[13;2u" }
+>     - { key: Return,   mods: Control, chars: "\x1b\[13;5u" }
+
+```viml
+" :h mkdx-setting-enter-shift
+" :h mkdx-function-shift-enter-handler
+:let g:mkdx#settings = { 'enter': { 'shift': 0 } }
+```
+
 ## `g:mkdx#settings.enter.enable`
 
 This setting enables auto-appending list items when you are editing a markdown list.
@@ -1202,6 +1262,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Insert fenced code block|insert|<kbd>\~</kbd><kbd>\~</kbd><kbd>\~</kbd>|`<Plug>(mkdx-fence-tilde)`|
 |Insert kbd shortcut|insert|<kbd>\<</kbd><kbd>tab</kbd>|`<Plug>(mkdx-insert-kbd)`|
 |<kbd>enter</kbd> handler|insert|<kbd>enter</kbd>|`<Plug>(mkdx-enter)`|
+|<kbd>shift</kbd>+<kbd>enter</kbd> handler|insert|<kbd>shift</kbd>+<kbd>enter</kbd>|`<Plug>(mkdx-shift-enter)`|
 |<kbd>ctrl</kbd>+<kbd>n</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>n</kbd>|`<Plug>(mkdx-ctrl-n-compl)`|
 |<kbd>ctrl</kbd>+<kbd>p</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>p</kbd>|`<Plug>(mkdx-ctrl-p-compl)`|
 |<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|

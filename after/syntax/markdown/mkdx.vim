@@ -9,20 +9,32 @@ syn match   mkdxTableAlign "[\.:]" contained
 syn region  mkdxTableHeader start="^\zs.*\ze\n[-|\:\. ]\+$" end="$" nextgroup=mkdxTableHeadDelimiter contained contains=mkdxTableDelimiter
 syn match   mkdxTableHeadDelimiter "^[-|\:\.\ ]\+$" contained contains=mkdxTableDelimiter,mkdxTableAlign
 syn region  mkdxTableCaption matchgroup=mkdxTableCaptionDelimiter start="^\[" end="\]$" keepend contained
+
 syn match   mkdxListItem '^[ \t]*\([0-9.]\+\|[-*]\) '
 syn match   mkdxCheckboxEmpty '\[ \]'
 syn match   mkdxCheckboxPending '\[-\]'
 syn match   mkdxCheckboxComplete '\[x\]'
 syn match   mkdxTildeFence '^[ \t]*\~\~\~\w*'
+syn region  mkdxBoldItalic matchgroup=mkdxBoldItalicDelimiter start="[\*_]\{3}" end="[\*_]\{3}" keepend concealends
+syn region  mkdxInlineCode matchgroup=mkdxInlineCodeDelimiter start="``\@!" end="``\@!" keepend concealends
+
+syn match   mkdxKbdText '\%(kbd>\)\@<=[^ >]\+\%(<\/\?kbd\)\@='
+syn match   mkdxKbdOpening '<kbd>'
+syn match   mkdxKbdEnding '<\/kbd>'
 
 if hlexists('Constant')
   highlight default link mkdxTableHeader Constant
+  highlight default link mkdxKbdText     Constant
 endif
 
 if hlexists('Delimiter')
   highlight default link mkdxTableDelimiter        Delimiter
   highlight default link mkdxTableHeadDelimiter    Delimiter
   highlight default link mkdxTableCaptionDelimiter Delimiter
+  highlight default link mkdxBoldItalicDelimiter   Delimiter
+  highlight default link mkdxBoldItalic            Delimiter
+  highlight default link mkdxKbdOpening            Delimiter
+  highlight default link mkdxKbdEnding             mkdxKbdOpening
 endif
 
 if hlexists('Identifier')
@@ -48,8 +60,10 @@ endif
 
 if hlexists('markdownCodeDelimiter')
   highlight default link mkdxTildeFence markdownCodeDelimiter
+endif
 
-  if hlexists('markdownCode')
-    syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\~\~\~\~*.*$" end="^\s*\~\~\~\~*\ze\s*$" keepend
-  endif
+if hlexists('markdownCode')
+  highlight default link mkdxInlineCode           markdownCode
+  highlight default link mkdxInlineCodeDelimiter  markdownCode
+  syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\~\~\~\~*.*$" end="^\s*\~\~\~\~*\ze\s*$" keepend
 endif

@@ -617,7 +617,8 @@ To see a mapping of new settings from old variables, see [this README](https://g
 let g:mkdx#settings = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1 },
+      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1,
+      \                              'shifto': 1, 'shift': 0 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'],
       \                              'bold': '**', 'italic': '*',

@@ -1,5 +1,6 @@
-Execute (Enable highlighting):
+Execute (Enable required settings):
   let g:mkdx#settings.highlight.enable = 1
+  let g:mkdx#settings.enter.shift      = 1
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

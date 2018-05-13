@@ -1329,6 +1329,7 @@ fun! mkdx#ShiftOHandler()
 endfun
 
 fun! mkdx#ShiftEnterHandler()
+  if (!g:mkdx#settings.enter.shift) | return "\n" | endif
   let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')
   return "\n" . get(rem, 1, '') . repeat(' ', strlen(get(rem, 2, '')))
 endfun

@@ -8,7 +8,7 @@ Execute (Setup):
     let g:mkdx#settings = {
         \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
         \ 'restore_visual':          1,
-        \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1, 'shifto': 1 },
+        \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
         \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
         \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
         \                              'list': '-', 'fence': '', 'header': '#' },

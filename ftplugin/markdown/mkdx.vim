@@ -2,7 +2,7 @@ if exists('b:did_ftplugin') | finish | else | let b:did_ftplugin = 1 | endif
 let s:defaults          = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1, 'shifto': 1 },
+      \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
       \                              'list': '-', 'fence': '', 'header': '#' },
@@ -153,7 +153,7 @@ if g:mkdx#settings.map.enable == 1
     setlocal formatoptions-=r
     setlocal autoindent
 
-    if (!hasmapto('<Plug>(mkdx-shift-enter)'))
+    if (!hasmapto('<Plug>(mkdx-shift-enter)') && g:mkdx#settings.enter.shift)
       imap <buffer><silent> <S-CR> <Plug>(mkdx-shift-enter)
     endif
 

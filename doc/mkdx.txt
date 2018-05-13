@@ -66,9 +66,16 @@ CONTENTS                                                         *mkdx-contents*
         `mkdxTableDelimiter`
         `mkdxTableAlign`
         `mkdxTableHeader`
-        `mkdxTableHeaderDelimiter`
+        `mkdxTableHeadDelimiter`
         `mkdxTableCaption`
         `mkdxTableCaptionDelimiter`
+        `mkdxKbdText`
+        `mkdxKbdOpening`
+        `mkdxKbdEnding`
+        `mkdxBoldItalic`
+        `mkdxBoldItalicDelimiter`
+        `mkdxInlineCode`
+        `mkdxInlineCodeDelimiter`
 
     Plugs
         <Plug>(mkdx-ctrl-n-compl)
@@ -257,6 +264,13 @@ for functions. Below is a list of all helptags:
     - |mkdx-highlight-table-header-delimiter|
     - |mkdx-highlight-table-caption|
     - |mkdx-highlight-table-caption-delimiter|
+    - |mkdx-highlight-kbd-text|
+    - |mkdx-highlight-kbd-opening|
+    - |mkdx-highlight-kbd-ending|
+    - |mkdx-highlight-bold-italic|
+    - |mkdx-highlight-bold-italic-delimiter|
+    - |mkdx-highlight-inline-code|
+    - |mkdx-highlight-inline-code-delimiter|
 
 - |mkdx-plugs|
     - |mkdx-plug-ctrl-n-compl|
@@ -882,11 +896,16 @@ want to enable. At the moment, the list can have two values:
 ==============================================================================
 HIGHLIGHTING                                                 *mkdx-highlighting*
 
-mkdx provides opt-in highlighting for list items and checkboxes.
+mkdx provides opt-in highlighting for list items, checkboxes, tables,
+fenced code-blocks, inline-code blocks and bold+italic (ex: `**_text_**`).
 To do this, mkdx defines its own |syntax| groups specifically for these types.
-The sections below show the default values of each highlight group.
+Below you can find the defaults for each individual highlighting group. To
+override the colors for a highlight group, see: |highlight|.
 
-To override the colors for a highlight group, see: |highlight|.
+Also, when |conceallevel| is set to `2`, mkdx will also fold some components:
+
+- `**_text_**`   => `text`
+- ``code``       => `code`
 
 ==============================================================================
 `mkdxListItem`                                          *mkdx-highlight-list-item*
@@ -894,52 +913,65 @@ To override the colors for a highlight group, see: |highlight|.
     `highlight default link mkdxListItem Comment`
 
 ==============================================================================
+`mkdxCheckboxPending`                            *mkdx-highlight-checkbox-pending*
+`mkdxCheckboxComplete`                          *mkdx-highlight-checkbox-complete*
 `mkdxCheckboxEmpty`                                *mkdx-highlight-checkbox-empty*
 
-    `highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile`
-
-==============================================================================
-`mkdxCheckboxPending`                            *mkdx-highlight-checkbox-pending*
-
-    `highlight default link mkdxCheckboxPending gitcommitBranch`
-
-==============================================================================
-`mkdxCheckboxComplete`                          *mkdx-highlight-checkbox-complete*
-
+    `highlight default link mkdxCheckboxPending  gitcommitBranch`
     `highlight default link mkdxCheckboxComplete gitcommitSelectedFile`
+    `highlight default link mkdxCheckboxEmpty    gitcommitUnmergedFile`
 
 ==============================================================================
 `mkdxTable`                                                 *mkdx-highlight-table*
-
-==============================================================================
 `mkdxTableDelimiter`                              *mkdx-highlight-table-delimiter*
 
-  `highlight default link mkdxTableDelimiter Delimiter`
+    `highlight default link mkdxTable`
+    `highlight default link mkdxTableDelimiter Delimiter`
 
 ==============================================================================
 `mkdxTableAlign`                                      *mkdx-highlight-table-align*
 
-  `highlight default link mkdxTableAlign Identifier`
+    `highlight default link mkdxTableAlign Identifier`
 
 ==============================================================================
 `mkdxTableHeader`                                    *mkdx-highlight-table-header*
-
-  `highlight default link mkdxTableHeader Constant`
-
-==============================================================================
 `mkdxTableHeadDelimiter`                     *mkdx-highlight-table-head-delimiter*
 
-  `highlight default link mkdxTableHeadDelimiter Delimiter`
+    `highlight default link mkdxTableHeader        Constant`
+    `highlight default link mkdxTableHeadDelimiter Delimiter`
 
 ==============================================================================
 `mkdxTableCaption`                                  *mkdx-highlight-table-caption*
-
-  `highlight default link mkdxTableCaption Comment`
-
-==============================================================================
 `mkdxTableCaptionDelimiter`               *mkdx-highlight-table-caption-delimiter*
 
-  `highlight default link mkdxTableCaptionDelimiter Delimiter`
+    `highlight default link mkdxTableCaption          Comment`
+    `highlight default link mkdxTableCaptionDelimiter Delimiter`
+
+==============================================================================
+`mkdxKbdText`                                            *mkdx-highlight-kbd-text*
+
+    `highlight default link mkdxKbdText Constant`
+
+==============================================================================
+`mkdxKbdOpening`                                      *mkdx-highlight-kbd-opening*
+`mkdxKbdEnding`                                        *mkdx-highlight-kbd-ending*
+
+    `highlight default link mkdxKbdOpening Delimiter`
+    `highlight default link mkdxKbdEnding  mkdxKbdOpening`
+
+==============================================================================
+`mkdxBoldItalic`                                      *mkdx-highlight-bold-italic*
+`mkdxBoldItalicDelimiter`                   *mkdx-highlight-bold-italic-delimiter*
+
+    `highlight default link mkdxBoldItalic          Delimiter`
+    `highlight default link mkdxBoldItalicDelimiter Delimiter`
+
+==============================================================================
+`mkdxInlineCode`                                      *mkdx-highlight-inline-code*
+`mkdxInlineCodeDelimiter`                   *mkdx-highlight-inline-code-delimiter*
+
+    `highlight default link mkdxInlineCode          markdownCode`
+    `highlight default link mkdxInlineCodeDelimiter Delimiter`
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*

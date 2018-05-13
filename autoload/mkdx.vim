@@ -228,22 +228,19 @@ endfun
 let s:util.mkdx_loadpath = get(filter(split(&rtp, ','), {idx, plugin -> match(plugin, 'mkdx/\?$') > -1}), 0, '')
 let s:util.mkdx_loadpath = !empty(s:util.mkdx_loadpath) ? substitute(s:util.mkdx_loadpath, '/\+$', '', 'g') : s:util.mkdx_loadpath
 let s:util.syn_loadpath  = join([s:util.mkdx_loadpath, 'after/syntax/markdown/mkdx.vim'], '/')
+let s:util.hl_names      = ['mkdxTable', 'mkdxTableDelimiter', 'mkdxTableAlign', 'mkdxTableHeader',
+                          \ 'mkdxTableHeadDelimiter', 'mkdxTableCaption', 'mkdxTableCaptionDelimiter',
+                          \ 'mkdxListItem', 'mkdxCheckboxEmpty', 'mkdxCheckboxPending', 'mkdxCheckboxComplete',
+                          \ 'mkdxTildeFence', 'mkdxBoldItalic', 'mkdxBoldItalicDelimiter', 'mkdxInlineCode',
+                          \ 'mkdxInlineCodeDelimiter', 'mkdxKbdText', 'mkdxKbdOpening', 'mkdxKbdEnding']
 
 fun! s:util.ToggleHighlight(old, new)
   if (a:new)
     exe 'so ' . s:util.syn_loadpath
   else
-    highlight clear mkdxTable
-    highlight clear mkdxTableDelimiter
-    highlight clear mkdxTableAlign
-    highlight clear mkdxTableHeader
-    highlight clear mkdxTableHeadDelimiter
-    highlight clear mkdxTableCaption
-    highlight clear mkdxListItem
-    highlight clear mkdxCheckboxEmpty
-    highlight clear mkdxCheckboxPending
-    highlight clear mkdxCheckboxComplete
-    highlight clear mkdxTildeFence
+    for group_name in s:util.hl_names
+      exe 'highlight clear ' . group_name
+    endfor
     setf markdown
   endif
 endfun

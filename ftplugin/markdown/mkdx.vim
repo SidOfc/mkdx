@@ -77,7 +77,7 @@ noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOH
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
-inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>2hcit
+inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>F<
 inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
 inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFencedCodeBlock('`')<Cr>kA
 inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>

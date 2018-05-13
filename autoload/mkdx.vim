@@ -1359,7 +1359,7 @@ fun! mkdx#EnterHandler()
     if (remove)                                   | call setline('.', '')                                                      | endif
     if (upd_tl)                                   | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
     if (remove)                                   | return ''                                                                  | endif
-    if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n"                                                                | endif
+    if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n" . qu_str                                                       | endif
     if (tcb)                                      | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
 
     return ("\n"

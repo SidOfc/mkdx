@@ -64,6 +64,6 @@ endif
 
 if hlexists('markdownCode')
   highlight default link mkdxInlineCode           markdownCode
-  highlight default link mkdxInlineCodeDelimiter  markdownCode
+  highlight default link mkdxInlineCodeDelimiter  markdownCodeDelimiter
   syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\~\~\~\~*.*$" end="^\s*\~\~\~\~*\ze\s*$" keepend
 endif

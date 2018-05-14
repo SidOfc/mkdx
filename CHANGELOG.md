@@ -1,3 +1,11 @@
+## 28-04-2018 VERSION 1.5.0
+
+- Add insert mode completion for [fragment links](#insert-mode-fragment-completion).
+- Add [setting](#gmkdxsettingslinksfragmentcomplete) to control completions.
+- Add support for anchor fragment links ([#24](../../issues/24)) (`<a id="hello"></a>` / `<a name="hello"></a>`) for [jumping](#jump-to-header), [detection](#dead-link-detection) and [completion](#insert-mode-fragment-completion).
+- Fix issue where double slashes in the URL would not be removed in external link checks.
+- Fix nested `<a></a>` tags in generated TOC links.
+
 ## 27-04-2018 VERSION 1.4.3
 
 - ([#17](../../issues/17)) Add a mapping to go to [fragment link location](#jump-to-header).

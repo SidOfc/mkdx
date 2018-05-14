@@ -645,7 +645,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.1'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -770,7 +770,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.1' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1362,6 +1362,14 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 14-05-2018 VERSION 1.6.1
+
+- Add: Highlighting for tables ([#42](../../pull/42)), `<kbd>` shortcuts and `_**bolditalic**_` ([#43](../../pull/43)).
+- Add: [<kbd>shift</kbd>+<kbd>enter</kbd>](#inserting-list-items) support to create multiline items ([#44](../../pull/43)).
+- Fix: <kbd>shift</kbd>+<kbd>enter</kbd> no longer require double <kbd>escape</kbd> to exit insert mode ([#45](../../pull/45)).
+- Fix: Dead link detection, incorrect external label and relative links were [always skipped](https://github.com/SidOfc/mkdx/commit/f3c5d2884237dba1b97d915f3d80e03317877a18).
+- Fix: `grep` and `ggrep` do not count line column properly (byte-offset is converted now).
+
 ## 10-05-2018 VERSION 1.6.0
 
 - Fix: Handle URLS starting with "../../" correctly.
@@ -1388,11 +1396,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available
 - [jumping to headers](#jump-to-header) uses a [grep program](#supported-grep-programs) and `job` when available
 - [insert autocompletion](#insert-mode-fragment-completion) uses a [grep program](#supported-grep-programs) and `job` when available
-
-## 28-04-2018 VERSION 1.5.0
-
-- Add insert mode completion for [fragment links](#insert-mode-fragment-completion).
-- Add [setting](#gmkdxsettingslinksfragmentcomplete) to control completions.
-- Add support for anchor fragment links ([#24](../../issues/24)) (`<a id="hello"></a>` / `<a name="hello"></a>`) for [jumping](#jump-to-header), [detection](#dead-link-detection) and [completion](#insert-mode-fragment-completion).
-- Fix issue where double slashes in the URL would not be removed in external link checks.
-- Fix nested `<a></a>` tags in generated TOC links.

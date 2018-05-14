@@ -103,9 +103,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.6.1</a></li>
         <li><a href="#10-05-2018-version-160">10-05-2018 VERSION 1.6.0</a></li>
         <li><a href="#05-05-2018-version-151">05-05-2018 VERSION 1.5.1</a></li>
-        <li><a href="#28-04-2018-version-150">28-04-2018 VERSION 1.5.0</a></li>
     </ul></li>
 </ul>
 </details>

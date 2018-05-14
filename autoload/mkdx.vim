@@ -923,10 +923,25 @@ fun! s:util.IdentifyGrepLink(input)
   return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
 endfun
 
+fun! s:util.guardian(hash, key, value)
+  let a:hash[a:key] = a:value.old
+  if (type(a:value.new) == s:HASH)
+    for [setting, val] in items(a:value.new)
+      if (has_key(a:hash[a:key], setting))
+        if (type(val) == s:HASH && type(a:hash[a:key][setting]) == s:HASH)
+          let a:hash[a:key][setting] = mkdx#MergeSettings(a:hash[a:key][setting], val, {'modify': 1})
+        else
+          let a:hash[a:key][setting] = val
+        endif
+      endif
+    endfor
+  endif
+endfun
+
 """"" MAIN FUNCTIONALITY
 fun! mkdx#guard_settings()
   if (exists('*dictwatcheradd'))
-    call dictwatcheradd(g:, 'mkdx#settings', function(s:util.OnSettingModified, [[]]))
+    call dictwatcheradd(g:, 'mkdx#settings', function(s:util.guardian))
     call s:util.add_dict_watchers(g:mkdx#settings)
   endif
 endfun

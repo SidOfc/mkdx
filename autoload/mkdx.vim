@@ -868,15 +868,19 @@ endfun
 
 fun! s:util.Grep(...)
   let options  = extend({'pattern': '', 'done': s:util._, 'each': s:util._, 'file': expand('%'),
-                       \ 'opts': [], 'pat_flag': ''}, get(a:000, 0, {}))
+                       \ 'opts': [], 'pat_flag': '', 'sync': 0}, get(a:000, 0, {}))
   let base     = extend(filter([s:util.grepcmd, options.pat_flag, options.pattern, options.file],
                              \ {idx, arg -> !empty(arg)}),
                       \ options.opts)
 
   if (s:_is_nvim)
-    return jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
+    let jid = jobstart(base, {'on_stdout': options.each, 'on_exit': options.done})
+    if (options.sync) | call jobwait([jid]) | endif
+    return jid
   elseif (s:_can_async)
-    return job_start(base, {'pty': 0, 'out_cb': options.each})
+    let job = job_start(base, {'pty': 0, 'out_cb': options.each})
+    if (options.sync) | sleep 60m | endif
+    return job
   endif
 endfun
 
@@ -1026,11 +1030,9 @@ fun! s:util.ContextualComplete()
 
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
-    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^#{1,6}.*$|(name|id)="[^"]+"'})
+    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^#{1,6}.*$|(name|id)="[^"]+"', 'sync': 1})
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
-
-    sleep 50m
 
     return [start, []]
   else

@@ -1322,7 +1322,7 @@ fun! mkdx#ShiftOHandler()
       let line = line[strlen(qstr):]
     endif
 
-    let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\)'), 1, -1)
+    let lin = bld ? -1 : get(matchlist(line, '^ *\([0-9.]\+\) '), 1, -1)
     let lis = bld ? -1 : get(matchlist(line, '^ *\([' . join(g:mkdx#settings.tokens.enter, '') . ']\) '), 1, -1)
 
     if (lin != -1)

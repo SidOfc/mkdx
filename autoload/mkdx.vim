@@ -1522,7 +1522,7 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
-  if (do_details && prevlvl > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
+  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
   let c = (!get(a:000, 0, 0) && after_pos) ? (after_info[0] - 1) : (cpos[1] - 1)

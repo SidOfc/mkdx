@@ -40,6 +40,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.tokens.fence`
         `g:mkdx#settings.tokens.italic`
         `g:mkdx#settings.tokens.bold`
+        `g:mkdx#settings.tokens.strike`
         `g:mkdx#settings.tokens.list`
         `g:mkdx#settings.table.header_divider`
         `g:mkdx#settings.table.divider`
@@ -167,6 +168,8 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#InsertCtrlPHandler()
         mkdx#CompleteLink()
         mkdx#fold()
+        mkdx#WrapText()
+        mkdx#WrapStrike()
 
     Errors
        Type
@@ -238,6 +241,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-tokens-fence|
     - |mkdx-setting-tokens-italic|
     - |mkdx-setting-tokens-bold|
+    - |mkdx-setting-tokens-strike|
     - |mkdx-setting-tokens-list|
     - |mkdx-setting-table-header-divider|
     - |mkdx-setting-table-divider|
@@ -391,6 +395,7 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },`
     `      \ 'tokens':                  { 'enter':  ['-', '*', '>'],`
      `     \                              'bold':   '**', 'italic': '*',`
+     `     \                              'strike': '',`
     `      \                              'list':   '-',  'fence':  '',`
         `  \                              'header': '#' },`
     `      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],`
@@ -471,6 +476,7 @@ s:defaults.tokens.header             `=>` g:mkdx#header_style
 s:defaults.tokens.enter              `=>` g:mkdx#list_tokens
 s:defaults.tokens.fence              `=>` g:mkdx#fence_style
 s:defaults.tokens.bold               `=>` g:mkdx#bold_token
+s:defaults.tokens.strike             `=>`
 s:defaults.tokens.italic             `=>` g:mkdx#italic_token
 s:defaults.tokens.list               `=>` g:mkdx#list_token
 s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
@@ -491,7 +497,7 @@ s:defaults.highlight.enable          `=>`
 Check external links as well as absolute and relative paths aside from
 fragment links. Requires Neovim |job-control| or Regular vim |job|.
 
-The following CURL command will be run in the background:
+The following CURL command will be executed in the background:
 
 `curl -L -I -s --no-keepalive -o /dev/null \`
      `-m [g:mkdx#settings.links.external.timeout] -w "%{http_code}"' \`
@@ -682,6 +688,12 @@ text in italic style.
 
 Token used by |mkdx-plug-text-bold-n| and |mkdx-plug-text-bold-v| to wrap
 text in bold style.
+
+==============================================================================
+`g:mkdx#settings.tokens.strike = ''`                  *mkdx-setting-tokens-strike*
+
+Token used by |mkdx-function-wrap-strike| to wrap text with strike tags.
+When empty, `<strike></strike>` will be used to wrap the selected content.
 
 ==============================================================================
 `g:mkdx#settings.tokens.list = '-'`                     *mkdx-setting-tokens-list*
@@ -2169,6 +2181,34 @@ There are two kinds of folds that mkdx understands:
 
 Folding can be disabled for {fence} and {toc} individually by changing
 |mkdx-setting-fold-components|.
+
+==============================================================================
+mkdx#WrapText([{mode}[, {start}[, {end}[, {plug}]]]])  *mkdx-function-wrap-text*
+
+Wraps text based on {mode}, when omitted, this defaults to 'n' and the current
+word under the cursor will be wrapped with {start} and {end}.
+
+{mode} can be `'n'` or `'v'` for 'normal' and 'visual' mode respectively.
+In visual mode, the selection will be wrapped. This also works for multi-line
+selections.
+
+If {start} is omitted, it defaults to an empty string.
+{end} defaults to {start}. when omitted.
+
+When {plug} is supplied and repeat.vim is installed, the function will call:
+
+`   silent! repeat#set("\<Plug>(" . ` {plug} ` . ")")`
+
+The {start}, {end} and {plug} arguments must be string values.
+
+==============================================================================
+mkdx#WrapStrike([{mode}[, {plug}]])                  *mkdx-function-wrap-strike*
+
+Wraps |mkdx-function-wrap-text| specifically for wrapping strikethrough style.
+See |mkdx-setting-tokens-stike| for more details. Both arguments are passed to
+`mkdx#WrapText`. When {mode} is omitted it defaults to 'n' and the current
+word under the cursor will be wrapped. When {plug} is omitted, it defaults to
+an empty string.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

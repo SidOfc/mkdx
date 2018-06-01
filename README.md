@@ -622,7 +622,7 @@ let g:mkdx#settings = {
       \                              'shifto': 1, 'shift': 0 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'],
-      \                              'bold': '**', 'italic': '*',
+      \                              'bold': '**', 'italic': '*', 'strike': '',
       \                              'list': '-', 'fence': '',
       \                              'header': '#' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'],

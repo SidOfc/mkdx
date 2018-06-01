@@ -1176,7 +1176,21 @@ fun! mkdx#WrapText(...)
   let x = get(a:000, 2, w)
   let a = get(a:000, 3, '')
 
-  call s:util.WrapSelectionOrWord(m, w, x, a)
+  call s:util.WrapSelectionOrWord(m, w, x)
+
+  if (a != '')
+    silent! call repeat#set("\<Plug>(" . a . ")")
+  endif
+endfun
+
+fun! mkdx#WrapStrike(...)
+  let m = get(a:000, 0, 'n')
+  let a = get(a:000, 1, '')
+  let e = !empty(g:mkdx#settings.tokens.strike)
+  let s = e ? g:mkdx#settings.tokens.strike : '<strike>'
+  let z = e ? g:mkdx#settings.tokens.strike : '</strike>'
+
+  call s:util.WrapSelectionOrWord(m, s, z)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")

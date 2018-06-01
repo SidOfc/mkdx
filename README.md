@@ -75,6 +75,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingstokensfence"><code>g:mkdx#settings.tokens.fence</code></a></li>
         <li><a href="#gmkdxsettingstokensitalic"><code>g:mkdx#settings.tokens.italic</code></a></li>
         <li><a href="#gmkdxsettingstokensbold"><code>g:mkdx#settings.tokens.bold</code></a></li>
+        <li><a href="#gmkdxsettingstokensstrike"><code>g:mkdx#settings.tokens.strike</code></a></li>
         <li><a href="#gmkdxsettingstokenslist"><code>g:mkdx#settings.tokens.list</code></a></li>
         <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
         <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
@@ -923,6 +924,11 @@ let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
+See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
+
+## `g:mkdx#settings.tokens.strike`
+
+This token is used for striking the current word under the cursor or a visual selection of text.
 See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml

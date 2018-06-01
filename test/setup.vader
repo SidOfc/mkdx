@@ -11,7 +11,7 @@ Execute (Setup):
         \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
         \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
         \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
-        \                              'list': '-', 'fence': '', 'header': '#' },
+        \                              'list': '-', 'fence': '', 'header': '#', 'strike': '' },
         \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
         \ 'toc':                     { 'text': 'TOC', 'list_token': '-', 'position': 0,
         \                              'details': { 'enable': 0, 'summary': 'Click to expand {{toc.text}}' } },

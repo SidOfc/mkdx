@@ -1,3 +1,9 @@
+## 05-05-2018 VERSION 1.5.1
+
+- [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available
+- [jumping to headers](#jump-to-header) uses a [grep program](#supported-grep-programs) and `job` when available
+- [insert autocompletion](#insert-mode-fragment-completion) uses a [grep program](#supported-grep-programs) and `job` when available
+
 ## 28-04-2018 VERSION 1.5.0
 
 - Add insert mode completion for [fragment links](#insert-mode-fragment-completion).

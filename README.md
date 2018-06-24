@@ -104,9 +104,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
-        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.6.1</a></li>
+        <li><a href="#24-06-2018-version-170">24-06-2018 VERSION 1.7.0</a></li>
+        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.7.0</a></li>
         <li><a href="#10-05-2018-version-160">10-05-2018 VERSION 1.6.0</a></li>
-        <li><a href="#05-05-2018-version-151">05-05-2018 VERSION 1.5.1</a></li>
     </ul></li>
 </ul>
 </details>
@@ -646,7 +646,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.1'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.0'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -771,7 +771,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.6.1' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.0' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -930,6 +930,9 @@ See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more d
 
 This token is used for striking the current word under the cursor or a visual selection of text.
 See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
+
+**Note:** this setting has been added in version *1.7.0*. Prior to that,
+`<strike>...</strike>` tags will always be used to create strikethrough text.
 
 ```viml
 " :h mkdx-setting-tokens-bold
@@ -1368,6 +1371,17 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 24-06-2018 VERSION 1.7.0
+
+- Add: Support Setex style headings (`-` / `=` characters below nonblank line)
+- Add: Support Setex style headings in completion menu
+- Add: Support Setex style headings in TOC generation
+- Add: Support Setex style headings in header listing
+- Add: [Setting](#gmkdxsettingstokensstrike) to allow customizing strikethrough style ([#49](../../pull/49))
+- Fix: TOC without any nested elements created too many closing tags when generated using `<details>` tag
+- Fix: Non-list items sometimes got detected as list items when starting with a number on <kbd>shift</kbd>+<kbd>O</kbd>
+- Fix: overriding `g:mkdx#settings` with `has('*dictwatcheradd')` crashing Vim
+
 ## 14-05-2018 VERSION 1.6.1
 
 - Add: Highlighting for tables ([#42](../../pull/42)), `<kbd>` shortcuts and `_**bolditalic**_` ([#43](../../pull/43)).
@@ -1396,9 +1410,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
         - Fence style - (`:let g:mkdx#settings.tokens.fence = '~'`).
         - Folds - (`:let g:mkdx#settings.tokens.components = ['toc']`).
     - Add: setting to control auto-updates: `g:mkdx#settings.auto_update.enable = 1`.
-
-## 05-05-2018 VERSION 1.5.1
-
-- [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available
-- [jumping to headers](#jump-to-header) uses a [grep program](#supported-grep-programs) and `job` when available
-- [insert autocompletion](#insert-mode-fragment-completion) uses a [grep program](#supported-grep-programs) and `job` when available

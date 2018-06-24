@@ -621,6 +621,15 @@ fun! s:util.ListHeaders()
 
     if (!skip)
       let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
+
+      if (lvl == 0)
+        let setext_ul = get(matchlist(header, '^\%(-\|=\)\+$'), 0, '')
+        if !empty(setext_ul)
+          let header = getline(lnum - 1)
+          let lvl    = setext_ul[0] == '=' ? 1 : 2
+        endif
+      endif
+
       if (lvl > 0)
         let hash         = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
         let hashes[hash] = get(hashes, hash, -1) + 1
@@ -918,13 +927,26 @@ fun! s:util.IdentifyGrepLink(input)
     let matched = empty(tmp) ? matched : ((index(['id', 'name'], get(mtc, 1, '')) > -1) ? tmp[:-1] : tmp)
   endif
 
+  if match(matched, '^\%(-\|=\)\+$') > -1
+    let slnum = lnum - 1
+    let compl = []
+    let prefx = matched[0] == '-' ? '##' : '#'
+    while prevnonblank(slnum) == slnum
+      call add(compl, getline(slnum))
+      if (slnum == 1) | break | endif
+      let slnum = slnum - 1
+    endwhile
+
+    return { 'type': 'header', 'lnum': lnum - 1, '_col': cnum, 'col':  cnum, 'content': prefx . ' ' . join(reverse(compl), ' ') }
+  endif
+
   if (matched[0]   == '#')    | return { 'type': 'header', 'lnum': lnum, '_col': cnum, 'col': cnum,     'content': matched }       | endif
   if (matched[0:1] == '](')   | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 2, 'content': matched[2:-2] } | endif
   if (matched[0:1] == 'id')   | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 4, 'content': matched[4:-2] } | endif
   if (matched[0:3] == 'href') | return { 'type': 'link',   'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
   if (matched[0:3] == 'name') | return { 'type': 'anchor', 'lnum': lnum, '_col': cnum, 'col': cnum + 6, 'content': matched[6:-2] } | endif
 
-  return { 'type': 'unknown', 'lnum': lnum, 'col': cnum, 'content': matched }
+  return { 'type': 'unknown', 'lnum': lnum, '_col': cnum, 'col': cnum, 'content': matched }
 endfun
 
 fun! s:util.guardian(hash, key, value)
@@ -1030,7 +1052,7 @@ fun! s:util.ContextualComplete()
 
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
-    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^#{1,6}.*$|(name|id)="[^"]+"', 'sync': 1})
+    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^(#{1,6} .*|(\-|=)+)$|(name|id)="[^"]+"', 'sync': 1})
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
 
@@ -1466,7 +1488,7 @@ fun! mkdx#QuickfixHeaders(...)
   if (open_qf && !s:_testing && s:_can_vimgrep_fmt)
     call setqflist([])
     call s:util.Grep(extend(get(s:util.grepopts, s:util.grepcmd, {}),
-                         \ {'pattern': '^#{1,6} .*$',
+                         \ {'pattern': '^(#{1,6} .*|(\-|=)+)$',
                            \ 'each': function(s:util.AddHeaderToQuickfix, [curr_buf]),
                            \ 'done': function(s:util.EchoQuickfixCount, ['header'])}))
   else
@@ -1548,3 +1570,7 @@ fun! mkdx#GenerateTOC(...)
   call setpos('.', cpos)
   return len(contents)
 endfun
+
+if $VIM_DEV
+  let g:mkdx#util = s:util
+endif

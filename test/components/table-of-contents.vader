@@ -6,6 +6,45 @@ Execute (Disable TOC in <details />):
 Execute (Change title to "Table of Contents"):
   let g:mkdx#settings.toc.text = 'Table of Contents'
 
+Given (A file with setex headers):
+  
+  Header 1
+  ===
+  # Header 2
+  # Header 3
+  Subheader of 3
+  ---
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+
+Do (<leader>i):
+   i
+
+Expect (A table of contents including the setex headers):
+  # Table of Contents
+
+  - [Table of Contents](#table-of-contents)
+  - [Header 1](#header-1)
+  - [Header 2](#header-2)
+  - [Header 3](#header-3)
+      - [Subheader of 3](#subheader-of-3)
+      - [Subheader of 3](#subheader-of-3-1)
+  - [Header with link](#header-with-link)
+  - [Header with img](#header-with-img)
+
+  Header 1
+  ===
+  # Header 2
+  # Header 3
+  Subheader of 3
+  ---
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A file with headers):
   
   # Header 1

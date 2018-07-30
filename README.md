@@ -104,9 +104,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#30-07-2018-version-171">30-07-2018 VERSION 1.7.1</a></li>
         <li><a href="#24-06-2018-version-170">24-06-2018 VERSION 1.7.0</a></li>
-        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.7.0</a></li>
-        <li><a href="#10-05-2018-version-160">10-05-2018 VERSION 1.6.0</a></li>
+        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.6.1</a></li>
     </ul></li>
 </ul>
 </details>
@@ -259,6 +259,8 @@ the newly inserted item.
 
 Sometimes, you might need to write a multi-line list item, this can be achieved by enabling [`g:mkdx#settings.enter.shift`](#gmkdxsettingsentershift).
 Once enabled, pressing <kbd>shift</kbd>+<kbd>enter</kbd> will place the cursor on a new line, indented to where the text started on the previous line.
+Press <kbd>shift</kbd>+<kbd>enter</kbd> while you want to add lines to the current item, a regular <kbd>enter</kbd> will create a new list item at the
+previous indentation level.
 
 ```viml
 " :h mkdx-mapping-list-items
@@ -646,7 +648,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.1'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -771,7 +773,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.1' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1371,6 +1373,10 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 30-07-2018 VERSION 1.7.1
+
+- Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line
+
 ## 24-06-2018 VERSION 1.7.0
 
 - Add: Support Setex style headings (`-` / `=` characters below nonblank line)
@@ -1389,24 +1395,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: <kbd>shift</kbd>+<kbd>enter</kbd> no longer require double <kbd>escape</kbd> to exit insert mode ([#45](../../pull/45)).
 - Fix: Dead link detection, incorrect external label and relative links were [always skipped](https://github.com/SidOfc/mkdx/commit/f3c5d2884237dba1b97d915f3d80e03317877a18).
 - Fix: `grep` and `ggrep` do not count line column properly (byte-offset is converted now).
-
-## 10-05-2018 VERSION 1.6.0
-
-- Fix: Handle URLS starting with "../../" correctly.
-- Fix: Removed hardcoded hashtag as header identifier in function.
-- Fix: ([#35](../../pull/35)) Generating a TOC in the details didn't generate the final closing tags.
-- Fix: ([#40](../../pull/40)) Shift-o (`O`) prepending a list item to a line starting with a number.
-- Fix: ([#39](../../pull/39)) Set `autoindent`, it is enabled by default in Neovim but disabled by default in Vim.
-- Add: ([#41](../../pull/41)) Fold support for the table of contents and fenced code blocks (opt-in).
-    - Add setting to enable folding: `g:mkdx#settings.fold.enable = 0`.
-    - Add setting to modify what is folded: `g:mkdx#settings.fold.components = ['toc', 'fence']`.
-- NEOVIM
-    - Add: ([#32](../../pull/32)) `dictionarywatcher` that watches settings and immediately updates the document, this includes:
-        - TOC text - (`:let g:mkdx#settings.toc.text = 'string'`).
-        - TOC position - (`:let g:mkdx#settings.toc.position = 2`).
-        - TOC style - (`:let g:mkdx#settings.toc.details.enable = 1`).
-        - TOC summary - (`:let g:mkdx#settings.toc.details.summary = 'new string'`).
-        - Header style - (`:let g:mkdx#settings.tokens.header = '@'`).
-        - Fence style - (`:let g:mkdx#settings.tokens.fence = '~'`).
-        - Folds - (`:let g:mkdx#settings.tokens.components = ['toc']`).
-    - Add: setting to control auto-updates: `g:mkdx#settings.auto_update.enable = 1`.

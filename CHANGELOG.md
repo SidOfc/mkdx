@@ -1,3 +1,24 @@
+## 10-05-2018 VERSION 1.6.0
+
+- Fix: Handle URLS starting with "../../" correctly.
+- Fix: Removed hardcoded hashtag as header identifier in function.
+- Fix: ([#35](../../pull/35)) Generating a TOC in the details didn't generate the final closing tags.
+- Fix: ([#40](../../pull/40)) Shift-o (`O`) prepending a list item to a line starting with a number.
+- Fix: ([#39](../../pull/39)) Set `autoindent`, it is enabled by default in Neovim but disabled by default in Vim.
+- Add: ([#41](../../pull/41)) Fold support for the table of contents and fenced code blocks (opt-in).
+    - Add setting to enable folding: `g:mkdx#settings.fold.enable = 0`.
+    - Add setting to modify what is folded: `g:mkdx#settings.fold.components = ['toc', 'fence']`.
+- NEOVIM
+    - Add: ([#32](../../pull/32)) `dictionarywatcher` that watches settings and immediately updates the document, this includes:
+        - TOC text - (`:let g:mkdx#settings.toc.text = 'string'`).
+        - TOC position - (`:let g:mkdx#settings.toc.position = 2`).
+        - TOC style - (`:let g:mkdx#settings.toc.details.enable = 1`).
+        - TOC summary - (`:let g:mkdx#settings.toc.details.summary = 'new string'`).
+        - Header style - (`:let g:mkdx#settings.tokens.header = '@'`).
+        - Fence style - (`:let g:mkdx#settings.tokens.fence = '~'`).
+        - Folds - (`:let g:mkdx#settings.tokens.components = ['toc']`).
+    - Add: setting to control auto-updates: `g:mkdx#settings.auto_update.enable = 1`.
+
 ## 05-05-2018 VERSION 1.5.1
 
 - [dead link detection](#dead-link-detection) uses a [grep program](#supported-grep-programs) and `job` when available

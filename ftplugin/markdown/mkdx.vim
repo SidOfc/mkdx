@@ -13,7 +13,7 @@ let s:defaults          = {
       \                              'align': { 'left': [], 'center': [], 'right': [],
       \                                         'default': 'center' } },
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.0' },
+      \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.1' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
       \ 'highlight':               { 'enable': 0 },
       \ 'auto_update':             { 'enable': 1 },
@@ -75,7 +75,7 @@ noremap         <silent> <Plug>(mkdx-toggle-to-kbd-n)    :call      mkdx#ToggleT
 noremap         <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleToKbd('v')<Cr>
 noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
-inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>
+inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
 inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>F<
 inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA

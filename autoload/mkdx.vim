@@ -1388,28 +1388,47 @@ fun! mkdx#ShiftEnterHandler()
 endfun
 
 fun! mkdx#EnterHandler()
-  let lnum = line('.')
-  let cnum = virtcol('.')
-  let line = getline(lnum)
+  let lnum        = line('.')
+  let cnum        = virtcol('.')
+  let line        = getline(lnum)
+  let indent      = indent(lnum)
+  let sp_pat      = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+  let after_inl   = 0
+  let inl_ind     = 0
+  let tmp_lnum    = lnum - 1
+
+  if (!(match(line, sp_pat) > -1) && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
+    while (indent(tmp_lnum) >= indent)
+      if (tmp_lnum < 0) | break | else | let tmp_lnum -= 1 | endif
+    endwhile
+
+    if (tmp_lnum >= 0)
+      let line      = getline(tmp_lnum)
+      let inl_ind   = indent(tmp_lnum)
+      let after_inl = 1
+    endif
+  endif
 
   if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strlen(line)
     let at_end  = cnum > len
-    let sp_pat  = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')
     let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
     let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
-    let remove  = empty(substitute(line, sp_pat . ' *', '', ''))
+    let remove  = empty(substitute(line, sp_pat . ' *', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0)
     let incr    = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\) '), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0 && at_end
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
-    let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, '')) : ''
+    let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))
+    let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, inl_ind)) : inl_ind
 
-    if (at_end && match(line, '^>\? *[0-9.]\+ ') > -1)
-      call s:util.UpdateListNumbers(lnum, incr, (remove ? -1 : 1))
+    if ((at_end || after_inl) && match(line, '^>\? *[0-9.]\+ ') > -1)
+      call s:util.UpdateListNumbers((after_inl ? tmp_lnum : lnum), incr, (remove ? -1 : 1))
     endif
 
+    " autoindent gets reenabled outside of this function
+    if (after_inl)                                | setlocal noautoindent                                                      | endif
     if (remove)                                   | call setline('.', '')                                                      | endif
     if (upd_tl)                                   | call call(s:util.UpdateTaskList, tl_prms)                                  | endif
     if (remove)                                   | return ''                                                                  | endif

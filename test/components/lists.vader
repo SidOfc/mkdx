@@ -112,6 +112,28 @@ Expect (An empty list item):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given (A nested markdown list with multi-line items):
+  1. task
+  2. task
+      2.1. sub
+           task
+      2.2. subtask
+  3. hello
+
+Do (<enter> after finishing an inline item with <shift>+<enter> creates new list item):
+  3jA\<cr>hello
+
+Expect (An empty list item):
+  1. task
+  2. task
+      2.1. sub
+           task
+      2.2. hello
+      2.3. subtask
+  3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A nested markdown list in a quote block):
   > 1. task
   > 2. task

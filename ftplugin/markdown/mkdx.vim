@@ -7,7 +7,7 @@ let s:defaults          = {
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
       \                              'list': '-', 'fence': '', 'header': '#', 'strike': '' },
       \ 'checkbox':                { 'toggles': [' ', '-', 'x'], 'update_tree': 2, 'initial_state': ' ' },
-      \ 'toc':                     { 'text': 'TOC', 'list_token': '-', 'position': 0,
+      \ 'toc':                     { 'text': 'TOC', 'list_token': '-', 'position': 0, 'update_on_write': 0,
       \                              'details': { 'enable': 0, 'summary': 'Click to expand {{toc.text}}' } },
       \ 'table':                   { 'divider': '|', 'header_divider': '-',
       \                              'align': { 'left': [], 'center': [], 'right': [],
@@ -94,6 +94,13 @@ endif
 if (g:mkdx#settings.fold.enable)
   setlocal foldmethod=expr
   setlocal foldexpr=mkdx#fold(v:lnum)
+endif
+
+if (has('autocmd'))
+  augroup MkdxAutocommands
+    au!
+    au BufWritePre *.md call mkdx#BeforeWrite()
+  augroup END
 endif
 
 if g:mkdx#settings.map.enable == 1

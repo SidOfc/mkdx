@@ -1444,6 +1444,16 @@ fun! mkdx#EnterHandler()
   return "\n"
 endfun
 
+fun! mkdx#BeforeWrite()
+  if (g:mkdx#settings.toc.update_on_write != 0)
+    if (s:util.GetTOCPositionAndStyle()[0] > -1)
+      call mkdx#UpdateTOC()
+    elseif (g:mkdx#settings.toc.position > 0)
+      call mkdx#GenerateTOC()
+    endif
+  end
+endfun
+
 fun! mkdx#GenerateOrUpdateTOC()
   silent! call repeat#set("\<Plug>(mkdx-gen-or-upd-toc)")
 

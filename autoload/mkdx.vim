@@ -1485,10 +1485,13 @@ endfun
 
 fun! mkdx#BeforeWrite()
   if (g:mkdx#settings.toc.update_on_write != 0)
-    if (s:util.GetTOCPositionAndStyle()[0] > -1)
-      call mkdx#UpdateTOC()
-    elseif (g:mkdx#settings.toc.position > 0)
-      call mkdx#GenerateTOC()
+    if ((localtime() - get(s:util, '__before_write_time', 2)) >= 2)
+      let s:util.__before_write_time = localtime()
+      if (s:util.GetTOCPositionAndStyle()[0] > -1)
+        call mkdx#UpdateTOC()
+      elseif (g:mkdx#settings.toc.position > 0)
+        call mkdx#GenerateTOC()
+      endif
     endif
   end
 endfun

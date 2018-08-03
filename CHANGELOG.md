@@ -1,3 +1,11 @@
+## 14-05-2018 VERSION 1.6.1
+
+- Add: Highlighting for tables ([#42](../../pull/42)), `<kbd>` shortcuts and `_**bolditalic**_` ([#43](../../pull/43)).
+- Add: [<kbd>shift</kbd>+<kbd>enter</kbd>](#inserting-list-items) support to create multiline items ([#44](../../pull/43)).
+- Fix: <kbd>shift</kbd>+<kbd>enter</kbd> no longer require double <kbd>escape</kbd> to exit insert mode ([#45](../../pull/45)).
+- Fix: Dead link detection, incorrect external label and relative links were [always skipped](https://github.com/SidOfc/mkdx/commit/f3c5d2884237dba1b97d915f3d80e03317877a18).
+- Fix: `grep` and `ggrep` do not count line column properly (byte-offset is converted now).
+
 ## 10-05-2018 VERSION 1.6.0
 
 - Fix: Handle URLS starting with "../../" correctly.

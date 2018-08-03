@@ -105,9 +105,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#03-08-2018-version-180">03-08-2018 VERSION 1.8.0</a></li>
         <li><a href="#30-07-2018-version-171">30-07-2018 VERSION 1.7.1</a></li>
         <li><a href="#24-06-2018-version-170">24-06-2018 VERSION 1.7.0</a></li>
-        <li><a href="#14-05-2018-version-161">14-05-2018 VERSION 1.6.1</a></li>
     </ul></li>
 </ul>
 </details>
@@ -650,7 +650,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.1'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.0'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -775,7 +775,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.7.1' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.0' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1389,6 +1389,11 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 03-08-2018 VERSION 1.8.0
+
+- Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))
+- Fix: Unable to position TOC as last header ([#53](../../pull/53))
+
 ## 30-07-2018 VERSION 1.7.1
 
 - Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line
@@ -1403,11 +1408,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: TOC without any nested elements created too many closing tags when generated using `<details>` tag
 - Fix: Non-list items sometimes got detected as list items when starting with a number on <kbd>shift</kbd>+<kbd>O</kbd>
 - Fix: overriding `g:mkdx#settings` with `has('*dictwatcheradd')` crashing Vim
-
-## 14-05-2018 VERSION 1.6.1
-
-- Add: Highlighting for tables ([#42](../../pull/42)), `<kbd>` shortcuts and `_**bolditalic**_` ([#43](../../pull/43)).
-- Add: [<kbd>shift</kbd>+<kbd>enter</kbd>](#inserting-list-items) support to create multiline items ([#44](../../pull/43)).
-- Fix: <kbd>shift</kbd>+<kbd>enter</kbd> no longer require double <kbd>escape</kbd> to exit insert mode ([#45](../../pull/45)).
-- Fix: Dead link detection, incorrect external label and relative links were [always skipped](https://github.com/SidOfc/mkdx/commit/f3c5d2884237dba1b97d915f3d80e03317877a18).
-- Fix: `grep` and `ggrep` do not count line column properly (byte-offset is converted now).

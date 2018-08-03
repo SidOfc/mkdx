@@ -99,7 +99,7 @@ endif
 if (has('autocmd'))
   augroup MkdxAutocommands
     au!
-    au BufWritePre *.md call mkdx#BeforeWrite()
+    au BufWritePre *.md silent! call mkdx#BeforeWrite()
   augroup END
 endif
 

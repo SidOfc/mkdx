@@ -143,7 +143,11 @@ endfun
 
 fun! s:util.RepositionTOC(old, new)
   let [current, endc, details] = s:util.GetTOCPositionAndStyle()
-  silent! exe 'normal! :' . current . ',' . endc . 'd'
+
+  if (current > -1)
+    silent! exe 'normal! :' . current . ',' . endc . 'd'
+  endif
+
   call mkdx#GenerateTOC(0, details)
 endfun
 
@@ -1536,6 +1540,7 @@ fun! mkdx#GenerateTOC(...)
   let curr       = 0
   let toc_pos    = g:mkdx#settings.toc.position - 1
   let after_info = get(src, toc_pos, -1)
+  let after_info = toc_pos > 0 && type(after_info) != type([]) ? get(src, -1, -1) : after_info
   let after_pos  = toc_pos >= 0 && type(after_info) == type([])
   let detail_opt = get(a:000, 1, -1)
   let do_details = detail_opt > -1 ? detail_opt : g:mkdx#settings.toc.details.enable
@@ -1580,7 +1585,9 @@ fun! mkdx#GenerateTOC(...)
   if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
-  let c = (!get(a:000, 0, 0) && after_pos) ? (after_info[0] - 1) : (cpos[1] - 1)
+  let c = ((!get(a:000, 0, 0) && after_pos) ? after_info[0] : cpos[1]) -
+        \ ((after_info[0] == 1 && toc_pos > 0) ? -1 : 1) +
+        \ (toc_pos == srclen ? 1 : 0)
 
   if (c > 0 && nextnonblank(c) == c)     | call insert(contents, '') | endif
   if (after_pos || !empty(getline('.'))) | call add(contents, '')    | endif

@@ -87,6 +87,7 @@ settings and examples with default mappings.
         <li><a href="#gmkdxsettingsentermalformed"><code>g:mkdx#settings.enter.malformed</code></a></li>
         <li><a href="#gmkdxsettingstoctext"><code>g:mkdx#settings.toc.text</code></a></li>
         <li><a href="#gmkdxsettingstoclist_token"><code>g:mkdx#settings.toc.list_token</code></a></li>
+        <li><a href="#gmkdxsettingstocupdate_on_write"><code>g:mkdx#settings.toc.update_on_write</code></a></li>
         <li><a href="#gmkdxsettingstocposition"><code>g:mkdx#settings.toc.position</code></a></li>
         <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
@@ -631,6 +632,7 @@ let g:mkdx#settings = {
       \                              'update_tree': 2,
       \                              'initial_state': ' ' },
       \ 'toc':                     { 'text': "TOC", 'list_token': '-',
+      \                              'update_on_write': 0,
       \                              'position': 0,
       \                              'details': {
       \                                 'enable': 0,
@@ -1116,6 +1118,20 @@ Defines the list token to use in the generated TOC.
 ```viml
 " :h mkdx-setting-toc-list-token
 let g:mkdx#settings = { 'toc': { 'list_token': '-' } }
+```
+
+## `g:mkdx#settings.toc.update_on_write`
+
+As easy as it is to update the table of contents manually, [it is just as easy to forget](https://github.com/SidOfc/mkdx/search?q=update+toc&type=Commits) :)
+This setting is disabled by default, set it to `1` to enable it and never worry about updating your TOC ever again.
+When the TOC hasn't yet been generated and [`g:mkdx#settings.toc.position`](#gmkdxsettingstocposition) isn't `0`, the TOC will be generated at given position (or as the last header of the document if there aren't enough headers).
+Otherwise, you will first have to generate the TOC once manually in the desired position and then it will be updated too.
+
+**Note:** this only works if your vim `has('autocmd')`.
+
+```viml
+" :h mkdx-setting-toc-update-on-write
+let g:mkdx#settings = { 'toc': { 'save_on_write': 0 } }
 ```
 
 ## `g:mkdx#settings.toc.position`

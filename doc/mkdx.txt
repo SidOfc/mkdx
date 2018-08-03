@@ -52,6 +52,7 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.toc.text`
         `g:mkdx#settings.toc.list_token`
         `g:mkdx#settings.toc.position`
+        `g:mkdx#settings.toc.update_on_write`
         `g:mkdx#settings.toc.details.enable`
         `g:mkdx#settings.toc.details.summary`
         `g:mkdx#settings.highlight.enable`
@@ -254,6 +255,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-toc-text|
     - |mkdx-setting-toc-list-token|
     - |mkdx-setting-toc-position|
+    - |mkdx-setting-toc-update-on-write|
     - |mkdx-setting-toc-details-enable|
     - |mkdx-setting-toc-details-summary|
     - |mkdx-setting-highlight-enable|
@@ -404,6 +406,7 @@ at the bottom of every setting section. The default settings hash:
     `      \ 'toc':                     { 'text':       "TOC",`
     `      \                              'list_token': '-',`
     `      \                              'position':   0,`
+    `      \                              'update_on_write':   0,`
     `      \                              'details':    {`
     `      \                                 'enable':  0,`
     `      \                                 'summary': '{{toc.text}}'`
@@ -487,6 +490,7 @@ s:defaults.enter.shift               `=>`
 s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
 s:defaults.toc.text                  `=>` g:mkdx#toc_text
 s:defaults.toc.position              `=>`
+s:defaults.toc.update_on_write       `=>`
 s:defaults.toc.details.enable        `=>`
 s:defaults.toc.details.summary       `=>`
 s:defaults.highlight.enable          `=>`
@@ -831,6 +835,24 @@ Define the list style to use when generating a table of contents.
 The position at which to place the TOC, `0` is used for cursor line (default).
 If a number `> 0` is supplied, the TOC will be generated ABOVE that header.
 e.g. setting it to `1` will cause it to be the first heading of your document.
+
+==============================================================================
+`g:mkdx#settings.toc.update_on_write = 0`       *mkdx-setting-toc-update-on-write*
+
+This setting is disabled by default, set it to `1` to enable.
+Since this feature requires |autocmd|, your vim needs `has('autocmd')`
+for this to work.
+
+Using the |BufWritePre| |autocmd|, mkdx has the ability to update the table of
+contents automatically. The toc can be updated automatically when it is
+already present somewhere on the page (e.g. generated using <leader-i>).
+
+When the toc hasn't been generated and `g:mkdx#settings.toc.position > 0` then
+the toc will be generated at that position (as nth header in document).
+
+When `g:mkdx#settings.toc.position == 0` then the toc must first be generated
+at the desired position using <leader-i>. As soon as the toc is present it
+will be updated.
 
 ==============================================================================
 `g:mkdx#settings.toc.details.enable = 0`         *mkdx-setting-toc-details-enable*

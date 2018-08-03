@@ -968,6 +968,72 @@ fun! s:util.guardian(hash, key, value)
   endif
 endfun
 
+fun! s:util.get_lines_starting_with(pat)
+  return filter(map(range(1, line('$')),
+                  \ {_, lnum -> (match(getline(lnum), a:pat) > -1) ? lnum : -1}),
+              \ {_, lnum -> lnum > -1})
+endfun
+
+fun! s:util.ContextualComplete()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start] != '#')
+    let start -= 1
+  endwhile
+
+  if (line[start] != '#') | return [start, []] | endif
+
+  if (!s:_testing && s:_can_vimgrep_fmt)
+    let hashes = {}
+    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^(#{1,6} .*|(\-|=)+)$|(name|id)="[^"]+"', 'sync': 1})
+    let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
+    call s:util.Grep(opts)
+
+    return [start, []]
+  else
+    return [start, extend(
+          \ map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}}),
+          \ map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}}))]
+  endif
+endfun
+
+fun! s:util.GetTOCPositionAndStyle(...)
+  let opts   = extend({'text': g:mkdx#settings.toc.text,
+                    \  'details': g:mkdx#settings.toc.details.enable,
+                    \  'force': 0},
+                    \ get(a:000, 0, {}))
+  let startc = -1
+  let found  = 0
+
+  for lnum in range(1, line('$'))
+    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
+      let startc = lnum
+      let found  = 1
+      break
+    endif
+  endfor
+
+  if (!found) | return [-1, -1, -1] | endif
+
+  let endc = nextnonblank(startc + 1)
+  while (nextnonblank(endc) == endc)
+    let endc += 1
+    let endl  = getline(endc)
+    if (match(endl, '^[ \t]*#\{1,6}') > -1)
+      break
+    elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
+      let endc += 1
+      break
+    endif
+  endwhile
+
+  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
+  return [startc, endc, ((!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>')
+                                                          \ : opts.details)]
+endfun
+
 """"" MAIN FUNCTIONALITY
 fun! mkdx#guard_settings()
   if (exists('*dictwatcheradd'))
@@ -995,12 +1061,6 @@ fun! mkdx#MergeSettings(...)
   endfor
 
   return c
-endfun
-
-fun! s:util.get_lines_starting_with(pat)
-  return filter(map(range(1, line('$')),
-                  \ {_, lnum -> (match(getline(lnum), a:pat) > -1) ? lnum : -1}),
-              \ {_, lnum -> lnum > -1})
 endfun
 
 fun! mkdx#fold(lnum)
@@ -1041,31 +1101,6 @@ fun! mkdx#CompleteLink()
     return "#\<C-X>\<C-U>"
   endif
   return '#'
-endfun
-
-fun! s:util.ContextualComplete()
-  let col   = col('.') - 2
-  let start = col
-  let line  = getline('.')
-
-  while (start > 0 && line[start] != '#')
-    let start -= 1
-  endwhile
-
-  if (line[start] != '#') | return [start, []] | endif
-
-  if (!s:_testing && s:_can_vimgrep_fmt)
-    let hashes = {}
-    let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^(#{1,6} .*|(\-|=)+)$|(name|id)="[^"]+"', 'sync': 1})
-    let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
-    call s:util.Grep(opts)
-
-    return [start, []]
-  else
-    return [start, extend(
-          \ map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}}),
-          \ map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}}))]
-  endif
 endfun
 
 fun! mkdx#Complete(findstart, base)
@@ -1448,6 +1483,16 @@ fun! mkdx#EnterHandler()
   return "\n"
 endfun
 
+fun! mkdx#BeforeWrite()
+  if (g:mkdx#settings.toc.update_on_write != 0)
+    if (s:util.GetTOCPositionAndStyle()[0] > -1)
+      call mkdx#UpdateTOC()
+    elseif (g:mkdx#settings.toc.position > 0)
+      call mkdx#GenerateTOC()
+    endif
+  end
+endfun
+
 fun! mkdx#GenerateOrUpdateTOC()
   silent! call repeat#set("\<Plug>(mkdx-gen-or-upd-toc)")
 
@@ -1459,38 +1504,6 @@ fun! mkdx#GenerateOrUpdateTOC()
   endfor
 
   call mkdx#GenerateTOC()
-endfun
-
-fun! s:util.GetTOCPositionAndStyle(...)
-  let opts   = extend({'text': g:mkdx#settings.toc.text, 'details': g:mkdx#settings.toc.details.enable, 'force': 0}, get(a:000, 0, {}))
-  let startc = -1
-  let found  = 0
-
-  for lnum in range(1, line('$'))
-    if (match(getline(lnum), '^' . g:mkdx#settings.tokens.header . '\{1,6} \+' . opts.text) > -1)
-      let startc = lnum
-      let found  = 1
-      break
-    endif
-  endfor
-
-  if (!found) | return [-1, -1, -1] | endif
-
-  let endc = nextnonblank(startc + 1)
-  while (nextnonblank(endc) == endc)
-    let endc += 1
-    let endl  = getline(endc)
-    if (match(endl, '^[ \t]*#\{1,6}') > -1)
-      break
-    elseif (substitute(endl, '[ \t]\+', '', 'g') == '</details>')
-      let endc += 1
-      break
-    endif
-  endwhile
-
-  if (nextnonblank(endc) == endc) | let endc -= 1 | endif
-  return [startc, endc, ((!opts.force && opts.details > -1) ? (getline(nextnonblank(startc + 1)) =~ '^<details>')
-                                                          \ : opts.details)]
 endfun
 
 fun! mkdx#UpdateTOC(...)

@@ -1,5 +1,58 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Execute (Enable TOC save on write):
+  let g:mkdx#settings.toc.update_on_write = 1
+
+Given markdown (A file with headers and a table of contents):
+  # TOC
+
+  - [TOC](#toc)
+  - [Header 1](#header-1)
+  - [Header 2](#header-2)
+  - [Header 3](#header-3)
+      - [Subheader of 3](#subheader-of-3)
+      - [Subheader of 3](#subheader-of-3-1)
+  - [Header with link](#header-with-link)
+  - [Header with img](#header-with-img)
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+
+Do (execute before save hook):
+  Go# new header\<esc>:call mkdx#BeforeWrite()\<cr>\<esc>
+
+Expect markdown (A table of contents):
+  # TOC
+
+  - [TOC](#toc)
+  - [Header 1](#header-1)
+  - [Header 2](#header-2)
+  - [Header 3](#header-3)
+      - [Subheader of 3](#subheader-of-3)
+      - [Subheader of 3](#subheader-of-3-1)
+  - [Header with link](#header-with-link)
+  - [Header with img](#header-with-img)
+  - [new header](#new-header)
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+  # new header
+
+Execute (Disable TOC save on write):
+  let g:mkdx#settings.toc.update_on_write = 0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Execute (Disable TOC in <details />):
   let g:mkdx#settings.toc.details.enable = 0
 
@@ -19,7 +72,7 @@ Given (A file with setex headers):
   # Header ![with img](img.png)
 
 Do (<leader>i):
-   i
+   i\<esc>
 
 Expect (A table of contents including the setex headers):
   # Table of Contents
@@ -56,7 +109,7 @@ Given (A file with headers):
   # Header ![with img](img.png)
 
 Do (<leader>i):
-   i
+   i\<esc>
 
 Expect (A table of contents):
   # Table of Contents
@@ -129,4 +182,4 @@ Expect (An updated table of contents):
 
 Execute (Reset settings):
   let g:mkdx#settings.toc.details.enable = 0
-  let g:mkdx#settings.toc.text = 'YOLO'
+  let g:mkdx#settings.toc.text = 'TOC'

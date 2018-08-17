@@ -3,7 +3,7 @@ if (exists('g:mkdx#settings') && g:mkdx#settings.highlight.enable != 1) | finish
 " https://github.com/mattly/vim-markdown-enhancements/blob/master/after/syntax/markdown.vim
 " the table highlighting is taken from this repo, which is now read-only,
 " thanks @mattly for your contribution ;)
-syn region  mkdxTable start="^\%(\[.*\]\n\)\{}.*|.*\n[-|\:\. ]\+$" end="\%(\n\[.*\]\n\)\{}\ze\n[^|]\+\n$" keepend contains=mkdxTableHeader,mkdxTableHeadDelimiter,mkdxTableDelimiter,mkdxTableCaption
+syn region  mkdxTable start="^\%(\[.*\]\n\)\{}.*|.*\n[-|\:\. ]\+$" end="^\%(\n\[.*\]\n\)\{-}\ze\%(\n[^|]\+\n\)\{-}$" keepend contains=mkdxTableHeader,mkdxTableHeadDelimiter,mkdxTableDelimiter,mkdxTableCaption
 syn match   mkdxTableDelimiter "|" contained
 syn match   mkdxTableAlign "[\.:]" contained
 syn region  mkdxTableHeader start="^\zs.*\ze\n[-|\:\. ]\+$" end="$" nextgroup=mkdxTableHeadDelimiter contained contains=mkdxTableDelimiter

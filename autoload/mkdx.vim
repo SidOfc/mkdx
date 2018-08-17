@@ -435,15 +435,17 @@ fun! s:util.GetRemoteUrl()
 endfun
 
 fun! s:util.AsyncDeadExternalToQF(...)
-  let prev_tot         = get(a:000, 1, 0)
-  let external         = filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
-  let ext_len          = len(external)
+  let prev_tot = get(a:000, 1, 0)
+  let external = filter(s:util.ListLinks(), {idx, val -> val[2][0] != '#'})
+  let ext_len  = len(external)
+
+  if (get(a:000, 0, 1)) | call setqflist([]) | endif
+  if (ext_len == 0) | return [] | endif
+
   let bufnum           = bufnr('%')
   let total            = ext_len + prev_tot
   let [remote, branch] = ext_len > 0 ? s:util.GetRemoteUrl() : ''
   let skip_rel         = !g:mkdx#settings.links.external.relative ? 1 : (ext_len > 0 && empty(remote))
-
-  if (get(a:000, 0, 1)) | call setqflist([]) | endif
 
   for [lnum, column, url] in external
     let has_frag = url[0]   == '#'
@@ -1177,7 +1179,7 @@ fun! mkdx#QuickfixDeadLinks(...)
   if (get(a:000, 0, 1))
     let dl = len(dead)
 
-    call setqflist(dead)
+    if (dl > 0) | call setqflist(dead) | endif
     if (!s:_testing && g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif

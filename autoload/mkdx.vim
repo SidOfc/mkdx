@@ -1322,54 +1322,72 @@ endfun
 fun! mkdx#Tableize() range
   let next_nonblank = nextnonblank(a:firstline)
   let firstline     = getline(next_nonblank)
-
-  if (match(firstline, '[,\t]') < 0) | return | endif
-
   let lines                                   = getline(a:firstline, a:lastline)
   let [col_maxlen, col_align, col_idx, parts] = [{}, {}, [], []]
   let [linecount, ld]                         = [range(0, len(lines) - 1), ' ' . g:mkdx#settings.table.divider . ' ']
 
-  for column in s:util.CsvRowToList(firstline)
-    call add(col_idx, column)
-    if (index(map(deepcopy(g:mkdx#settings.table.align.left), {idx, val -> tolower(val)}), tolower(column)) > -1)
-      let col_align[column] = 'left'
-    elseif (index(map(deepcopy(g:mkdx#settings.table.align.right), {idx, val -> tolower(val)}), tolower(column)) > -1)
-      let col_align[column] = 'right'
-    elseif (index(map(deepcopy(g:mkdx#settings.table.align.center), {idx, val -> tolower(val)}), tolower(column)) > -1)
-      let col_align[column] = 'center'
-    else
-      let col_align[column] = g:mkdx#settings.table.align.default
-    endif
-  endfor
-
-  for idx in linecount
-    let lines[idx] = s:util.CsvRowToList(lines[idx])
-
-    for column in range(0, len(lines[idx]) - 1)
-      let curr_word_max = strlen(lines[idx][column])
-      let last_col_max  = get(col_maxlen, column, 0)
-
-      if (curr_word_max > last_col_max) | let col_maxlen[column] = curr_word_max | endif
+  if (match(firstline, '[,\t]') > -1) " CSV data found, convert it to a table
+    for column in s:util.CsvRowToList(firstline)
+      call add(col_idx, column)
+      if (index(map(deepcopy(g:mkdx#settings.table.align.left), {idx, val -> tolower(val)}), tolower(column)) > -1)
+        let col_align[column] = 'left'
+      elseif (index(map(deepcopy(g:mkdx#settings.table.align.right), {idx, val -> tolower(val)}), tolower(column)) > -1)
+        let col_align[column] = 'right'
+      elseif (index(map(deepcopy(g:mkdx#settings.table.align.center), {idx, val -> tolower(val)}), tolower(column)) > -1)
+        let col_align[column] = 'center'
+      else
+        let col_align[column] = g:mkdx#settings.table.align.default
+      endif
     endfor
-  endfor
 
-  for linec in linecount
-    if !empty(filter(lines[linec], {idx, val -> !empty(val)}))
-      call setline(a:firstline + linec,
-        \ ld[1:2] . join(map(lines[linec], {key, val -> s:util.AlignString(val, get(col_align, get(col_idx, key, ''), 'center'), col_maxlen[key])}), ld) . ld[0:1])
-    endif
-  endfor
+    for idx in linecount
+      let lines[idx] = s:util.CsvRowToList(lines[idx])
 
-  for column in keys(col_maxlen)
-    let align = tolower(get(col_align, get(col_idx, column, ''), g:mkdx#settings.table.align.default))
-    let lhs   = index(['right', 'center'], align) ? ':' : g:mkdx#settings.table.header_divider
-    let rhs   = index(['left',  'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+      for column in range(0, len(lines[idx]) - 1)
+        let curr_word_max = strlen(lines[idx][column])
+        let last_col_max  = get(col_maxlen, column, 0)
 
-    call add(parts, lhs . repeat(g:mkdx#settings.table.header_divider, col_maxlen[column]) . rhs)
-  endfor
+        if (curr_word_max > last_col_max) | let col_maxlen[column] = curr_word_max | endif
+      endfor
+    endfor
 
-  call s:util.InsertLine(g:mkdx#settings.table.divider . join(parts, g:mkdx#settings.table.divider) . g:mkdx#settings.table.divider, next_nonblank)
-  call cursor(a:lastline + 1, 1)
+    for linec in linecount
+      if !empty(filter(lines[linec], {idx, val -> !empty(val)}))
+        call setline(a:firstline + linec,
+          \ ld[1:2] . join(map(lines[linec], {key, val -> s:util.AlignString(val, get(col_align, get(col_idx, key, ''), 'center'), col_maxlen[key])}), ld) . ld[0:1])
+      endif
+    endfor
+
+    for column in keys(col_maxlen)
+      let align = tolower(get(col_align, get(col_idx, column, ''), g:mkdx#settings.table.align.default))
+      let lhs   = index(['right', 'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+      let rhs   = index(['left',  'center'], align) ? ':' : g:mkdx#settings.table.header_divider
+
+      call add(parts, lhs . repeat(g:mkdx#settings.table.header_divider, col_maxlen[column]) . rhs)
+    endfor
+
+    call s:util.InsertLine(g:mkdx#settings.table.divider . join(parts, g:mkdx#settings.table.divider) . g:mkdx#settings.table.divider, next_nonblank)
+  elseif (match(firstline, '\%(|.*\)\{-2,}') > -1) " markdown table found, convert to CSV
+    for idx in linecount
+      let npos = a:firstline + idx
+
+      if ((npos != next_nonblank + 1) && !empty(getline(npos)))
+        let tmp = join(map(s:util.TableRowToList(lines[idx]),
+                    \ {idx, col -> substitute(col, '^\s\+\|\s\+$', '', 'g')}), '","')
+
+        call setline(npos, '"' . tmp . '"')
+      endif
+    endfor
+
+    exe ((next_nonblank + 1) . "d_")
+    call cursor(a:lastline - 1, 1)
+  endif
+endfun
+
+fun! s:util.TableRowToList(line)
+  return map(split(substitute(a:line, '^\s\+\|\s\+$', '', 'g'),
+                 \ g:mkdx#settings.table.divider),
+           \ {idx, ln -> substitute(ln, '"', '\"', 'g')})
 endfun
 
 fun! mkdx#OHandler()

@@ -82,6 +82,9 @@ Then (Check cursor positioned on line: 7, col: 47):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Execute (empty quickfix):
+  call setqflist([])
+
 Given markdown (Example with <a> tag with "id" or "name" attribute):
 
   # with a header

@@ -160,19 +160,19 @@ if g:mkdx#settings.map.enable == 1
     setlocal formatoptions-=r
     setlocal autoindent
 
-    if (!hasmapto('<Plug>(mkdx-shift-enter)') && g:mkdx#settings.enter.shift)
+    if (!hasmapto('<Plug>(mkdx-shift-enter)', 'i') && g:mkdx#settings.enter.shift)
       imap <buffer><silent> <S-CR> <Plug>(mkdx-shift-enter)
     endif
 
-    if (!hasmapto('<Plug>(mkdx-enter)'))
+    if (!hasmapto('<Plug>(mkdx-enter)', 'i'))
       imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
     endif
 
-    if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
+    if (!hasmapto('<Plug>(mkdx-o)', 'n') && g:mkdx#settings.enter.o)
       nmap <buffer><silent> o <Plug>(mkdx-o)
     endif
 
-    if (!hasmapto('<Plug>(mkdx-shift-o)') && g:mkdx#settings.enter.shifto)
+    if (!hasmapto('<Plug>(mkdx-shift-o)', 'n') && g:mkdx#settings.enter.shifto)
       nmap <buffer><silent> O <Plug>(mkdx-shift-o)
     end
   endif
@@ -180,7 +180,7 @@ if g:mkdx#settings.map.enable == 1
   for [label, prefix, mapmode, binding, plug, cmd] in s:bindings
     let mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
 
-    if ((mapcheck(mapping, mapmode) == "") && !hasmapto(plug))
+    if ((mapcheck(mapping, mapmode) == "") && !hasmapto(plug, mapmode))
       if (!empty(cmd) && has('menu'))
         exe mapmode . 'noremenu <silent> <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . mapping . ' ' . cmd
       end

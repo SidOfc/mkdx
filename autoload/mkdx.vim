@@ -194,13 +194,13 @@ fun! s:util.ToggleCompletions(old, new)
       setlocal completefunc=mkdx#Complete
       setlocal pumheight=15
       setlocal iskeyword+=\-
-      if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)'))
+      if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)', 'i'))
         imap <buffer><silent> <C-n> <Plug>(mkdx-ctrl-n-compl)
       endif
-      if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)'))
+      if (!hasmapto('<Plug>(mkdx-ctrl-p-compl)', 'i'))
         imap <buffer><silent> <C-p> <Plug>(mkdx-ctrl-p-compl)
       endif
-      if (!hasmapto('<Plug>(mkdx-link-compl)'))
+      if (!hasmapto('<Plug>(mkdx-link-compl)', 'i'))
         imap <buffer><silent> # <Plug>(mkdx-link-compl)
       endif
     endif
@@ -216,15 +216,15 @@ fun! s:util.ToggleEnter(old, new)
     setlocal formatoptions-=r
     setlocal autoindent
 
-    if (!hasmapto('<Plug>(mkdx-enter)'))
+    if (!hasmapto('<Plug>(mkdx-enter)', 'i'))
       imap <buffer><silent> <Cr> <Plug>(mkdx-enter)
     endif
 
-    if (!hasmapto('<Plug>(mkdx-o)') && g:mkdx#settings.enter.o)
+    if (!hasmapto('<Plug>(mkdx-o)', 'n') && g:mkdx#settings.enter.o)
       nmap <buffer><silent> o <Plug>(mkdx-o)
     endif
 
-    if (!hasmapto('<Plug>(mkdx-shift-o)') && g:mkdx#settings.enter.shifto)
+    if (!hasmapto('<Plug>(mkdx-shift-o)', 'n') && g:mkdx#settings.enter.shifto)
       nmap <buffer><silent> O <Plug>(mkdx-shift-o)
     end
   endif

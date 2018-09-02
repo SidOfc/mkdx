@@ -1265,15 +1265,15 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 
 |description|modes|mapping|Execute|
 |----|----|-------|-------|
-|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev)`|
-|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>=</kbd>|`<Plug>(mkdx-checkbox-next)`|
+|Prev checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>-</kbd>|`<Plug>(mkdx-checkbox-prev-{n\|v})`|
+|Next checkbox state|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>=</kbd>|`<Plug>(mkdx-checkbox-next-{n\|v})`|
 |Promote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\[</kbd>|`<Plug>(mkdx-promote-header)`|
 |Demote header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\]</kbd>|`<Plug>(mkdx-demote-header)`|
 |Toggle kbd shortcut|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>k</kbd>|`<Plug>(mkdx-toggle-to-kbd-{n\|v})`|
-|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>'</kbd>|`<Plug>(mkdx-toggle-quote)`|
-|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox)`|
-|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checklist)`|
-|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>l</kbd>|`<Plug>(mkdx-toggle-list)`|
+|Toggle quote|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>'</kbd>|`<Plug>(mkdx-toggle-quote-{n\|v})`|
+|Toggle checkbox item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checkbox-{n\|v})`|
+|Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checklist-{n\|v})`|
+|Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>l</kbd>|`<Plug>(mkdx-toggle-list-{n\|v})`|
 |Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
 |Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
 |Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
@@ -1352,10 +1352,10 @@ All of the functions of mkdx are mapped using `<Plug>` mappings.
 To disable a `<Plug>` mapping, first find it [here](#mappings) or at: `:h mkdx-plugs`.
 
 Say you want to disable the behaviour for toggling the next checkbox state.
-The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next)`. To disable it, add the following to your _.vimrc_:
+The corresponding `<Plug>` is called `<Plug>(mkdx-checkbox-next-n)`. To disable it, add the following to your _.vimrc_:
 
 ```viml
-map <Plug> <Plug>(mkdx-checkbox-next)
+map <Plug> <Plug>(mkdx-checkbox-next-n)
 ```
 
 # Supported `grep` programs

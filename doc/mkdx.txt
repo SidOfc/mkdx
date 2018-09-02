@@ -84,11 +84,12 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-ctrl-n-compl)
         <Plug>(mkdx-ctrl-p-compl)
         <Plug>(mkdx-link-compl)
-        <Plug>(mkdx-checkbox-next)
-        <Plug>(mkdx-checkbox-prev)
+        <Plug>(mkdx-checkbox-next-n)
+        <Plug>(mkdx-checkbox-next-v)
+        <Plug>(mkdx-checkbox-prev-n)
+        <Plug>(mkdx-checkbox-prev-v)
         <Plug>(mkdx-promote-header)
         <Plug>(mkdx-demote-header)
-        <Plug>(mkdx-toggle-quote)
         <Plug>(mkdx-wrap-link-n)
         <Plug>(mkdx-wrap-link-v)
         <Plug>(mkdx-jump-to-header)
@@ -106,11 +107,16 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-text-strike-v)
         <Plug>(mkdx-text-inline-code-n)
         <Plug>(mkdx-text-inline-code-v)
-        <Plug>(mkdx-toggle-checkbox)
-        <Plug>(mkdx-toggle-checklist)
-        <Plug>(mkdx-toggle-list)
+        <Plug>(mkdx-toggle-checkbox-n)
+        <Plug>(mkdx-toggle-checkbox-v)
+        <Plug>(mkdx-toggle-checklist-n)
+        <Plug>(mkdx-toggle-checklist-v)
+        <Plug>(mkdx-toggle-list-n)
+        <Plug>(mkdx-toggle-list-v)
         <Plug>(mkdx-toggle-to-kbd-n)
         <Plug>(mkdx-toggle-to-kbd-v)
+        <Plug>(mkdx-toggle-quote-n)
+        <Plug>(mkdx-toggle-quote-v)
         <Plug>(mkdx-o)
         <Plug>(mkdx-shift-o)
         <Plug>(mkdx-shift-enter)
@@ -178,6 +184,9 @@ CONTENTS                                                         *mkdx-contents*
        Between
        Only valid
        Only list
+
+    Deprecated
+       V1.8.0
 
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
@@ -287,11 +296,12 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-ctrl-n-compl|
     - |mkdx-plug-ctrl-p-compl|
     - |mkdx-plug-link-compl|
-    - |mkdx-plug-checkbox-next|
-    - |mkdx-plug-checkbox-prev|
+    - |mkdx-plug-checkbox-next-n|
+    - |mkdx-plug-checkbox-next-v|
+    - |mkdx-plug-checkbox-prev-n|
+    - |mkdx-plug-checkbox-prev-v|
     - |mkdx-plug-promote-header|
     - |mkdx-plug-demote-header|
-    - |mkdx-plug-toggle-quote|
     - |mkdx-plug-wrap-link-n|
     - |mkdx-plug-wrap-link-v|
     - |mkdx-plug-jump-to-header|
@@ -312,10 +322,15 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-wrap-text-in-backticks-n|
     - |mkdx-plug-wrap-text-in-backticks-v|
     - |mkdx-plug-toggle-checkbox|
+    - |mkdx-plug-toggle-checkbox-v|
     - |mkdx-plug-toggle-checklist|
+    - |mkdx-plug-toggle-checklist-v|
     - |mkdx-plug-toggle-list|
+    - |mkdx-plug-toggle-list-v|
     - |mkdx-plug-toggle-to-kbd-n|
     - |mkdx-plug-toggle-to-kbd-v|
+    - |mkdx-plug-toggle-quote|
+    - |mkdx-plug-toggle-quote-v|
     - |mkdx-plug-o|
     - |mkdx-plug-shift-o|
     - |mkdx-plug-enter|
@@ -1054,14 +1069,24 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `mkdx#CompleteLink()`
 
 ==============================================================================
-<Plug>(mkdx-checkbox-next)                             *mkdx-plug-checkbox-next*
+<Plug>(mkdx-checkbox-next-n)                         *mkdx-plug-checkbox-next-v*
 
     `:call mkdx#ToggleCheckboxState()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-checkbox-prev)                             *mkdx-plug-checkbox-prev*
+<Plug>(mkdx-checkbox-next-v)                         *mkdx-plug-checkbox-next-v*
+
+    `:call mkdx#ToggleCheckboxState()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-checkbox-prev-n)                         *mkdx-plug-checkbox-prev-n*
 
     `:call mkdx#ToggleCheckboxState(1)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-checkbox-prev-v)                         *mkdx-plug-checkbox-prev-v*
+
+    `:call mkdx#ToggleCheckboxState(1)<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-promote-header)                           *mkdx-plug-promote-header*
@@ -1074,9 +1099,14 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:<C-U>call mkdx#ToggleHeader()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-toggle-quote)                               *mkdx-plug-toggle-quote*
+<Plug>(mkdx-toggle-quote-n)                           *mkdx-plug-toggle-quote-n*
 
     `:call mkdx#ToggleQuote()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-quote-v)                           *mkdx-plug-toggle-quote-v*
+
+    `:call mkdx#ToggleQuote()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-wrap-link-n)                                 *mkdx-plug-wrap-link-n*
@@ -1096,7 +1126,7 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 ==============================================================================
 <Plug>(mkdx-tableize)                                       *mkdx-plug-tableize*
 
-    `:call mkdx#Tableize()<Cr>`
+    `:call mkdx#Tableize()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-generate-toc)                               *mkdx-plug-generate-toc*
@@ -1173,18 +1203,34 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     :<C-U>call mkdx#WrapText('v', '`', '`')<Cr>
 
 ==============================================================================
-<Plug>(mkdx-toggle-checkbox)                         *mkdx-plug-toggle-checkbox*
+<Plug>(mkdx-toggle-checkbox-n)                     *mkdx-plug-toggle-checkbox-n*
 
     `:call mkdx#ToggleCheckboxTask()<Cr>`
 
 ==============================================================================
-<Plug>(mkdx-toggle-checklist)                       *mkdx-plug-toggle-checklist*
+<Plug>(mkdx-toggle-checkbox-v)                     *mkdx-plug-toggle-checkbox-v*
+
+    `:call mkdx#ToggleCheckboxTask()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-checklist-n)                   *mkdx-plug-toggle-checklist-n*
 
     `:call mkdx#ToggleChecklist()<Cr>`
+
 ==============================================================================
-<Plug>(mkdx-toggle-list)                                 *mkdx-plug-toggle-list*
+<Plug>(mkdx-toggle-checklist-v)                   *mkdx-plug-toggle-checklist-v*
+
+    `:call mkdx#ToggleChecklist()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-list-n)                             *mkdx-plug-toggle-list-n*
 
     `:call mkdx#ToggleList()<Cr>`
+
+==============================================================================
+<Plug>(mkdx-toggle-list-v)                             *mkdx-plug-toggle-list-v*
+
+    `:call mkdx#ToggleList()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-toggle-to-kbd-n)                         *mkdx-plug-toggle-to-kbd-n*
@@ -1251,12 +1297,12 @@ which it won't do anything anymore:
     `nmap <leader>= <Nop>`
     `vmap <leader>= <Nop>`
 
-Will disable |mkdx-plug-checkbox-next| in normal and visual mode.
+Will disable |mkdx-plug-checkbox-next-n| and |mkdx-plug-checkbox-next-v|.
 A better way in general, to prevent mkdx from setting an option is by
 remapping it's <Plug>, this will take care of both scenario's with one mapping
 and it is easier to understand "what" you unmapped, e.g:
 
-    `map <Plug> <Plug>(mkdx-checkbox-next)`
+    `map <Plug> <Plug>(mkdx-checkbox-next-n)`
 
 will result in the same as using regular `nmap` and `vmap`. For an overview of
 available <Plug> mappings that can be disabled, visit: |mkdx-plugs|.
@@ -1313,8 +1359,8 @@ When toggling an item which is nested in a list, the parent and child list
 items will be updated as well. Automatic updating of checkboxes
 can be disabled setting |mkdx-setting-checkbox-update-tree|.
 
-    `nmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
-    `vmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next)`
+    `nmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next-n)`
+    `vmap <MAP_PREFIX>- <Plug>(mkdx-checkbox-next-v)`
 
 ==============================================================================
 Toggle checkbox backward                 *mkdx-mapping-toggle-checkbox-backward*
@@ -1329,8 +1375,8 @@ When toggling an item which is nested in a list, the parent and child list
 items will be updated as well. Automatic updating of checkboxes
 can be disabled setting |mkdx-setting-checkbox-update-tree|.
 
-    `nmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
-    `vmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev)`
+    `nmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev-n)`
+    `vmap <MAP_PREFIX>= <Plug>(mkdx-checkbox-prev-v)`
 
 ==============================================================================
 Wrap text in link                               *mkdx-mapping-wrap-text-in-link*
@@ -1415,8 +1461,8 @@ Toggles a markdown quote on the current line or on every nonblank line in a
 visual selection. This function restores visual selection if
 |mkdx-setting-restore-visual| is set.
 
-    `nmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
-    `vmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote)`
+    `nmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote-n)`
+    `vmap <MAP_PREFIX>' <Plug>(mkdx-toggle-quote-v)`
 
 ==============================================================================
 List items                                             *mkdx-mapping-list-items*
@@ -2313,5 +2359,37 @@ option in this specific validation:
 
 The error will point out what valid options are in the context of the variable
 that you are trying to modify.
+
+==============================================================================
+DEPRECATED                                                     *mkdx-deprecated*
+
+The following section provides information about deprecated functionality,
+plugs, mappings etc...
+
+======
+V1.8.0
+
+Deprecated plugs:
+    - `mkdx-checkbox-next` replaced by:
+      - `mkdx-checkbox-next-n`
+      - `mkdx-checkbox-next-v`
+    - `mkdx-checkbox-prev` replaced by:
+      - `mkdx-checkbox-prev-n`
+      - `mkdx-checkbox-prev-v`
+    - `mkdx-toggle-quote` replaced by:
+      - `mkdx-toggle-quote-n`
+      - `mkdx-toggle-quote-v`
+    - `mkdx-toggle-checklist` replaced by:
+      - `mkdx-toggle-checklist-n`
+      - `mkdx-toggle-checklist-v`
+    - `mkdx-toggle-checkbox` replaced by:
+      - `mkdx-toggle-checkbox-n`
+      - `mkdx-toggle-checkbox-v`
+    - `mkdx-toggle-list` replaced by:
+      - `mkdx-toggle-list-n`
+      - `mkdx-toggle-list-v`
+
+While the old plugs will still work, they will no longer restore visual mode
+regardless of |mkdx-setting-restore-visual|.
 
 vim:tw=78:sw=4:ft=help:norl:

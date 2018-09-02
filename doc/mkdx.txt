@@ -185,6 +185,9 @@ CONTENTS                                                         *mkdx-contents*
        Only valid
        Only list
 
+    Deprecated
+       V1.8.0
+
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
 
@@ -2356,5 +2359,37 @@ option in this specific validation:
 
 The error will point out what valid options are in the context of the variable
 that you are trying to modify.
+
+==============================================================================
+DEPRECATED                                                     *mkdx-deprecated*
+
+The following section provides information about deprecated functionality,
+plugs, mappings etc...
+
+======
+V1.8.0
+
+Deprecated plugs:
+    - `mkdx-checkbox-next` replaced by:
+      - `mkdx-checkbox-next-n`
+      - `mkdx-checkbox-next-v`
+    - `mkdx-checkbox-prev` replaced by:
+      - `mkdx-checkbox-prev-n`
+      - `mkdx-checkbox-prev-v`
+    - `mkdx-toggle-quote` replaced by:
+      - `mkdx-toggle-quote-n`
+      - `mkdx-toggle-quote-v`
+    - `mkdx-toggle-checklist` replaced by:
+      - `mkdx-toggle-checklist-n`
+      - `mkdx-toggle-checklist-v`
+    - `mkdx-toggle-checkbox` replaced by:
+      - `mkdx-toggle-checkbox-n`
+      - `mkdx-toggle-checkbox-v`
+    - `mkdx-toggle-list` replaced by:
+      - `mkdx-toggle-list-n`
+      - `mkdx-toggle-list-v`
+
+While the old plugs will still work, they will no longer restore visual mode
+regardless of |mkdx-setting-restore-visual|.
 
 vim:tw=78:sw=4:ft=help:norl:

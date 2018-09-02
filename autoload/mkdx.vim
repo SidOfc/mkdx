@@ -1233,6 +1233,12 @@ fun! mkdx#ToggleCheckboxState(...)
   silent! call repeat#set("\<Plug>(mkdx-checkbox-" . (reverse ? 'prev' : 'next') . ")")
 endfun
 
+fun! mkdx#MaybeRestoreVisual()
+  if (g:mkdx#settings.restore_visual)
+    normal! gv
+  endif
+endfun
+
 fun! mkdx#WrapText(...)
   let m = get(a:000, 0, 'n')
   let w = get(a:000, 1, '')
@@ -1282,23 +1288,23 @@ endfun
 
 fun! mkdx#ToggleList()
   call setline('.', s:util.ToggleLineType(getline('.'), 'list'))
-  silent! call repeat#set("\<Plug>(mkdx-toggle-list)")
+  silent! call repeat#set("\<Plug>(mkdx-toggle-list-n)")
 endfun
 
 fun! mkdx#ToggleChecklist()
   call setline('.', s:util.ToggleLineType(getline('.'), 'checklist'))
-  silent! call repeat#set("\<Plug>(mkdx-toggle-checklist)")
+  silent! call repeat#set("\<Plug>(mkdx-toggle-checklist-n)")
 endfun
 
 fun! mkdx#ToggleCheckboxTask()
   call setline('.', s:util.ToggleLineType(getline('.'), 'checkbox'))
-  silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox)")
+  silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox-n)")
 endfun
 
 fun! mkdx#ToggleQuote()
   let line = getline('.')
   if (!empty(line)) | call setline('.', s:util.transform(getline('.'), ['toggle-quote'])) | endif
-  silent! call repeat#set("\<Plug>(mkdx-toggle-quote)")
+  silent! call repeat#set("\<Plug>(mkdx-toggle-quote-n)")
 endfun
 
 fun! mkdx#ToggleHeader(...)

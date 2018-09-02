@@ -46,18 +46,32 @@ if (!exists('g:mkdx#settings_initialized'))
   call mkdx#guard_settings()
 endif
 
+" backwards compat <= 1.8.0
 noremap         <silent> <Plug>(mkdx-checkbox-next)      :call      mkdx#ToggleCheckboxState()<Cr>
 noremap         <silent> <Plug>(mkdx-checkbox-prev)      :call      mkdx#ToggleCheckboxState(1)<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-quote)       :call      mkdx#ToggleQuote()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-checkbox)    :call      mkdx#ToggleCheckboxTask()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-checklist)   :call      mkdx#ToggleChecklist()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-list)        :call      mkdx#ToggleList()<Cr>
+
+noremap         <silent> <Plug>(mkdx-checkbox-next-n)    :call      mkdx#ToggleCheckboxState()<Cr>
+noremap         <silent> <Plug>(mkdx-checkbox-prev-n)    :call      mkdx#ToggleCheckboxState(1)<Cr>
+noremap         <silent> <Plug>(mkdx-checkbox-next-v)    :call      mkdx#ToggleCheckboxState()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-checkbox-prev-v)    :call      mkdx#ToggleCheckboxState(1)<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-quote-n)     :call      mkdx#ToggleQuote()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-quote-v)     :call      mkdx#ToggleQuote()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checkbox-n)  :call      mkdx#ToggleCheckboxTask()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checkbox-v)  :call      mkdx#ToggleCheckboxTask()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checklist-n) :call      mkdx#ToggleChecklist()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-checklist-v) :call      mkdx#ToggleChecklist()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-list-n)      :call      mkdx#ToggleList()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-list-v)      :call      mkdx#ToggleList()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-demote-header)      :<C-U>call mkdx#ToggleHeader()<Cr>
 noremap         <silent> <Plug>(mkdx-promote-header)     :<C-U>call mkdx#ToggleHeader(1)<Cr>
 noremap         <silent> <Plug>(mkdx-wrap-link-n)        :<C-U>call mkdx#WrapLink()<Cr>
 noremap         <silent> <Plug>(mkdx-wrap-link-v)        :call      mkdx#WrapLink('v')<Cr>
 noremap         <silent> <Plug>(mkdx-jump-to-header)     :call      mkdx#JumpToHeader()<Cr>
-noremap         <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>
+noremap         <silent> <Plug>(mkdx-tableize)           :call      mkdx#Tableize()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-quickfix-links)     :call      mkdx#QuickfixDeadLinks()<Cr>
 noremap         <silent> <Plug>(mkdx-quickfix-toc)       :call      mkdx#QuickfixHeaders()<Cr>
 noremap         <silent> <Plug>(mkdx-generate-toc)       :call      mkdx#GenerateTOC()<Cr>
@@ -106,20 +120,20 @@ endif
 if g:mkdx#settings.map.enable == 1
   let s:gv       = g:mkdx#settings.restore_visual == 1 ? 'gv' : ''
   let s:bindings = [
-        \ ['Toggle\ checkbox\ backward',      1, 'n', '-',      '<Plug>(mkdx-checkbox-prev)',           ':call mkdx#ToggleCheckboxState(1)<cr>'],
-        \ ['Toggle\ checkbox\ forward',       1, 'n', '=',      '<Plug>(mkdx-checkbox-next)',           ':call mkdx#ToggleCheckboxState()<cr>'],
-        \ ['Toggle\ checkbox\ forward',       1, 'v', '-',      '<Plug>(mkdx-checkbox-prev)' . s:gv,    ':call mkdx#ToggleCheckboxState()<cr>' . s:gv],
-        \ ['Toggle\ checkbox\ backward',      1, 'v', '=',      '<Plug>(mkdx-checkbox-next)' . s:gv,    ':call mkdx#ToggleCheckboxState(1)<cr>' . s:gv],
+        \ ['Toggle\ checkbox\ backward',      1, 'n', '-',      '<Plug>(mkdx-checkbox-prev-n)',         ':call mkdx#ToggleCheckboxState(1)<cr>'],
+        \ ['Toggle\ checkbox\ forward',       1, 'n', '=',      '<Plug>(mkdx-checkbox-next-n)',         ':call mkdx#ToggleCheckboxState()<cr>'],
+        \ ['Toggle\ checkbox\ forward',       1, 'v', '-',      '<Plug>(mkdx-checkbox-prev-v)',         ':call mkdx#ToggleCheckboxState()<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
+        \ ['Toggle\ checkbox\ backward',      1, 'v', '=',      '<Plug>(mkdx-checkbox-next-v)',         ':call mkdx#ToggleCheckboxState(1)<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
         \ ['Promote\ header',                 1, 'n', '[',      '<Plug>(mkdx-promote-header)',          ':<C-U>call mkdx#ToggleHeader(1)<cr>'],
         \ ['Demote\ header',                  1, 'n', ']',      '<Plug>(mkdx-demote-header)',           ':<C-U>call mkdx#ToggleHeader()<cr>'],
-        \ ['Toggle\ quote',                   1, 'n', "'",      '<Plug>(mkdx-toggle-quote)',            ':call mkdx#ToggleQuote()<cr>'],
-        \ ['Toggle\ quote',                   1, 'v', "'",      '<Plug>(mkdx-toggle-quote)' . s:gv,     ':call mkdx#ToggleQuote()<cr>' . s:gv],
-        \ ['Toggle\ checkbox',                1, 'n', "t",      '<Plug>(mkdx-toggle-checkbox)',         ':call mkdx#ToggleCheckboxTask()<cr>'],
-        \ ['Toggle\ checkbox',                1, 'v', "t",      '<Plug>(mkdx-toggle-checkbox)' . s:gv,  ':call mkdx#ToggleCheckboxTask()<cr>' . s:gv],
-        \ ['Toggle\ checklist',               1, 'n', "lt",     '<Plug>(mkdx-toggle-checklist)',        ':call mkdx#ToggleChecklist()<cr>'],
-        \ ['Toggle\ checklist',               1, 'v', "lt",     '<Plug>(mkdx-toggle-checklist)' . s:gv, ':call mkdx#ToggleChecklist()<cr>' . s:gv],
-        \ ['Toggle\ list',                    1, 'n', "ll",     '<Plug>(mkdx-toggle-list)',             ':call mkdx#ToggleList()<cr>'],
-        \ ['Toggle\ list',                    1, 'v', "ll",     '<Plug>(mkdx-toggle-list)' . s:gv,      ':call mkdx#ToggleList()<cr>' . s:gv],
+        \ ['Toggle\ quote',                   1, 'n', "'",      '<Plug>(mkdx-toggle-quote-n)',          ':call mkdx#ToggleQuote()<cr>'],
+        \ ['Toggle\ quote',                   1, 'v', "'",      '<Plug>(mkdx-toggle-quote-v)',          ':call mkdx#ToggleQuote()<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
+        \ ['Toggle\ checkbox',                1, 'n', "t",      '<Plug>(mkdx-toggle-checkbox-n)',       ':call mkdx#ToggleCheckboxTask()<cr>'],
+        \ ['Toggle\ checkbox',                1, 'v', "t",      '<Plug>(mkdx-toggle-checkbox-v)',       ':call mkdx#ToggleCheckboxTask()<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
+        \ ['Toggle\ checklist',               1, 'n', "lt",     '<Plug>(mkdx-toggle-checklist-n)',      ':call mkdx#ToggleChecklist()<cr>'],
+        \ ['Toggle\ checklist',               1, 'v', "lt",     '<Plug>(mkdx-toggle-checklist-v)',      ':call mkdx#ToggleChecklist()<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
+        \ ['Toggle\ list',                    1, 'n', "ll",     '<Plug>(mkdx-toggle-list-n)',           ':call mkdx#ToggleList()<cr>'],
+        \ ['Toggle\ list',                    1, 'v', "ll",     '<Plug>(mkdx-toggle-list-v)',           ':call mkdx#ToggleList()<cr>:call mkdx#MaybeRestoreVisual()<cr>'],
         \ ['Wrap\ link',                      1, 'n', 'ln',     '<Plug>(mkdx-wrap-link-n)',             ':<C-U>call mkdx#WrapLink()<cr>'],
         \ ['Wrap\ link',                      1, 'v', 'ln',     '<Plug>(mkdx-wrap-link-v)',             ':<C-U>call mkdx#WrapLink("v")<cr>'],
         \ ['Italic',                          1, 'n', '/',      '<Plug>(mkdx-text-italic-n)',           ':<C-U>call mkdx#WrapText("n", g:mkdx#settings.tokens.italic, g:mkdx#settings.tokens.italic, "mkdx-text-italic-n")<Cr>'],
@@ -130,7 +144,7 @@ if g:mkdx#settings.map.enable == 1
         \ ['Inline\ code',                    1, 'v', '`',      '<Plug>(mkdx-text-inline-code-v)',      ':<C-U>call mkdx#WrapText("v", "`", "`")<cr>'],
         \ ['Strike\ through',                 1, 'n', 's',      '<Plug>(mkdx-text-strike-n)',           ':<C-U>call mkdx#WrapText("n", "<strike>", "</strike>", "mkdx-text-strike-n")<cr>'],
         \ ['Strike\ through',                 1, 'v', 's',      '<Plug>(mkdx-text-strike-v)',           ':<C-U>call mkdx#WrapText("v", "<strike>", "</strike>")<cr>'],
-        \ ['Convert\ to\ table',              1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>'],
+        \ ['Convert\ to\ table',              1, 'v', ',',      '<Plug>(mkdx-tableize)',                ':call mkdx#Tableize()<cr>:call mkdx#MaybeRestoreVisual()<Cr>'],
         \ ['Generate\ /\ Update\ TOC',        1, 'n', 'i',      '<Plug>(mkdx-gen-or-upd-toc)',          ':call mkdx#GenerateOrUpdateTOC()<cr>'],
         \ ['Open\ TOC\ in\ quickfix',         1, 'n', 'I',      '<Plug>(mkdx-quickfix-toc)',            ':call mkdx#QuickfixHeaders()<cr>'],
         \ ['Open\ dead\ links\ in\ quickfix', 1, 'n', 'L',      '<Plug>(mkdx-quickfix-links)',          ':call mkdx#QuickfixDeadLinks()<cr>'],

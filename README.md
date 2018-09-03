@@ -31,6 +31,7 @@ settings and examples with default mappings.
     <li><a href="#mkdxvim--">mkdx.vim</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
+    <li><a href="#quick-start">Quick start</a></li>
     <li><a href="#examples">Examples</a><ul>
         <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
@@ -148,6 +149,32 @@ Plug 'SidOfc/mkdx'
 cd ~/.vim/bundle
 git clone https://github.com/SidOfc/mkdx
 ```
+
+# Quick start
+
+This plugin is extremely customizable, there are __a lot__ of [settings](#gmkdxsettings) and [examples](#examples) to go through. Some of the best settings are disabled because they might not perform on some specific setup or the functionality may interfere with other plugins who are better suited for specific tasks (e.g. highlighting is only a minor 'enhancement' in this plugin).
+
+**quick setup**
+```viml
+let g:mkdx#settings     = { 'highlight': { 'enable': 1 },
+                        \ 'enter': { 'shift': 1 },
+                        \ 'links': { 'external': { 'enable': 1 } },
+                        \ 'toc': { 'text': 'Table of Contents', 'update_on_write': 1 },
+                        \ 'fold': { 'enable': 1 } }
+let g:polyglot_disabled = ['markdown'] " for vim-polyglot users, it loads Plasticboy's markdown
+                                       " plugin which unfortunately interferes with mkdx list indentation.
+```
+
+The above snippet enables:
+
+- Folding of inline code blocks and the table of contents
+- Makes dead link detection also check for external links instead of only checking `#` links
+- Enables <kbd>shift</kbd>+<kbd>enter</kbd> support for multi line list items (__please ensure__ that it works [correctly](#gmkdxsettingsentershift)).
+- Changes the default table of contents text from `TOC` to `Table of Contents`
+- Updates the table of contents automatically before saving the file
+- Enables better syntax highlighting for tables, list items, check boxes with certain states, <kbd>kbd</kbd> tags and bold+italic markers
+
+There is much more that can be configured, [go here](#gmkdxsettings) for an overview of the defaults or check out the examples below :)
 
 # Examples
 

@@ -106,9 +106,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#05-09-2018-version-181">05-09-2018 VERSION 1.8.1</a></li>
         <li><a href="#03-08-2018-version-180">03-08-2018 VERSION 1.8.0</a></li>
         <li><a href="#30-07-2018-version-171">30-07-2018 VERSION 1.7.1</a></li>
-        <li><a href="#24-06-2018-version-170">24-06-2018 VERSION 1.7.0</a></li>
     </ul></li>
 </ul>
 </details>
@@ -1416,6 +1416,16 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 05-09-2018 VERSION 1.8.1
+
+- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table)
+- Fix: Only open quickfix when broken links are present
+- Fix: Table highlighting now stops at the end of a table
+- Fix: Empty cells in CSV also get a border
+- Fix: All `hasmapto` calls are mode specific
+- Fix: `g:mkdx#settings.restore_visual` can now be disabled during runtime
+- Fix: Wrapping at end of line was broken
+
 ## 03-08-2018 VERSION 1.8.0
 
 - Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))
@@ -1424,14 +1434,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 30-07-2018 VERSION 1.7.1
 
 - Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line
-
-## 24-06-2018 VERSION 1.7.0
-
-- Add: Support Setex style headings (`-` / `=` characters below nonblank line)
-- Add: Support Setex style headings in completion menu
-- Add: Support Setex style headings in TOC generation
-- Add: Support Setex style headings in header listing
-- Add: [Setting](#gmkdxsettingstokensstrike) to allow customizing strikethrough style ([#49](../../pull/49))
-- Fix: TOC without any nested elements created too many closing tags when generated using `<details>` tag
-- Fix: Non-list items sometimes got detected as list items when starting with a number on <kbd>shift</kbd>+<kbd>O</kbd>
-- Fix: overriding `g:mkdx#settings` with `has('*dictwatcheradd')` crashing Vim

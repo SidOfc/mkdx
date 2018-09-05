@@ -1,3 +1,14 @@
+## 24-06-2018 VERSION 1.7.0
+
+- Add: Support Setex style headings (`-` / `=` characters below nonblank line)
+- Add: Support Setex style headings in completion menu
+- Add: Support Setex style headings in TOC generation
+- Add: Support Setex style headings in header listing
+- Add: [Setting](#gmkdxsettingstokensstrike) to allow customizing strikethrough style ([#49](../../pull/49))
+- Fix: TOC without any nested elements created too many closing tags when generated using `<details>` tag
+- Fix: Non-list items sometimes got detected as list items when starting with a number on <kbd>shift</kbd>+<kbd>O</kbd>
+- Fix: overriding `g:mkdx#settings` with `has('*dictwatcheradd')` crashing Vim
+
 ## 14-05-2018 VERSION 1.6.1
 
 - Add: Highlighting for tables ([#42](../../pull/42)), `<kbd>` shortcuts and `_**bolditalic**_` ([#43](../../pull/43)).

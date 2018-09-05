@@ -1,16 +1,16 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A paragraph of text):
-  Hello there
+  Hello there.
   this is an awesome short
   paragraph of text
   that I use to test links
 
-Do ($vb<prefix>ln):
-  :normal! $vb\<cr> lnhello
+Do (2eviw<prefix>ln):
+  :normal! 2eviw\<cr> lnhello
 
 Expect (The word "Hello" to be a link):
-  Hello [there](hello)
+  Hello [there](hello).
   this is an awesome short
   paragraph of text
   that I use to test links
@@ -19,7 +19,7 @@ Do (jV<prefix>ln):
   jV lnhello
 
 Expect (The word "Hello" to be a link):
-  Hello there
+  Hello there.
   [this is an awesome short](hello)
   paragraph of text
   that I use to test links
@@ -28,7 +28,7 @@ Do (jVj<prefix>ln):
   jVj lnhello
 
 Expect (The word "Hello" to be a link):
-  Hello there
+  Hello there.
   [this is an awesome short
   paragraph of text](hello)
   that I use to test links

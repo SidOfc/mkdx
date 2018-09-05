@@ -566,6 +566,8 @@ fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')
   let end   = get(a:000, 2, start)
+  let vcol  = virtcol('.')
+  let llen  = strlen(getline('.'))
   let _r    = @z
 
   if (mode != 'n')
@@ -580,7 +582,7 @@ fun! s:util.WrapSelectionOrWord(...)
   else
     normal! "zdiw
     let @z = start . @z . end
-    exe 'normal! "z' . ((virtcol('.') == strlen(getline('.'))) ? 'p' : 'P')
+    exe 'normal! "z' . ((vcol == llen) ? 'p' : 'P')
   endif
 
   let zz = @z

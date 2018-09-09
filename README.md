@@ -1418,7 +1418,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## 09-09-2018 VERSION 1.8.1
 
-- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table)
+- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table-and-back)
 - Fix: Only open quickfix when broken links are present([#56](../../pull/56))
 - Fix: Table highlighting now stops at the end of a table ([#57](../../pull/57))
 - Fix: Empty cells in CSV also get a border ([#61](../../pull/61))

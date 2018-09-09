@@ -48,7 +48,7 @@ settings and examples with default mappings.
         <li><a href="#toggling-quotes">Toggling Quotes</a></li>
         <li><a href="#wrap-as-link">Wrap as link</a></li>
         <li><a href="#wrap-as-bold--italic--inline-code--strikethrough">Wrap as bold / italic / inline-code / strikethrough</a></li>
-        <li><a href="#convert-csv-to-table">Convert CSV to table</a></li>
+        <li><a href="#convert-csv-to-table-and-back">Convert CSV to table (and back)</a></li>
         <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
@@ -484,9 +484,9 @@ Wrap the word (anywhere) under the cursor or a visual selection using the follow
 
 As with all other mappings, all the *normal* mode mappings are repeatable.
 
-## Convert CSV to table
+## Convert CSV to table (and back)
 
-![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize-2.gif)
+![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize.gif)
 
 Convert visually selected CSV rows to a markdown table with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>,</kbd>.
 The first row will be used as a header. A separator will be inserted below the header. Default and specific column alignment options are also available, see: [`g:mkdx#settings.table.align`](#gmkdxsettingstablealign) for more.

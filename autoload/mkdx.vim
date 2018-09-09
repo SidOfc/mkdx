@@ -348,6 +348,7 @@ fun! s:util.AddHeaderToQuickfix(bufnr, jid, stream, ...)
   let stream     = type(a:stream) == s:LIST ? a:stream : [a:stream]
   let TQF        = {gl -> {'lnum': gl.lnum, 'bufnr': a:bufnr, 'text': s:util.transform(gl.content, ['clean-header'])}}
   let qf_entries = map(filter(stream, {idx, line -> !empty(line)}), {idx, line -> TQF(s:util.IdentifyGrepLink(line))})
+  let qf_entries = filter(qf_entries, {idx, entry -> !empty(get(entry, 'text', ''))})
 
   if (len(qf_entries) > 0) | call setqflist(qf_entries, 'a') | endif
   if (s:util.EchoQuickfixCount('header')) | copen | else | cclose | endif
@@ -634,7 +635,9 @@ fun! s:util.ListHeaders()
         let setext_ul = get(matchlist(header, '^\%(-\|=\)\+$'), 0, '')
         if !empty(setext_ul)
           let header = getline(lnum - 1)
-          let lvl    = setext_ul[0] == '=' ? 1 : 2
+          if !empty(header)
+            let lvl = setext_ul[0] == '=' ? 1 : 2
+          endif
         endif
       endif
 
@@ -940,7 +943,9 @@ fun! s:util.IdentifyGrepLink(input)
     let compl = []
     let prefx = matched[0] == '-' ? '##' : '#'
     while prevnonblank(slnum) == slnum
-      call add(compl, getline(slnum))
+      let ln = getline(slnum)
+      if empty(ln) | break | endif
+      call add(compl, ln)
       if (slnum == 1) | break | endif
       let slnum = slnum - 1
     endwhile

@@ -106,7 +106,7 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
-        <li><a href="#05-09-2018-version-181">05-09-2018 VERSION 1.8.1</a></li>
+        <li><a href="#09-09-2018-version-181">09-09-2018 VERSION 1.8.1</a></li>
         <li><a href="#03-08-2018-version-180">03-08-2018 VERSION 1.8.0</a></li>
         <li><a href="#30-07-2018-version-171">30-07-2018 VERSION 1.7.1</a></li>
     </ul></li>
@@ -1416,7 +1416,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
-## 05-09-2018 VERSION 1.8.1
+## 09-09-2018 VERSION 1.8.1
 
 - Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table)
 - Fix: Only open quickfix when broken links are present
@@ -1424,7 +1424,10 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: Empty cells in CSV also get a border
 - Fix: All `hasmapto` calls are mode specific
 - Fix: `g:mkdx#settings.restore_visual` can now be disabled during runtime
-- Fix: Wrapping at end of line was broken
+- Fix: Wrapping at end of line no longer breaks when line ends with non word characters
+- Fix: No longer pollute register when updating table of contents ([#68](https://github.com/SidOfc/mkdx/issues/68))
+- Fix: Empty setex-style headers are no longer added to quickfix headers or the table of contents ([#69](https://github.com/SidOfc/mkdx/issues/69))
+- Fix: Always empty quickfix list before showing dead links ([#70](https://github.com/SidOfc/mkdx/issues/70))
 
 ## 03-08-2018 VERSION 1.8.0
 

@@ -106,9 +106,9 @@ settings and examples with default mappings.
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#09-09-2018-version-181">09-09-2018 VERSION 1.8.1</a></li>
         <li><a href="#03-08-2018-version-180">03-08-2018 VERSION 1.8.0</a></li>
         <li><a href="#30-07-2018-version-171">30-07-2018 VERSION 1.7.1</a></li>
-        <li><a href="#24-06-2018-version-170">24-06-2018 VERSION 1.7.0</a></li>
     </ul></li>
 </ul>
 </details>
@@ -677,7 +677,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.1'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -802,7 +802,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.1' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1416,6 +1416,19 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 09-09-2018 VERSION 1.8.1
+
+- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table)
+- Fix: Only open quickfix when broken links are present([#56](../../pull/56))
+- Fix: Table highlighting now stops at the end of a table ([#57](../../pull/57))
+- Fix: Empty cells in CSV also get a border ([#61](../../pull/61))
+- Fix: All `hasmapto` calls are mode specific ([#64](../../pull/64))
+- Fix: `g:mkdx#settings.restore_visual` can now be disabled during runtime ([#65](../../pull/65))
+- Fix: Wrapping at end of line no longer breaks when line ends with non word characters ([#67](../../pull/67))
+- Fix: No longer pollute register when updating table of contents ([#68](../../issues/68))
+- Fix: Empty setex-style headers are no longer added to quickfix headers or the table of contents ([#69](../../issues/69))
+- Fix: Always empty quickfix list before showing dead links ([#70](../../issues/70))
+
 ## 03-08-2018 VERSION 1.8.0
 
 - Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))
@@ -1424,14 +1437,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 30-07-2018 VERSION 1.7.1
 
 - Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line
-
-## 24-06-2018 VERSION 1.7.0
-
-- Add: Support Setex style headings (`-` / `=` characters below nonblank line)
-- Add: Support Setex style headings in completion menu
-- Add: Support Setex style headings in TOC generation
-- Add: Support Setex style headings in header listing
-- Add: [Setting](#gmkdxsettingstokensstrike) to allow customizing strikethrough style ([#49](../../pull/49))
-- Fix: TOC without any nested elements created too many closing tags when generated using `<details>` tag
-- Fix: Non-list items sometimes got detected as list items when starting with a number on <kbd>shift</kbd>+<kbd>O</kbd>
-- Fix: overriding `g:mkdx#settings` with `has('*dictwatcheradd')` crashing Vim

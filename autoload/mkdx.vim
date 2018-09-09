@@ -1543,7 +1543,7 @@ fun! mkdx#UpdateTOC(...)
   let curpos                  = getpos('.')
   let [startc, endc, details] = s:util.GetTOCPositionAndStyle(opts)
 
-  silent! exe 'normal! :' . startc . ',' . endc . 'd'
+  silent! exe 'normal! :' . startc . ',' . endc . 'd _'
 
   let inslen = mkdx#GenerateTOC(1, details)
 

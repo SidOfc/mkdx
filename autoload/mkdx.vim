@@ -1181,7 +1181,7 @@ fun! mkdx#QuickfixDeadLinks(...)
   if (get(a:000, 0, 1))
     let dl = len(dead)
 
-    if (dl > 0) | call setqflist(dead) | endif
+    call setqflist(dead)
     if (!s:_testing && g:mkdx#settings.links.external.enable && s:_can_async && s:_has_curl)
       call s:util.AsyncDeadExternalToQF(0, total)
     endif

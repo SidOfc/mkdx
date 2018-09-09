@@ -1401,7 +1401,7 @@ endfun
 fun! s:util.TableRowToList(line)
   return map(split(substitute(a:line, '^\s\+\|\s\+$', '', 'g'),
                  \ g:mkdx#settings.table.divider),
-           \ {idx, ln -> substitute(ln, '"', '\"', 'g')})
+           \ {idx, ln -> substitute(ln, '"', '\\"', 'g')})
 endfun
 
 fun! mkdx#OHandler()

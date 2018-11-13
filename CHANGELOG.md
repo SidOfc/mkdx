@@ -1,3 +1,7 @@
+## 30-07-2018 VERSION 1.7.1
+
+- Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line
+
 ## 24-06-2018 VERSION 1.7.0
 
 - Add: Support Setex style headings (`-` / `=` characters below nonblank line)

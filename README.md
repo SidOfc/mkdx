@@ -1120,7 +1120,7 @@ let g:mkdx#settings = { 'enter': { 'shifto': 1 } }
 This setting defines behaviour to use when working with improperly indented
 markdown lists. At the moment it works for checklist items that do not have an
 `indent()` which is divisible by `shiftwidth`. In which case the indent will
-be rounded up to the next indent if it is greater than `&sw / 2` otherwise it
+be rounded up to the next indent if it is greater than `s:sw() / 2` otherwise it
 will be rounded down to the previous indent.
 
 ```viml

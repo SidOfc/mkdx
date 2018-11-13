@@ -1,4 +1,15 @@
 """"" UTILITY FUNCTIONS
+" Extracted from shiftwidth() documentation
+if exists('*shiftwidth')
+  func s:sw()
+    return shiftwidth()
+  endfunc
+else
+  func s:sw()
+    return &sw
+  endfunc
+endif
+
 let s:_is_nvim               = has('nvim')
 let s:_has_curl              = executable('curl')
 let s:_can_async             = s:_is_nvim || has('job')
@@ -708,7 +719,7 @@ fun! s:util.FormatTOCHeader(level, content, ...)
   let hsh = s:util.transform(tolower(a:content), ['clean-header', 'header-to-hash']) . get(a:000, 0, '')
   let hdr = s:util.transform(a:content, ['clean-header', 'trailing-space'], {str -> '[' . str . '](#' . hsh . ')'})
 
-  return repeat(repeat(' ', &sw), a:level) . g:mkdx#settings.toc.list_token . ' ' . hdr
+  return repeat(repeat(' ', s:sw()), a:level) . g:mkdx#settings.toc.list_token . ' ' . hdr
 endfun
 
 fun! s:util.HeaderToATag(header, ...)
@@ -722,10 +733,10 @@ fun! s:util.TaskItem(linenum)
   let line   = getline(a:linenum)
   let token  = get(matchlist(line, '\[\(.\)\]'), 1, '')
   let ident  = strlen(get(matchlist(line, '^>\?\( \{0,}\)'), 1, ''))
-  let rem    = ident % &sw
-  let ident -= g:mkdx#settings.enter.malformed ? (rem - (rem > &sw / 2 ? &sw : 0)) : 0
+  let rem    = ident % s:sw()
+  let ident -= g:mkdx#settings.enter.malformed ? (rem - (rem > s:sw() / 2 ? s:sw() : 0)) : 0
 
-  return [token, (ident == 0 ? ident : ident / &sw), line]
+  return [token, (ident == 0 ? ident : ident / s:sw()), line]
 endfun
 
 fun! s:util.TasksToCheck(linenum)
@@ -1438,7 +1449,7 @@ fun! mkdx#ShiftOHandler()
       let esc  = lin == '*' ? '\*' : lin
       let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
       exe 'normal! O' . qstr . lin . (suff ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : ' ')
-      call s:util.UpdateListNumbers(lnum, indent(lnum) / &sw)
+      call s:util.UpdateListNumbers(lnum, indent(lnum) / s:sw())
     elseif (lis != -1)
       let esc  = lis == '*' ? '\*' : lis
       let suff = !empty(matchlist(line, '^ *' . esc . ' \[.\]'))
@@ -1608,10 +1619,10 @@ fun! mkdx#GenerateTOC(...)
   for [lnum, lvl, line, hsh, sfx] in src
     let curr         += 1
     let headers[hsh]  = get(headers, hsh, -1) + 1
-    let spc           = repeat(repeat(' ', &sw), lvl)
+    let spc           = repeat(repeat(' ', s:sw()), lvl)
     let ending_tag    = (get(src, curr, [0, lvl])[1] > lvl) ? '<ul>' : '</li>'
 
-    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
+    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', s:sw() * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
@@ -1632,7 +1643,7 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
-  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
+  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', s:sw()) . repeat('</ul></li>', prevlvl - 1)) | endif
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
   let c = ((!get(a:000, 0, 0) && after_pos) ? after_info[0] : cpos[1]) -

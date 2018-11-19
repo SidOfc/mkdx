@@ -283,7 +283,10 @@ let s:util.validations = {
 let s:util.updaters = {
       \ 'g:mkdx#settings.toc.text': s:util.ReplaceTOCText,
       \ 'g:mkdx#settings.toc.details.enable': s:util.UpdateTOCStyle,
-      \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCSummary,
+      \ 'g:mkdx#settings.toc.details.summary': s:util.UpdateTOCDetails,
+      \ 'g:mkdx#settings.toc.details.nesting_level': s:util.UpdateTOCDetails,
+      \ 'g:mkdx#settings.toc.details.child_count': s:util.UpdateTOCDetails,
+      \ 'g:mkdx#settings.toc.details.child_summary': s:util.UpdateTOCDetails,
       \ 'g:mkdx#settings.toc.position': s:util.RepositionTOC,
       \ 'g:mkdx#settings.tokens.header': s:util.UpdateHeaders,
       \ 'g:mkdx#settings.tokens.fence': s:util.UpdateFencedCodeBlocks,
@@ -1616,34 +1619,107 @@ fun! mkdx#GenerateTOC(...)
     call extend(contents, ['<details>', '<summary>' . summary_text . '</summary>', '<ul>'])
   endif
 
+  let children_at_level = []
+  let child_lvl         = g:mkdx#settings.toc.details.nesting_level + 1
+
+  if (child_lvl == 0) | let child_lvl = 10 | endif
+
   for [lnum, lvl, line, hsh, sfx] in src
     let curr         += 1
+    let nextlvl       = get(src, curr, [0, -1])[1]
     let headers[hsh]  = get(headers, hsh, -1) + 1
-    let spc           = repeat(repeat(' ', s:sw()), lvl)
-    let ending_tag    = (get(src, curr, [0, lvl])[1] > lvl) ? '<ul>' : '</li>'
+    let spc           = repeat(repeat(' ', &sw), lvl)
+    let children      = 0
 
+    if (lvl >= child_lvl && nextlvl - lvl == 1)
+      let next_c_lvl = nextlvl
+      let next_c_idx = curr
+      while (next_c_lvl != -1 && next_c_lvl >= nextlvl)
+        let next_c_lvl  = get(src, next_c_idx, [0, -1])[1]
+        let next_c_idx += 1
+        if (next_c_lvl == nextlvl)
+          let children += 1
+        endif
+      endwhile
+    endif
+
+    let inner_details_open = do_details && children >= g:mkdx#settings.toc.details.child_count && (nextlvl >= child_lvl) && (lvl == nextlvl - 1)
+          \ ? '<details><summary>' . substitute(g:mkdx#settings.toc.details.child_summary, '{{count}}', children, 'g') . '</summary>'
+          \ : ''
+    let ending_tag = (nextlvl > lvl) ? inner_details_open . '<ul>' : '</li>'
+
+    if !empty(inner_details_open)
+      call insert(children_at_level, lvl)
+    endif
+
+    if (do_details && lvl < prevlvl)
+      let prevl = prevlvl
+      let close = ''
+
+      while (lvl < prevl && prevl > 0)
+        let prevl -= 1
+        if (get(children_at_level, 0, -1) == prevl)
+          call remove(children_at_level, 0)
+          let close .= '</ul></details></li>'
+        else
+          let close .= '</ul></li>'
+        endif
+      endwhile
+
+      call add(contents, repeat(' ', &sw * lvl) . close)
+    endif
+>>>>>>> Add base implementation for nested details in large toc sub-lists
+
+<<<<<<< HEAD
     if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', s:sw() * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
+||||||| merged common ancestors
+    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
+=======
+>>>>>>> Add base implementation for nested details in large toc sub-lists
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
       let headers[csh] = get(headers, csh, -1) + 1
       let contents     = extend([header, ''], contents)
-      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), '</li>')
     endif
 
     call LI(lvl, spc, line, sfx, ending_tag)
+
     if (empty(header) && curr == srclen)
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
       let headers[csh] = get(headers, csh, -1) + 1
       let contents     = extend([header, ''], contents)
-      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), ending_tag)
+      call LI(prevlvl, spc, header, ((headers[csh] > 0) ? '-' . headers[csh] : ''), '</li>')
     endif
 
     let prevlvl = lvl
   endfor
 
+<<<<<<< HEAD
   if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', s:sw()) . repeat('</ul></li>', prevlvl - 1)) | endif
+||||||| merged common ancestors
+  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
+=======
+  echom string(children_at_level)
+  if (do_details && (prevlvl - 1) > 0)
+    let prevl = prevlvl - 1
+    let close = ''
+
+    while (prevl > 0)
+      if (get(children_at_level, 0, -1) == prevl)
+        call remove(children_at_level, 0)
+        let close .= '</ul></details></li>'
+      else
+        let close .= '</ul></li>'
+      endif
+      let prevl -= 1
+    endwhile
+
+    call add(contents, repeat(' ', &sw * (lvl - 1)) . close)
+  endif
+>>>>>>> Add base implementation for nested details in large toc sub-lists
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
   let c = ((!get(a:000, 0, 0) && after_pos) ? after_info[0] : cpos[1]) -

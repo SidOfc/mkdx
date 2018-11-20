@@ -851,7 +851,7 @@ fun! s:util.InsertLine(line, position)
 endfun
 
 fun! s:util.AlignString(str, align, length)
-  let remaining = a:length - strlen(a:str)
+  let remaining = a:length - strwidth(a:str)
 
   if (remaining < 0) | return a:str[0:(a:length - 1)] | endif
 
@@ -1357,7 +1357,7 @@ fun! mkdx#Tableize() range
       let lines[idx] = s:util.CsvRowToList(lines[idx])
 
       for column in range(0, len(lines[idx]) - 1)
-        let curr_word_max = strlen(lines[idx][column])
+        let curr_word_max = strwidth(lines[idx][column])
         let last_col_max  = get(col_maxlen, column, 0)
 
         if (curr_word_max > last_col_max) | let col_maxlen[column] = curr_word_max | endif

@@ -27,6 +27,8 @@ settings and examples with default mappings.
 
 Before we dive in I'd like to give a special thanks to the following contributors for posting issues and PRs:
 
+- [@yous](https://github.com/yous)
+    - discovering a bug when using unicode characters in list items
 - [@marcdeop](https://github.com/marcdeop) ([Erasys](https://www.erasys.de/))
     - discovering and fixing a bug when using `&sw` with a value of `0`.
 - [@totpet](https://github.com/totpet)
@@ -124,9 +126,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#20-11-2018-version-183">20-11-2018 VERSION 1.8.3</a></li>
         <li><a href="#13-11-2018-version-182">13-11-2018 VERSION 1.8.2</a></li>
         <li><a href="#09-09-2018-version-181">09-09-2018 VERSION 1.8.1</a></li>
-        <li><a href="#03-08-2018-version-180">03-08-2018 VERSION 1.8.0</a></li>
     </ul></li>
 </ul>
 </details>
@@ -695,7 +697,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.2'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.3'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -820,7 +822,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.2' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.3' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1434,9 +1436,14 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 20-11-2018 VERSION 1.8.3
+
+- Fix: handle unicode characters in list items ([#80](../../issues/80))
+- Fix: handle unicode characters in CSV ([#81](../../issues/81))
+
 ## 13-11-2018 VERSION 1.8.2
 
-- Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop)).
+- Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop))
 
 ## 09-09-2018 VERSION 1.8.1
 
@@ -1450,8 +1457,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: No longer pollute register when updating table of contents ([#68](../../issues/68))
 - Fix: Empty setex-style headers are no longer added to quickfix headers or the table of contents ([#69](../../issues/69))
 - Fix: Always empty quickfix list before showing dead links ([#70](../../issues/70))
-
-## 03-08-2018 VERSION 1.8.0
-
-- Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))
-- Fix: Unable to position TOC as last header ([#53](../../pull/53))

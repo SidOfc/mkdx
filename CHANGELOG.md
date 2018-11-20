@@ -1,3 +1,8 @@
+## 03-08-2018 VERSION 1.8.0
+
+- Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))
+- Fix: Unable to position TOC as last header ([#53](../../pull/53))
+
 ## 30-07-2018 VERSION 1.7.1
 
 - Add: Pressing <kbd>enter</kbd> after an inline list item creates a new list item instead of a blank line

@@ -683,7 +683,10 @@ let g:mkdx#settings = {
       \                              'position': 0,
       \                              'details': {
       \                                 'enable': 0,
-      \                                 'summary': 'Click to expand {{toc.text}}'
+      \                                 'summary': 'Click to expand {{toc.text}}',
+      \                                 'nesting_level': -1,
+      \                                 'child_count': 5,
+      \                                 'child_summary': 'show {{count}} items'
       \                              }
       \                            },
       \ 'table':                   { 'divider': '|',

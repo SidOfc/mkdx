@@ -52,7 +52,7 @@ Thank you for making this plugin better!
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#examples">Examples</a><ul>
+    <li><a href="#examples">Examples</a><details><summary>show 22 items</summary><ul>
         <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
@@ -75,8 +75,8 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
-    </ul></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><ul>
+    </ul></details></li>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 42 items</summary><ul>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
@@ -112,11 +112,14 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingstocposition"><code>g:mkdx#settings.toc.position</code></a></li>
         <li><a href="#gmkdxsettingstocdetailsenable"><code>g:mkdx#settings.toc.details.enable</code></a></li>
         <li><a href="#gmkdxsettingstocdetailssummary"><code>g:mkdx#settings.toc.details.summary</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailsnesting_level"><code>g:mkdx#settings.toc.details.nesting_level</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailschild_count"><code>g:mkdx#settings.toc.details.child_count</code></a></li>
+        <li><a href="#gmkdxsettingstocdetailschild_summary"><code>g:mkdx#settings.toc.details.child_summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
         <li><a href="#gmkdxsettingsauto_updateenable"><code>g:mkdx#settings.auto_update.enable</code></a></li>
         <li><a href="#gmkdxsettingsfoldenable"><code>g:mkdx#settings.fold.enable</code></a></li>
         <li><a href="#gmkdxsettingsfoldcomponents"><code>g:mkdx#settings.fold.components</code></a></li>
-    </ul></li>
+    </ul></details></li>
     <li><a href="#mappings">Mappings</a><ul>
         <li><a href="#remapping-functionality">Remapping functionality</a></li>
         <li><a href="#unmapping-functionality-using-nop">Unmapping functionality using <code>&lt;Nop&gt;</code></a></li>
@@ -572,16 +575,19 @@ So instead the TOC itself will be rendered as HTML nested `<ul>` tags with `<li>
 <ul>
 <li><a href="">mkdx.vim</a></li>
 <li><a href="">TOC</a></li>
-<li><a href="">Changelog</a></li>
-<li><ul>
+<li><a href="">Install</a></li>
+<li><a href="">Examples</a></li>
+<li><a href="">Changelog</a><ul>
 <li><a href="">31-03-2018 VERSION 1.1.0</a></li>
 <li><a href="">25-03-2018 VERSION 1.0.2</a></li>
 <li><a href="">24-03-2018 VERSION 1.0.1</a></li>
 </ul></li>
-<li><a href="">Install</a></li>
-<li><a href="">Examples</a></li>
 </ul>
 </details>
+<br />
+
+**Note:** When wrapping the TOC inside a details tag, you can optionally wrap nested items with a lot of children by using [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting_level) and [g:mkdx#settings.toc.details.child_count](#gmkdxsettingstocdetailschild_count).
+Check the [Table of Contents](#table-of-contents) for an example :)
 
 ## Open TOC in quickfix window
 
@@ -1221,6 +1227,40 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 ```viml
 " :h mkdx-setting-toc-details-summary
 let g:mkdx#settings = { 'toc': { 'details': { 'summary': 'Click to expand {{toc.text}}' } } }
+```
+
+## `g:mkdx#settings.toc.details.nesting_level`
+
+Disabled by default. This setting allows additional `<details>` to be generated from a specified nesting level. When enabled,
+it relies on a TOC wrapped as details to already be present or [g:mkdx#settings.toc.details.enable](#gmkdxsettingstocdetailsenable) to be `1`.
+
+Note: `1` is always added to the specified amount, this is to prevent all H1's from being wrapped when setting this value to `0`.
+This means that a nesting level of `5` wraps H6 list items. Think of this value as the 'nth' nesting level, where 0 would make no sense to 'nest' since it is at the root of the list.
+
+```viml
+" :h mkdx-setting-toc-details-nesting-level
+let g:mkdx#settings = { 'toc': { 'details': { 'nesting_level': -1 } } }
+```
+
+## `g:mkdx#settings.toc.details.child_count`
+
+When [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting_level) is enabled, this setting defines
+when to wrap children of a specific list item. This is done by counting the children and either wrapping when the amount
+of items is greater than or equal to this setting.
+
+```viml
+" :h mkdx-setting-toc-details-child-count
+let g:mkdx#settings = { 'toc': { 'details': { 'child_count': 5 } } }
+```
+
+## `g:mkdx#settings.toc.details.child_summary`
+
+This setting is like [g:mkdx#settings.toc.details.summary](#gmkdxsettingstocdetailssummary) but applies to the nested details summary.
+A special `{{count}}` placeholder can be used in the supplied string which will be replaced with the amount of list items wrapped in the details tag.
+
+```viml
+" :h mkdx-setting-toc-details-child-summary
+let g:mkdx#settings = { 'toc': { 'details': { 'child_summary': 'show {{count}} items' } } }
 ```
 
 ## `g:mkdx#settings.highlight.enable`

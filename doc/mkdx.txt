@@ -911,10 +911,10 @@ by default.
 `g:mkdx#settings.toc.details.nesting_level = -1`
 
 Disabled by default, set to a value greater than `-1` to enable.
-This setting allows `<details>` to be generated from specified nesting level.
-It uses |mkdx-setting-toc-details-child-count| to determine the amount of
-children to wrap and |mkdx-settings-toc-details-child-summary| to specify the
-`<summary>` content inside the nested details tag.
+This setting allows additional `<details>` to be generated from specified
+nesting level. It uses |mkdx-setting-toc-details-child-count| to determine the
+amount of children to wrap and |mkdx-settings-toc-details-child-summary| to
+specify the `<summary>` content inside the nested details tag.
 
 This value always gets `1` added to it so setting it to `5` will cause H6
 headers to be collapsed if the amount of children is atleast the specified

@@ -166,8 +166,12 @@ fun! s:util.UpdateTOCStyle(old, new)
   silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
 endfun
 
-fun! s:util.UpdateTOCSummary(old, new)
-  if (g:mkdx#settings.toc.details.enable) | silent! call mkdx#UpdateTOC() | endif
+fun! s:util.UpdateTOCDetails(old, new)
+  let details = get(s:util.GetTOCPositionAndStyle(), 2, g:mkdx#settings.toc.details.enable)
+
+  if (details)
+    silent! call mkdx#UpdateTOC({'details': details})
+  endif
 endfun
 
 fun! s:util.UpdateFencedCodeBlocks(old, new)

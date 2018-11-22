@@ -1,11 +1,11 @@
 """"" UTILITY FUNCTIONS
 " Extracted from shiftwidth() documentation
 if exists('*shiftwidth')
-  func s:sw()
+  fun! s:sw()
     return shiftwidth()
   endfunc
 else
-  func s:sw()
+  fun! s:sw()
     return &sw
   endfunc
 endif
@@ -1628,7 +1628,7 @@ fun! mkdx#GenerateTOC(...)
     let curr         += 1
     let nextlvl       = get(src, curr, [0, -1])[1]
     let headers[hsh]  = get(headers, hsh, -1) + 1
-    let spc           = repeat(repeat(' ', &sw), lvl)
+    let spc           = repeat(repeat(' ', s:sw()), lvl)
     let children      = 0
 
     if (lvl >= child_lvl && nextlvl - lvl == 1)

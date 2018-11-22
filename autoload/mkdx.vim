@@ -1668,14 +1668,7 @@ fun! mkdx#GenerateTOC(...)
 
       call add(contents, repeat(' ', &sw * lvl) . close)
     endif
->>>>>>> Add base implementation for nested details in large toc sub-lists
 
-<<<<<<< HEAD
-    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', s:sw() * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
-||||||| merged common ancestors
-    if (do_details && lvl < prevlvl) | call add(contents, repeat(' ', &sw * lvl) . repeat('</ul></li>', prevlvl - lvl)) | endif
-=======
->>>>>>> Add base implementation for nested details in large toc sub-lists
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
       let header       = repeat(g:mkdx#settings.tokens.header, prevlvl) . ' ' . g:mkdx#settings.toc.text
       let csh          = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
@@ -1697,12 +1690,6 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
-<<<<<<< HEAD
-  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', s:sw()) . repeat('</ul></li>', prevlvl - 1)) | endif
-||||||| merged common ancestors
-  if (do_details && (prevlvl - 1) > 0) | call add(contents, repeat(' ', &sw) . repeat('</ul></li>', prevlvl - 1)) | endif
-=======
-  echom string(children_at_level)
   if (do_details && (prevlvl - 1) > 0)
     let prevl = prevlvl - 1
     let close = ''
@@ -1719,7 +1706,7 @@ fun! mkdx#GenerateTOC(...)
 
     call add(contents, repeat(' ', &sw * (lvl - 1)) . close)
   endif
->>>>>>> Add base implementation for nested details in large toc sub-lists
+
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif
 
   let c = ((!get(a:000, 0, 0) && after_pos) ? after_info[0] : cpos[1]) -

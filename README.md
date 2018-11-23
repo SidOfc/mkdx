@@ -1237,6 +1237,8 @@ it relies on a TOC wrapped as details to already be present or [g:mkdx#settings.
 Note: `1` is always added to the specified amount, this is to prevent all H1's from being wrapped when setting this value to `0`.
 This means that a nesting level of `5` wraps H6 list items. Think of this value as the 'nth' nesting level, where 0 would make no sense to 'nest' since it is at the root of the list.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-details-nesting-level
 let g:mkdx#settings = { 'toc': { 'details': { 'nesting_level': -1 } } }
@@ -1248,6 +1250,8 @@ When [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting
 when to wrap children of a specific list item. This is done by counting the children and either wrapping when the amount
 of items is greater than or equal to this setting.
 
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
 ```viml
 " :h mkdx-setting-toc-details-child-count
 let g:mkdx#settings = { 'toc': { 'details': { 'child_count': 5 } } }
@@ -1257,6 +1261,8 @@ let g:mkdx#settings = { 'toc': { 'details': { 'child_count': 5 } } }
 
 This setting is like [g:mkdx#settings.toc.details.summary](#gmkdxsettingstocdetailssummary) but applies to the nested details summary.
 A special `{{count}}` placeholder can be used in the supplied string which will be replaced with the amount of list items wrapped in the details tag.
+
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 ```viml
 " :h mkdx-setting-toc-details-child-summary

@@ -1,3 +1,16 @@
+## 09-09-2018 VERSION 1.8.1
+
+- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table-and-back)
+- Fix: Only open quickfix when broken links are present([#56](../../pull/56))
+- Fix: Table highlighting now stops at the end of a table ([#57](../../pull/57))
+- Fix: Empty cells in CSV also get a border ([#61](../../pull/61))
+- Fix: All `hasmapto` calls are mode specific ([#64](../../pull/64))
+- Fix: `g:mkdx#settings.restore_visual` can now be disabled during runtime ([#65](../../pull/65))
+- Fix: Wrapping at end of line no longer breaks when line ends with non word characters ([#67](../../pull/67))
+- Fix: No longer pollute register when updating table of contents ([#68](../../issues/68))
+- Fix: Empty setex-style headers are no longer added to quickfix headers or the table of contents ([#69](../../issues/69))
+- Fix: Always empty quickfix list before showing dead links ([#70](../../issues/70))
+
 ## 03-08-2018 VERSION 1.8.0
 
 - Add: Setting to control updating TOC before writing the buffer ([#54](../../pull/54))

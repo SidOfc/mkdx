@@ -129,9 +129,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#23-11-2018-version-190">23-11-2018 VERSION 1.9.0</a></li>
         <li><a href="#20-11-2018-version-183">20-11-2018 VERSION 1.8.3</a></li>
         <li><a href="#13-11-2018-version-182">13-11-2018 VERSION 1.8.2</a></li>
-        <li><a href="#09-09-2018-version-181">09-09-2018 VERSION 1.8.1</a></li>
     </ul></li>
 </ul>
 </details>
@@ -1479,6 +1479,13 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 23-11-2018 VERSION 1.9.0
+
+- Add: Table of contents supports configurable nested details tags
+- Add: [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting_level) to control nested details generation
+- Add: [g:mkdx#settings.toc.details.child_count](#gmkdxsettingstocdetailschild_count) to control after how many children a nested details tag will appear
+- Add: [g:mkdx#settings.toc.details.child_summary](#gmkdxsettingstocdetailschild_summary) to control summary text inside nested details
+
 ## 20-11-2018 VERSION 1.8.3
 
 - Fix: handle unicode characters in list items ([#80](../../issues/80))
@@ -1487,16 +1494,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 13-11-2018 VERSION 1.8.2
 
 - Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop))
-
-## 09-09-2018 VERSION 1.8.1
-
-- Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table-and-back)
-- Fix: Only open quickfix when broken links are present([#56](../../pull/56))
-- Fix: Table highlighting now stops at the end of a table ([#57](../../pull/57))
-- Fix: Empty cells in CSV also get a border ([#61](../../pull/61))
-- Fix: All `hasmapto` calls are mode specific ([#64](../../pull/64))
-- Fix: `g:mkdx#settings.restore_visual` can now be disabled during runtime ([#65](../../pull/65))
-- Fix: Wrapping at end of line no longer breaks when line ends with non word characters ([#67](../../pull/67))
-- Fix: No longer pollute register when updating table of contents ([#68](../../issues/68))
-- Fix: Empty setex-style headers are no longer added to quickfix headers or the table of contents ([#69](../../issues/69))
-- Fix: Always empty quickfix list before showing dead links ([#70](../../issues/70))

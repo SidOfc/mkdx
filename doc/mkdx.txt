@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.8.3`
+`Version: 1.9.0`
 
 `               888b     d888 888    d8P  8888888b. Y88b   d88P`
 `       , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P   |\ - ,`
@@ -55,6 +55,9 @@ CONTENTS                                                         *mkdx-contents*
         `g:mkdx#settings.toc.update_on_write`
         `g:mkdx#settings.toc.details.enable`
         `g:mkdx#settings.toc.details.summary`
+        `g:mkdx#settings.toc.details.nesting_level`
+        `g:mkdx#settings.toc.details.child_count`
+        `g:mkdx#settings.toc.details.child_summary`
         `g:mkdx#settings.highlight.enable`
         `g:mkdx#settings.auto_update.enable`
         `g:mkdx#settings.fold.enable`
@@ -220,8 +223,6 @@ view the menu.
 ==============================================================================
 HELPTAGS                                     *mkdx-tags* *mkdx-help* *mkdx-helptags*
 
-The helptags are split into 4 types, |mdx-settings|, |mkdx-highlighting|,
-|mdx-mappings| and |mdx-functions|. These are the category tags. Within each
 See |mkdx-settings| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
 for functions. Below is a list of all helptags:
 
@@ -267,6 +268,9 @@ for functions. Below is a list of all helptags:
     - |mkdx-setting-toc-update-on-write|
     - |mkdx-setting-toc-details-enable|
     - |mkdx-setting-toc-details-summary|
+    - |mkdx-setting-toc-details-nesting-level|
+    - |mkdx-setting-toc-details-child-count|
+    - |mkdx-setting-toc-details-child-summary|
     - |mkdx-setting-highlight-enable|
     - |mkdx-setting-auto-update-enable|
     - |mkdx-setting-fold-enable|
@@ -425,6 +429,9 @@ at the bottom of every setting section. The default settings hash:
     `      \                              'details':    {`
     `      \                                 'enable':  0,`
     `      \                                 'summary': '{{toc.text}}'`
+          `\                                 'nesting_level': -1,`
+          `\                                 'child_count': 5,`
+          `\                                 'child_summary': 'show {{count}} items'`
     `      \                              }`
     `      \                            },`
     `      \ 'table':                   { 'divider': '|',`
@@ -441,7 +448,7 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'timeout':    3,`
           `\                                 'host':       '',`
           `\                                 'relative':   1,`
-          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.8.3'`
+          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.0'`
           `\                              },`
           `\                              'fragment': {`
           `\                                 'jumplist': 1,`
@@ -508,6 +515,9 @@ s:defaults.toc.position              `=>`
 s:defaults.toc.update_on_write       `=>`
 s:defaults.toc.details.enable        `=>`
 s:defaults.toc.details.summary       `=>`
+s:defaults.toc.details.nesting_level `=>`
+s:defaults.toc.details.child_count   `=>`
+s:defaults.toc.details.child_summary `=>`
 s:defaults.highlight.enable          `=>`
 
 ==============================================================================
@@ -551,7 +561,7 @@ safely append or remove a trailing `/` from your host.
 ==============================================================================
 `g:mkdx#settings.links.external.user_agent =`     *mkdx-setting-links-external-ua*
 ` \ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1)' .`
-` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.8.3'`
+` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.9.0'`
 
 Specify an actual user agent to prevent being blocked from a website.
 If you don't like being `Chrome/9001` then feel free to change it
@@ -897,6 +907,48 @@ be omitted. If it is set to an empty string, |mkdx-setting-toc-text| will be use
 by default.
 
 ==============================================================================
+                                        *mkdx-setting-toc-details-nesting-level*
+`g:mkdx#settings.toc.details.nesting_level = -1`
+
+Disabled by default, set to a value greater than `-1` to enable.
+This setting allows additional `<details>` to be generated from specified
+nesting level. It uses |mkdx-setting-toc-details-child-count| to determine the
+amount of children to wrap and |mkdx-settings-toc-details-child-summary| to
+specify the `<summary>` content inside the nested details tag.
+
+This value always gets `1` added to it so setting it to `5` will cause H6
+headers to be collapsed if the amount of children is atleast the specified
+child count.
+
+Setting this to any value greater than `5` prevents any wrapping from
+happening since headings only go up to H6.
+
+Note: This only works if the TOC is already present and a `<details>` TOC or
+when |mkdx-setting-toc-details-enable| is set to `1`.
+
+==============================================================================
+                                          *mkdx-setting-toc-details-child-count*
+`g:mkdx#settings.toc.details.child_count = 5`
+
+When |mkdx-setting-toc-details-nesting-level| is enabled, this setting defines
+when to wrap. e.g. if there are 4 children in a list item no wrapping will
+occur with the default value since it requires at least `5` list items to be
+present. Reducing it to `3` would cause the children to be wrapped in a nested
+details tag.
+
+Setting this to `0` means that after specified
+|mkdx-setting-toc-details-nesting-level| every list item that contains 1 or
+more nested list items will be wrapped inside a details tag.
+
+==============================================================================
+                                        *mkdx-setting-toc-details-child-summary*
+`g:mkdx#settings.toc.details.child_summary = 'show {{count}} items'`
+
+Controls the text to show inside nested details summary. The special
+placeholder `{{count}}` is replaced with the amount of items hidden in the
+details tag.
+
+==============================================================================
 `g:mkdx#settings.highlight.enable = 0`             *mkdx-setting-highlight-enable*
 
 Enables state-specific highlighting for checkboxes and generic highlighting
@@ -937,6 +989,9 @@ Full list of instant-updated settings:
 - `g:mkdx#settings.toc.text`
 - `g:mkdx#settings.toc.details.enable`
 - `g:mkdx#settings.toc.details.summary`
+- `g:mkdx#settings.toc.details.nesting_level`
+- `g:mkdx#settings.toc.details.child_count`
+- `g:mkdx#settings.toc.details.child_summary`
 - `g:mkdx#settings.toc.position`
 - `g:mkdx#settings.tokens.header`
 - `g:mkdx#settings.tokens.fence`

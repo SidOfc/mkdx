@@ -1,5 +1,201 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Execute (Set TOC details nesting settings):
+  let g:mkdx#settings.toc.details.nesting_level = 0
+
+Given markdown (A file with headers and a <details> table of contents):
+  # TOC
+
+  <details>
+  <summary>Click to expand TOC</summary>
+  <ul>
+      <li><a href="#toc">TOC</a></li>
+      <li><a href="#header-1">Header 1</a></li>
+      <li><a href="#header-2">Header 2</a></li>
+      <li><a href="#header-3">Header 3</a><details><summary>show 7 items</summary><ul>
+          <li><a href="#subheader-of-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-1">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-2">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-4">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-5">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-6">Subheader of 3</a></li>
+      </ul></details></li>
+      <li><a href="#header-with-link">Header with link</a></li>
+      <li><a href="#header-with-img">Header with img</a></li>
+  </ul>
+  </details>
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+
+Do (add header and simulate before save hook):
+  Go# new header\<esc>:call mkdx#UpdateTOC()\<cr>\<esc>
+
+Expect markdown (A table of contents with nested details):
+  # TOC
+
+  <details>
+  <summary>Click to expand TOC</summary>
+  <ul>
+      <li><a href="#toc">TOC</a></li>
+      <li><a href="#header-1">Header 1</a></li>
+      <li><a href="#header-2">Header 2</a></li>
+      <li><a href="#header-3">Header 3</a><details><summary>show 7 items</summary><ul>
+          <li><a href="#subheader-of-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-1">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-2">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-4">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-5">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-6">Subheader of 3</a></li>
+      </ul></details></li>
+      <li><a href="#header-with-link">Header with link</a></li>
+      <li><a href="#header-with-img">Header with img</a></li>
+      <li><a href="#new-header">new header</a></li>
+  </ul>
+  </details>
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+  # new header
+
+Execute (Reset TOC details nesting settings):
+  let g:mkdx#settings.toc.details.nesting_level = -1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute (Set TOC details nesting settings):
+  let g:mkdx#settings.toc.details.nesting_level = 1
+  let g:mkdx#settings.toc.details.child_count = 3
+
+Given markdown (A file with headers and a <details> table of contents):
+  # TOC
+
+  <details>
+  <summary>Click to expand TOC</summary>
+  <ul>
+      <li><a href="#toc">TOC</a></li>
+      <li><a href="#header-1">Header 1</a></li>
+      <li><a href="#header-2">Header 2</a></li>
+      <li><a href="#header-3">Header 3</a><ul>
+          <li><a href="#subheader-of-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-1">Subheader of 3</a><ul>
+              <li><a href="#deeply-nested-not-wrapped">Deeply nested, not wrapped</a></li>
+              <li><a href="#deeply-nested-not-wrapped-1">Deeply nested, not wrapped</a></li>
+          </ul></details></li>
+          <li><a href="#subheader-of-3-2">Subheader of 3</a><details><summary>show 3 items</summary><ul>
+              <li><a href="#deeply-nested-wrapped">Deeply nested, wrapped</a></li>
+              <li><a href="#deeply-nested-wrapped-1">Deeply nested, wrapped</a></li>
+              <li><a href="#deeply-nested-wrapped-2">Deeply nested, wrapped</a></li>
+          </ul></li>
+          <li><a href="#subheader-of-3-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-4">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-5">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-6">Subheader of 3</a></li>
+      </ul></li>
+      <li><a href="#header-with-link">Header with link</a></li>
+      <li><a href="#header-with-img">Header with img</a></li>
+  </ul>
+  </details>
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ### Deeply nested, not wrapped
+  ### Deeply nested, not wrapped
+  ## Subheader of 3
+  ### Deeply nested, wrapped
+  ### Deeply nested, wrapped
+  ### Deeply nested, wrapped
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+
+Do (add header and simulate before save hook):
+  Go# new header\<esc>:call mkdx#UpdateTOC()\<cr>\<esc>
+
+Expect markdown (A table of contents with nested details):
+  # TOC
+
+  <details>
+  <summary>Click to expand TOC</summary>
+  <ul>
+      <li><a href="#toc">TOC</a></li>
+      <li><a href="#header-1">Header 1</a></li>
+      <li><a href="#header-2">Header 2</a></li>
+      <li><a href="#header-3">Header 3</a><ul>
+          <li><a href="#subheader-of-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-1">Subheader of 3</a><ul>
+              <li><a href="#deeply-nested-not-wrapped">Deeply nested, not wrapped</a></li>
+              <li><a href="#deeply-nested-not-wrapped-1">Deeply nested, not wrapped</a></li>
+          </ul></details></li>
+          <li><a href="#subheader-of-3-2">Subheader of 3</a><details><summary>show 3 items</summary><ul>
+              <li><a href="#deeply-nested-wrapped">Deeply nested, wrapped</a></li>
+              <li><a href="#deeply-nested-wrapped-1">Deeply nested, wrapped</a></li>
+              <li><a href="#deeply-nested-wrapped-2">Deeply nested, wrapped</a></li>
+          </ul></li>
+          <li><a href="#subheader-of-3-3">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-4">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-5">Subheader of 3</a></li>
+          <li><a href="#subheader-of-3-6">Subheader of 3</a></li>
+      </ul></li>
+      <li><a href="#header-with-link">Header with link</a></li>
+      <li><a href="#header-with-img">Header with img</a></li>
+      <li><a href="#new-header">new header</a></li>
+  </ul>
+  </details>
+
+  # Header 1
+  # Header 2
+  # Header 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ### Deeply nested, not wrapped
+  ### Deeply nested, not wrapped
+  ## Subheader of 3
+  ### Deeply nested, wrapped
+  ### Deeply nested, wrapped
+  ### Deeply nested, wrapped
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  ## Subheader of 3
+  # Header [with link](https://google.com)
+  # Header ![with img](img.png)
+  # new header
+
+Execute (Reset TOC details nesting settings):
+  let g:mkdx#settings.toc.details.nesting_level = -1
+  let g:mkdx#settings.toc.details.child_count = 5 " mkdx default
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Execute (Enable TOC save on write):
   let g:mkdx#settings.toc.update_on_write = 1
 

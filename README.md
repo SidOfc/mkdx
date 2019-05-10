@@ -129,9 +129,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#10-05-2019-version-191">10-05-2019 VERSION 1.9.1</a></li>
         <li><a href="#23-11-2018-version-190">23-11-2018 VERSION 1.9.0</a></li>
         <li><a href="#20-11-2018-version-183">20-11-2018 VERSION 1.8.3</a></li>
-        <li><a href="#13-11-2018-version-182">13-11-2018 VERSION 1.8.2</a></li>
     </ul></li>
 </ul>
 </details>
@@ -706,7 +706,7 @@ let g:mkdx#settings = {
       \                            },
       \ 'links':                   { 'external': {
       \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.0'
+      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.1'
       \                              },
       \                              'fragment': {
       \                                 'jumplist': 1,
@@ -831,7 +831,7 @@ If you don't like being `Chrome/9001` then feel free to change it into anything 
 
 ```viml
 " :h mkdx-setting-links-external-ua
-let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.0' } } }
+let g:mkdx#settings = { 'links': { 'external': { 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.1' } } }
 ```
 
 ## `g:mkdx#settings.links.fragment.jumplist`
@@ -1485,6 +1485,10 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 10-05-2019 VERSION 1.9.1
+
+- Fix: Handle non-ascii characters in header (TOC) links ([#85](../../pull/85) by @totpet)
+
 ## 23-11-2018 VERSION 1.9.0
 
 - Add: Table of contents supports configurable nested details tags
@@ -1496,7 +1500,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 - Fix: handle unicode characters in list items ([#80](../../issues/80))
 - Fix: handle unicode characters in CSV ([#81](../../issues/81))
-
-## 13-11-2018 VERSION 1.8.2
-
-- Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop))

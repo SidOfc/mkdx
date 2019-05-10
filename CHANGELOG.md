@@ -1,3 +1,7 @@
+## 13-11-2018 VERSION 1.8.2
+
+- Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop))
+
 ## 09-09-2018 VERSION 1.8.1
 
 - Add: Mkdx can convert tables [back to CSV](#convert-csv-to-table-and-back)

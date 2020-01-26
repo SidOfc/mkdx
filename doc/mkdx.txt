@@ -1523,8 +1523,8 @@ visual selection. This function restores visual selection if
 List items                                             *mkdx-mapping-list-items*
                                                                     `o` and <Cr>
 
-When editing a list in markdown, pressing either <enter> in normal mode or `o`
-in insert mode will insert a new list item below the current item. All items
+When editing a list in markdown, pressing either <enter> in insert mode or `o`
+in normal mode will insert a new list item below the current item. All items
 following the newly added item are incremented accordingly. The following
 patterns are identified as list tokens:
 

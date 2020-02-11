@@ -106,7 +106,7 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal completeopt+=noinsert,menuone
 endif
 
-if (g:mkdx#settings.fold.enable)
+if (!get(g:, 'markdown_folding', 0) && g:mkdx#settings.fold.enable)
   setlocal foldmethod=expr
   setlocal foldexpr=mkdx#fold(v:lnum)
 endif

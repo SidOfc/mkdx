@@ -191,6 +191,8 @@ fun! s:util.UpdateFolds(old, new)
 endfun
 
 fun! s:util.ToggleFolds(old, new)
+  if (!get(g:, 'markdown_folding', 0)) | return | endif
+
   if (a:new)
     if (&foldexpr != 'mkdx#fold(v:lnum)')
       setlocal foldmethod=expr

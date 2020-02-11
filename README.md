@@ -209,6 +209,9 @@ Folding in mkdx can be enabled by setting [`g:mkdx#settings.fold.enable`](#gmkdx
 Both the table of contents and fenced code blocks can be folded independently as well, see [`g:mkdx#settings.fold.components`](#gmkdxsettingsfoldcomponents) for more information.
 We also see a tiny bit of [auto update](#gmkdxsettingsauto_updateenable) in this example, that shows that the new value gets applied instantly.
 
+**NOTE:** this functionality conflicts with [tpope's vim-markdown plugin](https://github.com/tpope/vim-markdown).
+When `g:markdown_folding = 1`, mkdx will do nothing with `foldmethod` and `foldexpr` and leave them intact for vim-markdown.
+
 ## Insert mode fragment completion
 
 ![mkdx insert mode fragment completion](doc/gifs/vim-mkdx-insert-completions.gif)

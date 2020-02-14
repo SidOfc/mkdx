@@ -184,6 +184,8 @@ fun! s:util.UpdateFencedCodeBlocks(old, new)
 endfun
 
 fun! s:util.UpdateFolds(old, new)
+  if (!g:mkdx#settings.fold.enable) | return | endif
+
   let s:util._fold_fence = index(a:new, 'fence') > -1
   let s:util._fold_toc   = index(a:new, 'toc')   > -1
 
@@ -191,7 +193,7 @@ fun! s:util.UpdateFolds(old, new)
 endfun
 
 fun! s:util.ToggleFolds(old, new)
-  if (!get(g:, 'markdown_folding', 0)) | return | endif
+  if (!g:mkdx#settings.fold.enable) | return | endif
 
   if (a:new)
     if (&foldexpr != 'mkdx#fold(v:lnum)')
@@ -1093,6 +1095,7 @@ fun! mkdx#MergeSettings(...)
 endfun
 
 fun! mkdx#fold(lnum)
+  if (!g:mkdx#settings.fold.enable) | return | endif
   if (a:lnum == 1 || s:util._update_folds)
     let s:util._folds        = []
     let s:util._update_folds = 0

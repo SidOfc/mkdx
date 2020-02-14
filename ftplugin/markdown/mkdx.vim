@@ -1,4 +1,4 @@
-if exists('b:did_ftplugin') | finish | else | let b:did_ftplugin = 1 | endif
+if exists('b:did_ftplugin_mkdx') | finish | else | let b:did_ftplugin_mkdx = 1 | endif
 let s:defaults          = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
@@ -106,7 +106,11 @@ if (g:mkdx#settings.links.fragment.complete)
   setlocal completeopt+=noinsert,menuone
 endif
 
-if (!get(g:, 'markdown_folding', 0) && g:mkdx#settings.fold.enable)
+if (get(g:, 'markdown_folding', 0))
+  g:mkdx#settings.fold.enable = 0
+endif
+
+if (g:mkdx#settings.fold.enable)
   setlocal foldmethod=expr
   setlocal foldexpr=mkdx#fold(v:lnum)
 endif

@@ -1510,6 +1510,7 @@ fun! mkdx#EnterHandler()
     let at_end  = cnum > len
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')
+    let t       = t == '>' ? '' : t
     let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
     let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
     let remove  = empty(substitute(line, sp_pat . ' *', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0)

@@ -17,6 +17,32 @@ Execute (Syntax groups are correctly set):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given (A markdown quote):
+  - quote text
+
+Do (<enter> at end of the quote inserts a quote mark on a new line):
+  A\<cr>
+
+Expect (An empty list item):
+  - quote text
+  - 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A markdown multi line quote):
+  > quote text
+  > some more
+
+Do (<o> on a quoted line inserts a new empty quote mark in the middle):
+  o
+
+Expect (An empty list item):
+  > quote text
+  > 
+  > some more
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A markdown list):
   - list item
   - list item

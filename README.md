@@ -481,7 +481,13 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 
 In some cases you may want to quote more than one line or block of text.
 To cover this case, typing an additional space followed by an enter after
-an empty quote line will keep the symbol and create a new empty quote line below it.
+an empty quote line will keep the symbol and create a new empty quote line below it:
+
+```markdown
+> this is some text in a quote
+>  
+> 
+```
 
 ## Wrap as link
 

@@ -477,6 +477,12 @@ Toggle quotes on the current line or a visual selection with <kbd>[\<PREFIX\>](#
 " :h mkdx-function-toggle-quote
 ```
 
+**Typing a multi-paragraph quote**
+
+In some cases you may want to quote more than one line or block of text.
+To cover this case, typing an additional space followed by an enter after
+an empty quote line will keep the symbol and create a new empty quote line below it.
+
 ## Wrap as link
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)

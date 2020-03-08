@@ -1524,6 +1524,11 @@ fun! mkdx#EnterHandler()
       call s:util.UpdateListNumbers((after_inl ? tmp_lnum : lnum), incr, (remove ? -1 : 1))
     endif
 
+    if (remove && qu_str[0] == '>' && strlen(get(matchlist(getline(lnum), '\s\+$'), 0, '')) > 1)
+      let remove = 0
+      let qu_str = substitute(qu_str, '\s\+$', '', 'g') . ' '
+    endif
+
     " autoindent gets reenabled outside of this function
     if (after_inl)                                | setlocal noautoindent                                                      | endif
     if (remove)                                   | call setline('.', '')                                                      | endif
@@ -1532,10 +1537,12 @@ fun! mkdx#EnterHandler()
     if ((match(line, '^ *\*\*') > -1) || !at_end) | return "\n" . qu_str                                                       | endif
     if (tcb)                                      | return "\n" . qu_str . '[' . g:mkdx#settings.checkbox.initial_state . '] ' | endif
 
-    return ("\n"
-      \ . qu_str
-      \ . (match(t, '[0-9.]\+') > -1 ? s:util.NextListNumber(t, incr > -1 ? incr : 0) : t)
-      \ . (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (!empty(t) ? ' ' : '')))
+    let result = ["\n",
+      \ qu_str,
+      \ (match(t, '[0-9.]\+') > -1 ? s:util.NextListNumber(t, incr > -1 ? incr : 0) : t),
+      \ (cb ? ' [' . g:mkdx#settings.checkbox.initial_state . '] ' : (!empty(t) ? ' ' : ''))]
+
+    return join(result, '')
   endif
 
   return "\n"

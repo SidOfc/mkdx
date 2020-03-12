@@ -1126,7 +1126,7 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `mkdx#CompleteLink()`
 
 ==============================================================================
-<Plug>(mkdx-checkbox-next-n)                         *mkdx-plug-checkbox-next-v*
+<Plug>(mkdx-checkbox-next-n)                         *mkdx-plug-checkbox-next-n*
 
     `:call mkdx#ToggleCheckboxState()<Cr>`
 
@@ -2130,6 +2130,10 @@ repeat.vim. This requires you to setup a <Plug>(custom-plug) mapping. You
 would then supply the name of your plug as value for {repeat}. In this case it
 would be `custom-plug`.
 
+When {repeat} is supplied and repeat.vim is installed, the function will call:
+
+`   silent! repeat#set("\<Plug>(" . ` {repeat} ` . ")")`
+
 Note: If you are considering to repeat a visual mode command, this will work
 still but in this case it will repeat on the previously selected text.
 
@@ -2327,25 +2331,6 @@ There are two kinds of folds that mkdx understands:
 
 Folding can be disabled for {fence} and {toc} individually by changing
 |mkdx-setting-fold-components|.
-
-==============================================================================
-mkdx#WrapText([{mode}[, {start}[, {end}[, {plug}]]]])  *mkdx-function-wrap-text*
-
-Wraps text based on {mode}, when omitted, this defaults to 'n' and the current
-word under the cursor will be wrapped with {start} and {end}.
-
-{mode} can be `'n'` or `'v'` for 'normal' and 'visual' mode respectively.
-In visual mode, the selection will be wrapped. This also works for multi-line
-selections.
-
-If {start} is omitted, it defaults to an empty string.
-{end} defaults to {start}. when omitted.
-
-When {plug} is supplied and repeat.vim is installed, the function will call:
-
-`   silent! repeat#set("\<Plug>(" . ` {plug} ` . ")")`
-
-The {start}, {end} and {plug} arguments must be string values.
 
 ==============================================================================
 mkdx#WrapStrike([{mode}[, {plug}]])                  *mkdx-function-wrap-strike*

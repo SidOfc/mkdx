@@ -1331,6 +1331,32 @@ fun! mkdx#ToggleCheckboxTask()
   silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox-n)")
 endfun
 
+fun! QuoteLineInfo(lnum)
+  let line = getline(a:lnum)
+
+  return {'lnum': a:lnum, 'empty': empty(line), 'line': line}
+endfun
+
+fun! mkdx#ToggleQuoteSelection() range
+  let mapped_lines = map(range(a:firstline, a:lastline), {_, lnum -> QuoteLineInfo(lnum)})
+  let first_nonempty = -1
+  let last_nonempty = -1
+
+  for current in mapped_lines
+    if !current.empty
+      let last_nonempty = current.lnum
+
+      if first_nonempty == -1 | let first_nonempty = current.lnum | endif
+    endif
+  endfor
+
+  for current in mapped_lines
+    if current.lnum >= first_nonempty && current.lnum <= last_nonempty
+      call setline(current.lnum, s:util.transform(current.line, ['toggle-quote']))
+    endif
+  endfor
+endfun
+
 fun! mkdx#ToggleQuote()
   let line = getline('.')
   if (!empty(line)) | call setline('.', s:util.transform(getline('.'), ['toggle-quote'])) | endif

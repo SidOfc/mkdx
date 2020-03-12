@@ -83,11 +83,31 @@ Do (<prefix>'):
 Expect (The line to be a quote):
   > hello world
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A regular line):
+  hello world
+
 Do (<prefix>'<prefix>'):
    ' '
 
 Expect (The line to be unchanged):
   hello world
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (multiple paragraphs of unquoted text):
+  hello world
+
+  another paragraph
+
+Do (<prefix>' in Visual Mode):
+   \<S-v>3j '
+
+Expect (The selection to be quoted):
+  > hello world
+  > 
+  > another paragraph
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

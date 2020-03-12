@@ -157,6 +157,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#ToggleCheckboxState()
         mkdx#WrapLink()
         mkdx#ToggleQuote()
+        mkdx#ToggleQuoteSelection()
         mkdx#ToggleHeader()
         mkdx#JumpToHeader()
         mkdx#Tableize()
@@ -372,6 +373,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-toggle-checkbox|
     - |mkdx-function-wrap-link|
     - |mkdx-function-toggle-quote|
+    - |mkdx-function-toggle-quote-selection|
     - |mkdx-function-toggle-header|
     - |mkdx-function-jump-to-header|
     - |mkdx-function-tableize|
@@ -1161,7 +1163,7 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 ==============================================================================
 <Plug>(mkdx-toggle-quote-v)                           *mkdx-plug-toggle-quote-v*
 
-    `:call mkdx#ToggleQuote()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
+    `:call mkdx#ToggleQuoteSelection()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-wrap-link-n)                                 *mkdx-plug-wrap-link-n*
@@ -1737,12 +1739,30 @@ to prepend a URL / path. To disable link wrapping, see:
 ==============================================================================
 mkdx#ToggleQuote()                                  *mkdx-function-toggle-quote*
 
-This function works in |Normal-mode| and |Visual-mode|. It toggles a markdown quote
+This function works in |Normal-mode|. It toggles a markdown quote
 on a line, if a qoute mark (`>`) is present, it will be removed, otherwise it
 will be prepended.
 
     This is an awesome quote!   ` => ` > This is an awesome quote!
     > This is an awesome quote! ` => ` This is an awesome quote!
+
+==============================================================================
+mkdx#ToggleQuoteSelection()               *mkdx-function-toggle-quote-selection*
+
+This function works in |Visual-mode|. It toggles a markdown quote
+on a selection, if a qoute mark (`>`) is present, it will be removed,
+otherwise it will be prepended.
+
+    This is an awesome quote!   ` => ` > This is an awesome quote!
+    > This is an awesome quote! ` => ` This is an awesome quote!
+
+On multiple paragraphs of text, mkdx will preserve "inner empty lines" as part
+of the quote. Empty lines at the start and end of a selection are
+ignored:
+
+    This is a multi-paragraph        > This is a multi-line paragraph
+                                 `=>`  > 
+    Quote of text                    > Quote of text
 
 ==============================================================================
 mkdx#ToggleHeader([, {increment}])                 *mkdx-function-toggle-header*

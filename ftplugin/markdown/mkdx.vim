@@ -60,7 +60,7 @@ noremap         <silent> <Plug>(mkdx-checkbox-prev-n)    :call      mkdx#ToggleC
 noremap         <silent> <Plug>(mkdx-checkbox-next-v)    :call      mkdx#ToggleCheckboxState()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-checkbox-prev-v)    :call      mkdx#ToggleCheckboxState(1)<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-quote-n)     :call      mkdx#ToggleQuote()<Cr>
-noremap         <silent> <Plug>(mkdx-toggle-quote-v)     :call      mkdx#ToggleQuote()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
+noremap         <silent> <Plug>(mkdx-toggle-quote-v)     :call      mkdx#ToggleQuoteSelection()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-checkbox-n)  :call      mkdx#ToggleCheckboxTask()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-checkbox-v)  :call      mkdx#ToggleCheckboxTask()<Cr>:call mkdx#MaybeRestoreVisual()<Cr>
 noremap         <silent> <Plug>(mkdx-toggle-checklist-n) :call      mkdx#ToggleChecklist()<Cr>

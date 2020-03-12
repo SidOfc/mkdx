@@ -1282,6 +1282,18 @@ fun! mkdx#WrapText(...)
   endif
 endfun
 
+fun! mkdx#WrapSelectionInCode() range
+  let is_linewise = getpos("'>")[2] > 10000000
+
+  echom string(getpos("'>")) is_linewise
+
+  if is_linewise
+    return "xi```\<Cr>```\<Cr>\<Esc>2kp"
+  else
+    return ":\<C-U>call mkdx#WrapText('v', '`', '`')\<Cr>"
+  end
+endfun
+
 fun! mkdx#WrapStrike(...)
   let m = get(a:000, 0, 'n')
   let a = get(a:000, 1, '')

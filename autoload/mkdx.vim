@@ -1282,6 +1282,39 @@ fun! mkdx#WrapText(...)
   endif
 endfun
 
+fun! mkdx#WrapCutTextInCodeBlock() range
+  let first_line = getpos("'<")[1]
+  let last_line  = getpos("'>")[1]
+
+  let lines = getline(first_line, last_line)
+  let line_len = len(lines)
+  let start_idx = 0
+  let end_idx = line_len - 1
+
+  while (start_idx < line_len) && empty(lines[start_idx]) | let start_idx = start_idx + 1 | endwhile
+  while (end_idx > 0) && empty(lines[end_idx]) | let end_idx = end_idx - 1 | endwhile
+
+  call insert(lines, '```', start_idx)
+  call insert(lines, '```', end_idx + 2)
+
+  let old_fold = g:mkdx#settings.fold.enable
+  let g:mkdx#settings.fold.enable = 0
+
+  call deletebufline(bufname('%'), first_line, last_line)
+  call append(first_line - 1, lines)
+
+  let g:mkdx#settings.fold.enable = 0
+endfun
+
+fun! mkdx#WrapSelectionInCode() range
+  echom string(a:firstline) string(a:lastline)
+  if (mode() ==# 'V')
+    return ":\<C-U>call mkdx#WrapCutTextInCodeBlock()\<Cr>"
+  else
+    return ":\<C-U>call mkdx#WrapText('v', '`', '`')\<Cr>"
+  end
+endfun
+
 fun! mkdx#WrapStrike(...)
   let m = get(a:000, 0, 'n')
   let a = get(a:000, 1, '')
@@ -1331,19 +1364,13 @@ fun! mkdx#ToggleCheckboxTask()
   silent! call repeat#set("\<Plug>(mkdx-toggle-checkbox-n)")
 endfun
 
-fun! QuoteLineInfo(lnum)
-  let line = getline(a:lnum)
-
-  return {'lnum': a:lnum, 'empty': empty(line), 'line': line}
-endfun
-
 fun! mkdx#ToggleQuoteSelection() range
-  let mapped_lines = map(range(a:firstline, a:lastline), {_, lnum -> QuoteLineInfo(lnum)})
+  let mapped_lines = map(range(a:firstline, a:lastline), {_, lnum -> {'lnum': lnum, 'line': getline(lnum)}})
   let first_nonempty = -1
   let last_nonempty = -1
 
   for current in mapped_lines
-    if !current.empty
+    if !empty(current.line)
       let last_nonempty = current.lnum
 
       if first_nonempty == -1 | let first_nonempty = current.lnum | endif

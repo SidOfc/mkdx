@@ -232,6 +232,8 @@ Do (<prefix>` (inline-code "Hello")):
 Expect (The word "Hello" to be inline-code):
   `Hello` world
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A paragraph of text):
   Hello there
   this is an awesome short
@@ -240,10 +242,31 @@ Given (A paragraph of text):
 Do (Vj<prefix>`):
   Vj `
 
+" FIXME mkdx#WrapCutTextInCodeBlock() might use a method which works with
+"       real buffers, but not the virtual "vader" buffers
+" Expect (Line including newline to be wrapped):
+"   ```
+"   Hello there
+"   this is an awesome short
+"   ```
+"   paragraph of text
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A paragraph of text):
+  Hello there
+  this is an awesome short
+  paragraph of text
+
+Do (vj<prefix>`):
+  vj999l `
+
 Expect (Line including newline to be wrapped):
   `Hello there
   this is an awesome short`
   paragraph of text
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line "Hello world"):
   Hello world

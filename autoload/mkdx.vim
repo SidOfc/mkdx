@@ -1290,12 +1290,13 @@ fun! mkdx#WrapCutTextInCodeBlock() range
   let line_len = len(lines)
   let start_idx = 0
   let end_idx = line_len - 1
+  let fence_style = strlen(g:mkdx#settings.tokens.fence) > 0 ? g:mkdx#settings.tokens.fence : '`'
 
   while (start_idx < line_len) && empty(lines[start_idx]) | let start_idx = start_idx + 1 | endwhile
   while (end_idx > 0) && empty(lines[end_idx]) | let end_idx = end_idx - 1 | endwhile
 
-  call insert(lines, '```', start_idx)
-  call insert(lines, '```', end_idx + 2)
+  call insert(lines, repeat(fence_style, 3), start_idx)
+  call insert(lines, repeat(fence_style, 3), end_idx + 2)
 
   let old_fold = g:mkdx#settings.fold.enable
   let g:mkdx#settings.fold.enable = 0

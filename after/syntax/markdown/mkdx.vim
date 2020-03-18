@@ -53,7 +53,7 @@ if hlexists('Delimiter')
   highlight default link mkdxKbdOpening            Delimiter
   highlight default link mkdxKbdEnding             mkdxKbdOpening
 
-  highlight default      mkdxBoldItalic            ctermfg=14 guifg=#8a553f cterm=bold term=bold gui=bold
+  highlight default      mkdxBoldItalic            ctermfg=14 guifg=#8a553f cterm=bold,italic term=bold,italic gui=bold,italic
 endif
 
 if hlexists('Identifier')

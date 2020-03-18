@@ -53,7 +53,11 @@ if hlexists('Delimiter')
   highlight default link mkdxKbdOpening            Delimiter
   highlight default link mkdxKbdEnding             mkdxKbdOpening
 
-  highlight default      mkdxBoldItalic            ctermfg=14 guifg=#8a553f cterm=bold,italic term=bold,italic gui=bold,italic
+  let real_syn_id = synIDtrans(hlID("mkdxBoldItalicDelimiter"))
+  let cterm_fg    = synIDattr(real_syn_id, 'fg', 'cterm')
+  let gui_fg      = synIDattr(real_syn_id, 'fg', 'gui')
+
+  exe 'highlight default mkdxBoldItalic ctermfg=' .  cterm_fg . ' guifg=' . gui_fg . ' cterm=bold,italic gui=bold,italic'
 endif
 
 if hlexists('Identifier')

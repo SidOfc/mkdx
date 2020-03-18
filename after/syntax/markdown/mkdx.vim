@@ -97,9 +97,14 @@ if hlexists('htmlStrike')
 endif
 
 if mkdx#in_rtp('syntax/yaml.vim')
-  syn include @YAML syntax/yaml.vim
-  unlet b:current_syntax
-  syn region YAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
+  " below code is taken from vim-pandoc-syntax:
+  " https://github.com/vim-pandoc/vim-pandoc-syntax/blob/0d1129e5cf1b0e3a90e923c3b5f40133bf153f7c/syntax/pandoc.vim#L558-L565
+  try
+    unlet! b:current_syntax
+    syn include @YAML syntax/yaml.vim
+  catch /E484/
+  endtry
+  syn region mkdxYAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
 endif
 
 hi default link mkdxCriticAdd              DiffText

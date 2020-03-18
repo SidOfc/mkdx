@@ -3,6 +3,8 @@ if (exists('g:mkdx#settings') && g:mkdx#settings.highlight.enable != 1) | finish
 " https://github.com/mattly/vim-markdown-enhancements/blob/master/after/syntax/markdown.vim
 " the table highlighting and CriticMarkup are taken from this repo, which is now read-only,
 " thanks @mattly for your contribution, and once again some time later ;)
+"
+" guide (todo): https://github.com/fletcher/MultiMarkdown/wiki/MultiMarkdown-Syntax-Guide
 syn region  mkdxTable start="^\%(\[.*\]\n\)\{}.*|.*\n[-|\:\. ]\+$" end="^\%(\n\[.*\]\n\)\{-}\ze\%(\n[^|]\+\n\)\{-}$" keepend contains=mkdxTableHeader,mkdxTableHeadDelimiter,mkdxTableDelimiter,mkdxTableCaption
 syn match   mkdxTableDelimiter "|" contained
 syn match   mkdxTableAlign "[\.:]" contained
@@ -48,9 +50,10 @@ if hlexists('Delimiter')
   highlight default link mkdxTableHeadDelimiter    Delimiter
   highlight default link mkdxTableCaptionDelimiter Delimiter
   highlight default link mkdxBoldItalicDelimiter   Delimiter
-  highlight default link mkdxBoldItalic            Delimiter
   highlight default link mkdxKbdOpening            Delimiter
   highlight default link mkdxKbdEnding             mkdxKbdOpening
+
+  highlight default      mkdxBoldItalic            ctermfg=14 guifg=#8a553f cterm=bold term=bold gui=bold
 endif
 
 if hlexists('Identifier')

@@ -96,6 +96,12 @@ if hlexists('htmlStrike')
     syn region mkdxStrikeThrough matchgroup=markdownStrikeThroughDelimiter start="\S\@<=\~\~\|\~\~\S\@=" end="\S\@<=\~\~\|\~\~\S\@=" keepend contains=markdownLineStart
 endif
 
+if mkdx#in_rtp('syntax/yaml.vim')
+  syn include @YAML syntax/yaml.vim
+  unlet b:current_syntax
+  syn region YAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
+endif
+
 hi default link mkdxCriticAdd              DiffText
 hi default link mkdxCriticAddition         DiffAdd
 hi default link mkdxCriticDel              DiffText

@@ -1792,6 +1792,16 @@ fun! mkdx#GenerateTOC(...)
   return len(contents)
 endfun
 
+fun! mkdx#in_rtp(relative_path)
+  for rtp in split(&rtp, ',')
+    if filereadable(join([substitute(rtp, '/\+$', '', 'g'), a:relative_path], '/'))
+      return 1
+    endif
+  endfor
+
+  return 0
+endfun
+
 if $VIM_DEV
   let g:mkdx#util = s:util
 endif

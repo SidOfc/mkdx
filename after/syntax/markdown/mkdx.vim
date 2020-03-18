@@ -1,8 +1,8 @@
 if (exists('g:mkdx#settings') && g:mkdx#settings.highlight.enable != 1) | finish | endif
 
 " https://github.com/mattly/vim-markdown-enhancements/blob/master/after/syntax/markdown.vim
-" the table highlighting is taken from this repo, which is now read-only,
-" thanks @mattly for your contribution ;)
+" the table highlighting and CriticMarkup are taken from this repo, which is now read-only,
+" thanks @mattly for your contribution, and once again some time later ;)
 syn region  mkdxTable start="^\%(\[.*\]\n\)\{}.*|.*\n[-|\:\. ]\+$" end="^\%(\n\[.*\]\n\)\{-}\ze\%(\n[^|]\+\n\)\{-}$" keepend contains=mkdxTableHeader,mkdxTableHeadDelimiter,mkdxTableDelimiter,mkdxTableCaption
 syn match   mkdxTableDelimiter "|" contained
 syn match   mkdxTableAlign "[\.:]" contained
@@ -21,6 +21,22 @@ syn region  mkdxInlineCode matchgroup=mkdxInlineCodeDelimiter start="``\@!" end=
 syn match   mkdxKbdText '\%(kbd>\)\@<=[^ >]\+\%(<\/\?kbd\)\@='
 syn match   mkdxKbdOpening '<kbd>'
 syn match   mkdxKbdEnding '<\/kbd>'
+
+" CriticMarkup
+" reference: http://criticmarkup.com
+syn region mkdxCriticAddition matchgroup=mdCriticAdd start=/{++/ end=/++}/ contains=mdCriticAddStartMark, mdCriticAddEndMark concealends
+syn match  mkdxCriticAddStartMark /{++/ contained conceal
+syn match  mkdxCriticAddEndMark /++}/ contained conceal
+syn region mkdxCriticDeletion matchgroup=mdCriticDel start=/{--/ end=/--}/ contains=mdCriticDelStartMark,mdCriticDelEndMark concealends
+syn match  mkdxCriticDelStartMark /{--/ contained conceal
+syn match  mkdxCriticDelEndMark /--}/ contained conceal
+syn region mkdxCriticSubRemove start=/{\~\~/ end=/.\(\~>\)\@=/ keepend
+syn match  mkdxCriticSubStartMark /{\~\~/ contained containedin=mdCriticSubRemove conceal
+syn region mkdxCriticSubstitute start=/\~>/ end=/\~\~}/ keepend
+syn match  mkdxCriticSubTransMark /\~>/ contained containedin=mdCriticSubstitute conceal
+syn match  mkdxCriticSubEndMark /\~\~}/ contained containedin=mdCriticSubstitute conceal
+syn region mkdxCriticComment matchgroup=mdCriticExtra start=/{>>/ end=/<<}/ concealends
+syn region mkdxCriticHighlight matchgroup=mdCriticExtra start=/{==/ end=/==}/ concealends
 
 if hlexists('Constant')
   highlight default link mkdxTableHeader Constant
@@ -72,3 +88,16 @@ if hlexists('htmlStrike')
     highlight default link mkdxStrikeThrough htmlStrike
     syn region mkdxStrikeThrough matchgroup=markdownStrikeThroughDelimiter start="\S\@<=\~\~\|\~\~\S\@=" end="\S\@<=\~\~\|\~\~\S\@=" keepend contains=markdownLineStart
 endif
+
+hi default link mkdxCriticAdd              DiffText
+hi default link mkdxCriticAddition         DiffAdd
+hi default link mkdxCriticDel              DiffText
+hi default link mkdxCriticDeletion         DiffDelete
+hi default link mkdxCriticSubRemove        DiffDelete
+hi default link mkdxCriticSubstitute       DiffAdd
+hi default link mkdxCriticSubStartMark     DiffText
+hi default link mkdxCriticSubTransMark     DiffText
+hi default link mkdxCriticSubEndMark       DiffText
+hi default link mkdxCriticComment          Comment
+hi default link mkdxCriticHighlight        Todo
+hi default link mkdxCriticExtra            DiffText

@@ -57,6 +57,9 @@ if hlexists('Delimiter')
   let cterm_fg    = synIDattr(real_syn_id, 'fg', 'cterm')
   let gui_fg      = synIDattr(real_syn_id, 'fg', 'gui')
 
+  if (empty(cterm_fg)) | let cterm_fg = '224'    | endif
+  if (empty(gui_fg))   | let gui_fg   = 'Orange' | endif
+
   exe 'highlight default mkdxBoldItalic ctermfg=' .  cterm_fg . ' guifg=' . gui_fg . ' cterm=bold,italic gui=bold,italic'
 endif
 

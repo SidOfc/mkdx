@@ -1723,6 +1723,7 @@ fun! mkdx#GenerateTOC(...)
       call insert(children_at_level, lvl)
     endif
 
+    echom 'line: "' . line . '", lvl:' lvl 'prevlvl:' prevlvl
     if (do_details && lvl < prevlvl)
       let prevl = prevlvl
       let close = ''

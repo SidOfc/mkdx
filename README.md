@@ -1288,22 +1288,55 @@ let g:mkdx#settings = { 'toc': { 'details': { 'child_summary': 'show {{count}} i
 
 ## `g:mkdx#settings.highlight.enable`
 
-This setting enables state-specific highlighting for checkboxes and tables.
-The highlighting is linked to the `gitcommit*` family of highlight groups (and Comment for list items), full list:
-If you want to change the highlighting groups, `link` them to different groups:
+This setting enables mkdx highlighting.
+mkdx attempts to improve highlighting for the following syntax in a markdown file:
 
-```viml
-" :h mkdx-highlighting
+- Tables
+- List items
+- Checkboxes (including their state, `[x]` (done), `[-]` (doing, not compatible with GH), and `[ ]` (todo))
+- Fenced code blocks with tilde (this is just about highlight color of tilde, not code inside it)
+- bold-italic text (text which is both bold _and_ italic)
+- keyboard tags
+- [CriticMarkup](http://criticmarkup.com/)
+- YAML front-matter
+- Inline code blocks
 
-" these are the defaults, defined by mkdx in after/syntax/markdown/mkdx.vim
-highlight default link mkdxListItem Comment
-highlight default link mkdxCheckboxEmpty gitcommitUnmergedFile
-highlight default link mkdxCheckboxPending gitcommitBranch
-highlight default link mkdxCheckboxComplete gitcommitSelectedFile
+All other syntax remains untouched.
 
-" to change the color of list items to the "jsOperator" group, one would write this in their vimrc:
-highlight link mkdxListItem jsOperator
-```
+<details>
+<summary>Full list of highlight groups</summary>
+<ul>
+<li><code>mkdxTable</code></li>
+<li><code>mkdxTableDelimiter</code></li>
+<li><code>mkdxTableAlign</code></li>
+<li><code>mkdxTableHeader</code></li>
+<li><code>mkdxTableHeadDelimiter</code></li>
+<li><code>mkdxTableCaption</code></li>
+<li><code>mkdxListItem</code></li>
+<li><code>mkdxCheckboxEmpty</code></li>
+<li><code>mkdxCheckboxPending</code></li>
+<li><code>mkdxCheckboxComplete</code></li>
+<li><code>mkdxTildeFence</code></li>
+<li><code>mkdxBoldItalic</code></li>
+<li><code>mkdxInlineCode</code></li>
+<li><code>mkdxKbdText</code></li>
+<li><code>mkdxKbdOpening</code></li>
+<li><code>mkdxKbdEnding</code></li>
+<li><code>mkdxCriticAddition</code></li>
+<li><code>mkdxCriticAddStartMark</code></li>
+<li><code>mkdxCriticAddEndMark</code></li>
+<li><code>mkdxCriticDeletion</code></li>
+<li><code>mkdxCriticDelStartMark</code></li>
+<li><code>mkdxCriticDelEndMark</code></li>
+<li><code>mkdxCriticSubRemove</code></li>
+<li><code>mkdxCriticSubStartMark</code></li>
+<li><code>mkdxCriticSubstitute</code></li>
+<li><code>mkdxCriticSubTransMark</code></li>
+<li><code>mkdxCriticSubEndMark</code></li>
+<li><code>mkdxCriticComment</code></li>
+<li><code>mkdxCriticHighlight</code></li>
+</ul>
+</details>
 
 Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.

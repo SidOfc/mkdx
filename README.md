@@ -679,6 +679,8 @@ To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
 
 # `g:mkdx#settings`
 
+**IMPORTANT**: _within your .vimrc / config/nvim/init.vim files you will not be able to use the 'short' `g:mkdx#settings.setting.name` style. these are only intended to be used in EX mode (when typing a `:` command)_
+
 All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
 If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.
 Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.

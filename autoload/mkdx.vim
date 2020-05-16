@@ -609,7 +609,7 @@ let s:wrap_hl_map = {
       \ 'mkdx-text-italic-n':      ['markdownItalic', 'markdownItalicDelimiter'],
       \ 'mkdx-text-bold-n':        ['markdownBold',   'markdownBoldDelimiter'],
       \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag'],
-      \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter'],
+      \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter', 'markdownLink'],
       \ 'mkdx-text-inline-code-n': ['mkdxInlineCode']
       \ }
 
@@ -666,7 +666,15 @@ endfun
 
 fun! s:util.unwrap(type, start, end)
   let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
+  let end = a:end
 
+  if (a:end == ']()') " end of markdown link, may contain link
+    let link_start = getline(slnum)[scol:]
+    let open_paren = match(link_start, '](')
+    let close_paren = match(link_start, ')', open_paren)
+    let url = link_start[(open_paren + 2):(close_paren - 1)]
+    let end = '](' . url . ')'
+  endif
   " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
 
   let sline = getline(slnum)
@@ -678,7 +686,7 @@ fun! s:util.unwrap(type, start, end)
   call setline(slnum, sa . sb)
 
   let eline = getline(elnum)
-  let eoff  = strlen(a:end)
+  let eoff  = strlen(end)
   let epos  = max([ecol - 1, 0]) - (slnum == elnum ? soff : 0) - eoff
   let ea    = eline[0:epos]
   let eb    = eline[(epos + 1 + eoff):]
@@ -710,6 +718,7 @@ fun! s:util.WrapSelectionOrWord(...)
     if s:util.isAlreadyWrapped(type)
       call s:util.unwrap(type, start, end)
       call cursor(line('.'), vcol - strlen(start))
+      return 'unwrap'
     else
       let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
       let mvcol  = vcol - 2
@@ -1456,7 +1465,9 @@ fun! mkdx#WrapLink(...) range
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    call s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1), 'mkdx-wrap-link-n')
+    let result = s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1), 'mkdx-text-link-n')
+    if (result ==? 'unwrap') | return | endif
+    normal! f)
   end
 
   let @z = r

@@ -521,6 +521,11 @@ Wrap the word (anywhere) under the cursor or a visual selection using the follow
 - <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd> => <strike>strikethrough</strike>
 
 As with all other mappings, all the *normal* mode mappings are repeatable.
+mkdx also supports supplying an optional `[count]` to these mappings, e.g.
+
+Given text `Hello world` where the cursor can be anywhere inside the first word
+<kbd>2</kbd>+<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> will
+wrap both `Hello` and `world`: `**Hello world**`. This works for all the mappings above.
 
 ## Convert CSV to table (and back)
 

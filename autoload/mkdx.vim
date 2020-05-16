@@ -709,6 +709,7 @@ fun! s:util.WrapSelectionOrWord(...)
   else
     if s:util.isAlreadyWrapped(type)
       call s:util.unwrap(type, start, end)
+      call cursor(line('.'), vcol - strlen(start))
     else
       let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
       let mvcol  = vcol - 2
@@ -719,6 +720,7 @@ fun! s:util.WrapSelectionOrWord(...)
       let zlen = strlen(@z)
       let @z = start . @z . end
       exe 'normal! "z' . ((vcol >= llen - zlen) ? 'p' : 'P')
+      call cursor(line('.'), vcol + strlen(start))
     endif
   endif
 

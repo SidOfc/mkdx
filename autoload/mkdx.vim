@@ -1400,7 +1400,7 @@ fun! mkdx#WrapText(...)
   let x = get(a:000, 2, w)
   let a = get(a:000, 3, '')
 
-  call s:util.WrapSelectionOrWord(m, w, x, get(v:, 'count1', 1), a)
+  call s:util.WrapSelectionOrWord(m, w, x, v:count1, a)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1448,7 +1448,7 @@ fun! mkdx#WrapStrike(...)
   let s = e ? g:mkdx#settings.tokens.strike : '<strike>'
   let z = e ? g:mkdx#settings.tokens.strike : '</strike>'
 
-  call s:util.WrapSelectionOrWord(m, s, z, get(v:, 'count1', 1), a)
+  call s:util.WrapSelectionOrWord(m, s, z, v:count1, a)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1465,7 +1465,7 @@ fun! mkdx#WrapLink(...) range
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    let result = s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1), 'mkdx-text-link-n')
+    let result = s:util.WrapSelectionOrWord(m, '[', ']()', v:count1, 'mkdx-text-link-n')
     if (result ==? 'unwrap') | return | endif
     normal! f)
   end

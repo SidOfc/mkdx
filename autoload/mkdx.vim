@@ -589,8 +589,10 @@ fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')
   let end   = get(a:000, 2, start)
+  let count = max([get(a:000, 3, 1), 1])
   let vcol  = virtcol('.')
-  let llen  = strlen(getline('.'))
+  let line  = getline('.')
+  let llen  = strlen(line)
   let _r    = @z
 
   if (mode != 'n')
@@ -603,9 +605,13 @@ fun! s:util.WrapSelectionOrWord(...)
     exe 'normal! i' . start
     call cursor(elnum, ecol)
   else
-    normal! "zdiw
+    let mvcol = vcol - 2
+    let go_bk = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+    let cmd = 'normal! ' . go_bk . '"z' . count . 'de'
+    exe cmd
+    let zlen = strlen(@z)
     let @z = start . @z . end
-    exe 'normal! "z' . ((vcol == llen) ? 'p' : 'P')
+    exe 'normal! "z' . ((vcol >= llen - zlen) ? 'p' : 'P')
   endif
 
   let zz = @z

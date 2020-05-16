@@ -1737,7 +1737,7 @@ fun! mkdx#GenerateTOC(...)
         endif
       endwhile
 
-      call add(contents, repeat(' ', &sw * lvl) . close)
+      call add(contents, repeat(' ', s:sw() * lvl) . close)
     endif
 
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
@@ -1761,6 +1761,7 @@ fun! mkdx#GenerateTOC(...)
     let prevlvl = lvl
   endfor
 
+
   if (do_details && (prevlvl - 1) > 0)
     let prevl = prevlvl - 1
     let close = ''
@@ -1775,7 +1776,7 @@ fun! mkdx#GenerateTOC(...)
       let prevl -= 1
     endwhile
 
-    call add(contents, repeat(' ', &sw * (lvl - 1)) . close)
+    call add(contents, repeat(' ', s:sw() * (lvl - 1)) . close)
   endif
 
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif

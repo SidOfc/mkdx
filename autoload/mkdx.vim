@@ -608,7 +608,7 @@ endfun
 let s:wrap_hl_map = {
       \ 'mkdx-text-italic-n':      ['markdownItalic', 'markdownItalicDelimiter'],
       \ 'mkdx-text-bold-n':        ['markdownBold',   'markdownBoldDelimiter'],
-      \ 'mkdx-text-strike-n':      ['htmlStrike'],
+      \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag'],
       \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter'],
       \ 'mkdx-text-inline-code-n': ['mkdxInlineCode']
       \ }

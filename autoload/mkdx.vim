@@ -1331,7 +1331,7 @@ fun! mkdx#WrapStrike(...)
   let s = e ? g:mkdx#settings.tokens.strike : '<strike>'
   let z = e ? g:mkdx#settings.tokens.strike : '</strike>'
 
-  call s:util.WrapSelectionOrWord(m, s, z)
+  call s:util.WrapSelectionOrWord(m, s, z, get(v:, 'count1', 1))
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")

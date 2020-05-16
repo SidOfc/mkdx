@@ -92,7 +92,7 @@ Given (A paragraph of text):
 Do (Vj<prefix>b):
   Vj b
 
-Expect (The word "Hello" to be a link):
+Expect (The word "Hello" to be bold):
   **Hello there
   this is an awesome short**
   paragraph of text
@@ -101,9 +101,18 @@ Expect (The word "Hello" to be a link):
 Do (wvj<prefix>b):
   wvj b
 
-Expect (The word "Hello" to be a link):
+Expect (The word "Hello" to be bold):
   Hello **there
   this is** an awesome short
+  paragraph of text
+  that I use to test links
+
+Do (Wrapping with count to wrap [count] words forward):
+  2 b
+
+Expect (The first two words to be wrapped):
+  **Hello there**
+  this is an awesome short
   paragraph of text
   that I use to test links
 
@@ -180,6 +189,12 @@ Do (<prefix>/ (italicize selection)):
 Expect (The selection to be italic):
   *Hello world*
 
+Do (Wrapping with count to wrap [count] words forward):
+  2 /
+
+Expect (The first two words to be wrapped):
+  *Hello world*
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line "Hello world"):
@@ -198,6 +213,12 @@ Do (<prefix>s (strike selection)):
   v2e s
 
 Expect (The selection to be strikethrough):
+  <strike>Hello world</strike>
+
+Do (Wrapping with count to wrap [count] words forward):
+  2 s
+
+Expect (The first two words to be wrapped):
   <strike>Hello world</strike>
 
 Given (A paragraph of text):
@@ -239,8 +260,8 @@ Given (A paragraph of text):
   this is an awesome short
   paragraph of text
 
-Do (Vj<prefix>`):
-  Vj `
+" Do (Vj<prefix>`):
+"   Vj `
 
 " FIXME mkdx#WrapCutTextInCodeBlock() might use a method which works with
 "       real buffers, but not the virtual "vader" buffers
@@ -250,6 +271,14 @@ Do (Vj<prefix>`):
 "   this is an awesome short
 "   ```
 "   paragraph of text
+
+Do (Wrapping with count to wrap [count] words forward):
+  2 `
+
+Expect (The first two words to be wrapped):
+  `Hello there`
+  this is an awesome short
+  paragraph of text
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

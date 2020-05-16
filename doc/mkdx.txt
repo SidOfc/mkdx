@@ -1739,6 +1739,11 @@ In visual mode, it will wrap the entire visual selection in a link.
 
     Hello ` => ` [Hello]()
 
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right, e.g. running `2<prefix>ln`:
+
+    Hello world `=>` [Hello world]()
+
 If a visual selection ends in an image extension (`.png` for example), an
 image link will be created instead.
 

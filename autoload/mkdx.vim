@@ -1348,7 +1348,7 @@ fun! mkdx#WrapLink(...) range
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    call s:util.WrapSelectionOrWord(m, '[', ']()')
+    call s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1))
   end
 
   let @z = r

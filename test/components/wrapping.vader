@@ -40,6 +40,14 @@ Given (A line "Hello world"):
 
   hello
 
+Do (2<prefix>ln):
+  2 lnhttps://github.com/SidOfc/mkdx\<esc>
+
+Expect (Selection wrapped as link):
+  [Hello world](https://github.com/SidOfc/mkdx) hello world
+
+  hello
+
 Do (v2e<prefix>ln):
   v2e lnhttps://github.com/SidOfc/mkdx\<esc>
 
@@ -253,12 +261,18 @@ Do (<prefix>` (inline-code "Hello")):
 Expect (The word "Hello" to be inline-code):
   `Hello` world
 
+Do (Wrapping with count to wrap [count] words forward):
+  2 `
+
+Expect (The first two words to be wrapped):
+  `Hello world`
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Given (A paragraph of text):
-  Hello there
-  this is an awesome short
-  paragraph of text
+" Given (A paragraph of text):
+"   Hello there
+"   this is an awesome short
+"   paragraph of text
 
 " Do (Vj<prefix>`):
 "   Vj `
@@ -271,14 +285,6 @@ Given (A paragraph of text):
 "   this is an awesome short
 "   ```
 "   paragraph of text
-
-Do (Wrapping with count to wrap [count] words forward):
-  2 `
-
-Expect (The first two words to be wrapped):
-  `Hello there`
-  this is an awesome short
-  paragraph of text
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

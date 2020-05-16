@@ -695,15 +695,16 @@ fun! s:util.unwrap(type, start, end)
 endfun
 
 fun! s:util.WrapSelectionOrWord(...)
-  let mode  = get(a:000, 0, 'n')
-  let start = get(a:000, 1, '')
-  let end   = get(a:000, 2, start)
-  let count = max([get(a:000, 3, 1), 1])
-  let type  = get(a:000, 4, '')
-  let vcol  = virtcol('.')
-  let line  = getline('.')
-  let llen  = strlen(line)
-  let _r    = @z
+  let mode    = get(a:000, 0, 'n')
+  let start   = get(a:000, 1, '')
+  let end     = get(a:000, 2, start)
+  " l: prefix is needed here becauuse vim acts retarded if I don't include it
+  let l:count = max([get(a:000, 3, 1), 1])
+  let type    = get(a:000, 4, '')
+  let vcol    = virtcol('.')
+  let line    = getline('.')
+  let llen    = strlen(line)
+  let _r      = @z
 
   if (mode != 'n')
     let [slnum, scol] = getpos("'<")[1:2]
@@ -724,7 +725,7 @@ fun! s:util.WrapSelectionOrWord(...)
       let mvcol  = vcol - 2
       let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
       let motion = s_ch_w ? 'l' : 'E'
-      let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
+      let cmd    = 'normal! ' . go_bk . '"z' . l:count . 'd' . motion
       exe cmd
       let zlen = strlen(@z)
       let @z = start . @z . end

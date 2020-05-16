@@ -608,7 +608,7 @@ fun! s:util.WrapSelectionOrWord(...)
     let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
     let mvcol  = vcol - 2
     let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
-    let motion = s_ch_w ? 'l' : 'e'
+    let motion = s_ch_w ? 'l' : 'E'
     let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
     exe cmd
     let zlen = strlen(@z)

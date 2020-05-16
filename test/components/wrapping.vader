@@ -126,6 +126,17 @@ Expect (The first two words to be wrapped):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Given (Text with a WORD):
+  Hello-world
+
+Do (<prefix>b):
+   b
+
+Expect (the WORD to be wrapped):
+  **Hello-world**
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Given (A paragraph of text):
   Hello there
   this is an awesome short

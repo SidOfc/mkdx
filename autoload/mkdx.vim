@@ -595,7 +595,7 @@ endfun
 fun! s:util.isHlAtPos(hl, lnum, col)
   let pos_hl        = synIDattr(get(synstack(a:lnum, a:col), 0, ''), 'name')
   let possibilities = type(a:hl) == type([]) ? a:hl : [a:hl]
-  echom 'pos_hl('.string(possibilities).', '.a:lnum.', '.a:col.') "' . pos_hl . '"'
+  " echom 'pos_hl('.string(possibilities).', '.a:lnum.', '.a:col.') "' . pos_hl . '"'
   for possibility in possibilities
     if pos_hl =~? '^' . possibility
       return 1
@@ -621,8 +621,8 @@ fun! s:util.isAlreadyWrapped(id)
   return !empty(found_match)
 endfun
 
-fun! s:util.hlBounds()
-  let group = s:util.hlAtCursor()
+fun! s:util.hlBounds(type)
+  let group = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
   let slnum = line('.')
   let scol  = col('.')
   let elnum = slnum
@@ -664,11 +664,10 @@ fun! s:util.hlBounds()
   return [slnum, scol, elnum, ecol]
 endfun
 
-fun! s:util.unwrap(start, end)
-  let [slnum, scol, elnum, ecol] = s:util.hlBounds()
+fun! s:util.unwrap(type, start, end)
+  let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
 
-  echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
-  return
+  " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
 
   let sline = getline(slnum)
   let soff  = strlen(a:start)
@@ -709,7 +708,7 @@ fun! s:util.WrapSelectionOrWord(...)
     call cursor(elnum, ecol)
   else
     if s:util.isAlreadyWrapped(type)
-      call s:util.unwrap(start, end)
+      call s:util.unwrap(type, start, end)
     else
       let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
       let mvcol  = vcol - 2

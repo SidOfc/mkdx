@@ -127,6 +127,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-insert-kbd)
         <Plug>(mkdx-fence-tilde)
         <Plug>(mkdx-fence-backtick)
+        <Plug>(mkdx-gf)
 
     Mappings
         Insert link completion
@@ -152,6 +153,7 @@ CONTENTS                                                         *mkdx-contents*
         Toggle checklist
         Toggle list
         Toggle kbd shortcut
+        Jump to file or url
 
     Functions
         mkdx#ToggleCheckboxState()
@@ -181,6 +183,7 @@ CONTENTS                                                         *mkdx-contents*
         mkdx#fold()
         mkdx#WrapText()
         mkdx#WrapStrike()
+        mkdx#gf()
 
     Errors
        Type
@@ -343,6 +346,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-insert-kbd|
     - |mkdx-plug-fence-tilde|
     - |mkdx-plug-fence-backtick|
+    - |mkdx-plug-gf|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-link-completion|
@@ -368,6 +372,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
     - |mkdx-mapping-toggle-kbd-shortcut|
+    - |mkdx-mapping-jump-to-file-or-url|
 
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
@@ -396,6 +401,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-function-insert-ctrl-p-handler|
     - |mkdx-function-complete-link|
     - |mkdx-function-fold|
+    - |mkdx-function-gf|
 
 - |mkdx-errors|
     - |mkdx-error-type|
@@ -1335,6 +1341,11 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `<C-R>=mkdx#InsertFencedCodeBlock('```')<Cr>kA`
 
 ==============================================================================
+<Plug>(mkdx-gf)                                                   *mkdx-plug-gf*
+
+    `:<C-U>call mkdx#gf()<Cr>`
+
+==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both
@@ -1665,6 +1676,17 @@ In normal mode, it will attempt to convert the current |WORD| to an expanded
 kbd expression. In visual mode, the current visual selection will be expanded.
 
 Examples can be found at |mkdx-function-toggle-to-kbd|
+
+==============================================================================
+Jump to file or url                           *mkdx-mapping-jump-to-file-or-url*
+                                                                            gf
+
+This mapping works like regular |gf| unless the cursor is positioned on a
+markdown link. When on a link, mkdx will open the file or url inbetween the
+parentheses. The cursor can be anywhere on the link and this will work.
+
+When the link is not a file, but a URL, mkdx will use an `open` shell command.
+If `open` is not available, it will silently fail.
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -2357,6 +2379,16 @@ See |mkdx-setting-tokens-stike| for more details. Both arguments are passed to
 `mkdx#WrapText`. When {mode} is omitted it defaults to 'n' and the current
 word under the cursor will be wrapped. When {plug} is omitted, it defaults to
 an empty string.
+
+==============================================================================
+mkdx#gf()                                                     *mkdx-function-gf*
+
+This function is used when positioned within markdown links, it provides
+functionality required for |mkdx-mapping-jump-to-file-or-url| (<gf>).
+
+When on a markdown link, will open the location, if it is a file, regular |gf|
+is used to open the file, when it is a URL (anything starting with `http`)
+it will use `open` to open the URL, fails silently otherwise.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

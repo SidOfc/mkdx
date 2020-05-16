@@ -1448,6 +1448,7 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |<kbd>ctrl</kbd>+<kbd>n</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>n</kbd>|`<Plug>(mkdx-ctrl-n-compl)`|
 |<kbd>ctrl</kbd>+<kbd>p</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>p</kbd>|`<Plug>(mkdx-ctrl-p-compl)`|
 |<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|
+|Jump to file / URL|normal|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf)`|
 
 ## Remapping functionality
 

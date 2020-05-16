@@ -621,13 +621,6 @@ fun! s:util.isAlreadyWrapped(id)
   return !empty(found_match)
 endfun
 
-fun! mkdx#gf()
-  if s:util.isAlreadyWrapped('mkdx-text-link-n')
-  else
-    normal! gf
-  endif
-endfun
-
 fun! s:util.hlBounds(type)
   let group = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
   let slnum = line('.')
@@ -671,16 +664,35 @@ fun! s:util.hlBounds(type)
   return [slnum, scol, elnum, ecol]
 endfun
 
+fun! s:util.linkUrl(md_link)
+  let open_paren = match(a:md_link, '](')
+  let close_paren = match(a:md_link, ')', open_paren)
+
+  return a:md_link[(open_paren + 2):(close_paren - 1)]
+endfun
+
+fun! mkdx#gf()
+  if s:util.isAlreadyWrapped('mkdx-text-link-n')
+    let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
+    let destination = s:util.linkUrl(getline(slnum)[scol:])
+
+    if destination =~? '^http'
+      silent! call system('open ' . destination)
+    else
+      normal! f(lgf
+    endif
+  else
+    normal! gf
+  endif
+endfun
+
+
 fun! s:util.unwrap(type, start, end)
   let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
   let end = a:end
 
-  if (a:end == ']()') " end of markdown link, may contain link
-    let link_start = getline(slnum)[scol:]
-    let open_paren = match(link_start, '](')
-    let close_paren = match(link_start, ')', open_paren)
-    let url = link_start[(open_paren + 2):(close_paren - 1)]
-    let end = '](' . url . ')'
+  if (end == ']()') " end of markdown link, may contain link
+    let end = '](' . s:util.linkUrl(getline(slnum)[scol:]) . ')'
   endif
   " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
 

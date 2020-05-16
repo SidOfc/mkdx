@@ -605,9 +605,11 @@ fun! s:util.WrapSelectionOrWord(...)
     exe 'normal! i' . start
     call cursor(elnum, ecol)
   else
-    let mvcol = vcol - 2
-    let go_bk = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
-    let cmd = 'normal! ' . go_bk . '"z' . count . 'de'
+    let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
+    let mvcol  = vcol - 2
+    let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+    let motion = s_ch_w ? 'l' : 'e'
+    let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
     exe cmd
     let zlen = strlen(@z)
     let @z = start . @z . end
@@ -1281,7 +1283,7 @@ fun! mkdx#WrapText(...)
   let x = get(a:000, 2, w)
   let a = get(a:000, 3, '')
 
-  call s:util.WrapSelectionOrWord(m, w, x)
+  call s:util.WrapSelectionOrWord(m, w, x, get(v:, 'count1', 1))
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1766,7 +1768,6 @@ fun! mkdx#GenerateTOC(...)
 
     let prevlvl = lvl
   endfor
-
 
   if (do_details && (prevlvl - 1) > 0)
     let prevl = prevlvl - 1

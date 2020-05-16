@@ -40,6 +40,14 @@ Given (A line "Hello world"):
 
   hello
 
+Do (2<prefix>ln):
+  2 lnhttps://github.com/SidOfc/mkdx\<esc>
+
+Expect (Selection wrapped as link):
+  [Hello world](https://github.com/SidOfc/mkdx) hello world
+
+  hello
+
 Do (v2e<prefix>ln):
   v2e lnhttps://github.com/SidOfc/mkdx\<esc>
 
@@ -92,7 +100,7 @@ Given (A paragraph of text):
 Do (Vj<prefix>b):
   Vj b
 
-Expect (The word "Hello" to be a link):
+Expect (The word "Hello" to be bold):
   **Hello there
   this is an awesome short**
   paragraph of text
@@ -101,11 +109,31 @@ Expect (The word "Hello" to be a link):
 Do (wvj<prefix>b):
   wvj b
 
-Expect (The word "Hello" to be a link):
+Expect (The word "Hello" to be bold):
   Hello **there
   this is** an awesome short
   paragraph of text
   that I use to test links
+
+Do (Wrapping with count to wrap [count] words forward):
+  2 b
+
+Expect (The first two words to be wrapped):
+  **Hello there**
+  this is an awesome short
+  paragraph of text
+  that I use to test links
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (Text with a WORD):
+  Hello-world
+
+Do (<prefix>b):
+   b
+
+Expect (the WORD to be wrapped):
+  **Hello-world**
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -180,6 +208,12 @@ Do (<prefix>/ (italicize selection)):
 Expect (The selection to be italic):
   *Hello world*
 
+Do (Wrapping with count to wrap [count] words forward):
+  2 /
+
+Expect (The first two words to be wrapped):
+  *Hello world*
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given (A line "Hello world"):
@@ -198,6 +232,12 @@ Do (<prefix>s (strike selection)):
   v2e s
 
 Expect (The selection to be strikethrough):
+  <strike>Hello world</strike>
+
+Do (Wrapping with count to wrap [count] words forward):
+  2 s
+
+Expect (The first two words to be wrapped):
   <strike>Hello world</strike>
 
 Given (A paragraph of text):
@@ -232,15 +272,21 @@ Do (<prefix>` (inline-code "Hello")):
 Expect (The word "Hello" to be inline-code):
   `Hello` world
 
+Do (Wrapping with count to wrap [count] words forward):
+  2 `
+
+Expect (The first two words to be wrapped):
+  `Hello world`
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Given (A paragraph of text):
-  Hello there
-  this is an awesome short
-  paragraph of text
+" Given (A paragraph of text):
+"   Hello there
+"   this is an awesome short
+"   paragraph of text
 
-Do (Vj<prefix>`):
-  Vj `
+" Do (Vj<prefix>`):
+"   Vj `
 
 " FIXME mkdx#WrapCutTextInCodeBlock() might use a method which works with
 "       real buffers, but not the virtual "vader" buffers

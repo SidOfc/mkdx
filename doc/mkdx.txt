@@ -1457,6 +1457,9 @@ Wrap the word under the cursor or a visual selection in bold. By default
     `nmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-n)`
     `vmap <MAP_PREFIX>b <Plug>(mkdx-text-bold-v)`
 
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right.
+
 ==============================================================================
 Wrap text in italic                           *mkdx-mapping-wrap-text-in-italic*
 
@@ -1467,6 +1470,9 @@ Wrap the word under the cursor or a visual selection in italic. By default
     `nmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-n)`
     `vmap <MAP_PREFIX>/ <Plug>(mkdx-text-italic-v)`
 
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right.
+
 ==============================================================================
 Wrap text in strike-tag                   *mkdx-mapping-wrap-text-in-strike-tag*
 
@@ -1476,6 +1482,9 @@ tag.
     `nmap <MAP_PREFIX>s <Plug>(mkdx-text-strike-tag-n)`
     `vmap <MAP_PREFIX>s <Plug>(mkdx-text-strike-tag-v)`
 
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right.
+
 ==============================================================================
 Wrap text in backticks                     *mkdx-mapping-wrap-text-in-backticks*
 
@@ -1484,6 +1493,9 @@ inline code block).
 
     nmap <MAP_PREFIX>` <Plug>(mkdx-text-italic-n)
     vmap <MAP_PREFIX>` <Plug>(mkdx-text-italic-v)
+
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right.
 
 ==============================================================================
 Increment header level                     *mkdx-mapping-increment-header-level*
@@ -1726,6 +1738,11 @@ In normal mode, this function wraps the word under the cursor in a link.
 In visual mode, it will wrap the entire visual selection in a link.
 
     Hello ` => ` [Hello]()
+
+This mapping may be prefixed with a [count] to mark [count] words starting
+at cursor position, moving to right, e.g. running `2<prefix>ln`:
+
+    Hello world `=>` [Hello world]()
 
 If a visual selection ends in an image extension (`.png` for example), an
 image link will be created instead.

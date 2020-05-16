@@ -589,8 +589,10 @@ fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')
   let end   = get(a:000, 2, start)
+  let count = max([get(a:000, 3, 1), 1])
   let vcol  = virtcol('.')
-  let llen  = strlen(getline('.'))
+  let line  = getline('.')
+  let llen  = strlen(line)
   let _r    = @z
 
   if (mode != 'n')
@@ -603,9 +605,15 @@ fun! s:util.WrapSelectionOrWord(...)
     exe 'normal! i' . start
     call cursor(elnum, ecol)
   else
-    normal! "zdiw
+    let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
+    let mvcol  = vcol - 2
+    let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+    let motion = s_ch_w ? 'l' : 'E'
+    let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
+    exe cmd
+    let zlen = strlen(@z)
     let @z = start . @z . end
-    exe 'normal! "z' . ((vcol == llen) ? 'p' : 'P')
+    exe 'normal! "z' . ((vcol >= llen - zlen) ? 'p' : 'P')
   endif
 
   let zz = @z
@@ -1275,7 +1283,7 @@ fun! mkdx#WrapText(...)
   let x = get(a:000, 2, w)
   let a = get(a:000, 3, '')
 
-  call s:util.WrapSelectionOrWord(m, w, x)
+  call s:util.WrapSelectionOrWord(m, w, x, get(v:, 'count1', 1))
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1323,7 +1331,7 @@ fun! mkdx#WrapStrike(...)
   let s = e ? g:mkdx#settings.tokens.strike : '<strike>'
   let z = e ? g:mkdx#settings.tokens.strike : '</strike>'
 
-  call s:util.WrapSelectionOrWord(m, s, z)
+  call s:util.WrapSelectionOrWord(m, s, z, get(v:, 'count1', 1))
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1340,7 +1348,7 @@ fun! mkdx#WrapLink(...) range
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    call s:util.WrapSelectionOrWord(m, '[', ']()')
+    call s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1))
   end
 
   let @z = r
@@ -1737,7 +1745,7 @@ fun! mkdx#GenerateTOC(...)
         endif
       endwhile
 
-      call add(contents, repeat(' ', &sw * lvl) . close)
+      call add(contents, repeat(' ', s:sw() * lvl) . close)
     endif
 
     if (empty(header) && (lnum >= cpos[1] || (curr > toc_pos && after_pos)))
@@ -1775,7 +1783,7 @@ fun! mkdx#GenerateTOC(...)
       let prevl -= 1
     endwhile
 
-    call add(contents, repeat(' ', &sw * (lvl - 1)) . close)
+    call add(contents, repeat(' ', s:sw() * (lvl - 1)) . close)
   endif
 
   if (do_details) | call extend(contents, ['</ul>', '</details>']) | endif

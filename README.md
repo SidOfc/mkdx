@@ -497,6 +497,9 @@ Wrap the word under the cursor or a visual selection in an empty markdown link
 with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
 cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the cursor.
 
+This mapping also takes a count, list as wrap mappings in the [bold / italic / inline-code / strikethrough](#wrap-as-bold--italic--inline-code--strikethrough).
+Doing this will wrap _count_ words within the body of the link.
+
 If what you're wrapping is an image (only works with visual selections at the moment), an image link will be created
 instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern).
 
@@ -521,6 +524,11 @@ Wrap the word (anywhere) under the cursor or a visual selection using the follow
 - <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd> => <strike>strikethrough</strike>
 
 As with all other mappings, all the *normal* mode mappings are repeatable.
+mkdx also supports supplying an optional _count_ to these mappings, e.g.
+
+Given text `Hello world` where the cursor can be anywhere inside the first word
+<kbd>2</kbd>+<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> will
+wrap both `Hello` and `world`: `**Hello world**`. This works for all the mappings above.
 
 ## Convert CSV to table (and back)
 

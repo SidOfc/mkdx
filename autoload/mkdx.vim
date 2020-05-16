@@ -585,11 +585,121 @@ fun! s:util.FindDeadFragmentLinks()
   return [dead, len(frags)]
 endfun
 
+fun! s:util.hlAtCursor()
+  return map(
+      \ synstack(line('.'), col('.')),
+      \ 'synIDattr(v:val, "name")'
+      \ )
+endfun
+
+fun! s:util.isHlAtPos(hl, lnum, col)
+  let pos_hl        = synIDattr(get(synstack(a:lnum, a:col), 0, ''), 'name')
+  let possibilities = type(a:hl) == type([]) ? a:hl : [a:hl]
+  " echom 'pos_hl('.string(possibilities).', '.a:lnum.', '.a:col.') "' . pos_hl . '"'
+  for possibility in possibilities
+    if pos_hl =~? '^' . possibility
+      return 1
+    endif
+  endfor
+
+  return 0
+endfun
+
+let s:wrap_hl_map = {
+      \ 'mkdx-text-italic-n':      ['markdownItalic', 'markdownItalicDelimiter'],
+      \ 'mkdx-text-bold-n':        ['markdownBold',   'markdownBoldDelimiter'],
+      \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag'],
+      \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter', 'markdownLink'],
+      \ 'mkdx-text-inline-code-n': ['mkdxInlineCode']
+      \ }
+
+fun! s:util.isAlreadyWrapped(id)
+  let first_group = get(s:util.hlAtCursor(), 0, '')
+  let candidates  = copy(get(s:wrap_hl_map, a:id, []))
+  let found_match = get(filter(candidates, {_, candidate -> candidate ==? first_group}), 0, '')
+
+  return !empty(found_match)
+endfun
+
+fun! s:util.hlBounds(type)
+  let group = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
+  let slnum = line('.')
+  let scol  = col('.')
+  let elnum = slnum
+  let ecol  = scol
+
+  while 1
+    if scol > 1
+      if s:util.isHlAtPos(group, slnum, scol - 1)
+        let scol -= 1
+      else
+        break
+      endif
+    else
+      let prev_line_len = strlen(getline(slnum - 1))
+      if s:util.isHlAtPos(group, slnum - 1, prev_line_len)
+        let slnum -= 1
+        let scol   = prev_line_len
+      else
+        break
+      endif
+    endif
+  endwhile
+
+  let eline_len = strlen(getline(elnum))
+  while s:util.isHlAtPos(group, elnum, ecol + 1)
+    let ecol += 1
+    if ecol >= eline_len
+      let eline_len = strlen(getline(elnum + 1))
+      if s:util.isHlAtPos(group, elnum + 1, 1)
+        let elnum += 1
+        let ecol   = 1
+      else
+        break
+      endif
+    endif
+  endwhile
+
+  " echom 'hlBounds('.string(group).'):' [slnum, scol, elnum, ecol]
+  return [slnum, scol, elnum, ecol]
+endfun
+
+fun! s:util.unwrap(type, start, end)
+  let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
+  let end = a:end
+
+  if (a:end == ']()') " end of markdown link, may contain link
+    let link_start = getline(slnum)[scol:]
+    let open_paren = match(link_start, '](')
+    let close_paren = match(link_start, ')', open_paren)
+    let url = link_start[(open_paren + 2):(close_paren - 1)]
+    let end = '](' . url . ')'
+  endif
+  " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
+
+  let sline = getline(slnum)
+  let soff  = strlen(a:start)
+  let spos  = max([scol - 2, 0])
+  let sa    = spos > 0 ? sline[0:spos] : ''
+  let sb    = sline[(spos + (spos > 0) + soff):]
+
+  call setline(slnum, sa . sb)
+
+  let eline = getline(elnum)
+  let eoff  = strlen(end)
+  let epos  = max([ecol - 1, 0]) - (slnum == elnum ? soff : 0) - eoff
+  let ea    = eline[0:epos]
+  let eb    = eline[(epos + 1 + eoff):]
+
+  call setline(elnum, ea . eb)
+endfun
+
 fun! s:util.WrapSelectionOrWord(...)
   let mode  = get(a:000, 0, 'n')
   let start = get(a:000, 1, '')
   let end   = get(a:000, 2, start)
   let count = max([get(a:000, 3, 1), 1])
+  let type  = get(a:000, 4, '')
   let vcol  = virtcol('.')
   let line  = getline('.')
   let llen  = strlen(line)
@@ -605,15 +715,22 @@ fun! s:util.WrapSelectionOrWord(...)
     exe 'normal! i' . start
     call cursor(elnum, ecol)
   else
-    let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
-    let mvcol  = vcol - 2
-    let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
-    let motion = s_ch_w ? 'l' : 'E'
-    let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
-    exe cmd
-    let zlen = strlen(@z)
-    let @z = start . @z . end
-    exe 'normal! "z' . ((vcol >= llen - zlen) ? 'p' : 'P')
+    if s:util.isAlreadyWrapped(type)
+      call s:util.unwrap(type, start, end)
+      call cursor(line('.'), vcol - strlen(start))
+      return 'unwrap'
+    else
+      let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
+      let mvcol  = vcol - 2
+      let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+      let motion = s_ch_w ? 'l' : 'E'
+      let cmd    = 'normal! ' . go_bk . '"z' . count . 'd' . motion
+      exe cmd
+      let zlen = strlen(@z)
+      let @z = start . @z . end
+      exe 'normal! "z' . ((vcol >= llen - zlen) ? 'p' : 'P')
+      call cursor(line('.'), vcol + strlen(start))
+    endif
   endif
 
   let zz = @z
@@ -1283,7 +1400,7 @@ fun! mkdx#WrapText(...)
   let x = get(a:000, 2, w)
   let a = get(a:000, 3, '')
 
-  call s:util.WrapSelectionOrWord(m, w, x, get(v:, 'count1', 1))
+  call s:util.WrapSelectionOrWord(m, w, x, get(v:, 'count1', 1), a)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1331,7 +1448,7 @@ fun! mkdx#WrapStrike(...)
   let s = e ? g:mkdx#settings.tokens.strike : '<strike>'
   let z = e ? g:mkdx#settings.tokens.strike : '</strike>'
 
-  call s:util.WrapSelectionOrWord(m, s, z, get(v:, 'count1', 1))
+  call s:util.WrapSelectionOrWord(m, s, z, get(v:, 'count1', 1), a)
 
   if (a != '')
     silent! call repeat#set("\<Plug>(" . a . ")")
@@ -1348,7 +1465,9 @@ fun! mkdx#WrapLink(...) range
     call s:util.WrapSelectionOrWord(m, (img ? '!' : '') . '[', '](' . (img ? substitute(@z, '\n', '', 'g') : '') . ')')
     normal! f)
   else
-    call s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1))
+    let result = s:util.WrapSelectionOrWord(m, '[', ']()', get(v:, 'count1', 1), 'mkdx-text-link-n')
+    if (result ==? 'unwrap') | return | endif
+    normal! f)
   end
 
   let @z = r

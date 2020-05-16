@@ -99,6 +99,8 @@ inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNH
 inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
 
+nnoremap gf :<C-U>call mkdx#gf()<Cr>
+
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
   setlocal pumheight=15

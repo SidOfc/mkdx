@@ -621,6 +621,13 @@ fun! s:util.isAlreadyWrapped(id)
   return !empty(found_match)
 endfun
 
+fun! mkdx#gf()
+  if s:util.isAlreadyWrapped('mkdx-text-link-n')
+  else
+    normal! gf
+  endif
+endfun
+
 fun! s:util.hlBounds(type)
   let group = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
   let slnum = line('.')

@@ -76,7 +76,8 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 42 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 43 items</summary><ul>
+        <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalhost"><code>g:mkdx#settings.links.external.host</code></a></li>
@@ -710,6 +711,7 @@ To see a mapping of new settings from old variables, see [this README](https://g
 " :h mkdx-settings
 let g:mkdx#settings = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
+      \ 'gf_on_steroids':          0,
       \ 'restore_visual':          1,
       \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1,
       \                              'shifto': 1, 'shift': 0 },
@@ -774,6 +776,26 @@ To overwrite a setting while editing:
 ```viml
 " :h mkdx-settings
 :let g:mkdx#settings.enter.enable = 0
+```
+
+## `g:mkdx#settings.gf_on_steroids`
+
+mkdx enhances <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd> within markdown buffers.
+The main difference is that you can open files / urls / images with the cursor positioned anywhere
+in a markdown link. Otherwise they will work normally.
+
+By enabling this setting, these two mappings are merged into one, so both <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
+will work exactly the same. Functionalities from both will work for each mapping, so you can now
+use <kbd>g</kbd><kbd>f</kbd> OR <kbd>g</kbd><kbd>x</kbd> to open local files as well as urls / images externally.
+
+mkdx uses [g:mkdx#settings.image_extension_pattern](#gmkdxsettingsimage_extension_pattern) to determine
+wether or not a file is an image and should be opened by an external application.
+
+```viml
+" :h mkdx-setting-gf-on-steroids
+" :h mkdx-mapping-jump-to-file
+" :h mkdx-mapping-open-external-file
+:let g:mkdx#settings.gf_on_steroids = 0
 ```
 
 ## `g:mkdx#settings.links.external.enable`
@@ -1460,7 +1482,8 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |<kbd>ctrl</kbd>+<kbd>n</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>n</kbd>|`<Plug>(mkdx-ctrl-n-compl)`|
 |<kbd>ctrl</kbd>+<kbd>p</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>p</kbd>|`<Plug>(mkdx-ctrl-p-compl)`|
 |<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|
-|Jump to file / URL|normal|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf)`|
+|Jump to file|normal|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf)`|
+|Open external file|normal|<kbd>g</kbd><kbd>x</kbd>|`<Plug>(mkdx-gx)`|
 
 ## Remapping functionality
 

@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.9.1`
+`Version: 1.9.2`
 
 `               888b     d888 888    d8P  8888888b. Y88b   d88P`
 `       , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P   |\ - ,`
@@ -880,6 +880,9 @@ The overrides include:
 
     `setlocal foldmethod=expr`
     `setlocal foldexpr=mkdx#fold(v:lnum)`
+
+NOTE: when `g:markdown_folding` is enabled, this functionality will no-op
+because they do not work together nicely!
 
 ==============================================================================
 `g:mkdx#settings.fold.coponents = ['toc', 'fence'] `*mkdx-setting-fold-components*

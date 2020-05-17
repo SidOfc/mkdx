@@ -1,3 +1,8 @@
+## 20-11-2018 VERSION 1.8.3
+
+- Fix: handle unicode characters in list items ([#80](../../issues/80))
+- Fix: handle unicode characters in CSV ([#81](../../issues/81))
+
 ## 13-11-2018 VERSION 1.8.2
 
 - Fix: handle `&shiftwidth = 0` (Thanks to [@marcdeop](https://github.com/marcdeop))

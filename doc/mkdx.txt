@@ -21,6 +21,7 @@ CONTENTS                                                         *mkdx-contents*
     Menu
 
     `g:mkdx#settings`
+        `g:mkdx#settings.gf_on_steroids`
         `g:mkdx#settings.links.external.enable`
         `g:mkdx#settings.links.external.timeout`
         `g:mkdx#settings.links.external.host`
@@ -128,6 +129,7 @@ CONTENTS                                                         *mkdx-contents*
         <Plug>(mkdx-fence-tilde)
         <Plug>(mkdx-fence-backtick)
         <Plug>(mkdx-gf)
+        <Plug>(mkdx-gx)
 
     Mappings
         Insert link completion
@@ -153,7 +155,8 @@ CONTENTS                                                         *mkdx-contents*
         Toggle checklist
         Toggle list
         Toggle kbd shortcut
-        Jump to file or url
+        Jump to file
+        Open external file
 
     Functions
         mkdx#ToggleCheckboxState()
@@ -237,6 +240,7 @@ for functions. Below is a list of all helptags:
 - |mkdx-helptags|, |mkdx-tags|, |mkdx-help|
 
 - |mkdx-settings|
+    - |mkdx-setting-gf-on-steroids|
     - |mkdx-setting-links-external-enable|
     - |mkdx-setting-links-external-timeout|
     - |mkdx-setting-links-external-host|
@@ -347,6 +351,7 @@ for functions. Below is a list of all helptags:
     - |mkdx-plug-fence-tilde|
     - |mkdx-plug-fence-backtick|
     - |mkdx-plug-gf|
+    - |mkdx-plug-gx|
 
 - |mkdx-mappings|
     - |mkdx-mapping-insert-link-completion|
@@ -372,7 +377,8 @@ for functions. Below is a list of all helptags:
     - |mkdx-mapping-toggle-checklist|
     - |mkdx-mapping-toggle-list|
     - |mkdx-mapping-toggle-kbd-shortcut|
-    - |mkdx-mapping-jump-to-file-or-url|
+    - |mkdx-mapping-jump-to-file|
+    - |mkdx-mapping-open-external-file|
 
 - |mkdx-functions|
     - |mkdx-function-toggle-checkbox|
@@ -411,13 +417,14 @@ for functions. Below is a list of all helptags:
     - |mkdx-error-only-list|
 
 ==============================================================================
-`g:mkdx#settings = { ... }`                                        *mkdx-settings*
+SETTINGS   `g:mkdx#settings = { ... }`                             *mkdx-settings*
 
 |mkdx| has some configurable settings that you can define. Defaults are shown
 at the bottom of every setting section. The default settings hash:
 
     `let g:mkdx#settings = {`
     `      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',`
+     `     \ 'gf_on_steroids':          0,`
     `      \ 'restore_visual':          1,`
     `      \ 'enter':                   { 'enable': 1, 'shift': 0, 'o': 1,`
     `      \                              'shifto': 1, 'malformed': 1 },`
@@ -472,12 +479,16 @@ To overwrite a setting, simply write it as seen above:
 
     `let g:mkdx#settings = { 'enter': { 'enable': 0 } }`
 
-To overwrite a setting after initialization:
+**NOTE:** the form shown above MUST be used in your .vimrc,
+the short form: `let g:mkdx#settings.some.setting` can NOT be used during
+initialization. This results in an error "g:mkdx#settings is undefined"!
+
+To overwrite a setting AFTER initialization (e.g. after loading .vimrc):
 
     `:let g:mkdx#settings.enter.enable = 0`
 
-Don't worry about overwriting `g:mkdx#settings`, it will be merged with the
-defaults to fill in any missing keys.
+Don't worry about overwriting `g:mkdx#settings` during initialization,
+it will be merged with the defaults to fill in any missing keys.
 
 To maintain backwards compatibility with all of the `g:` settings, mkdx first
 checks if a `g:` setting exists and overwrites the defaults with them, so
@@ -489,6 +500,7 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
+s:defaults.gf_on_steroids            `=>`
 s:defaults.links.external.enable     `=>`
 s:defaults.links.external.host       `=>`
 s:defaults.links.external.timeout    `=>`
@@ -527,6 +539,19 @@ s:defaults.toc.details.nesting_level `=>`
 s:defaults.toc.details.child_count   `=>`
 s:defaults.toc.details.child_summary `=>`
 s:defaults.highlight.enable          `=>`
+
+==============================================================================
+`g:mkdx#settings.gf_on_steroids = 0`                 *mkdx-setting-gf-on-steroids*
+
+mkdx provides enhanced versions of both <gf> and <gx> while editing markdown
+files. They aren't too special aside from the fact that you can open local
+files (<gf>) and urls / images (<gx>) with your cursor placed anywhere in a
+link. Aside from that, they function as you would expect from either mapping.
+
+This setting allows the features of <gf> (opening local files) and <gx>
+(opening urls / images externally) to be usable in each mapping. This means
+that enabling it will allow you to open urls / images externally using <gf> as
+well as opening files locally using <gx>.
 
 ==============================================================================
 `g:mkdx#settings.links.external.enable = 0`   *mkdx-setting-links-external-enable*
@@ -1343,7 +1368,12 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 ==============================================================================
 <Plug>(mkdx-gf)                                                   *mkdx-plug-gf*
 
-    `:<C-U>call mkdx#gf()<Cr>`
+    `:<C-U>call mkdx#gf('f')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-gx)                                                   *mkdx-plug-gx*
+
+    `:<C-U>call mkdx#gf('x')<Cr>`
 
 ==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
@@ -1678,15 +1708,30 @@ kbd expression. In visual mode, the current visual selection will be expanded.
 Examples can be found at |mkdx-function-toggle-to-kbd|
 
 ==============================================================================
-Jump to file or url                           *mkdx-mapping-jump-to-file-or-url*
+Jump to file                                         *mkdx-mapping-jump-to-file*
                                                                             gf
 
 This mapping works like regular |gf| unless the cursor is positioned on a
-markdown link. When on a link, mkdx will open the file or url inbetween the
+markdown link. When on a link, mkdx will open the file inbetween the
 parentheses. The cursor can be anywhere on the link and this will work.
 
-When the link is not a file, but a URL, mkdx will use an `open` shell command.
-If `open` is not available, it will silently fail.
+when |mkdx-setting-gf-on-steroids| is enabled, and link is not a file but a URL,
+mkdx will use an `open` shell command. If `open` is not available, it will
+silently fail.
+
+==============================================================================
+Open external file                             *mkdx-mapping-open-external-file*
+                                                                            gx
+
+This mapping emulates |netrw-gx| (also works without netrw enabled). It will
+open an external application using the `open` shell command. If `open` is not
+available, it will silently fail.
+
+Like |mkdx-mapping-jump-to-file| it will also work on markdown links, the
+cursor can be positioned anywhere on the link and this will work.
+
+When |mkdx-setting-gf-on-steroids| is enabled, this mapping will also read
+local files just like |mkdx-mapping-jump-to-file| otherwise would.
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -2381,14 +2426,29 @@ word under the cursor will be wrapped. When {plug} is omitted, it defaults to
 an empty string.
 
 ==============================================================================
-mkdx#gf()                                                     *mkdx-function-gf*
+mkdx#gf([{mode}])                                             *mkdx-function-gf*
 
 This function is used when positioned within markdown links, it provides
-functionality required for |mkdx-mapping-jump-to-file-or-url| (<gf>).
+functionality required for |mkdx-mapping-jump-to-file| (<gf>) as well as
+|mkdx-mapping-open-external-file| (<gx>).
 
 When on a markdown link, will open the location, if it is a file, regular |gf|
-is used to open the file, when it is a URL (anything starting with `http`)
-it will use `open` to open the URL, fails silently otherwise.
+is used to open the file, when it is a URL and |mkdx-setting-gf-on-steroids|
+is enabled, it will use `open` to open an URL or image, fails silently otherwise.
+
+The definition of images to `open` is defined by
+|mkdx-setting-image-extension-pattern|.
+
+The optional {mode} argument can either be `'f'` or `'x'`, this indicates
+which type of functionality should be invoked. When `'x'` and with
+|mkdx-setting-gf-on-steroids| DISABLED, it will always use `open`. Otherwise,
+when it is `'f'` and |mkdx-setting-gf-on-steroids| DISABLED, it will always
+use |mkdx-mapping-jump-to-file|.
+
+When |mkdx-setting-gf-on-steroids| is enabled, this argument is ignored and
+the "correct" implementation is used based on what is found. If it looks like
+an image or URL, `open` will be used, otherwise |mkdx-mapping-jump-to-file|
+will be used.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

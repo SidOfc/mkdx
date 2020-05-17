@@ -1570,9 +1570,9 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- Improve testing setup
-- Cleanup of code
-- Add more tests for all components
+- Process feature requests
+- Process bug reports
+- Otherwise, maintainance mode
 
 # Changelog
 

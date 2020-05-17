@@ -14,189 +14,199 @@
       `         888       888 888    Y88b 8888888P" d88P   Y88b`
 
 ==============================================================================
-CONTENTS                                                         *mkdx-contents*
-                                                                      *mkdx-toc*
-    Introduction
-    Helptags
-    Menu
+CONTENTS                                                *mkdx-toc* *mkdx-contents*
+                                             *mkdx-tags* *mkdx-help* *mkdx-helptags*
 
-    `g:mkdx#settings`
-        `g:mkdx#settings.gf_on_steroids`
-        `g:mkdx#settings.links.external.enable`
-        `g:mkdx#settings.links.external.timeout`
-        `g:mkdx#settings.links.external.host`
-        `g:mkdx#settings.links.external.user_agent`
-        `g:mkdx#settings.links.external.relative`
-        `g:mkdx#settings.links.fragment.jumplist`
-        `g:mkdx#settings.links.fragment.complete`
-        `g:mkdx#settings.image_extension_pattern`
-        `g:mkdx#settings.restore_visual`
-        `g:mkdx#settings.map.prefix`
-        `g:mkdx#settings.map.enable`
-        `g:mkdx#settings.checkbox.toggles`
-        `g:mkdx#settings.checkbox.update_tree`
-        `g:mkdx#settings.checkbox.initial_state`
-        `g:mkdx#settings.tokens.header`
-        `g:mkdx#settings.tokens.enter`
-        `g:mkdx#settings.tokens.fence`
-        `g:mkdx#settings.tokens.italic`
-        `g:mkdx#settings.tokens.bold`
-        `g:mkdx#settings.tokens.strike`
-        `g:mkdx#settings.tokens.list`
-        `g:mkdx#settings.table.header_divider`
-        `g:mkdx#settings.table.divider`
-        `g:mkdx#settings.enter.enable`
-        `g:mkdx#settings.enter.o`
-        `g:mkdx#settings.enter.shift`
-        `g:mkdx#settings.enter.shifto`
-        `g:mkdx#settings.enter.malformed`
-        `g:mkdx#settings.toc.text`
-        `g:mkdx#settings.toc.list_token`
-        `g:mkdx#settings.toc.position`
-        `g:mkdx#settings.toc.update_on_write`
-        `g:mkdx#settings.toc.details.enable`
-        `g:mkdx#settings.toc.details.summary`
-        `g:mkdx#settings.toc.details.nesting_level`
-        `g:mkdx#settings.toc.details.child_count`
-        `g:mkdx#settings.toc.details.child_summary`
-        `g:mkdx#settings.highlight.enable`
-        `g:mkdx#settings.auto_update.enable`
-        `g:mkdx#settings.fold.enable`
-        `g:mkdx#settings.fold.components`
+To jump to this table of contents, use |go| or |gg|.
 
-    Highlighting
-        `mkdxListItem`
-        `mkdxCheckboxEmpty`
-        `mkdxCheckboxPending`
-        `mkdxCheckboxComplete`
-        `mkdxTable`
-        `mkdxTableDelimiter`
-        `mkdxTableAlign`
-        `mkdxTableHeader`
-        `mkdxTableHeadDelimiter`
-        `mkdxTableCaption`
-        `mkdxTableCaptionDelimiter`
-        `mkdxKbdText`
-        `mkdxKbdOpening`
-        `mkdxKbdEnding`
-        `mkdxBoldItalic`
-        `mkdxBoldItalicDelimiter`
-        `mkdxInlineCode`
-        `mkdxInlineCodeDelimiter`
+- |mkdx.txt|, |mkdx|
+- |mkdx-contents|, |mkdx-toc|, |mkdx-helptags|, |mkdx-tags|, |mkdx-help|
+- |mkdx-menu|
+- |mkdx-introduction|
+                                                             *mkdx-toc-settings*
+Settings `.......................................................` |mkdx-settings|
+    gf_on_steroids `...............................` |mkdx-setting-gf-on-steroids|
+    links.external.enable `.................` |mkdx-setting-links-external-enable|
+    links.external.timeout `...............` |mkdx-setting-links-external-timeout|
+    links.external.host `.....................` |mkdx-setting-links-external-host|
+    links.external.user_agent `.................` |mkdx-setting-links-external-ua|
+    links.external.relative `..................` |mkdx-setting-links-external-rel|
+    links.fragment.jumplist `.............` |mkdx-setting-links-fragment-jumplist|
+    links.fragment.complete `.............` |mkdx-setting-links-fragment-complete|
+    image_extension_pattern `..............` |mkdx-setting-links-fragment-pattern|
+    restore_visual `...............................` |mkdx-setting-restore-visual|
+    map.prefix `.......................................` |mkdx-setting-map-prefix|
+    map.enable `.......................................` |mkdx-setting-map-enable|
+    checkbox.toggles `...........................` |mkdx-setting-checkbox-toggles|
+    checkbox.update_tree `...................` |mkdx-setting-checkbox-update-tree|
+    checkbox.initial_state `...............` |mkdx-setting-checkbox-initial-state|
+    tokens.header `.................................` |mkdx-setting-tokens-header|
+    tokens.enter `...................................` |mkdx-setting-tokens-enter|
+    tokens.fence `...................................` |mkdx-setting-tokens-fence|
+    tokens.italic `.................................` |mkdx-setting-tokens-italic|
+    tokens.bold `.....................................` |mkdx-setting-tokens-bold|
+    tokens.strike `.................................` |mkdx-setting-tokens-strike|
+    tokens.list `.....................................` |mkdx-setting-tokens-list|
+    table.header_divider `...................` |mkdx-setting-table-header-divider|
+    table.divider `.................................` |mkdx-setting-table-divider|
+    enter.enable `...................................` |mkdx-setting-enter-enable|
+    enter.shift `.....................................` |mkdx-setting-enter-shift|
+    enter.o `.............................................` |mkdx-setting-enter-o|
+    enter.shifto `...................................` |mkdx-setting-enter-shifto|
+    enter.malformed `.............................` |mkdx-setting-enter-malformed|
+    toc.text `...........................................` |mkdx-setting-toc-text|
+    toc.list_token `...............................` |mkdx-setting-toc-list-token|
+    toc.position `...................................` |mkdx-setting-toc-position|
+    toc.update_on_write `.....................` |mkdx-setting-toc-update-on-write|
+    toc.details.enable `.......................` |mkdx-setting-toc-details-enable|
+    toc.details.summary `.....................` |mkdx-setting-toc-details-summary|
+    toc.details.nesting_level `.........` |mkdx-setting-toc-details-nesting-level|
+    toc.details.child_count `.............` |mkdx-setting-toc-details-child-count|
+    toc.details.child_summary `.........` |mkdx-setting-toc-details-child-summary|
+    highlight.enable `...........................` |mkdx-setting-highlight-enable|
+    auto_update.enable `.......................` |mkdx-setting-auto-update-enable|
+    fold.enable `.....................................` |mkdx-setting-fold-enable|
+    fold.components `.............................` |mkdx-setting-fold-components|
 
-    Plugs
-        <Plug>(mkdx-ctrl-n-compl)
-        <Plug>(mkdx-ctrl-p-compl)
-        <Plug>(mkdx-link-compl)
-        <Plug>(mkdx-checkbox-next-n)
-        <Plug>(mkdx-checkbox-next-v)
-        <Plug>(mkdx-checkbox-prev-n)
-        <Plug>(mkdx-checkbox-prev-v)
-        <Plug>(mkdx-promote-header)
-        <Plug>(mkdx-demote-header)
-        <Plug>(mkdx-wrap-link-n)
-        <Plug>(mkdx-wrap-link-v)
-        <Plug>(mkdx-jump-to-header)
-        <Plug>(mkdx-tableize)
-        <Plug>(mkdx-generate-toc)
-        <Plug>(mkdx-update-toc)
-        <Plug>(mkdx-gen-or-upd-toc)
-        <Plug>(mkdx-quickfix-toc)
-        <Plug>(mkdx-quickfix-links)
-        <Plug>(mkdx-text-bold-n)
-        <Plug>(mkdx-text-bold-v)
-        <Plug>(mkdx-text-italic-n)
-        <Plug>(mkdx-text-italic-v)
-        <Plug>(mkdx-text-strike-n)
-        <Plug>(mkdx-text-strike-v)
-        <Plug>(mkdx-text-inline-code-n)
-        <Plug>(mkdx-text-inline-code-v)
-        <Plug>(mkdx-toggle-checkbox-n)
-        <Plug>(mkdx-toggle-checkbox-v)
-        <Plug>(mkdx-toggle-checklist-n)
-        <Plug>(mkdx-toggle-checklist-v)
-        <Plug>(mkdx-toggle-list-n)
-        <Plug>(mkdx-toggle-list-v)
-        <Plug>(mkdx-toggle-to-kbd-n)
-        <Plug>(mkdx-toggle-to-kbd-v)
-        <Plug>(mkdx-toggle-quote-n)
-        <Plug>(mkdx-toggle-quote-v)
-        <Plug>(mkdx-o)
-        <Plug>(mkdx-shift-o)
-        <Plug>(mkdx-shift-enter)
-        <Plug>(mkdx-enter)
-        <Plug>(mkdx-insert-kbd)
-        <Plug>(mkdx-fence-tilde)
-        <Plug>(mkdx-fence-backtick)
-        <Plug>(mkdx-gf)
-        <Plug>(mkdx-gx)
+                                                         *mkdx-toc-highlighting*
+Highlighting `...............................................` |mkdx-highlighting|
+    mkdxListItem `....................................` |mkdx-highlight-list-item|
+    mkdxCheckboxEmpty `..........................` |mkdx-highlight-checkbox-empty|
+    mkdxCheckboxPending `......................` |mkdx-highlight-checkbox-pending|
+    mkdxCheckboxComplete `....................` |mkdx-highlight-checkbox-complete|
+    mkdxTable `...........................................` |mkdx-highlight-table|
+    mkdxTableDelimiter `........................` |mkdx-highlight-table-delimiter|
+    mkdxTableAlign `................................` |mkdx-highlight-table-align|
+    mkdxTableHeader `..............................` |mkdx-highlight-table-header|
+    mkdxTableHeadDelimiter `...............` |mkdx-highlight-table-head-delimiter|
+    mkdxTableCaption `............................` |mkdx-highlight-table-caption|
+    mkdxTableCaptionDelimiter `.........` |mkdx-highlight-table-caption-delimiter|
+    mkdxKbdText `......................................` |mkdx-highlight-kbd-text|
+    mkdxKbdOpening `................................` |mkdx-highlight-kbd-opening|
+    mkdxKbdEnding `..................................` |mkdx-highlight-kbd-ending|
+    mkdxBoldItalic `................................` |mkdx-highlight-bold-italic|
+    mkdxBoldItalicDelimiter `.............` |mkdx-highlight-bold-italic-delimiter|
+    mkdxInlineCode `................................` |mkdx-highlight-inline-code|
+    mkdxInlineCodeDelimiter `.............` |mkdx-highlight-inline-code-delimiter|
 
-    Mappings
-        Insert link completion
-        Insert fenced code block
-        Insert `<kbd />` shortcut
-        Toggle checkbox forward
-        Toggle checkbox backward
-        Wrap text in link
-        Wrap text in bold
-        Wrap text in italic
-        Wrap text in `<strike />` tag
-        Wrap text in backticks
-        Increment header level
-        Decrement header level
-        CSV to markdown table
-        Toggle quote
-        List items
-        Generate or update table of contents
-        Quickfix table of contents
-        Quickfix dead links
-        Jump to header
-        Toggle checkbox
-        Toggle checklist
-        Toggle list
-        Toggle kbd shortcut
-        Jump to file
-        Open external file
+                                                                *mkdx-toc-plugs*
+Plugs `.............................................................` |mkdx-plugs|
+    <Plug>(mkdx-ctrl-n-compl) `.........................` |mkdx-plug-ctrl-n-compl|
+    <Plug>(mkdx-ctrl-p-compl) `.........................` |mkdx-plug-ctrl-p-compl|
+    <Plug>(mkdx-link-compl) `.............................` |mkdx-plug-link-compl|
+    <Plug>(mkdx-checkbox-next-n) `...................` |mkdx-plug-checkbox-next-n|
+    <Plug>(mkdx-checkbox-next-v) `...................` |mkdx-plug-checkbox-next-v|
+    <Plug>(mkdx-checkbox-prev-n) `...................` |mkdx-plug-checkbox-prev-n|
+    <Plug>(mkdx-checkbox-prev-v) `...................` |mkdx-plug-checkbox-prev-v|
+    <Plug>(mkdx-promote-header) `.....................` |mkdx-plug-promote-header|
+    <Plug>(mkdx-demote-header) `.......................` |mkdx-plug-demote-header|
+    <Plug>(mkdx-wrap-link-n) `...........................` |mkdx-plug-wrap-link-n|
+    <Plug>(mkdx-wrap-link-v) `...........................` |mkdx-plug-wrap-link-v|
+    <Plug>(mkdx-jump-to-header) `.....................` |mkdx-plug-jump-to-header|
+    <Plug>(mkdx-tableize) `.................................` |mkdx-plug-tableize|
+    <Plug>(mkdx-generate-toc) `.........................` |mkdx-plug-generate-toc|
+    <Plug>(mkdx-update-toc) `.............................` |mkdx-plug-update-toc|
+    <Plug>(mkdx-gen-or-upd-toc) `..................` |mkdx-plug-gen-or-update-toc|
+    <Plug>(mkdx-quickfix-toc) `.........................` |mkdx-plug-quickfix-toc|
+    <Plug>(mkdx-quickfix-links) `.....................` |mkdx-plug-quickfix-links|
+    <Plug>(mkdx-text-bold-n) `...................` |mkdx-plug-wrap-text-in-bold-n|
+    <Plug>(mkdx-text-bold-v) `...................` |mkdx-plug-wrap-text-in-bold-v|
+    <Plug>(mkdx-text-italic-n) `...............` |mkdx-plug-wrap-text-in-italic-n|
+    <Plug>(mkdx-text-italic-v) `...............` |mkdx-plug-wrap-text-in-italic-v|
+    <Plug>(mkdx-text-strike-n) `...........` |mkdx-plug-wrap-text-in-strike-tag-n|
+    <Plug>(mkdx-text-strike-v) `...........` |mkdx-plug-wrap-text-in-strike-tag-v|
+    <Plug>(mkdx-text-inline-code-n) `.......` |mkdx-plug-wrap-text-in-backticks-n|
+    <Plug>(mkdx-text-inline-code-v) `.......` |mkdx-plug-wrap-text-in-backticks-v|
+    <Plug>(mkdx-toggle-checkbox-n) `.................` |mkdx-plug-toggle-checkbox|
+    <Plug>(mkdx-toggle-checkbox-v) `...............` |mkdx-plug-toggle-checkbox-v|
+    <Plug>(mkdx-toggle-checklist-n) `...............` |mkdx-plug-toggle-checklist|
+    <Plug>(mkdx-toggle-checklist-v) `.............` |mkdx-plug-toggle-checklist-v|
+    <Plug>(mkdx-toggle-list-n) `.........................` |mkdx-plug-toggle-list|
+    <Plug>(mkdx-toggle-list-v) `.......................` |mkdx-plug-toggle-list-v|
+    <Plug>(mkdx-toggle-to-kbd-n) `...................` |mkdx-plug-toggle-to-kbd-n|
+    <Plug>(mkdx-toggle-to-kbd-v) `...................` |mkdx-plug-toggle-to-kbd-v|
+    <Plug>(mkdx-toggle-quote-n) `....................` |mkdx-plug-toggle-to-quote|
+    <Plug>(mkdx-toggle-quote-v) `..................` |mkdx-plug-toggle-to-quote-v|
+    <Plug>(mkdx-enter) `.......................................` |mkdx-plug-enter|
+    <Plug>(mkdx-shift-enter) `...........................` |mkdx-plug-shift-enter|
+    <Plug>(mkdx-o) `...............................................` |mkdx-plug-o|
+    <Plug>(mkdx-shift-o) `...................................` |mkdx-plug-shift-o|
+    <Plug>(mkdx-insert-kbd) `.............................` |mkdx-plug-insert-kbd|
+    <Plug>(mkdx-fence-tilde) `...........................` |mkdx-plug-fence-tilde|
+    <Plug>(mkdx-fence-backtick) `.....................` |mkdx-plug-fence-backtick|
+    <Plug>(mkdx-gf) `.............................................` |mkdx-plug-gf|
+    <Plug>(mkdx-gx) `.............................................` |mkdx-plug-gx|
 
-    Functions
-        mkdx#ToggleCheckboxState()
-        mkdx#WrapLink()
-        mkdx#ToggleQuote()
-        mkdx#ToggleQuoteSelection()
-        mkdx#ToggleHeader()
-        mkdx#JumpToHeader()
-        mkdx#Tableize()
-        mkdx#ShiftEnterHandler()
-        mkdx#EnterHandler()
-        mkdx#OHandler()
-        mkdx#ShiftOHandler()
-        mkdx#GenerateTOC()
-        mkdx#UpdateTOC()
-        mkdx#GenerateOrUpdateTOC()
-        mkdx#QuickfixHeaders()
-        mkdx#QuickfixDeadLinks()
-        mkdx#ToggleCheckboxTask()
-        mkdx#ToggleChecklist()
-        mkdx#ToggleList()
-        mkdx#ToggleToKbd()
-        mkdx#Complete()
-        mkdx#InsertCtrlNHandler()
-        mkdx#InsertCtrlPHandler()
-        mkdx#CompleteLink()
-        mkdx#fold()
-        mkdx#WrapText()
-        mkdx#WrapStrike()
-        mkdx#gf()
+                                                             *mkdx-toc-mappings*
+Mappings `.......................................................` |mkdx-mappings|
+    Insert link completion `...............` |mkdx-mapping-insert-link-completion|
+    Insert fenced code block `...........` |mkdx-mapping-insert-fenced-code-block|
+    Insert `<kbd />` shortcut `.................` |mkdx-mapping-insert-kbd-shortcut|
+    Toggle checkbox forward `.............` |mkdx-mapping-toggle-checkbox-forward|
+    Toggle checkbox backward `...........` |mkdx-mapping-toggle-checkbox-backward|
+    Wrap text in link `.........................` |mkdx-mapping-wrap-text-in-link|
+    Wrap text in bold `.........................` |mkdx-mapping-wrap-text-in-bold|
+    Wrap text in italic `.....................` |mkdx-mapping-wrap-text-in-italic|
+    Wrap text in `<strike />` tag `.........` |mkdx-mapping-wrap-text-in-strike-tag|
+    Wrap text in backticks `...............` |mkdx-mapping-wrap-text-in-backticks|
+    Increment header level `...............` |mkdx-mapping-increment-header-level|
+    Decrement header level `...............` |mkdx-mapping-decrement-header-level|
+    CSV to markdown table `.................` |mkdx-mapping-csv-to-markdown-table|
+    Toggle quote `...................................` |mkdx-mapping-toggle-quote|
+    List items `.......................................` |mkdx-mapping-list-items|
+    Generate or update table of contents `.` |mkdx-mapping-generate-or-update-toc|
+    Quickfix table of contents `.......` |mkdx-mapping-quickfix-table-of-contents|
+    Quickfix dead links `.....................` |mkdx-mapping-quickfix-dead-links|
+    Jump to header `...............................` |mkdx-mapping-jump-to-header|
+    Toggle checkbox `.............................` |mkdx-mapping-toggle-checkbox|
+    Toggle checklist `...........................` |mkdx-mapping-toggle-checklist|
+    Toggle list `.....................................` |mkdx-mapping-toggle-list|
+    Toggle kbd shortcut `.....................` |mkdx-mapping-toggle-kbd-shortcut|
+    Jump to file `...................................` |mkdx-mapping-jump-to-file|
+    Open external file `.......................` |mkdx-mapping-open-external-file|
 
-    Errors
-       Type
-       Minimum length
-       Between
-       Only valid
-       Only list
+                                                            *mkdx-toc-functions*
+Functions `.....................................................` |mkdx-functions|
+    mkdx#ToggleCheckboxState() `.................` |mkdx-function-toggle-checkbox|
+    mkdx#WrapLink() `..................................` |mkdx-function-wrap-link|
+    mkdx#ToggleQuote() `............................` |mkdx-function-toggle-quote|
+    mkdx#ToggleQuoteSelection() `.........` |mkdx-function-toggle-quote-selection|
+    mkdx#ToggleHeader() `..........................` |mkdx-function-toggle-header|
+    mkdx#JumpToHeader() `.........................` |mkdx-function-jump-to-header|
+    mkdx#Tableize() `...................................` |mkdx-function-tableize|
+    mkdx#EnterHandler() `..........................` |mkdx-function-enter-handler|
+    mkdx#ShiftEnterHandler() `...............` |mkdx-function-shift-enter-handler|
+    mkdx#OHandler() `..................................` |mkdx-function-o-handler|
+    mkdx#ShiftOHandler() `.......................` |mkdx-function-shift-o-handler|
+    mkdx#GenerateTOC() `............................` |mkdx-function-generate-toc|
+    mkdx#UpdateTOC() `................................` |mkdx-function-update-toc|
+    mkdx#GenerateOrUpdateTOC() `..........` |mkdx-function-generate-or-update-toc|
+    mkdx#QuickfixHeaders() `....................` |mkdx-function-quickfix-headers|
+    mkdx#QuickfixDeadLinks() `...............` |mkdx-function-quickfix-dead-links|
+    mkdx#ToggleCheckboxTask() `.............` |mkdx-function-toggle-checkbox-task|
+    mkdx#ToggleChecklist() `....................` |mkdx-function-toggle-checklist|
+    mkdx#ToggleList() `..............................` |mkdx-function-toggle-list|
+    mkdx#ToggleToKbd() `...........................` |mkdx-function-toggle-to-kbd|
+    mkdx#Complete() `...................................` |mkdx-function-complete|
+    mkdx#CompleteLink() `..........................` |mkdx-function-complete-link|
+    mkdx#InsertCtrlNHandler() `............` |mkdx-function-insert-ctrl-n-handler|
+    mkdx#InsertCtrlPHandler() `............` |mkdx-function-insert-ctrl-p-handler|
+    mkdx#fold() `...........................................` |mkdx-function-fold|
+    mkdx#WrapText() `..................................` |mkdx-function-wrap-text|
+    mkdx#WrapStrike() `..............................` |mkdx-function-wrap-strike|
+    mkdx#gf() `...............................................` |mkdx-function-gf|
 
-    Deprecated
-       V1.8.0
+                                                               *mkdx-toc-errors*
+Errors `...........................................................` |mkdx-errors|
+   Type `......................................................` |mkdx-error-type|
+   Minimum length `......................................` |mkdx-error-min-length|
+   Between `................................................` |mkdx-error-between|
+   Only valid `..........................................` |mkdx-error-only-valid|
+   Only list `............................................` |mkdx-error-only-list|
+
+                                                           *mkdx-toc-deprecated*
+Deprecated `...................................................` |mkdx-deprecated|
+   V1.8.0 `.............................................` |mkdx-deprecated-v1.8.0|
 
 ==============================================================================
 INTRODUCTION                                                 *mkdx-introduction*
@@ -228,196 +238,7 @@ entries will not yet exist. Open a markdown file first before attempting to
 view the menu.
 
 ==============================================================================
-HELPTAGS                                     *mkdx-tags* *mkdx-help* *mkdx-helptags*
-
-See |mkdx-settings| for settings, |mkdx-mappings| for keymaps and |mkdx-functions|
-for functions. Below is a list of all helptags:
-
-- |mkdx.txt|, |mkdx|
-- |mkdx-contents|, |mkdx-toc|
-- |mkdx-menu|
-- |mkdx-introduction|
-- |mkdx-helptags|, |mkdx-tags|, |mkdx-help|
-
-- |mkdx-settings|
-    - |mkdx-setting-gf-on-steroids|
-    - |mkdx-setting-links-external-enable|
-    - |mkdx-setting-links-external-timeout|
-    - |mkdx-setting-links-external-host|
-    - |mkdx-setting-links-external-rel|
-    - |mkdx-setting-links-external-ua|
-    - |mkdx-setting-links-fragment-jumplist|
-    - |mkdx-setting-links-fragment-complete|
-    - |mkdx-setting-image-extension-pattern|
-    - |mkdx-setting-restore-visual|
-    - |mkdx-setting-map-prefix|
-    - |mkdx-setting-map-enable|
-    - |mkdx-setting-checkbox-toggles|
-    - |mkdx-setting-checkbox-update-tree|
-    - |mkdx-setting-checkbox-initial-state|
-    - |mkdx-setting-tokens-header|
-    - |mkdx-setting-tokens-enter|
-    - |mkdx-setting-tokens-fence|
-    - |mkdx-setting-tokens-italic|
-    - |mkdx-setting-tokens-bold|
-    - |mkdx-setting-tokens-strike|
-    - |mkdx-setting-tokens-list|
-    - |mkdx-setting-table-header-divider|
-    - |mkdx-setting-table-divider|
-    - |mkdx-setting-table-align|
-    - |mkdx-setting-enter-enable|
-    - |mkdx-setting-enter-o|
-    - |mkdx-setting-enter-shift|
-    - |mkdx-setting-enter-shifto|
-    - |mkdx-setting-enter-malformed|
-    - |mkdx-setting-toc-text|
-    - |mkdx-setting-toc-list-token|
-    - |mkdx-setting-toc-position|
-    - |mkdx-setting-toc-update-on-write|
-    - |mkdx-setting-toc-details-enable|
-    - |mkdx-setting-toc-details-summary|
-    - |mkdx-setting-toc-details-nesting-level|
-    - |mkdx-setting-toc-details-child-count|
-    - |mkdx-setting-toc-details-child-summary|
-    - |mkdx-setting-highlight-enable|
-    - |mkdx-setting-auto-update-enable|
-    - |mkdx-setting-fold-enable|
-    - |mkdx-setting-fold-components|
-
-- |mkdx-highlighting|
-    - |mkdx-highlight-list-item|
-    - |mkdx-highlight-checkbox-empty|
-    - |mkdx-highlight-checkbox-pending|
-    - |mkdx-highlight-checkbox-complete|
-    - |mkdx-highlight-table|
-    - |mkdx-highlight-table-delimiter|
-    - |mkdx-highlight-table-align|
-    - |mkdx-highlight-table-header|
-    - |mkdx-highlight-table-header-delimiter|
-    - |mkdx-highlight-table-caption|
-    - |mkdx-highlight-table-caption-delimiter|
-    - |mkdx-highlight-kbd-text|
-    - |mkdx-highlight-kbd-opening|
-    - |mkdx-highlight-kbd-ending|
-    - |mkdx-highlight-bold-italic|
-    - |mkdx-highlight-bold-italic-delimiter|
-    - |mkdx-highlight-inline-code|
-    - |mkdx-highlight-inline-code-delimiter|
-
-- |mkdx-plugs|
-    - |mkdx-plug-ctrl-n-compl|
-    - |mkdx-plug-ctrl-p-compl|
-    - |mkdx-plug-link-compl|
-    - |mkdx-plug-checkbox-next-n|
-    - |mkdx-plug-checkbox-next-v|
-    - |mkdx-plug-checkbox-prev-n|
-    - |mkdx-plug-checkbox-prev-v|
-    - |mkdx-plug-promote-header|
-    - |mkdx-plug-demote-header|
-    - |mkdx-plug-wrap-link-n|
-    - |mkdx-plug-wrap-link-v|
-    - |mkdx-plug-jump-to-header|
-    - |mkdx-plug-tableize|
-    - |mkdx-plug-generate-toc|
-    - |mkdx-plug-update-toc|
-    - |mkdx-plug-gen-or-update-toc|
-    - |mkdx-plug-quickfix-toc|
-    - |mkdx-plug-quickfix-links|
-    - |mkdx-plug-wrap-text-in-link-n|
-    - |mkdx-plug-wrap-text-in-link-v|
-    - |mkdx-plug-wrap-text-in-bold-n|
-    - |mkdx-plug-wrap-text-in-bold-v|
-    - |mkdx-plug-wrap-text-in-italic-n|
-    - |mkdx-plug-wrap-text-in-italic-v|
-    - |mkdx-plug-wrap-text-in-strike-tag-n|
-    - |mkdx-plug-wrap-text-in-strike-tag-v|
-    - |mkdx-plug-wrap-text-in-backticks-n|
-    - |mkdx-plug-wrap-text-in-backticks-v|
-    - |mkdx-plug-toggle-checkbox|
-    - |mkdx-plug-toggle-checkbox-v|
-    - |mkdx-plug-toggle-checklist|
-    - |mkdx-plug-toggle-checklist-v|
-    - |mkdx-plug-toggle-list|
-    - |mkdx-plug-toggle-list-v|
-    - |mkdx-plug-toggle-to-kbd-n|
-    - |mkdx-plug-toggle-to-kbd-v|
-    - |mkdx-plug-toggle-quote|
-    - |mkdx-plug-toggle-quote-v|
-    - |mkdx-plug-o|
-    - |mkdx-plug-shift-o|
-    - |mkdx-plug-enter|
-    - |mkdx-plug-shift-enter|
-    - |mkdx-plug-insert-kbd|
-    - |mkdx-plug-fence-tilde|
-    - |mkdx-plug-fence-backtick|
-    - |mkdx-plug-gf|
-    - |mkdx-plug-gx|
-
-- |mkdx-mappings|
-    - |mkdx-mapping-insert-link-completion|
-    - |mkdx-mapping-insert-fenced-code-block|
-    - |mkdx-mapping-insert-kbd-shortcut|
-    - |mkdx-mapping-toggle-checkbox-forward|
-    - |mkdx-mapping-toggle-checkbox-backward|
-    - |mkdx-mapping-wrap-text-in-link|
-    - |mkdx-mapping-wrap-text-in-bold|
-    - |mkdx-mapping-wrap-text-in-italic|
-    - |mkdx-mapping-wrap-text-in-strike-tag|
-    - |mkdx-mapping-wrap-text-in-backticks|
-    - |mkdx-mapping-increment-header-level|
-    - |mkdx-mapping-decrement-header-level|
-    - |mkdx-mapping-csv-to-markdown-table|
-    - |mkdx-mapping-toggle-quote|
-    - |mkdx-mapping-list-items|
-    - |mkdx-mapping-generate-or-update-toc|
-    - |mkdx-mapping-quickfix-table-of-contents|
-    - |mkdx-mapping-quickfix-dead-links|
-    - |mkdx-mapping-jump-to-header|
-    - |mkdx-mapping-toggle-checkbox|
-    - |mkdx-mapping-toggle-checklist|
-    - |mkdx-mapping-toggle-list|
-    - |mkdx-mapping-toggle-kbd-shortcut|
-    - |mkdx-mapping-jump-to-file|
-    - |mkdx-mapping-open-external-file|
-
-- |mkdx-functions|
-    - |mkdx-function-toggle-checkbox|
-    - |mkdx-function-wrap-link|
-    - |mkdx-function-toggle-quote|
-    - |mkdx-function-toggle-quote-selection|
-    - |mkdx-function-toggle-header|
-    - |mkdx-function-jump-to-header|
-    - |mkdx-function-tableize|
-    - |mkdx-function-enter-handler|
-    - |mkdx-function-shift-enter-handler|
-    - |mkdx-function-o-handler|
-    - |mkdx-function-shift-o-handler|
-    - |mkdx-function-generate-toc|
-    - |mkdx-function-update-toc|
-    - |mkdx-function-generate-or-update-toc|
-    - |mkdx-function-quickfix-headers|
-    - |mkdx-function-quickfix-dead-links|
-    - |mkdx-function-wrap-text|
-    - |mkdx-function-toggle-checkbox-task|
-    - |mkdx-function-toggle-checklist|
-    - |mkdx-function-toggle-list|
-    - |mkdx-function-toggle-to-kbd|
-    - |mkdx-function-complete|
-    - |mkdx-function-insert-ctrl-n-handler|
-    - |mkdx-function-insert-ctrl-p-handler|
-    - |mkdx-function-complete-link|
-    - |mkdx-function-fold|
-    - |mkdx-function-gf|
-
-- |mkdx-errors|
-    - |mkdx-error-type|
-    - |mkdx-error-min-length|
-    - |mkdx-error-between|
-    - |mkdx-error-only-valid|
-    - |mkdx-error-only-list|
-
-==============================================================================
-SETTINGS   `g:mkdx#settings = { ... }`                             *mkdx-settings*
+SETTINGS                                                         *mkdx-settings*
 
 |mkdx| has some configurable settings that you can define. Defaults are shown
 at the bottom of every setting section. The default settings hash:
@@ -647,6 +468,9 @@ Defines the extensions to search for when identifying the type of link that
 |mkdx-function-wrap-link| will generate. Setting it to an empty string
 disables image wrapping and a regular empty markdown link will be generated
 instead.
+
+This setting is also used in |mkdx-function-gf| to define known image
+extensions that may be opened by an external program.
 
 ==============================================================================
 `g:mkdx#settings.restore_visual = 1`                 *mkdx-setting-restore-visual*
@@ -2356,20 +2180,6 @@ This function will be executed by |completefunc| and will return completions
 relevant to the current context.
 
 ==============================================================================
-mkdx#InsertCtrlNHandler()                  *mkdx-function-insert-ctrl-n-handler*
-
-Handles <C-n> completions in |Insert-mode| when in a recognized context and
-when |mkdx-setting-links-fragment-complete| is enabled (default on),
-otherwise default completions will be shown.
-
-==============================================================================
-mkdx#InsertCtrlPHandler()                  *mkdx-function-insert-ctrl-p-handler*
-
-Handles <C-p> completions in |Insert-mode| when in a recognized context and
-when |mkdx-setting-links-fragment-complete| is enabled (default on),
-otherwise default completions will be shown.
-
-==============================================================================
 mkdx#CompleteLink()                                *mkdx-function-complete-link*
 
 Every time a `#` character is typed in |Insert-mode|, check if the inserted
@@ -2384,6 +2194,20 @@ HTML ("`|`" is the cursor position):
 Completions will update while typing.
 Completions will not work outside of a link context, if you want to complete a
 fragment link without it being in a header, use <C-n> or <C-p> instead.
+
+==============================================================================
+mkdx#InsertCtrlNHandler()                  *mkdx-function-insert-ctrl-n-handler*
+
+Handles <C-n> completions in |Insert-mode| when in a recognized context and
+when |mkdx-setting-links-fragment-complete| is enabled (default on),
+otherwise default completions will be shown.
+
+==============================================================================
+mkdx#InsertCtrlPHandler()                  *mkdx-function-insert-ctrl-p-handler*
+
+Handles <C-p> completions in |Insert-mode| when in a recognized context and
+when |mkdx-setting-links-fragment-complete| is enabled (default on),
+otherwise default completions will be shown.
 
 ==============================================================================
 mkdx#fold({lnum})                                           *mkdx-function-fold*
@@ -2535,8 +2359,8 @@ DEPRECATED                                                     *mkdx-deprecated*
 The following section provides information about deprecated functionality,
 plugs, mappings etc...
 
-======
-V1.8.0
+==============================================================================
+V1.8.0                                                  *mkdx-deprecated-v1.8.0*
 
 Deprecated plugs:
     - `mkdx-checkbox-next` replaced by:

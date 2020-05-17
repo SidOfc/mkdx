@@ -672,21 +672,27 @@ fun! s:util.linkUrl(md_link)
 endfun
 
 fun! mkdx#gf()
+  let cpos = getpos('.')
   try
     if s:util.isAlreadyWrapped('mkdx-text-link-n')
       let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
-      let destination = s:util.linkUrl(getline(slnum)[scol:])
+      let line = getline(slnum)
+      let destination = s:util.linkUrl(line[scol:])
 
       if destination =~? '^http'
         silent! call system('open ' . destination)
       else
-        normal! f(l
-        normal! gf
+        if line[col('.') - 1] == ')'
+          normal! hgf
+        else
+          normal! t)gf
+        end
       endif
     else
       normal! gf
     endif
   catch
+    call setpos('.', cpos)
     echohl Error
     echom join(split(v:exception, ':')[1:], ':')
     echohl None

@@ -530,6 +530,18 @@ Given text `Hello world` where the cursor can be anywhere inside the first word
 <kbd>2</kbd>+<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> will
 wrap both `Hello` and `world`: `**Hello world**`. This works for all the mappings above.
 
+**NOTE:** mkdx wraps using Vim's 'word' (`:h word`), sometimes 'word' will not include command
+characters such as `-` which means mkdx may fail to wrap `hello-world` as one word.
+To fix this the `iskeyword` option can be overridden to include `-` or any other character:
+
+```viml
+augroup markdown
+    autocmd!
+    " Include dash in 'word'
+    autocmd FileType markdown setlocal iskeyword+=-
+augroup END
+```
+
 ## Convert CSV to table (and back)
 
 ![mkdx convert csv to table](doc/gifs/vim-mkdx-tableize.gif)

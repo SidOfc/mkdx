@@ -27,10 +27,17 @@ settings and examples with default mappings.
 
 Before we dive in I'd like to give a special thanks to the following contributors for posting issues and PRs:
 
+- [@victorkristof](https://github.com/victorkristof)
+    - idea to make text wrap mappings "toggleable"
+    - idea to allow text wrap mappings to be preceded with a _count_
+    - idea to enhance <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
+- [@samarulmeu](https://github.com/samarulmeu)
+    - idea to mark every line with a quote mark
+    - discovering a bug with double insertion of quote marks
 - [@yous](https://github.com/yous)
     - discovering a bug when using unicode characters in list items
 - [@marcdeop](https://github.com/marcdeop) ([Erasys](https://www.erasys.de/))
-    - discovering and fixing a bug when using `&sw` with a value of `0`.
+    - discovering and fixing a bug when using `&sw` with a value of `0`
 - [@totpet](https://github.com/totpet)
     - idea to compress GIFs to greatly reduce repository size
     - idea for <strike>strikethrough</strike> highlighting
@@ -700,7 +707,7 @@ To view the menu in NeoVim / Vim, run (_after_ opening a markdown file):
 
 # `g:mkdx#settings`
 
-**IMPORTANT**: _within your .vimrc / config/nvim/init.vim files you will not be able to use the 'short' `g:mkdx#settings.setting.name` style. these are only intended to be used in EX mode (when typing a `:` command)_
+**IMPORTANT**: _within your .vimrc / config/nvim/init.vim files you will not be able to use the 'short' `g:mkdx#settings.setting.name` style. these are only intended to be used in EX mode (when typing a `:` command)_.
 
 All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
 If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.

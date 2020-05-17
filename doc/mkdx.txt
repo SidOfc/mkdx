@@ -23,6 +23,7 @@ To jump to this table of contents, use |go| or |gg|.
 - |mkdx-contents|, |mkdx-toc|, |mkdx-helptags|, |mkdx-tags|, |mkdx-help|
 - |mkdx-menu|
 - |mkdx-introduction|
+- |mkdx-development|
                                                              *mkdx-toc-settings*
 Settings `.......................................................` |mkdx-settings|
     gf_on_steroids `...............................` |mkdx-setting-gf-on-steroids|
@@ -2445,5 +2446,39 @@ Deprecated plugs:
 
 While the old plugs will still work, they will no longer restore visual mode
 regardless of |mkdx-setting-restore-visual|.
+
+==============================================================================
+DEVELOPMENT                                                   *mkdx-development*
+
+This section does not describe much yet, it is primarily here so that over
+time as I (@SidOfc) moves machines, I can go here to see how to release mkdx
+properly, things such as zipping and excluding gifs etc...
+
+mkdx uses tagged releases to indicate a version, whenever a new version is
+"done" and the README / CHANGELOG / doc/mkdx.txt files are updated,
+tag the commit using:
+
+    `git tag -a 'vX.X.X' -m 'vX.X.X'`
+
+where `X.X.X` is replaced by the version number at the top of the file.
+Remember that tags must be pushed separately:
+
+    `git push && git push --tags`
+
+will perform both a regular `git push` and also `git push --tags` if it
+succeeds.
+
+Aside from deploying to git to allow modern installation via plugins, a zip
+file must also be created and deployed to
+https://www.vim.org/scripts/script.php?script_id=5620.
+
+To keep the filesize within acceptable range, use the following command:
+
+    `zip -r mkdx-X.X.X.zip mkdx -x "*git*" -x "*.gif" -x "*test*"`
+
+This excludes git, README gifs, and test files from the final zip.
+deploying to vim.org is recommended after pushing the updated README and
+CHANGELOG to github. This allows for easier copying of the changelog section
+in the README file.
 
 vim:tw=78:sw=4:ft=help:norl:

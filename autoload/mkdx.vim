@@ -679,7 +679,8 @@ fun! mkdx#gf()
     if destination =~? '^http'
       silent! call system('open ' . destination)
     else
-      normal! f(lgf
+      normal! f(l
+      normal! gf
     endif
   else
     normal! gf

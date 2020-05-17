@@ -706,65 +706,15 @@ All the settings used in mkdx are defined in a `g:mkdx#settings` hash.
 If you still have other `g:mkdx#` variables in your _.vimrc_, they should be replaced with an entry in `g:mkdx#settings` instead.
 Going forward, no new `g:mkdx#` variables will be added, **only** `g:mkdx#settings` will be extended.
 To see a mapping of new settings from old variables, see [this README](https://github.com/SidOfc/mkdx/blob/1a80ab700e6a02459879a8fd1e9e26ceca4f52c4/README.md#gmkdxsettings).
-
-```viml
-" :h mkdx-settings
-let g:mkdx#settings = {
-      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
-      \ 'gf_on_steroids':          0,
-      \ 'restore_visual':          1,
-      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1,
-      \                              'shifto': 1, 'shift': 0 },
-      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
-      \ 'tokens':                  { 'enter': ['-', '*', '>'],
-      \                              'bold': '**', 'italic': '*', 'strike': '',
-      \                              'list': '-', 'fence': '',
-      \                              'header': '#' },
-      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
-      \                              'update_tree': 2,
-      \                              'initial_state': ' ' },
-      \ 'toc':                     { 'text': "TOC", 'list_token': '-',
-      \                              'update_on_write': 0,
-      \                              'position': 0,
-      \                              'details': {
-      \                                 'enable': 0,
-      \                                 'summary': 'Click to expand {{toc.text}}',
-      \                                 'nesting_level': -1,
-      \                                 'child_count': 5,
-      \                                 'child_summary': 'show {{count}} items'
-      \                              }
-      \                            },
-      \ 'table':                   { 'divider': '|',
-      \                              'header_divider': '-',
-      \                              'align': {
-      \                                 'left':    [],
-      \                                 'center':  [],
-      \                                 'right':   [],
-      \                                 'default': 'center'
-      \                              }
-      \                            },
-      \ 'links':                   { 'external': {
-      \                                 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
-      \                                 'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.1'
-      \                              },
-      \                              'fragment': {
-      \                                 'jumplist': 1,
-      \                                 'complete': 1
-      \                              }
-      \                            },
-      \ 'highlight':               { 'enable': 0 },
-      \ 'auto_update':             { 'enable': 0 }
-    \ }
-```
-
-To overwrite a setting, write it as seen above in your _.vimrc_:
+For a full list of defaults, visit `:h mkdx-settings`, for an overview of all settings visit `:h mkdx-toc-settings`
+To overwrite a setting, write it as seen in `:h mkdx-settings` in your _.vimrc_:
 
 ```viml
 " :h mkdx-settings
 let g:mkdx#settings = { 'enter': { 'enable': 0 } }
 ```
 
-Will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
+The above will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
 For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
 This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.
 So while `g:mkdx#` variables still work, they are overwritten when you explicitly define them in
@@ -1343,44 +1293,10 @@ mkdx attempts to improve highlighting for the following syntax in a markdown fil
 - YAML front-matter
 - Inline code blocks
 
-All other syntax remains untouched.
+All other syntax remains untouched. To see all highlight groups, visit `:h mkdx-highlighting`,
+to see an overview of all highlight groups, visit `:h mkdx-toc-highlighting`
 
-<details>
-<summary>Full list of highlight groups</summary>
-<ul>
-<li><code>mkdxTable</code></li>
-<li><code>mkdxTableDelimiter</code></li>
-<li><code>mkdxTableAlign</code></li>
-<li><code>mkdxTableHeader</code></li>
-<li><code>mkdxTableHeadDelimiter</code></li>
-<li><code>mkdxTableCaption</code></li>
-<li><code>mkdxListItem</code></li>
-<li><code>mkdxCheckboxEmpty</code></li>
-<li><code>mkdxCheckboxPending</code></li>
-<li><code>mkdxCheckboxComplete</code></li>
-<li><code>mkdxTildeFence</code></li>
-<li><code>mkdxBoldItalic</code></li>
-<li><code>mkdxInlineCode</code></li>
-<li><code>mkdxKbdText</code></li>
-<li><code>mkdxKbdOpening</code></li>
-<li><code>mkdxKbdEnding</code></li>
-<li><code>mkdxCriticAddition</code></li>
-<li><code>mkdxCriticAddStartMark</code></li>
-<li><code>mkdxCriticAddEndMark</code></li>
-<li><code>mkdxCriticDeletion</code></li>
-<li><code>mkdxCriticDelStartMark</code></li>
-<li><code>mkdxCriticDelEndMark</code></li>
-<li><code>mkdxCriticSubRemove</code></li>
-<li><code>mkdxCriticSubStartMark</code></li>
-<li><code>mkdxCriticSubstitute</code></li>
-<li><code>mkdxCriticSubTransMark</code></li>
-<li><code>mkdxCriticSubEndMark</code></li>
-<li><code>mkdxCriticComment</code></li>
-<li><code>mkdxCriticHighlight</code></li>
-</ul>
-</details>
-
-Note: syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
+**NOTE:** syntax highlighting is opt-in _by default_. This means you must explicitly enable this feature to use it.
 The reason behind this is that this plugin is not a syntax plugin and maybe you are already using one that does such a thing in a way that works better for you.
 You can see it in action in the [Completing checkboxes / checklists](#completing-checkboxes--checklists) examples.
 

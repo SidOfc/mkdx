@@ -115,15 +115,15 @@ if mkdx#in_rtp('syntax/yaml.vim')
   syn region mkdxYAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
 endif
 
-hi default link mkdxCriticAdd              DiffText
-hi default link mkdxCriticAddition         DiffAdd
-hi default link mkdxCriticDel              DiffText
-hi default link mkdxCriticDeletion         DiffDelete
-hi default link mkdxCriticSubRemove        DiffDelete
-hi default link mkdxCriticSubstitute       DiffAdd
-hi default link mkdxCriticSubStartMark     DiffText
-hi default link mkdxCriticSubTransMark     DiffText
-hi default link mkdxCriticSubEndMark       DiffText
-hi default link mkdxCriticComment          Comment
-hi default link mkdxCriticHighlight        Todo
-hi default link mkdxCriticExtra            DiffText
+hi default link mkdxCriticAdd          DiffText
+hi default link mkdxCriticAddition     DiffAdd
+hi default link mkdxCriticDel          DiffText
+hi default link mkdxCriticDeletion     DiffDelete
+hi default link mkdxCriticSubRemove    DiffDelete
+hi default link mkdxCriticSubstitute   DiffAdd
+hi default link mkdxCriticSubStartMark DiffText
+hi default link mkdxCriticSubTransMark DiffText
+hi default link mkdxCriticSubEndMark   DiffText
+hi default link mkdxCriticComment      Comment
+hi default link mkdxCriticHighlight    Todo
+hi default link mkdxCriticExtra        DiffText

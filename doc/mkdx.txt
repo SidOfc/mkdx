@@ -70,6 +70,7 @@ Settings `.......................................................` |mkdx-setting
 
                                                          *mkdx-toc-highlighting*
 Highlighting `...............................................` |mkdx-highlighting|
+    mkdxYAMLHeader `...........................` |mkdx-highlight-yaml-frontmatter|
     mkdxListItem `....................................` |mkdx-highlight-list-item|
     mkdxCheckboxEmpty `..........................` |mkdx-highlight-checkbox-empty|
     mkdxCheckboxPending `......................` |mkdx-highlight-checkbox-pending|
@@ -88,6 +89,21 @@ Highlighting `...............................................` |mkdx-highlightin
     mkdxBoldItalicDelimiter `.............` |mkdx-highlight-bold-italic-delimiter|
     mkdxInlineCode `................................` |mkdx-highlight-inline-code|
     mkdxInlineCodeDelimiter `.............` |mkdx-highlight-inline-code-delimiter|
+    mkdxTildeFence `................................` |mkdx-highlight-tilde-fence|
+    mkdxCriticAddition `........................` |mkdx-highlight-critic-addition|
+    mkdxCriticAddStartMark `..............` |mkdx-highlight-critic-add-start-mark|
+    mkdxCriticAddEndMark `..................` |mkdx-highlight-critic-add-end-mark|
+    mkdxCriticDeletion `........................` |mkdx-highlight-critic-deletion|
+    mkdxCriticDelStartMark `..............` |mkdx-highlight-critic-del-start-mark|
+    mkdxCriticDelEndMark `..................` |mkdx-highlight-critic-del-end-mark|
+    mkdxCriticSubRemove `.....................` |mkdx-highlight-critic-sub-remove|
+    mkdxCriticSubStartMark `..............` |mkdx-highlight-critic-sub-start-mark|
+    mkdxCriticSubstitute `....................` |mkdx-highlight-critic-substitute|
+    mkdxCriticSubTransMark `..............` |mkdx-highlight-critic-sub-trans-mark|
+    mkdxCriticSubEndMark `..................` |mkdx-highlight-critic-sub-end-mark|
+    mkdxCriticComment `..........................` |mkdx-highlight-critic-comment|
+    mkdxCriticHighlight `......................` |mkdx-highlight-critic-highlight|
+    mkdxCriticExtra `..............................` |mkdx-highlight-critic-extra|
 
                                                                 *mkdx-toc-plugs*
 Plugs `.............................................................` |mkdx-plugs|
@@ -893,70 +909,112 @@ Also, when |conceallevel| is set to `2`, mkdx will also fold some components:
 - ``code``       => `code`
 
 ==============================================================================
-`mkdxListItem`                                          *mkdx-highlight-list-item*
+mkdxYAMLHeader                                 *mkdx-highlight-yaml-frontmatter*
+
+This syntax group does not apply its own highlighting, but rather allows
+|yaml| highlighting to be active in a markdown frontmatter block.
+
+This will only be activated if `syntax/yaml.vim` is found in 'rtp', if
+it is found but including it fails for some other reason this group will still
+be created, but highlighting will not be applied
+
+==============================================================================
+mkdxListItem                                          *mkdx-highlight-list-item*
 
     `highlight default link mkdxListItem Comment`
 
 ==============================================================================
-`mkdxCheckboxPending`                            *mkdx-highlight-checkbox-pending*
-`mkdxCheckboxComplete`                          *mkdx-highlight-checkbox-complete*
-`mkdxCheckboxEmpty`                                *mkdx-highlight-checkbox-empty*
+mkdxCheckboxPending                            *mkdx-highlight-checkbox-pending*
+mkdxCheckboxComplete                          *mkdx-highlight-checkbox-complete*
+mkdxCheckboxEmpty                                *mkdx-highlight-checkbox-empty*
 
     `highlight default link mkdxCheckboxPending  gitcommitBranch`
     `highlight default link mkdxCheckboxComplete gitcommitSelectedFile`
     `highlight default link mkdxCheckboxEmpty    gitcommitUnmergedFile`
 
 ==============================================================================
-`mkdxTable`                                                 *mkdx-highlight-table*
-`mkdxTableDelimiter`                              *mkdx-highlight-table-delimiter*
+mkdxTable                                                 *mkdx-highlight-table*
+mkdxTableDelimiter                              *mkdx-highlight-table-delimiter*
 
     `highlight default link mkdxTable`
     `highlight default link mkdxTableDelimiter Delimiter`
 
 ==============================================================================
-`mkdxTableAlign`                                      *mkdx-highlight-table-align*
+mkdxTableAlign                                      *mkdx-highlight-table-align*
 
     `highlight default link mkdxTableAlign Identifier`
 
 ==============================================================================
-`mkdxTableHeader`                                    *mkdx-highlight-table-header*
-`mkdxTableHeadDelimiter`                     *mkdx-highlight-table-head-delimiter*
+mkdxTableHeader                                    *mkdx-highlight-table-header*
+mkdxTableHeadDelimiter                     *mkdx-highlight-table-head-delimiter*
 
     `highlight default link mkdxTableHeader        Constant`
     `highlight default link mkdxTableHeadDelimiter Delimiter`
 
 ==============================================================================
-`mkdxTableCaption`                                  *mkdx-highlight-table-caption*
-`mkdxTableCaptionDelimiter`               *mkdx-highlight-table-caption-delimiter*
+mkdxTableCaption                                  *mkdx-highlight-table-caption*
+mkdxTableCaptionDelimiter               *mkdx-highlight-table-caption-delimiter*
 
     `highlight default link mkdxTableCaption          Comment`
     `highlight default link mkdxTableCaptionDelimiter Delimiter`
 
 ==============================================================================
-`mkdxKbdText`                                            *mkdx-highlight-kbd-text*
+mkdxKbdText                                            *mkdx-highlight-kbd-text*
 
     `highlight default link mkdxKbdText Constant`
 
 ==============================================================================
-`mkdxKbdOpening`                                      *mkdx-highlight-kbd-opening*
-`mkdxKbdEnding`                                        *mkdx-highlight-kbd-ending*
+mkdxKbdOpening                                      *mkdx-highlight-kbd-opening*
+mkdxKbdEnding                                        *mkdx-highlight-kbd-ending*
 
     `highlight default link mkdxKbdOpening Delimiter`
     `highlight default link mkdxKbdEnding  mkdxKbdOpening`
 
 ==============================================================================
-`mkdxBoldItalic`                                      *mkdx-highlight-bold-italic*
-`mkdxBoldItalicDelimiter`                   *mkdx-highlight-bold-italic-delimiter*
+mkdxBoldItalic                                      *mkdx-highlight-bold-italic*
+mkdxBoldItalicDelimiter                   *mkdx-highlight-bold-italic-delimiter*
 
     `highlight default link mkdxBoldItalic          Delimiter`
     `highlight default link mkdxBoldItalicDelimiter Delimiter`
 
 ==============================================================================
-`mkdxInlineCode`                                      *mkdx-highlight-inline-code*
-`mkdxInlineCodeDelimiter`                   *mkdx-highlight-inline-code-delimiter*
+mkdxInlineCode                                      *mkdx-highlight-inline-code*
+mkdxInlineCodeDelimiter                   *mkdx-highlight-inline-code-delimiter*
 
     `highlight default link mkdxInlineCode          markdownCode`
     `highlight default link mkdxInlineCodeDelimiter Delimiter`
+
+==============================================================================
+mkdxTildeFence                                      *mkdx-highlight-tilde-fence*
+
+    `highlight default link mkdxTildeFence markdownCodeDelimiter`
+
+==============================================================================
+mkdxCriticAdd                                        *mkdx-highlight-critic-add*
+mkdxCriticAddition                              *mkdx-highlight-critic-addition*
+mkdxCriticDel                                        *mkdx-highlight-critic-del*
+mkdxCriticDeletion                              *mkdx-highlight-critic-deletion*
+mkdxCriticSubRemove                           *mkdx-highlight-sub-critic-remove*
+mkdxCriticSubstitute                          *mkdx-highlight-critic-substitute*
+mkdxCriticSubStartMark                    *mkdx-highlight-critic-sub-start-mark*
+mkdxCriticSubTransMark                    *mkdx-highlight-critic-sub-trans-mark*
+mkdxCriticSubEndMark                        *mkdx-highlight-critic-sub-end-mark*
+mkdxCriticComment                                *mkdx-highlight-critic-comment*
+mkdxCriticHighlight                            *mkdx-highlight-critic-highlight*
+mkdxCriticExtra                                    *mkdx-highlight-critic-extra*
+
+    `hi default link mkdxCriticAdd          DiffText`
+    `hi default link mkdxCriticAddition     DiffAdd`
+    `hi default link mkdxCriticDel          DiffText`
+    `hi default link mkdxCriticDeletion     DiffDelete`
+    `hi default link mkdxCriticSubRemove    DiffDelete`
+    `hi default link mkdxCriticSubstitute   DiffAdd`
+    `hi default link mkdxCriticSubStartMark DiffText`
+    `hi default link mkdxCriticSubTransMark DiffText`
+    `hi default link mkdxCriticSubEndMark   DiffText`
+    `hi default link mkdxCriticComment      Comment`
+    `hi default link mkdxCriticHighlight    Todo`
+    `hi default link mkdxCriticExtra        DiffText`
 
 ==============================================================================
 PLUGS                                                               *mkdx-plugs*

@@ -160,7 +160,8 @@ if g:mkdx#settings.map.enable == 1
         \ ['Insert\ kbd\ tag',                0, 'i', '<<tab>', '<Plug>(mkdx-insert-kbd)',              '<kbd></kbd>2hcit'],
         \ ['Backtick\ fenced\ code\ block',   0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
         \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA'],
-        \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf()<Cr>']
+        \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf()<Cr>'],
+        \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf()<Cr>']
         \ ]
 
   if (g:mkdx#settings.links.fragment.complete)

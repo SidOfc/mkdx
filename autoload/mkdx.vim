@@ -671,8 +671,12 @@ fun! s:util.linkUrl(md_link)
   return a:md_link[(open_paren + 2):(close_paren - 1)]
 endfun
 
-fun! mkdx#gf()
+fun! mkdx#gf(...)
+  let mode = get(a:000, 0, 'f')
   let cpos = getpos('.')
+  let do_ext = !g:mkdx#settings.gf_on_steroids && mode ==? 'x'
+  let do_int = !g:mkdx#settings.gf_on_steroids && mode ==? 'f'
+
   try
     if s:util.isAlreadyWrapped('mkdx-text-link-n')
       let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
@@ -681,10 +685,12 @@ fun! mkdx#gf()
       let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart
       let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
 
-      if destination =~? '^http' || is_img
+      if !do_int && (do_ext || destination =~? '^http' || is_img)
         silent! call system('open ' . destination)
       else
-        if line[col('.') - 1] == ')'
+        if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'
+          normal! gf
+        elseif line[col('.') - 1] == ')'
           normal! hgf
         else
           normal! t)gf

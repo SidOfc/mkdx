@@ -2,6 +2,7 @@ if exists('b:did_ftplugin_mkdx') | finish | else | let b:did_ftplugin_mkdx = 1 |
 let s:defaults          = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
       \ 'restore_visual':          1,
+      \ 'gf_on_steroids':          0,
       \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
@@ -90,7 +91,8 @@ noremap         <silent> <Plug>(mkdx-toggle-to-kbd-n)    :call      mkdx#ToggleT
 noremap         <silent> <Plug>(mkdx-toggle-to-kbd-v)    :<C-U>call mkdx#ToggleToKbd('v')<Cr>
 noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOHandler()<Cr>
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
-noremap         <silent> <Plug>(mkdx-gf)                 :<C-U>call mkdx#gf()<Cr>
+noremap         <silent> <Plug>(mkdx-gf)                 :<C-U>call mkdx#gf('f')<Cr>
+noremap         <silent> <Plug>(mkdx-gx)                 :<C-U>call mkdx#gf('x')<Cr>
 inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
 inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>F<
@@ -160,9 +162,16 @@ if g:mkdx#settings.map.enable == 1
         \ ['Insert\ kbd\ tag',                0, 'i', '<<tab>', '<Plug>(mkdx-insert-kbd)',              '<kbd></kbd>2hcit'],
         \ ['Backtick\ fenced\ code\ block',   0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
         \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA'],
-        \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf()<Cr>'],
-        \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf()<Cr>']
+        \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf("f")<Cr>'],
+        \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gx)',                      ':<C-U>call mkdx#gf("x")<Cr>']
         \ ]
+
+  if (!hasmapto('<Plug>(mkdx-gf)', 'n'))
+    nmap <buffer><silent> gf <Plug>(mkdx-gf)
+  endif
+  if (!hasmapto('<Plug>(mkdx-gx)', 'n'))
+    nmap <buffer><silent> gx <Plug>(mkdx-gx)
+  endif
 
   if (g:mkdx#settings.links.fragment.complete)
     if (!hasmapto('<Plug>(mkdx-ctrl-n-compl)', 'i'))

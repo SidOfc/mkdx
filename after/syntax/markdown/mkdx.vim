@@ -20,6 +20,7 @@ syn match   mkdxTildeFence '^[ \t]*\~\~\~\w*'
 syn region  mkdxBoldItalic matchgroup=mkdxBoldItalicDelimiter start="[\*_]\{3}" end="[\*_]\{3}" keepend concealends
 syn region  mkdxInlineCode matchgroup=mkdxInlineCodeDelimiter start="``\@!" end="``\@!" keepend concealends
 
+syn match   mkdxLink '\(https\?:\)\?\/\/[^ ]\{-}\(\.\w\+\)\+'
 syn match   mkdxKbdText '\%(kbd>\)\@<=[^ >]\+\%(<\/\?kbd\)\@='
 syn match   mkdxKbdOpening '<kbd>'
 syn match   mkdxKbdEnding '<\/kbd>'
@@ -39,6 +40,10 @@ syn match  mkdxCriticSubTransMark /\~>/ contained containedin=mdCriticSubstitute
 syn match  mkdxCriticSubEndMark /\~\~}/ contained containedin=mdCriticSubstitute conceal
 syn region mkdxCriticComment matchgroup=mdCriticExtra start=/{>>/ end=/<<}/ concealends
 syn region mkdxCriticHighlight matchgroup=mdCriticExtra start=/{==/ end=/==}/ concealends
+
+if hlexists('markdownUrl')
+  highlight default link mkdxLink markdownUrl
+endif
 
 if hlexists('Constant')
   highlight default link mkdxTableHeader Constant

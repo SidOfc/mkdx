@@ -609,7 +609,7 @@ let s:wrap_hl_map = {
       \ 'mkdx-text-italic-n':      ['markdownItalic', 'markdownItalicDelimiter'],
       \ 'mkdx-text-bold-n':        ['markdownBold',   'markdownBoldDelimiter'],
       \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag'],
-      \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter', 'markdownLink'],
+      \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter', 'markdownLink', 'mkdxLink'],
       \ 'mkdx-text-inline-code-n': ['mkdxInlineCode']
       \ }
 
@@ -676,9 +676,10 @@ fun! mkdx#gf()
   try
     if s:util.isAlreadyWrapped('mkdx-text-link-n')
       let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
-      let line = getline(slnum)
-      let destination = s:util.linkUrl(line[scol:])
-      let is_img = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+      let line        = getline(slnum)
+      let subpart     = line[(scol - 1):(ecol - 1)]
+      let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart
+      let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
 
       if destination =~? '^http' || is_img
         silent! call system('open ' . destination)

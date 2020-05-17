@@ -678,8 +678,9 @@ fun! mkdx#gf()
       let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
       let line = getline(slnum)
       let destination = s:util.linkUrl(line[scol:])
+      let is_img = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
 
-      if destination =~? '^http'
+      if destination =~? '^http' || is_img
         silent! call system('open ' . destination)
       else
         if line[col('.') - 1] == ')'

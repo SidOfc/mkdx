@@ -34,6 +34,8 @@ Before we dive in I'd like to give a special thanks to the following contributor
 - [@samarulmeu](https://github.com/samarulmeu)
     - idea to mark every line with a quote mark
     - discovering a bug with double insertion of quote marks
+    - finding duplicate helptag
+    - his critical thinking on enhancing <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
 - [@yous](https://github.com/yous)
     - discovering a bug when using unicode characters in list items
 - [@marcdeop](https://github.com/marcdeop) ([Erasys](https://www.erasys.de/))
@@ -1517,7 +1519,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: no-op folding functions when `g:markdown_folding` is enabled
 - Fix: allow mkdx to work with [plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown) enabled
 - Fix: insertion of double quote marks on <kbd>enter</kbd>
-- Fix: removed duplicate helptag causing Vundle to crash
+- Fix: removed duplicate helptag causing Vundle to crash ([#92](../../issues/92) by @samarulmeu)
 - Fix: `<details />` TOC not unindenting properly when `&sw` is `0`
 - Fix: typo in README ([#88](../../issues/88) by @Ginner)
 

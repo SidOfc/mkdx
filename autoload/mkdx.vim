@@ -1731,7 +1731,7 @@ fun! mkdx#EnterHandler()
 
   if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strwidth(line)
-    let at_end  = cnum > len
+    let at_end  = 1 " implementation before #107: cnum > len
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')
     let t       = t == '>' ? '' : t

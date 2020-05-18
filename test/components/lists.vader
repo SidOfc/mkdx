@@ -107,7 +107,7 @@ Do (<enter> in the middle of list item performs regular <enter>):
 
 Expect (An empty list item):
   - list 
-  item
+  - item
   - list item
 
 Do (<shift>+<enter> in the middle of list item performs indented <enter>):
@@ -124,17 +124,6 @@ Given (A nested markdown list):
   1. task
   2. task
       2.1. subtask
-      2.2. subtask
-  3. hello
-
-Do (<enter> in the middle of list item performs regular <enter>):
-  2j8la\<cr>
-
-Expect (An empty list item):
-  1. task
-  2. task
-      2.1. 
-      subtask
       2.2. subtask
   3. hello
 
@@ -187,8 +176,8 @@ Expect (An empty list item):
   > 1. task
   > 2. task
   >     2.1. 
-  >     subtask
   >     2.2. subtask
+  >     2.3. subtask
   > 3. hello
 
 Do (<shift>+<enter> in the middle of list item performs indented <enter>):

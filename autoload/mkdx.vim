@@ -761,17 +761,23 @@ fun! s:util.WrapSelectionOrWord(...)
       call cursor(line('.'), vcol - strlen(start))
       return 'unwrap'
     else
-      let s_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
-      let mvcol  = vcol - 2
-      let go_bk  = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
-      let motion = s_ch_w ? 'l' : 'e'
-      let cmd    = 'normal! ' . go_bk . '"z' . l:count . 'd' . motion
+      let single_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
+      let mvcol       = vcol - 2
+      let go_bk       = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+      let motion      = single_ch_w ? 'l' : 'e'
+      let col_before  = col('.')
 
-      exe cmd
+      if !empty(go_bk)
+        exe 'normal! ' . go_bk
+        let col_before = col('.')
+      endif
 
+      exe 'normal! "z' . l:count . 'd' . motion
+
+      let col_after = col('.')
       let @z = start . @z . end
 
-      exe 'normal! "z' . ((vcol >= llen) ? 'p' : 'P')
+      exe 'normal! "z' . ((vcol >= llen || col_before != col_after) ? 'p' : 'P')
       call cursor(line('.'), vcol + strlen(start))
     endif
   endif

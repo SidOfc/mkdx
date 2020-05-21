@@ -77,8 +77,8 @@ Thank you for making this plugin better!
         <li><a href="#toggling-and-promoting--demoting-headers">Toggling and promoting / demoting Headers</a></li>
         <li><a href="#toggling-kbd--shortcuts">Toggling &lt;kbd /&gt; shortcuts</a></li>
         <li><a href="#toggling-quotes">Toggling Quotes</a></li>
-        <li><a href="#wrap-as-link">Wrap as link</a></li>
-        <li><a href="#wrap-as-bold--italic--inline-code--strikethrough">Wrap as bold / italic / inline-code / strikethrough</a></li>
+        <li><a href="#toggle-links">Toggle links</a></li>
+        <li><a href="#toggle-as-bold--italic--inline-code--strikethrough">Toggle as bold / italic / inline-code / strikethrough</a></li>
         <li><a href="#convert-csv-to-table-and-back">Convert CSV to table (and back)</a></li>
         <li><a href="#jump-to-header">Jump to header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
@@ -501,7 +501,7 @@ an empty quote line will keep the symbol and create a new empty quote line below
 > 
 ```
 
-## Wrap as link
+## Toggle links
 
 ![mkdx wrap text in link](doc/gifs/vim-mkdx-wrap-link.gif)
 
@@ -509,8 +509,11 @@ Wrap the word under the cursor or a visual selection in an empty markdown link
 with <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>. You'll end up in **insert** mode with your
 cursor between the parens, e.g. `(|)` where the pipe (`|`) character is the cursor.
 
-This mapping also takes a count, list as wrap mappings in the [bold / italic / inline-code / strikethrough](#wrap-as-bold--italic--inline-code--strikethrough).
-Doing this will wrap _count_ words within the body of the link.
+This mapping also takes a count, like the other wrap mappings [bold / italic / inline-code / strikethrough](#toggle-as-bold--italic--inline-code--strikethrough).
+Doing this will wrap _count_ words [from](https://link.com) cursor position in a link.
+
+Additionally, as of version **1.9.2, regular** markdown links (not images!) can also be removed using <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>.
+_count_ will be ignored when removing a link.
 
 If what you're wrapping is an image (only works with visual selections at the moment), an image link will be created
 instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_pattern`](#gmkdxsettingsimage_extension_pattern).
@@ -520,7 +523,7 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 " :h mkdx-function-wrap-link
 ```
 
-## Wrap as bold / italic / inline-code / strikethrough
+## Toggle as bold / italic / inline-code / strikethrough
 
 **Normal mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough normal](doc/gifs/vim-mkdx-wrap-text-normal.gif)
@@ -528,7 +531,7 @@ instead. To disable this behaviour, see: [`g:mkdx#settings.image_extension_patte
 **Visual mode**
 ![mkdx wrap text in bold / italic / inline-code / strikethrough visual](doc/gifs/vim-mkdx-wrap-text-visual.gif)
 
-Wrap the word (anywhere) under the cursor or a visual selection using the following mappings:
+Toggle the word (anywhere) under the cursor or a visual selection using the following mappings:
 
 - <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd> => *italic*
 - <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> => **bold**
@@ -541,6 +544,9 @@ mkdx also supports supplying an optional _count_ to these mappings, e.g.
 Given text `Hello world` where the cursor can be anywhere inside the first word
 <kbd>2</kbd>+<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd> will
 wrap both `Hello` and `world`: `**Hello world**`. This works for all the mappings above.
+
+As of version **1.9.2** mkdx also supports unwrapping of wrapped text in italic / bold / inline-code / strikethrough styles.
+When unwrapping, mkdx ignores any supplied _count_ arguments.
 
 **NOTE:** mkdx wraps using Vim's 'word' (`:h word`), sometimes 'word' will not include command
 characters such as `-` which means mkdx may fail to wrap `hello-world` as one word.
@@ -881,7 +887,7 @@ let g:mkdx#settings = { 'links': { 'fragment': { 'complete': 1 } } }
 ## `g:mkdx#settings.image_extension_pattern`
 
 Defines the extensions to search for when identifying the type of link that
-will be generated when [wrapping text in a link](#wrap-as-link). Setting it to an empty string
+will be generated when [wrapping text in a link](#toggle-links). Setting it to an empty string
 disables image wrapping and a regular empty markdown link will be used instead.
 
 ```viml
@@ -994,7 +1000,7 @@ let g:mkdx#settings = { 'tokens': { 'fence': '' } }
 ## `g:mkdx#settings.tokens.italic`
 
 This token is used for italicizing the current word under the cursor or a visual selection of text.
-See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#toggle-as-bold--italic--inline-code--strikethrough) for more details.
 
 ```viml
 " :h mkdx-setting-tokens-italic
@@ -1004,12 +1010,12 @@ let g:mkdx#settings = { 'tokens': { 'italic': '*' } }
 ## `g:mkdx#settings.tokens.bold`
 
 This token is used for bolding the current word under the cursor or a visual selection of text.
-See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#toggle-as-bold--italic--inline-code--strikethrough) for more details.
 
 ## `g:mkdx#settings.tokens.strike`
 
 This token is used for striking the current word under the cursor or a visual selection of text.
-See [this section](#wrap-as-bold--italic--inline-code--strikethrough) for more details.
+See [this section](#toggle-as-bold--italic--inline-code--strikethrough) for more details.
 
 **Note:** this setting has been added in version *1.7.0*. Prior to that,
 `<strike>...</strike>` tags will always be used to create strikethrough text.

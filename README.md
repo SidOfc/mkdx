@@ -33,6 +33,8 @@ Before we dive in I'd like to give a special thanks to the following contributor
     - idea to enhance <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
 - [@samarulmeu](https://github.com/samarulmeu)
     - idea to mark every line with a quote mark
+    - idea to allow middle-of-list-item <kbd>enter</kbd> to create a new list item
+    - discovering an edge case when wrapping near end of line would not work correctly
     - discovering a bug with double insertion of quote marks
     - finding duplicate helptag
     - his critical thinking on enhancing <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
@@ -139,9 +141,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
         <li><a href="#17-05-2020-version-192">17-05-2020 VERSION 1.9.2</a></li>
         <li><a href="#10-05-2019-version-191">10-05-2019 VERSION 1.9.1</a></li>
-        <li><a href="#23-11-2018-version-190">23-11-2018 VERSION 1.9.0</a></li>
     </ul></li>
 </ul>
 </details>
@@ -1506,6 +1508,11 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 18-05-2020 VERSION 1.9.3
+
+- Add: ability to press <kbd>enter</kbd> in the middle of a list-item to split it into two ([#107](../../issues/107) by @samarulmeu)
+- Fix: wrapping last word shifting word to right in some cases ([#101](../../issues/101) by @samarulmeu)
+
 ## 17-05-2020 VERSION 1.9.2
 
 - Add: text wrap mappings can now be prefixed with a _count_ :tada: ([#103](../../issues/103) by @victorkristof)
@@ -1526,10 +1533,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 ## 10-05-2019 VERSION 1.9.1
 
 - Fix: Handle non-ascii characters in header (TOC) links ([#85](../../pull/85) by @totpet)
-
-## 23-11-2018 VERSION 1.9.0
-
-- Add: Table of contents supports configurable nested details tags
-- Add: [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting_level) to control nested details generation
-- Add: [g:mkdx#settings.toc.details.child_count](#gmkdxsettingstocdetailschild_count) to control after how many children a nested details tag will appear
-- Add: [g:mkdx#settings.toc.details.child_summary](#gmkdxsettingstocdetailschild_summary) to control summary text inside nested details

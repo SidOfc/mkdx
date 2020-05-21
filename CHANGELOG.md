@@ -1,3 +1,10 @@
+## 23-11-2018 VERSION 1.9.0
+
+- Add: Table of contents supports configurable nested details tags
+- Add: [g:mkdx#settings.toc.details.nesting_level](#gmkdxsettingstocdetailsnesting_level) to control nested details generation
+- Add: [g:mkdx#settings.toc.details.child_count](#gmkdxsettingstocdetailschild_count) to control after how many children a nested details tag will appear
+- Add: [g:mkdx#settings.toc.details.child_summary](#gmkdxsettingstocdetailschild_summary) to control summary text inside nested details
+
 ## 20-11-2018 VERSION 1.8.3
 
 - Fix: handle unicode characters in list items ([#80](../../issues/80))

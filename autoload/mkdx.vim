@@ -671,43 +671,6 @@ fun! s:util.linkUrl(md_link)
   return a:md_link[(open_paren + 2):(close_paren - 1)]
 endfun
 
-fun! mkdx#gf(...)
-  let mode = get(a:000, 0, 'f')
-  let cpos = getpos('.')
-  let do_ext = !g:mkdx#settings.gf_on_steroids && mode ==? 'x'
-  let do_int = !g:mkdx#settings.gf_on_steroids && mode ==? 'f'
-
-  try
-    if s:util.isAlreadyWrapped('mkdx-text-link-n')
-      let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
-      let line        = getline(slnum)
-      let subpart     = line[(scol - 1):(ecol - 1)]
-      let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart
-      let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
-
-      if !do_int && (do_ext || destination =~? '^http' || is_img)
-        silent! call system('open ' . destination)
-      else
-        if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'
-          normal! gf
-        elseif line[col('.') - 1] == ')'
-          normal! hgf
-        else
-          normal! t)gf
-        end
-      endif
-    else
-      normal! gf
-    endif
-  catch
-    call setpos('.', cpos)
-    echohl Error
-    echom join(split(v:exception, ':')[1:], ':')
-    echohl None
-  endtry
-endfun
-
-
 fun! s:util.unwrap(type, start, end)
   let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
   let end = a:end
@@ -1482,7 +1445,6 @@ fun! mkdx#WrapCutTextInCodeBlock() range
 endfun
 
 fun! mkdx#WrapSelectionInCode() range
-  echom string(a:firstline) string(a:lastline)
   if (mode() ==# 'V')
     return ":\<C-U>call mkdx#WrapCutTextInCodeBlock()\<Cr>"
   else
@@ -1976,6 +1938,42 @@ fun! mkdx#in_rtp(relative_path)
   endfor
 
   return 0
+endfun
+
+fun! mkdx#gf(...)
+  let mode = get(a:000, 0, 'f')
+  let cpos = getpos('.')
+  let do_ext = !g:mkdx#settings.gf_on_steroids && mode ==? 'x'
+  let do_int = !g:mkdx#settings.gf_on_steroids && mode ==? 'f'
+
+  try
+    if s:util.isAlreadyWrapped('mkdx-text-link-n')
+      let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
+      let line        = getline(slnum)
+      let subpart     = line[(scol - 1):(ecol - 1)]
+      let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart
+      let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+
+      if !do_int && (do_ext || destination =~? '^http' || is_img)
+        silent! call system('open ' . destination)
+      else
+        if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'
+          normal! gf
+        elseif line[col('.') - 1] == ')'
+          normal! hgf
+        else
+          normal! t)gf
+        end
+      endif
+    else
+      normal! gf
+    endif
+  catch
+    call setpos('.', cpos)
+    echohl Error
+    echom join(split(v:exception, ':')[1:], ':')
+    echohl None
+  endtry
 endfun
 
 if $VIM_DEV

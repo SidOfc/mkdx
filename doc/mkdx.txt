@@ -212,6 +212,7 @@ Functions `.....................................................` |mkdx-function
     mkdx#WrapText() `..................................` |mkdx-function-wrap-text|
     mkdx#WrapStrike() `..............................` |mkdx-function-wrap-strike|
     mkdx#gf() `...............................................` |mkdx-function-gf|
+    mkdx#MaybeRestoreVisual() `.............` |mkdx-function-maybe-restore-visual|
 
                                                                *mkdx-toc-errors*
 Errors `...........................................................` |mkdx-errors|
@@ -2335,6 +2336,12 @@ When |mkdx-setting-gf-on-steroids| is enabled, this argument is ignored and
 the "correct" implementation is used based on what is found. If it looks like
 an image or URL, `open` will be used, otherwise |mkdx-mapping-jump-to-file|
 will be used.
+
+==============================================================================
+mkdx#MaybeRestoreVisual()                   *mkdx-function-maybe-restore-visual*
+
+When |mkdx-setting-restore-visual| is enabled, this function restores the last
+visual selection.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

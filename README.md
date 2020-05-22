@@ -27,6 +27,9 @@ settings and examples with default mappings.
 
 Before we dive in I'd like to give a special thanks to the following contributors for posting issues and PRs:
 
+- [@Ginner](https://github.com/Ginner)
+    - Fixing a confusing typo in the README
+    - idea to conceal markdown links (inspired by vim-pandoc-syntax functionality)
 - [@victorkristof](https://github.com/victorkristof)
     - idea to make text wrap mappings "toggleable"
     - idea to allow text wrap mappings to be preceded with a _count_
@@ -45,6 +48,7 @@ Before we dive in I'd like to give a special thanks to the following contributor
 - [@totpet](https://github.com/totpet)
     - idea to compress GIFs to greatly reduce repository size
     - idea for <strike>strikethrough</strike> highlighting
+    - Allowing header titles to contain non-ascii characters for various checks and TOC generation
 - [@toffalori](https://github.com/toffalori)
     - discovering an indent bug in Vim due to `autoindent` different default value
 - [@paxtemper](https://github.com/paxtemper)

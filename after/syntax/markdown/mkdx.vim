@@ -24,6 +24,7 @@ syn match   mkdxLink '\(https\?:\)\?\/\/[^ ]\{-}\(\.\w\+\)\+'
 syn match   mkdxKbdText '\%(kbd>\)\@<=[^ >]\+\%(<\/\?kbd\)\@='
 syn match   mkdxKbdOpening '<kbd>'
 syn match   mkdxKbdEnding '<\/kbd>'
+syn region  markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" keepend contained conceal contains=markdownUrl
 
 " CriticMarkup
 " reference: http://criticmarkup.com

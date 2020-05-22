@@ -673,18 +673,25 @@ endfun
 
 fun! s:util.unwrap(type, start, end)
   let [slnum, scol, elnum, ecol] = s:util.hlBounds(a:type)
-  let end = a:end
+  let sline   = getline(slnum)
+  let end     = a:end
+  let is_link = 0
+  let start   = a:start
 
   if (end == ']()') " end of markdown link, may contain link
-    let end = '](' . s:util.linkUrl(getline(slnum)[scol:]) . ')'
+    let is_link = 1
+    let end     = '](' . s:util.linkUrl(sline[scol:]) . ')'
+    if (scol - 1 > -1 && sline[scol - 1] == '!')
+      let start = '!' . start
+      let scol -= 1
+    endif
   endif
   " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
 
-  let sline = getline(slnum)
-  let soff  = strlen(a:start)
-  let spos  = max([scol - 2, 0])
-  let sa    = spos > 0 ? sline[0:spos] : ''
-  let sb    = sline[(spos + (spos > 0) + soff):]
+  let soff = strlen(start)
+  let spos = max([scol - 2, 0])
+  let sa   = spos > 0 ? sline[0:spos] : ''
+  let sb   = sline[(spos + (spos > 0) + soff):]
 
   call setline(slnum, sa . sb)
 
@@ -695,6 +702,12 @@ fun! s:util.unwrap(type, start, end)
   let eb    = eline[(epos + 1 + eoff):]
 
   call setline(elnum, ea . eb)
+
+  if (is_link || slnum == line('.'))
+    call cursor(slnum, max([spos + soff + 1, 1]))
+  elseif (elnum == line('.'))
+    call cursor(elnum, max([epos + 1, 1]))
+  endif
 endfun
 
 fun! s:util.WrapSelectionOrWord(...)
@@ -721,7 +734,6 @@ fun! s:util.WrapSelectionOrWord(...)
   else
     if s:util.isAlreadyWrapped(type)
       call s:util.unwrap(type, start, end)
-      call cursor(line('.'), vcol - strlen(start))
       return 'unwrap'
     else
       let single_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')

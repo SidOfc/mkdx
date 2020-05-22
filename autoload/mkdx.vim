@@ -1676,28 +1676,29 @@ fun! mkdx#ShiftEnterHandler()
 endfun
 
 fun! mkdx#EnterHandler()
-  let lnum        = line('.')
-  let cnum        = virtcol('.')
-  let line        = getline(lnum)
-  let indent      = indent(lnum)
-  let sp_pat      = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
-  let after_inl   = 0
-  let inl_ind     = 0
-  let tmp_lnum    = lnum - 1
+  let line = getline('.')
 
-  if (!(match(line, sp_pat) > -1) && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
-    while (indent(tmp_lnum) >= indent)
-      if (tmp_lnum < 0) | break | else | let tmp_lnum -= 1 | endif
-    endwhile
+  if (g:mkdx#settings.enter.enable && !empty(line))
+    let lnum      = line('.')
+    let cnum      = virtcol('.')
+    let indent    = indent(lnum)
+    let sp_pat    = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+    let after_inl = 0
+    let inl_ind   = 0
+    let tmp_lnum  = lnum - 1
 
-    if (tmp_lnum >= 0)
-      let line      = getline(tmp_lnum)
-      let inl_ind   = indent(tmp_lnum)
-      let after_inl = 1
+    if (!(match(line, sp_pat) > -1) && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
+      while (indent(tmp_lnum) >= indent)
+        if (tmp_lnum < 0) | break | else | let tmp_lnum -= 1 | endif
+      endwhile
+
+      if (tmp_lnum >= 0)
+        let line      = getline(tmp_lnum)
+        let inl_ind   = indent(tmp_lnum)
+        let after_inl = 1
+      endif
     endif
-  endif
 
-  if (!empty(line) && g:mkdx#settings.enter.enable)
     let len     = strwidth(line)
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')

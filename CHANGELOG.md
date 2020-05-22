@@ -1,3 +1,7 @@
+## 10-05-2019 VERSION 1.9.1
+
+- Fix: Handle non-ascii characters in header (TOC) links ([#85](../../pull/85) by @totpet)
+
 ## 23-11-2018 VERSION 1.9.0
 
 - Add: Table of contents supports configurable nested details tags

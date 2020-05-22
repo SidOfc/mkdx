@@ -145,9 +145,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#22-05-2020-version-194">22-05-2020 VERSION 1.9.4</a></li>
         <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
         <li><a href="#17-05-2020-version-192">17-05-2020 VERSION 1.9.2</a></li>
-        <li><a href="#10-05-2019-version-191">10-05-2019 VERSION 1.9.1</a></li>
     </ul></li>
 </ul>
 </details>
@@ -1518,6 +1518,11 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
+## 22-05-2020 VERSION 1.9.4
+
+- Add: when `conceallevel` is set, markdown link urls are now also hidden ([#108](../../issues/108) by @Ginner)
+- Fix: improved cursor position after unwrapping text
+
 ## 18-05-2020 VERSION 1.9.3
 
 - Add: ability to press <kbd>enter</kbd> in the middle of a list-item to split it into two ([#107](../../issues/107) by @samarulmeu)
@@ -1539,7 +1544,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: removed duplicate helptag causing Vundle to crash ([#92](../../issues/92) by @samarulmeu)
 - Fix: `<details />` TOC not unindenting properly when `&sw` is `0`
 - Fix: typo in README ([#88](../../issues/88) by @Ginner)
-
-## 10-05-2019 VERSION 1.9.1
-
-- Fix: Handle non-ascii characters in header (TOC) links ([#85](../../pull/85) by @totpet)

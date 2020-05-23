@@ -256,7 +256,12 @@ let s:util.hl_names      = ['mkdxTable', 'mkdxTableDelimiter', 'mkdxTableAlign',
                           \ 'mkdxTableHeadDelimiter', 'mkdxTableCaption', 'mkdxTableCaptionDelimiter',
                           \ 'mkdxListItem', 'mkdxCheckboxEmpty', 'mkdxCheckboxPending', 'mkdxCheckboxComplete',
                           \ 'mkdxTildeFence', 'mkdxBoldItalic', 'mkdxBoldItalicDelimiter', 'mkdxInlineCode',
-                          \ 'mkdxInlineCodeDelimiter', 'mkdxKbdText', 'mkdxKbdOpening', 'mkdxKbdEnding']
+                          \ 'mkdxInlineCodeDelimiter', 'mkdxKbdText', 'mkdxKbdOpening', 'mkdxKbdEnding',
+                          \ 'mkdxLink', 'mkdxCriticAddition', 'mkdxCriticAddStartMark',
+                          \ 'mkdxCriticAddEndMark', 'mkdxCriticDeletion', 'mkdxCriticDelStartMark',
+                          \ 'mkdxCriticSubRemove', 'mkdxCriticSubStartMark', 'mkdxCriticSubstitute',
+                          \ 'mkdxCriticSubTransMark', 'mkdxCriticSubEndMark', 'mkdxCriticComment',
+                          \ 'mkdxCriticHighlight', 'mkdxYAMLHeader']
 
 fun! s:util.ToggleHighlight(old, new)
   if (a:new)

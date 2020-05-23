@@ -488,7 +488,7 @@ fun! s:util.AsyncDeadExternalToQF(...)
 
     if (!skip_rel)
       if (s:_is_nvim)
-        call jobstart(cmd, {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
+        call jobstart(cmd, {'on_stdout': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]]), 'stdout_buffered': 1})
       elseif (s:_can_async)
         call job_start(cmd, {'pty': 0, 'out_cb': function(s:util.ExtractCurlHttpCode, [[total, bufnum, lnum, column, url]])})
       endif

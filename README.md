@@ -145,6 +145,7 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#edge-not-yet-on-vimorg">Edge (not yet on vim.org)</a></li>
         <li><a href="#22-05-2020-version-194">22-05-2020 VERSION 1.9.4</a></li>
         <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
         <li><a href="#17-05-2020-version-192">17-05-2020 VERSION 1.9.2</a></li>
@@ -1517,6 +1518,11 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## Edge (not yet on vim.org)
+
+- Fix: issue in neovim reporting external links as broken due to unbuffered stdout
+- Fix: add missing highlight groups to clear when toggling highlighting on/off by updating the setting
 
 ## 22-05-2020 VERSION 1.9.4
 

@@ -18,7 +18,7 @@ shortcuts, headers and links. In addition to that, this plugin provides a mappin
 of CSV data to a markdown table. And there's a lot more :D
 Visit `:h mkdx` or `:h mkdx-helptags` for more information.
 
-A copy can be found on [vim.sourceforge.io](https://vim.sourceforge.io/scripts/script.php?script_id=5620).
+A copy can be found on [vim.org](https://www.vim.org/scripts/script.php?script_id=5620).
 This plugin is also compatible with [repeat.vim](https://github.com/tpope/vim-repeat) by Tim Pope.
 Every _normal_ mode mapping can be repeated with the `.` command. Below you will find configurable
 settings and examples with default mappings.

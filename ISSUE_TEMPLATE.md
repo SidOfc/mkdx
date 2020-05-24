@@ -4,9 +4,8 @@ description of what you want and include an example of how this works in practic
 
 If you're opening a bug report,this template will help you fill out all the needed information,
 simply replace the [TEMPLATE] data with actual information, fill out the checkboxes and include any
-information you find useful and you're good to go! Please take the time to add the appropiate
-labels to the issue / request (bug for issues, feature-request for features, question for other questions),
-thanks in advance! When you're done, don't forget to re-read and remove dummy texts like this paragraph.
+information you find useful and you're good to go!
+When you're done, don't forget to re-read and remove dummy texts like this paragraph.
 
 **OS type**:
 
@@ -31,7 +30,7 @@ Example:
 
 1. Open a markdown file.
 2. Paste the following example into the file:
-   [EXAMPLE TEXT (for the author to test with)]
+   [EXAMPLE TEXT (for the maintainer to test with)]
 3. Then, attempt to do [ACTION] in [MODE].
 
 **Expected**:

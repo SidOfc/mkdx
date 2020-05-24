@@ -4,13 +4,15 @@ Contributing
 :zap: Thank you for taking the time to contribute!<br />
 Contributing to mkdx is very easy, no matter what you would like to do :)
 
-# TOC
+# Table of Contents
 
-- [TOC](#toc)
+- [Contributing](#contributing)
+- [Table of Contents](#table-of-contents)
 - [Code of Conduct](#code-of-conduct)
 - [Opening an issue](#opening-an-issue)
 - [Requesting a feature](#requesting-a-feature)
 - [Sending pull requests](#sending-pull-requests)
+- [Testing changes](#testing-changes)
 
 # Code of Conduct
 
@@ -19,18 +21,26 @@ Please refer to [Contributor Covenant Code of Conduct](https://github.com/SidOfc
 # Opening an issue
 
 When you've found something that doesn't work, visit the [issues](https://github.com/SidOfc/mkdx/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug) page to check wether no such issue already exists.
-If your issue doesn't exist, open a new [issue](issues/new) and add the "bug" label.
+If your issue doesn't exist, open a new [issue](issues/new).
 There is already some template information there but you can (and probably should) add more context / information as required.
+
+Please **do not discard** the template when filing a bug. Fill in the checkboxes by inserting an `x` to what applies to you.
+e.g. for the _OS type_, if you are using a _Unix_ based system, mark the _Unix_ checkbox like so:
+
+```markdown
+- [x] Unix
+```
 
 # Requesting a feature
 
 Think you've got a good idea for mkdx? Visit the [issues](https://github.com/SidOfc/mkdx/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Afeature-request) page
 and check to see if someone didn't already beat you to it :)
-If your feature isn't requested yet, open a new [issue](issues/new) and add the label "feature-request".
+If your feature isn't requested yet, open a new [issue](issues/new).
+
 The template is mostly useful for bugs since it requires some information about the issuer's computer and a reproducible example.
 Therefore, you are free to clear out the template and just start describing your feature.
-It is very helpful to include a graphical example, with that I mean that one can include a "before" snippet
-and an "after" snippet of what (s)he wishes to accomplish.
+It is very helpful to include a graphical example, with that I mean that you can include a "before" snippet
+and an "after" snippet of what you wish to accomplish.
 
 # Sending pull requests
 

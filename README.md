@@ -1130,8 +1130,8 @@ This can usually be fixed by setting them manually for your emulator, included f
 >
 > **[Alacritty](https://github.com/jwilm/alacritty)**, under `key_bindings`, add following to your `~/.config/alacritty/alacritty.yml`:
 >
->     - { key: Return,   mods: Shift,   chars: "\x1b\[13;2u" }
->     - { key: Return,   mods: Control, chars: "\x1b\[13;5u" }
+>     - { key: Return,   mods: Shift,   chars: "\x1b[13;2u" }
+>     - { key: Return,   mods: Control, chars: "\x1b[13;5u" }
 
 ```viml
 " :h mkdx-setting-enter-shift

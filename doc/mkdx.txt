@@ -1439,7 +1439,7 @@ Decrement header level                     *mkdx-mapping-decrement-header-level*
 
 Decrements the header level by 1. Wraps around to h1 when demoting beyond h6.
 
-    `nmap <MAP_PREFIX>[ <Plug>(mkdx-demote-header)`
+    `nmap <MAP_PREFIX>] <Plug>(mkdx-demote-header)`
 
 ==============================================================================
 Convert CSV to markdown table               *mkdx-mapping-csv-to-markdown-table*

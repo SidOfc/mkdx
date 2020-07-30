@@ -211,7 +211,7 @@ if g:mkdx#settings.map.enable == 1
   for [label, prefix, mapmode, binding, plug, cmd] in s:bindings
     let mapping = (prefix ? g:mkdx#settings.map.prefix : '') . binding
 
-    if ((mapcheck(mapping, mapmode) == "") && !hasmapto(plug, mapmode))
+    if ((maparg(mapping, mapmode) == "") && !hasmapto(plug, mapmode))
       if (!empty(cmd) && has('menu'))
         exe mapmode . 'noremenu <silent> <script> Plugin.mkdx.' . label . (mapmode == 'v' ? '\ (Visual)' : '') . '<tab>' . mapping . ' ' . cmd
       end

@@ -1521,6 +1521,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Fix: use `maparg` to check exact mappings exist instead of `mapcheck` ([#112](../../issues/112) by @Mayrixon)
 - Fix: issue in neovim reporting external links as broken due to unbuffered stdout
 - Fix: add missing highlight groups to clear when toggling highlighting on/off by updating the setting
 

@@ -187,6 +187,9 @@ if g:mkdx#settings.map.enable == 1
     endif
   endif
 
+  nnoremap <buffer> <Tab> :call mkdx#TabHandler(1)<Cr>
+  nnoremap <buffer> <S-Tab> :call mkdx#TabHandler(0)<Cr>
+
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r
     setlocal autoindent

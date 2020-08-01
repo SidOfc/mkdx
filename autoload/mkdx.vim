@@ -1686,6 +1686,24 @@ fun! mkdx#ShiftOHandler()
   startinsert!
 endfun
 
+fun! mkdx#TabHandler(nested)
+  let lnum   = line('.')
+  let line   = getline(lnum)
+  let sp_pat = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+
+  if (match(line, sp_pat) > -1)
+    let incr = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\) '), 1, ''), '\.')) - 1
+
+    if a:nested
+      call s:util.UpdateListNumbers(lnum, incr, -1)
+      normal! >>
+    else
+      normal! <<
+      call s:util.UpdateListNumbers(lnum, incr, 1)
+    endif
+  endif
+endfun
+
 fun! mkdx#ShiftEnterHandler()
   if (!g:mkdx#settings.enter.shift) | return "\n" | endif
   let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')

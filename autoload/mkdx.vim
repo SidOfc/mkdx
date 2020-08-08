@@ -1770,7 +1770,7 @@ fun! s:util.UpdateNumberedList()
   return result
 endfun
 
-fun! mkdx#TabHandler(nested)
+fun! mkdx#IndentHandler(nested)
   let line  = getline('.')
   let quote = get(matchlist(line, '^ *>'), 0, '')
 

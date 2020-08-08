@@ -102,8 +102,8 @@ inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFenced
 inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
-noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#TabHandler(1)<Cr>
-noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#TabHandler(0)<Cr>
+noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#IndentHandler(1)<Cr>
+noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#IndentHandler(0)<Cr>
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete

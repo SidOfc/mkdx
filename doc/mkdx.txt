@@ -50,6 +50,7 @@ Settings `.......................................................` |mkdx-setting
     tokens.list `.....................................` |mkdx-setting-tokens-list|
     table.header_divider `...................` |mkdx-setting-table-header-divider|
     table.divider `.................................` |mkdx-setting-table-divider|
+    tab.enable `.......................................` |mkdx-setting-tab-enable|
     enter.enable `...................................` |mkdx-setting-enter-enable|
     enter.shift `.....................................` |mkdx-setting-enter-shift|
     enter.o `.............................................` |mkdx-setting-enter-o|
@@ -153,6 +154,8 @@ Plugs `.............................................................` |mkdx-plug
     <Plug>(mkdx-fence-backtick) `.....................` |mkdx-plug-fence-backtick|
     <Plug>(mkdx-gf) `.............................................` |mkdx-plug-gf|
     <Plug>(mkdx-gx) `.............................................` |mkdx-plug-gx|
+    <Plug>(mkdx-indent) `.....................................` |mkdx-plug-indent|
+    <Plug>(mkdx-unindent) `.................................` |mkdx-plug-unindent|
 
                                                              *mkdx-toc-mappings*
 Mappings `.......................................................` |mkdx-mappings|
@@ -213,6 +216,7 @@ Functions `.....................................................` |mkdx-function
     mkdx#WrapStrike() `..............................` |mkdx-function-wrap-strike|
     mkdx#gf() `...............................................` |mkdx-function-gf|
     mkdx#MaybeRestoreVisual() `.............` |mkdx-function-maybe-restore-visual|
+    mkdx#IndentHandler() `........................` |mkdx-function-indent-handler|
 
                                                                *mkdx-toc-errors*
 Errors `...........................................................` |mkdx-errors|
@@ -637,7 +641,7 @@ being compared. This means column names are case-insensitive.
 ==============================================================================
 `g:mkdx#settings.enter.enable = 1`                     *mkdx-setting-enter-enable*
 
-When pressing <enter> in insert mode, this handles appending of new list items
+When pressing <Cr> in insert mode, this handles appending of new list items
 in lists. See |mkdx-setting-tokens-list| for a list of supported list tokens.
 Examples can be found at |mkdx-function-enter-handler|.
 
@@ -646,6 +650,12 @@ The overrides include:
 
     `setlocal formatoptions-=r`
     `setlocal autoindent`
+
+==============================================================================
+`g:mkdx#settings.tab.enable = 1`                         *mkdx-setting-tab-enable*
+
+When enabled, pressing <Tab> and <S-Tab> will indent / unindent lines and
+additionally renumber numbered list items.
 
 ==============================================================================
 `g:mkdx#settings.enter.shift = 0`                       *mkdx-setting-enter-shift*
@@ -1263,6 +1273,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:<C-U>call mkdx#gf('x')<Cr>`
 
 ==============================================================================
+<Plug>(mkdx-indent)                                           *mkdx-plug-indent*
+
+    `:call mkdx#IndentHandler(1)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-unindent)                                       *mkdx-plug-unindent*
+
+    `:call mkdx#IndentHandler(0)<Cr>`
+
+==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both
@@ -1463,16 +1483,23 @@ visual selection. This function restores visual selection if
 
 ==============================================================================
 List items                                             *mkdx-mapping-list-items*
-                                                                    `o` and <Cr>
+                                         `o`, `O`, <Cr>, <S-Cr>, <Tab> and <S-Tab>
 
 When editing a list in markdown, pressing either <enter> in insert mode or `o`
-in normal mode will insert a new list item below the current item. All items
+in normal mode will insert a new list item below the current item. When
+`O` is pressed, an item will be added above the current list item. All items
 following the newly added item are incremented accordingly. The following
 patterns are identified as list tokens:
 
 - Any number of spaces followed by dot separated numbers. (`'^ \+[0-9.]\+'`)
 - Any token present in |mkdx-setting-tokens-list|
 - All of the above, but inside a quoted block e.g: `> 1. list item`
+
+When pressing <S-Cr> with |mkdx-setting-enter-shift| enabled, a new line
+of the current list item is created. This allows creating inline list items.
+
+When pressing <Tab> or <S-Tab> on a numbered list, the list will be reindented
+accordingly.
 
 For examples, see |mkdx-function-enter-handler| and
 |mkdx-function-shift-enter-handler|.
@@ -2342,6 +2369,12 @@ mkdx#MaybeRestoreVisual()                   *mkdx-function-maybe-restore-visual*
 
 When |mkdx-setting-restore-visual| is enabled, this function restores the last
 visual selection.
+
+mkdx#IndentHandler({indent})                      *mkdx-function-indent-handler*
+
+When {indent} is nonzero, indents as usual, otherwise unindents as usual.
+Additionally, when indenting / unindenting within a numbered list, the
+list will be renumbered accordingly.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

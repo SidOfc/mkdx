@@ -4,6 +4,7 @@ let s:defaults          = {
       \ 'restore_visual':          1,
       \ 'gf_on_steroids':          0,
       \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1 },
+      \ 'tab':                     { 'enable': 1 },
       \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
       \ 'tokens':                  { 'enter': ['-', '*', '>'], 'bold': '**', 'italic': '*',
       \                              'list': '-', 'fence': '', 'header': '#', 'strike': '' },
@@ -101,6 +102,8 @@ inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFenced
 inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
+noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#TabHandler(1)<Cr>
+noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#TabHandler(0)<Cr>
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
@@ -187,8 +190,20 @@ if g:mkdx#settings.map.enable == 1
     endif
   endif
 
-  nnoremap <buffer> <Tab> :call mkdx#TabHandler(1)<Cr>
-  nnoremap <buffer> <S-Tab> :call mkdx#TabHandler(0)<Cr>
+  if (g:mkdx#settings.tab.enable)
+    if (!hasmapto('<Plug>(mkdx-indent)', 'n'))
+      nmap <buffer><silent> <Tab> <Plug>(mkdx-indent)
+    endif
+    if (!hasmapto('<Plug>(mkdx-indent', 'v'))
+      vmap <buffer><silent> <Tab> <Plug>(mkdx-indent)
+    endif
+    if (!hasmapto('<Plug>(mkdx-unindent)', 'n'))
+      nmap <buffer><silent> <S-Tab> <Plug>(mkdx-unindent)
+    endif
+    if (!hasmapto('<Plug>(mkdx-unindent', 'v'))
+      vmap <buffer><silent> <S-Tab> <Plug>(mkdx-unindent)
+    endif
+  endif
 
   if (g:mkdx#settings.enter.enable)
     setlocal formatoptions-=r

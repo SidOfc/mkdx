@@ -310,3 +310,60 @@ Expect (List items are correctly incremented and new empty list item):
       2.2. subtask
       2.3. subtask
   3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+      2.2. subtask
+  3. hello
+
+Do (Press <Tab> on the second nested list item makes it a child of the first):
+  3j\<Tab>
+
+Expect (List items are correctly indented):
+  1. task
+  2. task
+      2.1. subtask
+          2.1.1. subtask
+  3. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A deeply nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+          2.1.1. subtask
+  3. hello
+
+Do (Press <S-Tab> on the first nested list item unindents all its children):
+  2j\<S-Tab>
+
+Expect (List items are correctly indented):
+  1. task
+  2. task
+  3. subtask
+      3.1. subtask
+  4. hello
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Given (A deeply nested numbered list):
+  1. task
+  2. task
+      2.1. subtask
+          2.1.1. subtask
+  3. hello
+
+Do (Press <Tab> on the last list item sets its number correctly):
+  G\<Tab>
+
+Expect (List items are correctly indented):
+  1. task
+  2. task
+      2.1. subtask
+          2.1.1. subtask
+      2.2. hello

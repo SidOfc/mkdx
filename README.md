@@ -67,13 +67,14 @@ Thank you for making this plugin better!
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#examples">Examples</a><details><summary>show 22 items</summary><ul>
+    <li><a href="#examples">Examples</a><details><summary>show 23 items</summary><ul>
         <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
+        <li><a href="#indenting--unindenting-numbered-list-items">Indenting / unindenting numbered list items</a></li>
         <li><a href="#toggling-lines-from--to-task-items">Toggling lines from / to task items</a></li>
         <li><a href="#toggling-lines-from--to-list-items">Toggling lines from / to list items</a></li>
         <li><a href="#toggling-lines-from--to-checklist-items">Toggling lines from / to checklist items</a></li>
@@ -341,6 +342,19 @@ previous indentation level.
 " :h mkdx-setting-tokens-list
 " :h mkdx-function-enter-handler
 " :h mkdx-function-shift-enter-handler
+```
+
+## Indenting / unindenting numbered list items
+
+![mkdx indent/unindent list items](doc/gifs/indent-unindent-list-items.gif)
+
+Numbered list items will be renumbered upon indenting / unindenting. The algorithm for this is still pretty basic
+but attempts to ensure correct nesting. This feature uses <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>
+to indent and unindent respectively.
+
+```viml
+" :h mkdx-mapping-list-items
+" :h mkdx-function-indent-handler
 ```
 
 ## Toggling lines from / to task items

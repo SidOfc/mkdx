@@ -1545,6 +1545,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Add: feature to renumber numbered list items with tab/shift+tab ([#113](../../pull/113))
 - Fix: use `maparg` to check exact mappings exist instead of `mapcheck` ([#112](../../issues/112) by @Mayrixon)
 - Fix: issue in neovim reporting external links as broken due to unbuffered stdout
 - Fix: add missing highlight groups to clear when toggling highlighting on/off by updating the setting

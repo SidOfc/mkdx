@@ -1686,6 +1686,113 @@ fun! mkdx#ShiftOHandler()
   startinsert!
 endfun
 
+fun! s:util.UpdateNumberedList()
+  let lnum    = line('.')
+  let num_pat = '^>\? *[0-9.]\+'
+  let result  = []
+
+  while (indent(lnum) > 0)
+    let lnum -= 1
+  endwhile
+
+  if (match(getline(lnum), num_pat) > -1)
+    let start_lnum  = lnum
+    let end_lnum    = lnum
+    let indent_size = s:sw()
+
+    while (nextnonblank(start_lnum - 1) == start_lnum - 1)
+      let start_lnum -= 1
+    endwhile
+
+    while (nextnonblank(end_lnum + 1) == end_lnum + 1)
+      let end_lnum += 1
+    endwhile
+
+    for lnum in range(start_lnum, end_lnum)
+      let raw_line = getline(lnum)
+      let line     = substitute(raw_line, '^ *>', '', '')
+      let depth    = len(get(matchlist(line, '^ *'), 0, '')) / indent_size
+      let line     = substitute(line, '^ *', '', '')
+      let prev     = get(result, -1)
+      let has_prev = type(prev) == type({})
+      let nums     = []
+
+      if (match(line, num_pat) > -1)
+        if (has_prev)
+          let depth = min([depth, prev.depth + 1])
+          let nums  = copy(prev.nums)
+
+          if depth > prev.depth
+            call add(nums, 1)
+          elseif depth < prev.depth
+            let nums = nums[0:depth]
+            let nums[depth] += 1
+          elseif depth == prev.depth
+            let nums[depth] += 1
+          endif
+        else
+          call add(nums, 1)
+        endif
+
+        call add(result, {
+              \ 'quoted': match(raw_line, '^ *>') > -1,
+              \ 'lnum': lnum,
+              \ 'depth': depth,
+              \ 'lines': [line],
+              \ 'nums': nums
+              \ })
+      elseif (has_prev)
+        call add(prev.lines, line)
+      endif
+    endfor
+  endif
+
+  for item in result
+    let indent = repeat(' ', s:sw() * item.depth)
+    let quote  = item.quoted ? '> ' : ''
+    let lnum   = item.lnum
+    let line   = substitute(item.lines[0], num_pat, join(item.nums, '.') . '.', '')
+
+    call setline(lnum, quote . indent . line)
+
+    if (len(item.lines) > 1)
+      let sp_pat        = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+      let item_syms     = get(matchlist(line, sp_pat), 1, '')
+      let inline_indent = repeat(' ', len(item_syms))
+
+      for inline_line in item.lines[1:]
+        let lnum += 1
+        call setline(lnum, quote . indent . inline_indent . inline_line)
+      endfor
+    endif
+  endfor
+
+  return result
+endfun
+
+fun! mkdx#IndentHandler(nested)
+  let line  = getline('.')
+  let quote = get(matchlist(line, '^ *>'), 0, '')
+
+  if (!empty(quote))
+    let line = substitute(line, quote, '', '')
+    call setline('.', line)
+  endif
+
+  if a:nested
+    normal! >>
+  else
+    normal! <<
+  endif
+
+  if (!empty(quote))
+    let line = quote . getline('.')
+    call setline('.', line)
+  endif
+
+  call s:util.UpdateNumberedList()
+endfun
+
 fun! mkdx#ShiftEnterHandler()
   if (!g:mkdx#settings.enter.shift) | return "\n" | endif
   let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')

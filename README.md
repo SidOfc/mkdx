@@ -67,13 +67,14 @@ Thank you for making this plugin better!
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#examples">Examples</a><details><summary>show 22 items</summary><ul>
+    <li><a href="#examples">Examples</a><details><summary>show 23 items</summary><ul>
         <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
         <li><a href="#insert-fenced-code-block">Insert fenced code block</a></li>
         <li><a href="#insert-kbdkbd-shortcut">Insert <code>&lt;kbd&gt;&lt;/kbd&gt;</code> shortcut</a></li>
         <li><a href="#inserting-list-items">Inserting list items</a></li>
+        <li><a href="#indenting--unindenting-numbered-list-items">Indenting / unindenting numbered list items</a></li>
         <li><a href="#toggling-lines-from--to-task-items">Toggling lines from / to task items</a></li>
         <li><a href="#toggling-lines-from--to-list-items">Toggling lines from / to list items</a></li>
         <li><a href="#toggling-lines-from--to-checklist-items">Toggling lines from / to checklist items</a></li>
@@ -91,7 +92,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 43 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 44 items</summary><ul>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -117,8 +118,9 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingstableheader_divider"><code>g:mkdx#settings.table.header_divider</code></a></li>
         <li><a href="#gmkdxsettingstabledivider"><code>g:mkdx#settings.table.divider</code></a></li>
         <li><a href="#gmkdxsettingstablealign"><code>g:mkdx#settings.table.align</code></a></li>
-        <li><a href="#gmkdxsettingsentershift"><code>g:mkdx#settings.enter.shift</code></a></li>
+        <li><a href="#gmkdxsettingstabenable"><code>g:mkdx#settings.tab.enable</code></a></li>
         <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
+        <li><a href="#gmkdxsettingsentershift"><code>g:mkdx#settings.enter.shift</code></a></li>
         <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
         <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>
         <li><a href="#gmkdxsettingsentermalformed"><code>g:mkdx#settings.enter.malformed</code></a></li>
@@ -340,6 +342,19 @@ previous indentation level.
 " :h mkdx-setting-tokens-list
 " :h mkdx-function-enter-handler
 " :h mkdx-function-shift-enter-handler
+```
+
+## Indenting / unindenting numbered list items
+
+![mkdx indent/unindent list items](doc/gifs/indent-unindent-list-items.gif)
+
+Numbered list items will be renumbered upon indenting / unindenting. The algorithm for this is still pretty basic
+but attempts to ensure correct nesting. This feature uses <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>
+to indent and unindent respectively.
+
+```viml
+" :h mkdx-mapping-list-items
+" :h mkdx-function-indent-handler
 ```
 
 ## Toggling lines from / to task items
@@ -1085,6 +1100,25 @@ let g:mkdx#settings = { 'table': { 'align': {
         \ 'default': 'center' } } }
 ```
 
+## `g:mkdx#settings.tab.enable`
+
+This setting is enabled by default, when enabled, pressing <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd> on numbered
+list items will indent / unindent them and also renumber the list accordingly.
+
+## `g:mkdx#settings.enter.enable`
+
+This setting enables auto-appending list items when you are editing a markdown list.
+When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
+or just do a regular enter. unordered lists and numbered lists are both handled correctly.
+
+**NOTE:** When this setting is enabled, mkdx will execute a `setlocal formatoptions-=r` to prevent duplicate list markers from being inserted.
+This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
+
+```viml
+" :h mkdx-setting-enter-enable
+let g:mkdx#settings = { 'enter': { 'enable': 1 } }
+```
+
 ## `g:mkdx#settings.enter.shift`
 
 When enabled, pressing <kbd>shift</kbd>+<kbd>enter</kbd> will indent the next line upto the level of the text on the current line.
@@ -1137,20 +1171,6 @@ This can usually be fixed by setting them manually for your emulator, included f
 " :h mkdx-setting-enter-shift
 " :h mkdx-function-shift-enter-handler
 :let g:mkdx#settings = { 'enter': { 'shift': 0 } }
-```
-
-## `g:mkdx#settings.enter.enable`
-
-This setting enables auto-appending list items when you are editing a markdown list.
-When <kbd>enter</kbd> is pressed, a function is executed to detect wether or not to insert a new list item
-or just do a regular enter. unordered lists and numbered lists are both handled correctly.
-
-**NOTE:** When this setting is enabled, mkdx will execute a `setlocal formatoptions-=r` to prevent duplicate list markers from being inserted.
-This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
-
-```viml
-" :h mkdx-setting-enter-enable
-let g:mkdx#settings = { 'enter': { 'enable': 1 } }
 ```
 
 ## `g:mkdx#settings.enter.o`
@@ -1424,6 +1444,8 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|
 |Jump to file|normal|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf)`|
 |Open external file|normal|<kbd>g</kbd><kbd>x</kbd>|`<Plug>(mkdx-gx)`|
+|Indent numbered list item|<kbd>tab</kbd>|`<Plug>(mkdx-indent)`|
+|Unindent numbered list item|<kbd>shift</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-unindent)`|
 
 ## Remapping functionality
 
@@ -1470,6 +1492,8 @@ nmap <leader>= <Nop>
 " this will disable toggling checkbox next in visual mode.
 vmap <leader>= <Nop>
 ```
+
+If you only want to do this for markdown files, refer to the previous snippet using the `au` command.
 
 The mappings are checked using the value of [`g:mkdx#settings.map.prefix`](#gmkdxsettingsmapprefix) so you may need to check its value first
 by running the following: `:echo g:mkdx#settings.map.prefix`. A better way to prevent mkdx from mapping keys is by remapping `<Plug>` mappings.

@@ -1545,6 +1545,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Fix: issue when setting `let g:markdown_folding = 1` causing `Pattern not found: g:mkdx#settings.fold.enable = 0`
 - Add: feature to renumber numbered list items with tab/shift+tab ([#113](../../pull/113))
 - Fix: use `maparg` to check exact mappings exist instead of `mapcheck` ([#112](../../issues/112) by @Mayrixon)
 - Fix: issue in neovim reporting external links as broken due to unbuffered stdout

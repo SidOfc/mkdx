@@ -113,7 +113,7 @@ if (g:mkdx#settings.links.fragment.complete)
 endif
 
 if (get(g:, 'markdown_folding', 0))
-  g:mkdx#settings.fold.enable = 0
+  let g:mkdx#settings.fold.enable = 0
 endif
 
 if (g:mkdx#settings.fold.enable)

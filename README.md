@@ -778,6 +778,11 @@ use <kbd>g</kbd><kbd>f</kbd> OR <kbd>g</kbd><kbd>x</kbd> to open local files as 
 mkdx uses [g:mkdx#settings.image_extension_pattern](#gmkdxsettingsimage_extension_pattern) to determine
 wether or not a file is an image and should be opened by an external application.
 
+**IMPORTANT**: _mkdx uses `open` behind the scenes, on macOS this will work out of the box,
+on linux make sure the [`xdg-utils`](https://www.freedesktop.org/wiki/Software/xdg-utils/) package
+is installed and that you can run `open https://github.com`.
+`xdg-utils` can be installed by running `sudo apt install xdg-utils` in your terminal._
+
 ```viml
 " :h mkdx-setting-gf-on-steroids
 " :h mkdx-mapping-jump-to-file

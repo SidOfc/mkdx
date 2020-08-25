@@ -2079,7 +2079,8 @@ fun! mkdx#gf(...)
       let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
 
       if !do_int && (do_ext || destination =~? '^http' || is_img)
-        silent! call system('open ' . destination)
+        let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
+        silent! exec '!' . cmd . ' ' . destination
       else
         if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'
           normal! gf

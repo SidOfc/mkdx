@@ -2093,7 +2093,7 @@ fun! mkdx#gf(...)
       if !do_int && (do_ext || destination =~? '^http' || is_img || !is_plain)
         let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
         if (!empty(cmd))
-          silent! exec '!' . cmd . ' ' . destination
+          silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', ''))
         endif
       else
         if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'

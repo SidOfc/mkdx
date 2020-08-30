@@ -778,10 +778,13 @@ use <kbd>g</kbd><kbd>f</kbd> OR <kbd>g</kbd><kbd>x</kbd> to open local files as 
 mkdx uses [g:mkdx#settings.image_extension_pattern](#gmkdxsettingsimage_extension_pattern) to determine
 wether or not a file is an image and should be opened by an external application.
 
-**IMPORTANT**: _mkdx uses `open` behind the scenes, on macOS this will work out of the box,
+For other files such as `doc` or `pdf` mkdx relies on the [`file`](https://man7.org/linux/man-pages/man1/file.1.html)
+command to determine if a file should be opened inside (n)vim or using for example libreoffice.
+
+mkdx uses `open` behind the scenes, on macOS this will work out of the box,
 on linux make sure the [`xdg-utils`](https://www.freedesktop.org/wiki/Software/xdg-utils/) package
 is installed and that you can run `open https://github.com`.
-`xdg-utils` can be installed by running `sudo apt install xdg-utils` in your terminal._
+`xdg-utils` can be installed by running `sudo apt install xdg-utils` in your terminal.
 
 ```viml
 " :h mkdx-setting-gf-on-steroids
@@ -1109,6 +1112,15 @@ let g:mkdx#settings = { 'table': { 'align': {
 
 This setting is enabled by default, when enabled, pressing <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd> on numbered
 list items will indent / unindent them and also renumber the list accordingly.
+
+**NOTE:** This causes a conflict when UltiSnips also uses <kbd>tab</kbd> to expand snippets!
+Either disable this functionality or [remap it](#remapping-functionality) to some other key combination.
+
+```
+" :h mkdx-setting-tab-enable
+" :h mkdx-function-indent-handler
+let g:mkdx#settings = { 'tab': { 'enable': 1 } }
+```
 
 ## `g:mkdx#settings.enter.enable`
 

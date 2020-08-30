@@ -53,6 +53,16 @@ fun! s:util._(...)
   return get(a:000, 0, '')
 endfun
 
+fun! s:util.getMimeType(path)
+  if (!filereadable(a:path)) | return '' | endif
+
+  if executable('file')
+    return system('file -b --mime-type ' . shellescape(a:path))
+  else
+    return 'text/plain'
+  endif
+endfun
+
 let s:HASH = type({})
 let s:LIST = type([])
 let s:INT  = type(1)
@@ -2077,8 +2087,10 @@ fun! mkdx#gf(...)
       let subpart     = line[(scol - 1):(ecol - 1)]
       let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart
       let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+      let mime        = s:util.getMimeType(destination)
+      let is_plain    = mime =~? '^text' || mime =~? '^inode/x-empty'
 
-      if !do_int && (do_ext || destination =~? '^http' || is_img)
+      if !do_int && (do_ext || destination =~? '^http' || is_img || !is_plain)
         let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
         if (!empty(cmd))
           silent! exec '!' . cmd . ' ' . destination

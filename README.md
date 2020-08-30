@@ -1477,7 +1477,7 @@ endfun
 " finally, add a "FileType" autocommand that calls "s:MkdxRemap()" upon entering markdown filetype
 augroup Mkdx
     au!
-    au FileType markdown, mkdx call s:MkdxRemap()
+    au FileType markdown,mkdx call s:MkdxRemap()
 augroup END
 ```
 

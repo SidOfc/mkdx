@@ -1440,10 +1440,10 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Toggle checklist item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>t</kbd>|`<Plug>(mkdx-toggle-checklist-{n\|v})`|
 |Toggle list item|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>l</kbd>|`<Plug>(mkdx-toggle-list-{n\|v})`|
 |Wrap link|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>l</kbd><kbd>n</kbd>|`<Plug>(mkdx-wrap-link-{n\|v})`|
-|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd>|`<Plug>(mkdx-mkdx-text-italic-{n\|v})`|
-|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd>|`<Plug>(mkdx-mkdx-text-bold-{n\|v}))`|
-|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\`</kbd>|`<Plug>(mkdx-mkdx-text-inline-code-{n\|v})`|
-|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd>|`<Plug>(mkdx-mkdx-text-strike-{n\|v})`|
+|Italicize text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>/</kbd>|`<Plug>(mkdx-text-italic-{n\|v})`|
+|Bolden text|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>b</kbd>|`<Plug>(mkdx-text-bold-{n\|v}))`|
+|Wrap with inline code|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>\`</kbd>|`<Plug>(mkdx-text-inline-code-{n\|v})`|
+|Wrap with strikethrough|normal, visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>s</kbd>|`<Plug>(mkdx-text-strike-{n\|v})`|
 |CSV to table|visual|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>,</kbd>|`<Plug>(mkdx-tableize)`|
 |Jump to header|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd>|`<Plug>(mkdx-jump-to-header)`|
 |Generate / Update TOC|normal|<kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>i</kbd>|`<Plug>(mkdx-gen-or-upd-toc)`|

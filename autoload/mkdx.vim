@@ -636,12 +636,13 @@ fun! s:util.isAlreadyWrapped(id)
   return !empty(found_match)
 endfun
 
-fun! s:util.hlBounds(type)
-  let group = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
-  let slnum = line('.')
-  let scol  = col('.')
-  let elnum = slnum
-  let ecol  = scol
+fun! s:util.hlBounds(type, ...)
+  let single_line = get(a:, 0)
+  let group       = get(s:wrap_hl_map, a:type, s:util.hlAtCursor())
+  let slnum       = line('.')
+  let scol        = col('.')
+  let elnum       = slnum
+  let ecol        = scol
 
   while 1
     if scol > 1
@@ -652,7 +653,7 @@ fun! s:util.hlBounds(type)
       endif
     else
       let prev_line_len = strlen(getline(slnum - 1))
-      if s:util.isHlAtPos(group, slnum - 1, prev_line_len)
+      if !single_line && s:util.isHlAtPos(group, slnum - 1, prev_line_len)
         let slnum -= 1
         let scol   = prev_line_len
       else
@@ -666,7 +667,7 @@ fun! s:util.hlBounds(type)
     let ecol += 1
     if ecol >= eline_len
       let eline_len = strlen(getline(elnum + 1))
-      if s:util.isHlAtPos(group, elnum + 1, 1)
+      if !single_line && s:util.isHlAtPos(group, elnum + 1, 1)
         let elnum += 1
         let ecol   = 1
       else
@@ -2083,7 +2084,7 @@ fun! mkdx#gf(...)
 
   try
     if s:util.isAlreadyWrapped('mkdx-text-link-n')
-      let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n')
+      let [slnum, scol, elnum, ecol] = s:util.hlBounds('mkdx-text-link-n', 1)
       let line        = getline(slnum)
       let subpart     = line[(scol - 1):(ecol - 1)]
       let destination = match(subpart, '](') > -1 ? s:util.linkUrl(line[scol:]) : subpart

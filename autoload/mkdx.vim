@@ -623,7 +623,7 @@ endfun
 let s:wrap_hl_map = {
       \ 'mkdx-text-italic-n':      ['markdownItalic', 'markdownItalicDelimiter'],
       \ 'mkdx-text-bold-n':        ['markdownBold',   'markdownBoldDelimiter'],
-      \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag'],
+      \ 'mkdx-text-strike-n':      ['htmlStrike', 'htmlEndTag', 'mkdxStrikeThrough', 'markdownStrikeThroughDelimiter'],
       \ 'mkdx-text-link-n':        ['markdownLinkText', 'markdownLinkTextDelimiter', 'markdownLinkDelimiter', 'markdownLink', 'mkdxLink'],
       \ 'mkdx-text-inline-code-n': ['mkdxInlineCode']
       \ }
@@ -701,7 +701,9 @@ fun! s:util.unwrap(type, start, end)
       let scol -= 1
     endif
   endif
+
   " echom 'slnum:' slnum 'scol:' scol 'elnum:' elnum 'ecol:' ecol
+  " return
 
   let soff = strlen(start)
   let spos = max([scol - 2, 0])
@@ -729,7 +731,6 @@ fun! s:util.WrapSelectionOrWord(...)
   let mode    = get(a:000, 0, 'n')
   let start   = get(a:000, 1, '')
   let end     = get(a:000, 2, start)
-  " l: prefix is needed here becauuse vim acts retarded if I don't include it
   let l:count = max([get(a:000, 3, 1), 1])
   let type    = get(a:000, 4, '')
   let vcol    = virtcol('.')

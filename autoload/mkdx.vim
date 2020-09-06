@@ -173,7 +173,9 @@ fun! s:util.RepositionTOC(old, new)
 endfun
 
 fun! s:util.UpdateTOCStyle(old, new)
-  silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
+  if a:old !=? a:new
+    silent! call mkdx#UpdateTOC({'details': a:new, 'force': 1})
+  endif
 endfun
 
 fun! s:util.UpdateTOCDetails(old, new)

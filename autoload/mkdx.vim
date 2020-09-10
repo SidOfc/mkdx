@@ -1472,6 +1472,7 @@ fun! mkdx#WrapCutTextInCodeBlock() range
   call deletebufline(bufname('%'), first_line, last_line)
   call append(first_line - 1, lines)
 
+  " NOTE: why is this also set to 0 and not old_fold?
   let g:mkdx#settings.fold.enable = 0
 endfun
 

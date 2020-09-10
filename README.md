@@ -1562,9 +1562,10 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
-- Fix: using `mkdx#gf` with multiple lines with a link always opening first link ([#122](../../issue/122))
-- Fix: non plaintext files now also open using `open` instead of in (n)vim ([#116](../../issue/116))
-- Fix: links with subdomains failed to open using `mkdx#gf` ([#116](../../issue/116))
+- Fix: eager-load settings to ensure settings are properly initialized before loading a markdown file ([#125](../../issue/125) by @victorkristof)
+- Fix: using `mkdx#gf` with multiple lines with a link always opening first link ([#122](../../issue/122) by @Delayless)
+- Fix: non plaintext files now also open using `open` instead of in (n)vim ([#116](../../issue/116) by @kraxli)
+- Fix: links with subdomains failed to open using `mkdx#gf` ([#116](../../issue/116) by @kraxli)
 - Fix: issue when setting `let g:markdown_folding = 1` causing `Pattern not found: g:mkdx#settings.fold.enable = 0`
 - Add: feature to renumber numbered list items with tab/shift+tab ([#113](../../pull/113))
 - Fix: use `maparg` to check exact mappings exist instead of `mapcheck` ([#112](../../issues/112) by @Mayrixon)

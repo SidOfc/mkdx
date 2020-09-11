@@ -45,6 +45,8 @@ noremap         <silent> <Plug>(mkdx-shift-o)            :<C-U>call mkdx#ShiftOH
 noremap         <silent> <Plug>(mkdx-o)                  :<C-U>call mkdx#OHandler()<Cr>
 noremap         <silent> <Plug>(mkdx-gf)                 :<C-U>call mkdx#gf('f')<Cr>
 noremap         <silent> <Plug>(mkdx-gx)                 :<C-U>call mkdx#gf('x')<Cr>
+noremap         <silent> <Plug>(mkdx-gf-visual)          :<C-U>call mkdx#gf_visual('f')<Cr>
+noremap         <silent> <Plug>(mkdx-gx-visual)          :<C-U>call mkdx#gf_visual('x')<Cr>
 inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
 inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>F<
@@ -117,7 +119,9 @@ if g:mkdx#settings.map.enable == 1
         \ ['Backtick\ fenced\ code\ block',   0, 'i', '```',    '<Plug>(mkdx-fence-backtick)',          '<C-R>=mkdx#FencedCodeBlock("`")<Cr>kA'],
         \ ['tilde\ fenced\ code\ block',      0, 'i', '~~~',    '<Plug>(mkdx-fence-tilde)',             '<C-R>=mkdx#FencedCodeBlock("~")<Cr>kA'],
         \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf("f")<Cr>'],
-        \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gx)',                      ':<C-U>call mkdx#gf("x")<Cr>']
+        \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gx)',                      ':<C-U>call mkdx#gf("x")<Cr>'],
+        \ ['Jump to file / open URL',         0, 'v', 'gf',     '<Plug>(mkdx-gf-visual)',               ':<C-U>call mkdx#gf_visual("f")<Cr>'],
+        \ ['Jump to file / open URL',         0, 'v', 'gx',     '<Plug>(mkdx-gx-visual)',               ':<C-U>call mkdx#gf_visual("x")<Cr>']
         \ ]
 
   if (!hasmapto('<Plug>(mkdx-gf)', 'n'))

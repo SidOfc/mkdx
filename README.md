@@ -772,7 +772,8 @@ To overwrite a setting while editing:
 
 mkdx enhances <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd> within markdown buffers.
 The main difference is that you can open files / urls / images with the cursor positioned anywhere
-in a markdown link. Otherwise they will work normally.
+in a markdown link. Additionally, these mappings can also be used in visual mode and
+will be applied to the current selection in that case. Otherwise they will work normally.
 
 By enabling this setting, these two mappings are merged into one, so both <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd>
 will work exactly the same. Functionalities from both will work for each mapping, so you can now
@@ -784,7 +785,7 @@ wether or not a file is an image and should be opened by an external application
 For other files such as `doc` or `pdf` mkdx relies on the [`file`](https://man7.org/linux/man-pages/man1/file.1.html)
 command to determine if a file should be opened inside (n)vim or using for example libreoffice.
 
-mkdx uses `open` behind the scenes, on macOS this will work out of the box,
+mkdx uses `open` / `xdg-open` behind the scenes, on macOS this will work out of the box,
 on linux make sure the [`xdg-utils`](https://www.freedesktop.org/wiki/Software/xdg-utils/) package
 is installed and that you can run `open https://github.com`.
 `xdg-utils` can be installed by running `sudo apt install xdg-utils` in your terminal.
@@ -1492,7 +1493,9 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |<kbd>ctrl</kbd>+<kbd>p</kbd> handler|insert|<kbd>ctrl</kbd>+<kbd>p</kbd>|`<Plug>(mkdx-ctrl-p-compl)`|
 |<kbd>#</kbd> handler|insert|<kbd>#</kbd>|`<Plug>(mkdx-link-compl)`|
 |Jump to file|normal|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf)`|
+|Jump to file|visual|<kbd>g</kbd><kbd>f</kbd>|`<Plug>(mkdx-gf-visual)`|
 |Open external file|normal|<kbd>g</kbd><kbd>x</kbd>|`<Plug>(mkdx-gx)`|
+|Open external file|visual|<kbd>g</kbd><kbd>x</kbd>|`<Plug>(mkdx-gx-visual)`|
 |Indent numbered list item|<kbd>tab</kbd>|`<Plug>(mkdx-indent)`|
 |Unindent numbered list item|<kbd>shift</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-unindent)`|
 

@@ -2079,6 +2079,40 @@ fun! mkdx#in_rtp(relative_path)
   return 0
 endfun
 
+" credits: https://stackoverflow.com/a/6271254/2224331 answer by xolox.
+function! s:util.get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+fun! mkdx#gf_visual(...)
+  let mode = get(a:000, 0, 'f')
+  let do_ext = !g:mkdx#settings.gf_on_steroids && mode ==? 'x'
+  let do_int = !g:mkdx#settings.gf_on_steroids && mode ==? 'f'
+
+  let destination = substitute(s:util.get_visual_selection(), "\n", '', 'g')
+  let is_img      = match(get(split(destination, '\.'), -1, ''), g:mkdx#settings.image_extension_pattern) > -1
+  let mime        = s:util.getMimeType(destination)
+  let is_plain    = mime =~? '^text' || mime =~? '^inode/x-empty'
+
+  if !do_int && (do_ext || destination =~? '^http' || is_img || !is_plain)
+    let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
+    if (!empty(cmd))
+      silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', 'g'))
+    endif
+  elseif (filereadable(destination))
+    exe 'edit' destination
+  endif
+endfun
+
 fun! mkdx#gf(...)
   let mode = get(a:000, 0, 'f')
   let cpos = getpos('.')

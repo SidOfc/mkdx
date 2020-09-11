@@ -76,6 +76,8 @@ Settings `.......................................................` |mkdx-setting
                                                          *mkdx-toc-highlighting*
 Highlighting `...............................................` |mkdx-highlighting|
     mkdxYAMLHeader `...........................` |mkdx-highlight-yaml-frontmatter|
+    mkdxTOMLHeader `...........................` |mkdx-highlight-TOML-frontmatter|
+    mkdxJSONHeader `...........................` |mkdx-highlight-JSON-frontmatter|
     mkdxListItem `....................................` |mkdx-highlight-list-item|
     mkdxCheckboxEmpty `..........................` |mkdx-highlight-checkbox-empty|
     mkdxCheckboxPending `......................` |mkdx-highlight-checkbox-pending|
@@ -157,6 +159,8 @@ Plugs `.............................................................` |mkdx-plug
     <Plug>(mkdx-fence-backtick) `.....................` |mkdx-plug-fence-backtick|
     <Plug>(mkdx-gf) `.............................................` |mkdx-plug-gf|
     <Plug>(mkdx-gx) `.............................................` |mkdx-plug-gx|
+    <Plug>(mkdx-gf-visual) `............................... `|mkdx-plug-gf-visual|
+    <Plug>(mkdx-gx-visual) `...............................` |mkdx-plug-gx-visual|
     <Plug>(mkdx-indent) `.....................................` |mkdx-plug-indent|
     <Plug>(mkdx-unindent) `.................................` |mkdx-plug-unindent|
 
@@ -218,6 +222,7 @@ Functions `.....................................................` |mkdx-function
     mkdx#WrapText() `..................................` |mkdx-function-wrap-text|
     mkdx#WrapStrike() `..............................` |mkdx-function-wrap-strike|
     mkdx#gf() `...............................................` |mkdx-function-gf|
+    mkdx#gf_visual() `.................................` |mkdx-function-gf-visual|
     mkdx#MaybeRestoreVisual() `.............` |mkdx-function-maybe-restore-visual|
     mkdx#IndentHandler() `........................` |mkdx-function-indent-handler|
 
@@ -966,9 +971,20 @@ mkdxYAMLHeader                                 *mkdx-highlight-yaml-frontmatter*
 This syntax group does not apply its own highlighting, but rather allows
 |yaml| highlighting to be active in a markdown frontmatter block.
 
-This will only be activated if `syntax/yaml.vim` is found in 'rtp', if
-it is found but including it fails for some other reason this group will still
-be created, but highlighting will not be applied
+This will only be activated if `syntax/yaml.vim` is found in 'rtp' and
+|mkdx-setting-highlight-frontmatter-yaml| is enabled. If `syntax/yaml.vim`
+is found but including it fails for some other reason this group
+will still be created, but highlighting will not be applied.
+
+==============================================================================
+mkdxTOMLHeader                                 *mkdx-highlight-toml-frontmatter*
+
+Like |mkdx-highlight-yaml-frontmatter| but for TOML frontmatter.
+
+==============================================================================
+mkdxJSONHeader                                 *mkdx-highlight-json-frontmatter*
+
+Like |mkdx-highlight-yaml-frontmatter| but for JSON frontmatter.
 
 ==============================================================================
 mkdxListItem                                          *mkdx-highlight-list-item*
@@ -1308,6 +1324,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 <Plug>(mkdx-gx)                                                   *mkdx-plug-gx*
 
     `:<C-U>call mkdx#gf('x')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-gf-visual)                                     *mkdx-plug-gf-visual*
+
+    `:<C-U>call mkdx#gf_visual('f')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-gx-visual)                                     *mkdx-plug-gx-visual*
+
+    `:<C-U>call mkdx#gf_visual('x')<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-indent)                                           *mkdx-plug-indent*
@@ -1666,6 +1692,9 @@ This mapping works like regular |gf| unless the cursor is positioned on a
 markdown link. When on a link, mkdx will open the file inbetween the
 parentheses. The cursor can be anywhere on the link and this will work.
 
+This mapping also works in |Visual-Mode|. When used in visual mode, the
+selection is used as the destination.
+
 when |mkdx-setting-gf-on-steroids| is enabled, and link is not a file but a URL,
 mkdx will use an `open` shell command. If `open` is not available, it will
 silently fail.
@@ -1675,11 +1704,14 @@ Open external file                             *mkdx-mapping-open-external-file*
                                                                             gx
 
 This mapping emulates |netrw-gx| (also works without netrw enabled). It will
-open an external application using the `open` shell command. If `open` is not
-available, it will silently fail.
+open an external application using the `open` or `xdg-open` shell command.
+If neither `open` or `xdg-open` are not available, it will silently fail.
 
 Like |mkdx-mapping-jump-to-file| it will also work on markdown links, the
 cursor can be positioned anywhere on the link and this will work.
+
+This mapping also works in |Visual-Mode|. When used in visual mode, the
+selection is used as the destination.
 
 When |mkdx-setting-gf-on-steroids| is enabled, this mapping will also read
 local files just like |mkdx-mapping-jump-to-file| otherwise would.
@@ -2400,6 +2432,15 @@ When |mkdx-setting-gf-on-steroids| is enabled, this argument is ignored and
 the "correct" implementation is used based on what is found. If it looks like
 an image or URL, `open` will be used, otherwise |mkdx-mapping-jump-to-file|
 will be used.
+
+==============================================================================
+mkdx#gf_visual([{mode}])                               *mkdx-function-gf-visual*
+
+This function mimicks |mkdx-function-gf| but in visual mode. Selecting text
+and pressing <gf> / <gx> will apply the mapping on the selection instead.
+
+This is useful in scenarios where |mkdx-function-gf| does not work properly
+(yet) as a fallback method.
 
 ==============================================================================
 mkdx#MaybeRestoreVisual()                   *mkdx-function-maybe-restore-visual*

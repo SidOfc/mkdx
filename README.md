@@ -92,7 +92,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 44 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 47 items</summary><ul>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -134,6 +134,9 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingstocdetailschild_count"><code>g:mkdx#settings.toc.details.child_count</code></a></li>
         <li><a href="#gmkdxsettingstocdetailschild_summary"><code>g:mkdx#settings.toc.details.child_summary</code></a></li>
         <li><a href="#gmkdxsettingshighlightenable"><code>g:mkdx#settings.highlight.enable</code></a></li>
+        <li><a href="#gmkdxsettingshighlightfrontmatteryaml"><code>g:mkdx#settings.highlight.frontmatter.yaml</code></a></li>
+        <li><a href="#gmkdxsettingshighlightfrontmattertoml"><code>g:mkdx#settings.highlight.frontmatter.toml</code></a></li>
+        <li><a href="#gmkdxsettingshighlightfrontmatterjson"><code>g:mkdx#settings.highlight.frontmatter.json</code></a></li>
         <li><a href="#gmkdxsettingsauto_updateenable"><code>g:mkdx#settings.auto_update.enable</code></a></li>
         <li><a href="#gmkdxsettingsfoldenable"><code>g:mkdx#settings.fold.enable</code></a></li>
         <li><a href="#gmkdxsettingsfoldcomponents"><code>g:mkdx#settings.fold.components</code></a></li>
@@ -1367,6 +1370,35 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 let g:mkdx#settings = { 'highlight': { 'enable': 0 } }
 ```
 
+## `g:mkdx#settings.highlight.frontmatter.yaml`
+
+This setting is enabled by default. When enabled, YAML frontmatter is highlighted.
+
+```viml
+" :h mkdx-setting-highlight-frontmatter-yaml
+let g:mkdx#settings = { 'highlight': { 'frontmatter': { 'yaml': 1 } } }
+```
+
+## `g:mkdx#settings.highlight.frontmatter.toml`
+
+TOML frontmatter is disabled by default since it is less common than YAML.
+This allows markdown files to be loaded faster for people that don't use TOML frontmatter.
+
+```viml
+" :h mkdx-setting-highlight-frontmatter-toml
+let g:mkdx#settings = { 'highlight': { 'frontmatter': { 'toml': 0 } } }
+```
+
+## `g:mkdx#settings.highlight.frontmatter.json`
+
+JSON frontmatter is disabled by default since it is less common than YAML.
+This allows markdown files to be loaded faster for people that don't use JSON frontmatter.
+
+```viml
+" :h mkdx-setting-highlight-frontmatter-json
+let g:mkdx#settings = { 'highlight': { 'frontmatter': { 'json': 0 } } }
+```
+
 ## `g:mkdx#settings.auto_update.enable`
 
 This setting controls wether or not to update the document after changing certain variables.
@@ -1562,6 +1594,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Add: opt-in support for TOML and JSON frontmatter and settings to control which syntax is supported.
 - Fix: eager-load settings to ensure settings are properly initialized before loading a markdown file ([#125](../../issue/125) by @victorkristof)
 - Fix: using `mkdx#gf` with multiple lines with a link always opening first link ([#122](../../issue/122) by @Delayless)
 - Fix: non plaintext files now also open using `open` instead of in (n)vim ([#116](../../issue/116) by @kraxli)

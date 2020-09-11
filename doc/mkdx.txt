@@ -66,6 +66,9 @@ Settings `.......................................................` |mkdx-setting
     toc.details.child_count `.............` |mkdx-setting-toc-details-child-count|
     toc.details.child_summary `.........` |mkdx-setting-toc-details-child-summary|
     highlight.enable `...........................` |mkdx-setting-highlight-enable|
+    highlight.frontmatter.yaml `.......` |mkdx-setting-highlight-frontmatter-yaml|
+    highlight.frontmatter.toml `.......` |mkdx-setting-highlight-frontmatter-toml|
+    highlight.frontmatter.json `.......` |mkdx-setting-highlight-frontmatter-json|
     auto_update.enable `.......................` |mkdx-setting-auto-update-enable|
     fold.enable `.....................................` |mkdx-setting-fold-enable|
     fold.components `.............................` |mkdx-setting-fold-components|
@@ -313,7 +316,14 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'complete': 1`
           `\                              }`
           `\                            },`
-         ` \ 'highlight':               { 'enable': 0 },`
+          `\ 'highlight':               {`
+          `\                              'enable': 0,`
+          `\                              'frontmatter': {`
+          `\                                'yaml': 1,`
+          `\                                'toml': 0,`
+          `\                                'json': 0`
+          `\                              }`
+          `\                            },`
          ` \ 'auto_update':             { 'enable': 1 },`
           `\ 'fold':                    { 'enable': 0, 'components': ['toc', 'fence'] }`
     `    \ }`
@@ -343,45 +353,48 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
-s:defaults.gf_on_steroids            `=>`
-s:defaults.links.external.enable     `=>`
-s:defaults.links.external.host       `=>`
-s:defaults.links.external.timeout    `=>`
-s:defaults.links.external.relative   `=>`
-s:defaults.links.external.user_agent `=>`
-s:defaults.links.fragment.jumplist   `=>`
-s:defaults.links.fragment.complete   `=>`
-s:defaults.image_extension_pattern   `=>` g:mkdx#link_as_img_pat
-s:defaults.restore_visual            `=>` g:mkdx#restore_visual
-s:defaults.map.prefix                `=>` g:mkdx#map_prefix
-s:defaults.map.enable                `=>` g:mkdx#map_keys
-s:defaults.checkbox.toggles          `=>` g:mkdx#checkbox_toggles
-s:defaults.checkbox.update_tree      `=>` g:mkdx#checklist_update_tree
-s:defaults.checkbox.initial_state    `=>` g:mkdx#checkbox_initial_state
-s:defaults.table.header_divider      `=>` g:mkdx#table_header_divider
-s:defaults.table.divider             `=>` g:mkdx#table_divider
-s:defaults.tokens.header             `=>` g:mkdx#header_style
-s:defaults.tokens.enter              `=>` g:mkdx#list_tokens
-s:defaults.tokens.fence              `=>` g:mkdx#fence_style
-s:defaults.tokens.bold               `=>` g:mkdx#bold_token
-s:defaults.tokens.strike             `=>`
-s:defaults.tokens.italic             `=>` g:mkdx#italic_token
-s:defaults.tokens.list               `=>` g:mkdx#list_token
-s:defaults.enter.enable              `=>` g:mkdx#enhance_enter
-s:defaults.enter.malformed           `=>` g:mkdx#handle_malformed_indent
-s:defaults.enter.o                   `=>`
-s:defaults.enter.shifto              `=>`
-s:defaults.enter.shift               `=>`
-s:defaults.toc.list_token            `=>` g:mkdx#toc_list_token
-s:defaults.toc.text                  `=>` g:mkdx#toc_text
-s:defaults.toc.position              `=>`
-s:defaults.toc.update_on_write       `=>`
-s:defaults.toc.details.enable        `=>`
-s:defaults.toc.details.summary       `=>`
-s:defaults.toc.details.nesting_level `=>`
-s:defaults.toc.details.child_count   `=>`
-s:defaults.toc.details.child_summary `=>`
-s:defaults.highlight.enable          `=>`
+s:defaults.gf_on_steroids             `=>`
+s:defaults.links.external.enable      `=>`
+s:defaults.links.external.host        `=>`
+s:defaults.links.external.timeout     `=>`
+s:defaults.links.external.relative    `=>`
+s:defaults.links.external.user_agent  `=>`
+s:defaults.links.fragment.jumplist    `=>`
+s:defaults.links.fragment.complete    `=>`
+s:defaults.image_extension_pattern    `=>` g:mkdx#link_as_img_pat
+s:defaults.restore_visual             `=>` g:mkdx#restore_visual
+s:defaults.map.prefix                 `=>` g:mkdx#map_prefix
+s:defaults.map.enable                 `=>` g:mkdx#map_keys
+s:defaults.checkbox.toggles           `=>` g:mkdx#checkbox_toggles
+s:defaults.checkbox.update_tree       `=>` g:mkdx#checklist_update_tree
+s:defaults.checkbox.initial_state     `=>` g:mkdx#checkbox_initial_state
+s:defaults.table.header_divider       `=>` g:mkdx#table_header_divider
+s:defaults.table.divider              `=>` g:mkdx#table_divider
+s:defaults.tokens.header              `=>` g:mkdx#header_style
+s:defaults.tokens.enter               `=>` g:mkdx#list_tokens
+s:defaults.tokens.fence               `=>` g:mkdx#fence_style
+s:defaults.tokens.bold                `=>` g:mkdx#bold_token
+s:defaults.tokens.strike              `=>`
+s:defaults.tokens.italic              `=>` g:mkdx#italic_token
+s:defaults.tokens.list                `=>` g:mkdx#list_token
+s:defaults.enter.enable               `=>` g:mkdx#enhance_enter
+s:defaults.enter.malformed            `=>` g:mkdx#handle_malformed_indent
+s:defaults.enter.o                    `=>`
+s:defaults.enter.shifto               `=>`
+s:defaults.enter.shift                `=>`
+s:defaults.toc.list_token             `=>` g:mkdx#toc_list_token
+s:defaults.toc.text                   `=>` g:mkdx#toc_text
+s:defaults.toc.position               `=>`
+s:defaults.toc.update_on_write        `=>`
+s:defaults.toc.details.enable         `=>`
+s:defaults.toc.details.summary        `=>`
+s:defaults.toc.details.nesting_level  `=>`
+s:defaults.toc.details.child_count    `=>`
+s:defaults.toc.details.child_summary  `=>`
+s:defaults.highlight.enable           `=>`
+s:defaults.highlight.frontmatter.yaml `=>`
+s:defaults.highlight.frontmatter.toml `=>`
+s:defaults.highlight.frontmatter.json `=>`
 
 ==============================================================================
 `g:mkdx#settings.gf_on_steroids = 0`                 *mkdx-setting-gf-on-steroids*
@@ -849,6 +862,30 @@ The scheme goes as follows:
 
 See the section |mkdx-highlighting| for details about how to customize the
 colors.
+
+==============================================================================
+                                       *mkdx-setting-highlight-frontmatter-yaml*
+`g:mkdx#settings.highlight.frontmatter.yaml = 1`
+
+By default mkdx enables YAML frontmatter syntax if YAML syntax highlighting is
+available. When this setting is enabled when YAML syntax does not exist it
+will be ignored.
+
+==============================================================================
+                                       *mkdx-setting-highlight-frontmatter-toml*
+`g:mkdx#settings.highlight.frontmatter.toml = 0`
+
+By default mkdx does not enable TOML frontmatter since it is less common than
+YAML. This allows markdown files to load a little bit faster, if you use TOML
+frontmatter set this to `1`.
+
+==============================================================================
+                                       *mkdx-setting-highlight-frontmatter-json*
+`g:mkdx#settings.highlight.frontmatter.json = 0`
+
+By default mkdx does not enable JSON frontmatter since it is less common than
+YAML. This allows markdown files to load a little bit faster, if you use JSON
+frontmatter set this to `1`.
 
 ==============================================================================
 `g:mkdx#settings.auto_update.enable = 1`         *mkdx-setting-auto-update-enable*

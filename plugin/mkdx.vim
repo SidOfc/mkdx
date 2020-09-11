@@ -17,7 +17,7 @@ let s:defaults = {
       \ 'links':                   { 'external': { 'enable': 0, 'timeout': 3, 'host': '', 'relative': 1,
       \                                            'user_agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.1' },
       \                              'fragment': { 'jumplist': 1, 'complete': 1 } },
-      \ 'highlight':               { 'enable': 0 },
+      \ 'highlight':               { 'enable': 0, 'frontmatter': { 'yaml': 1, 'toml': 0, 'json': 0 } },
       \ 'auto_update':             { 'enable': 1 },
       \ 'fold':                    { 'enable': 0, 'components': ['toc', 'fence'] }
     \ }

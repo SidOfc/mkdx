@@ -1,4 +1,4 @@
-if (exists('g:mkdx#settings') && g:mkdx#settings.highlight.enable != 1) | finish | endif
+if (g:mkdx#settings.highlight.enable != 1) | finish | endif
 
 " https://github.com/mattly/vim-markdown-enhancements/blob/master/after/syntax/markdown.vim
 " the table highlighting and CriticMarkup are taken from this repo, which is now read-only,
@@ -105,15 +105,36 @@ if hlexists('htmlStrike')
     syn region mkdxStrikeThrough matchgroup=markdownStrikeThroughDelimiter start="\S\@<=\~\~\|\~\~\S\@=" end="\S\@<=\~\~\|\~\~\S\@=" keepend contains=markdownLineStart
 endif
 
-if mkdx#in_rtp('syntax/yaml.vim')
+if (mkdx#in_rtp('syntax/yaml.vim') && g:mkdx#settings.highlight.frontmatter.yaml)
   " below code is taken from vim-pandoc-syntax:
   " https://github.com/vim-pandoc/vim-pandoc-syntax/blob/0d1129e5cf1b0e3a90e923c3b5f40133bf153f7c/syntax/pandoc.vim#L558-L565
   try
     unlet! b:current_syntax
     syn include @YAML syntax/yaml.vim
+    syn region mkdxYAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
   catch /E484/
+    syn region mkdxYAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ containedin=TOP
   endtry
-  syn region mkdxYAMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^-\{3}\ze\n.\+/ end=/^\([-.]\)\1\{2}$/ keepend contains=@YAML containedin=TOP
+endif
+
+if (mkdx#in_rtp('syntax/toml.vim') && g:mkdx#settings.highlight.frontmatter.toml)
+  try
+    unlet! b:current_syntax
+    syn include @TOML syntax/toml.vim
+    syn region mkdxTOMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^+\{3}\ze\n.\+/ end=/^+++$/ keepend contains=@TOML containedin=TOP transparent
+  catch /E484/
+    syn region mkdxTOMLHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^+\{3}\ze\n.\+/ end=/^+++$/ containedin=TOP
+  endtry
+endif
+
+if (mkdx#in_rtp('syntax/json.vim') && g:mkdx#settings.highlight.frontmatter.json)
+  try
+    unlet! b:current_syntax
+    syn include @JSON syntax/json.vim
+    syn region mkdxJSONHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^{\ze\n.\+/ end=/^+++$/ keepend contains=@TOML containedin=TOP transparent
+  catch /E484/
+    syn region mkdxJSONHeader start=/\%(\%^\|\_^\s*\n\)\@<=\_^{\ze\n.\+/ end=/^}$/ containedin=TOP
+  endtry
 endif
 
 hi default link mkdxCriticAdd          DiffText

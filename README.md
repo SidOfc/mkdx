@@ -1597,6 +1597,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Add: `mkdx#gf_visual` function which mimicks `mkdx#gf` using visually selected text ([#119](../../issues/119))
 - Add: opt-in support for TOML and JSON frontmatter and settings to control which syntax is supported.
 - Add: feature to renumber numbered list items with tab/shift+tab ([#113](../../pull/113))
 - Fix: eager-load settings to ensure settings are properly initialized before loading a markdown file ([#125](../../issue/125) by @victorkristof)

@@ -2,7 +2,7 @@
 *mkdx*
 
 `Author:  Sidney Liebrand <sidneyliebrand@gmail.com>`
-`Version: 1.9.4`
+`Version: 1.10.0`
 
 `               888b     d888 888    d8P  8888888b. Y88b   d88P`
 `       , - /|  8888b   d8888 888   d8P   888  "Y88b Y88b d88P   |\ - ,`
@@ -314,7 +314,7 @@ at the bottom of every setting section. The default settings hash:
           `\                                 'timeout':    3,`
           `\                                 'host':       '',`
           `\                                 'relative':   1,`
-          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.9.1'`
+          `\                                 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001.0.0000.000 vim-mkdx/1.10.0'`
           `\                              },`
           `\                              'fragment': {`
           `\                                 'jumplist': 1,`
@@ -455,7 +455,7 @@ safely append or remove a trailing `/` from your host.
 ==============================================================================
 `g:mkdx#settings.links.external.user_agent =`     *mkdx-setting-links-external-ua*
 ` \ 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1)' .`
-` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.9.1'`
+` \ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/9001 vim-mkdx/1.10.0'`
 
 Specify an actual user agent to prevent being blocked from a website.
 If you don't like being `Chrome/9001` then feel free to change it
@@ -2569,7 +2569,7 @@ regardless of |mkdx-setting-restore-visual|.
 DEVELOPMENT                                                   *mkdx-development*
 
 This section does not describe much yet, it is primarily here so that over
-time as I (@SidOfc) moves machines, I can go here to see how to release mkdx
+time as I (@SidOfc) move machines, I can go here to see how to release mkdx
 properly, things such as zipping and excluding gifs etc...
 
 mkdx uses tagged releases to indicate a version, whenever a new version is

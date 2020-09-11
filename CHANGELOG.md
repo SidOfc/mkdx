@@ -1,3 +1,20 @@
+## 17-05-2020 VERSION 1.9.2
+
+- Add: text wrap mappings can now be prefixed with a _count_ :tada: ([#103](../../issues/103) by @victorkristof)
+- Add: ability to **toggle** bold / italic / strikethrough / inline-code / link wrapping ([#101](../../issues/101) by @victorkristof)
+- Add: enhanced versions of <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd> and [`g:mkdx#settings.gf_on_steroids`](#gmkdxsettingsgf_on_steroids) ([#100](../../issues/100) by @victorkristof and @samarulmeu)
+- Add: support YAML frontmatter
+- Add: ability to create multi-paragraph quotes
+- Add: toggling a quote with a multi-line selection no longer skips empty lines ([#94](../../issues/94) by @samarulmeu)
+- Add: toggling code will now toggle a code-block instead when in `V`isual-linewise mode ([#93](../../issues/93))
+- Add: [CriticMarkup](http://criticmarkup.com/) highlighting
+- Fix: no-op folding functions when `g:markdown_folding` is enabled
+- Fix: allow mkdx to work with [plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown) enabled
+- Fix: insertion of double quote marks on <kbd>enter</kbd>
+- Fix: removed duplicate helptag causing Vundle to crash ([#92](../../issues/92) by @samarulmeu)
+- Fix: `<details />` TOC not unindenting properly when `&sw` is `0`
+- Fix: typo in README ([#88](../../issues/88) by @Ginner)
+
 ## 10-05-2019 VERSION 1.9.1
 
 - Fix: Handle non-ascii characters in header (TOC) links ([#85](../../pull/85) by @totpet)

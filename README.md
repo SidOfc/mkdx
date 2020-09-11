@@ -150,10 +150,9 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
-        <li><a href="#edge-not-yet-on-vimorg">Edge (not yet on vim.org)</a></li>
+        <li><a href="#11-09-2020-version-1100">11-09-2020 VERSION 1.10.0</a></li>
         <li><a href="#22-05-2020-version-194">22-05-2020 VERSION 1.9.4</a></li>
         <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
-        <li><a href="#17-05-2020-version-192">17-05-2020 VERSION 1.9.2</a></li>
     </ul></li>
 </ul>
 </details>
@@ -1595,7 +1594,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
-## Edge (not yet on vim.org)
+## 11-09-2020 VERSION 1.10.0
 
 - Add: `mkdx#gf_visual` function which mimicks `mkdx#gf` using visually selected text ([#119](../../issues/119))
 - Add: opt-in support for TOML and JSON frontmatter and settings to control which syntax is supported.
@@ -1618,20 +1617,3 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 - Add: ability to press <kbd>enter</kbd> in the middle of a list-item to split it into two ([#107](../../issues/107) by @samarulmeu)
 - Fix: wrapping last word shifting word to right in some cases ([#101](../../issues/101) by @samarulmeu)
-
-## 17-05-2020 VERSION 1.9.2
-
-- Add: text wrap mappings can now be prefixed with a _count_ :tada: ([#103](../../issues/103) by @victorkristof)
-- Add: ability to **toggle** bold / italic / strikethrough / inline-code / link wrapping ([#101](../../issues/101) by @victorkristof)
-- Add: enhanced versions of <kbd>g</kbd><kbd>f</kbd> and <kbd>g</kbd><kbd>x</kbd> and [`g:mkdx#settings.gf_on_steroids`](#gmkdxsettingsgf_on_steroids) ([#100](../../issues/100) by @victorkristof and @samarulmeu)
-- Add: support YAML frontmatter
-- Add: ability to create multi-paragraph quotes
-- Add: toggling a quote with a multi-line selection no longer skips empty lines ([#94](../../issues/94) by @samarulmeu)
-- Add: toggling code will now toggle a code-block instead when in `V`isual-linewise mode ([#93](../../issues/93))
-- Add: [CriticMarkup](http://criticmarkup.com/) highlighting
-- Fix: no-op folding functions when `g:markdown_folding` is enabled
-- Fix: allow mkdx to work with [plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown) enabled
-- Fix: insertion of double quote marks on <kbd>enter</kbd>
-- Fix: removed duplicate helptag causing Vundle to crash ([#92](../../issues/92) by @samarulmeu)
-- Fix: `<details />` TOC not unindenting properly when `&sw` is `0`
-- Fix: typo in README ([#88](../../issues/88) by @Ginner)

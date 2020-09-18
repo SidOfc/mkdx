@@ -263,7 +263,7 @@ endfun
 
 let s:util.mkdx_loadpath = get(filter(split(&rtp, ','), {idx, plugin -> match(plugin, 'mkdx/\?$') > -1}), 0, '')
 let s:util.mkdx_loadpath = !empty(s:util.mkdx_loadpath) ? substitute(s:util.mkdx_loadpath, '/\+$', '', 'g') : s:util.mkdx_loadpath
-let s:util.syn_loadpath  = join([s:util.mkdx_loadpath, 'after/syntax/markdown/mkdx.vim'], '/')
+let s:util.syn_loadpath  = join([s:util.mkdx_loadpath, 'after/syntax/markdown.vim'], '/')
 let s:util.hl_names      = ['mkdxTable', 'mkdxTableDelimiter', 'mkdxTableAlign', 'mkdxTableHeader',
                           \ 'mkdxTableHeadDelimiter', 'mkdxTableCaption', 'mkdxTableCaptionDelimiter',
                           \ 'mkdxListItem', 'mkdxCheckboxEmpty', 'mkdxCheckboxPending', 'mkdxCheckboxComplete',

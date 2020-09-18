@@ -28,19 +28,19 @@ syn region  markdownLink matchgroup=markdownLinkDelimiter start="(" end=")" keep
 
 " CriticMarkup
 " reference: http://criticmarkup.com
-syn region mkdxCriticAddition matchgroup=mdCriticAdd start=/{++/ end=/++}/ contains=mdCriticAddStartMark, mdCriticAddEndMark concealends
+syn region mkdxCriticAddition matchgroup=mkdxCriticAdd start=/{++/ end=/++}/ contains=mkdxCriticAddStartMark, mkdxCriticAddEndMark concealends
 syn match  mkdxCriticAddStartMark /{++/ contained conceal
 syn match  mkdxCriticAddEndMark /++}/ contained conceal
-syn region mkdxCriticDeletion matchgroup=mdCriticDel start=/{--/ end=/--}/ contains=mdCriticDelStartMark,mdCriticDelEndMark concealends
+syn region mkdxCriticDeletion matchgroup=mkdxCriticDel start=/{--/ end=/--}/ contains=mkdxCriticDelStartMark,mkdxCriticDelEndMark concealends
 syn match  mkdxCriticDelStartMark /{--/ contained conceal
 syn match  mkdxCriticDelEndMark /--}/ contained conceal
 syn region mkdxCriticSubRemove start=/{\~\~/ end=/.\(\~>\)\@=/ keepend
-syn match  mkdxCriticSubStartMark /{\~\~/ contained containedin=mdCriticSubRemove conceal
+syn match  mkdxCriticSubStartMark /{\~\~/ contained containedin=mkdxCriticSubRemove conceal
 syn region mkdxCriticSubstitute start=/\~>/ end=/\~\~}/ keepend
-syn match  mkdxCriticSubTransMark /\~>/ contained containedin=mdCriticSubstitute conceal
-syn match  mkdxCriticSubEndMark /\~\~}/ contained containedin=mdCriticSubstitute conceal
-syn region mkdxCriticComment matchgroup=mdCriticExtra start=/{>>/ end=/<<}/ concealends
-syn region mkdxCriticHighlight matchgroup=mdCriticExtra start=/{==/ end=/==}/ concealends
+syn match  mkdxCriticSubTransMark /\~>/ contained containedin=mkdxCriticSubstitute
+syn match  mkdxCriticSubEndMark /\~\~}/ contained containedin=mkdxCriticSubstitute conceal
+syn region mkdxCriticComment matchgroup=mkdxCriticExtra start=/{>>/ end=/<<}/ concealends
+syn region mkdxCriticHighlight matchgroup=mkdxCriticExtra start=/{==/ end=/==}/ concealends
 
 if hlexists('markdownUrl')
   highlight default link mkdxLink markdownUrl

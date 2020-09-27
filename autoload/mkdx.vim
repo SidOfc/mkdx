@@ -815,10 +815,14 @@ fun! s:util.ListHeaders()
   let hashes  = {}
 
   for lnum in range(1, line('$'))
-    let header = getline(lnum)
-    let skip   = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+    let header         = getline(lnum)
+    let skip           = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
+    let is_frontmatter = match(
+          \ get(map(synstack(lnum, 1), 'synIDattr(v:val, "name")'), 0, ''),
+          \ 'mkdx\(YAML\|TOML\|JSON\)Header'
+          \ ) > -1
 
-    if (!skip)
+    if (!skip && !is_frontmatter)
       let lvl = strlen(get(matchlist(header, '^' . g:mkdx#settings.tokens.header . '\{1,6}'), 0, ''))
 
       if (lvl == 0)
@@ -877,7 +881,7 @@ let s:util.transformations = {
       \ 'clean-header':   [['^[ {{tokens.header}}]\+\| \+$', '', 'g'], ['\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g'],
       \                    ['<a.*>\(.*\)</a>', '\1', 'g'], ['!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g']],
       \ 'header-to-hash': [['`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g'], ['<kbd>\(.*\)<\/kbd>', '\1', 'g'],
-      \                    ['[^0-9[:lower:]\u4e00-\u9fff_\- ]\+', '', 'g'], ['[.,!@#$%^&*()=+"]', '', 'g'], [' ', '-', 'g']],
+      \                    ['\%#=2[^0-9[:lower:]\u4e00-\u9fff_\- ]\+', '', 'g'], ['[.,!@#$%^&*()=+"]', '', 'g'], [' ', '-', 'g']],
       \ 'toggle-quote':   [['^\(> \)\?', '\=(submatch(1) == "> " ? "" : "> ")', '']]
       \ }
 

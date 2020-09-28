@@ -872,6 +872,27 @@ fun! s:util.ToggleLineType(line, type)
   return substitute(a:line, repl[0], repl[1], repl[2])
 endfun
 
+" work around vim limitation of max char range size of 256 for chinese:
+" http://vim.1045645.n5.nabble.com/how-to-match-all-Chinese-chars-td5708582.html
+" solution by Christian Brabandt, modified by me for use in a single character
+" group
+function! s:util.split_into_ranges(start, end)
+    let start = '0x'. a:start
+    let end   = '0x'. a:end
+    let patt  = ''
+    while (end - start) > 256
+        let temp = start + 256
+        let patt .= printf('\u%X-\u%X', start, temp)
+        let start = temp + 1
+    endwhile
+
+    if (end - start) > 0
+        let patt .= printf('\u%X-\u%X', start, end)
+    endif
+
+    return patt
+endfunction
+
 let s:util.transformations = {
       \ 'trailing-space': [[' \+$', '', 'g']],
       \ 'escape-tags':    [['>', '\&gt;', 'g'], ['<', '\&lt;', 'g']],
@@ -881,7 +902,7 @@ let s:util.transformations = {
       \ 'clean-header':   [['^[ {{tokens.header}}]\+\| \+$', '', 'g'], ['\[!\[\([^\]]\+\)\](\([^\)]\+\))\](\([^\)]\+\))', '', 'g'],
       \                    ['<a.*>\(.*\)</a>', '\1', 'g'], ['!\?\[\([^\]]\+\)]([^)]\+)', '\1', 'g']],
       \ 'header-to-hash': [['`<kbd>\(.*\)<\/kbd>`', 'kbd\1kbd', 'g'], ['<kbd>\(.*\)<\/kbd>', '\1', 'g'],
-      \                    ['\%#=2[^0-9[:lower:]\u4e00-\u9fff_\- ]\+', '', 'g'], ['[.,!@#$%^&*()=+"]', '', 'g'], [' ', '-', 'g']],
+      \                    ['\%#=2[^0-9[:lower:]' . s:util.split_into_ranges('4e00', '9fbb') . '_\- ]\+', '', 'g'], ['[.,!@#$%^&*()=+"]', '', 'g'], [' ', '-', 'g']],
       \ 'toggle-quote':   [['^\(> \)\?', '\=(submatch(1) == "> " ? "" : "> ")', '']]
       \ }
 

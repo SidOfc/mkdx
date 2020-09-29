@@ -150,6 +150,7 @@ Thank you for making this plugin better!
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#changelog">Changelog</a><ul>
+        <li><a href="#edge-not-yet-on-vimorg">Edge (not yet on vim.org)</a></li>
         <li><a href="#11-09-2020-version-1100">11-09-2020 VERSION 1.10.0</a></li>
         <li><a href="#22-05-2020-version-194">22-05-2020 VERSION 1.9.4</a></li>
         <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
@@ -1593,6 +1594,12 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 The latest changes will be visible in this list.
 See [CHANGELOG.md](CHANGELOG.md) for older changes.
+
+## Edge (not yet on vim.org)
+
+- Fix: relocate syntax file for better compatibility ([#127](../../issues/127))
+- Fix: CriticMarkup highlighting works properly now ([#128](../../issues/128))
+- Fix: Support chinese when generating table of contents link fragments ([#130](../../issues/130))
 
 ## 11-09-2020 VERSION 1.10.0
 

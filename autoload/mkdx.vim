@@ -96,6 +96,8 @@ fun! s:util.add_dict_watchers(hash, ...)
 endfun
 
 fun! s:util.OnSettingModified(path, hash, key, value)
+  if (&ft !=? 'markdown') | return | endif
+
   let to = type(a:value.old)
   let tn = type(a:value.new)
   let yy = extend(deepcopy(a:path), [a:key])

@@ -2131,7 +2131,8 @@ fun! mkdx#gf_visual(...)
   if !do_int && (do_ext || destination =~? '^http' || is_img || !is_plain)
     let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
     if (!empty(cmd))
-      silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', 'g'))
+      silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', 'g')) . '>/dev/null'
+      redraw!
     endif
   elseif (filereadable(destination))
     exe 'edit' destination
@@ -2157,7 +2158,8 @@ fun! mkdx#gf(...)
       if !do_int && (do_ext || destination =~? '^http' || is_img || !is_plain)
         let cmd = executable('open') ? 'open' : (executable('xdg-open') ? 'xdg-open' : '')
         if (!empty(cmd))
-          silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', 'g'))
+          silent! exec '!' . cmd . ' ' . shellescape(substitute(destination, '#', '\\#', 'g')) . '>/dev/null'
+          redraw!
         endif
       else
         if get(s:util.hlAtCursor(), 0, '') ==? 'mkdxLink'

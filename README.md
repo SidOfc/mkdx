@@ -155,6 +155,10 @@ Thank you for making this plugin better!
         <li><a href="#22-05-2020-version-194">22-05-2020 VERSION 1.9.4</a></li>
         <li><a href="#18-05-2020-version-193">18-05-2020 VERSION 1.9.3</a></li>
     </ul></li>
+    <li><a href="#faq">FAQ</a><ul>
+        <li><a href="#e121-undefined-variable-gmkdxsettings">E121 Undefined variable: g:mkdx#settings</a></li>
+        <li><a href="#there-is-no-help-for-mkdx">There is no help for mkdx</a></li>
+    </ul></li>
 </ul>
 </details>
 
@@ -193,6 +197,36 @@ Plug 'SidOfc/mkdx'
 ```sh
 cd ~/.vim/bundle
 git clone https://github.com/SidOfc/mkdx
+```
+
+Pack (Vim's native plugin system).
+
+**vim:**
+```sh
+mkdir -p ~/.vim/pack/plugins/start
+cd ~/.vim/pack/plugins/start
+git clone https://github.com/SidOfc/mkdx.git
+```
+
+and then in your vimrc, add the following to the bottom:
+
+```viml
+if !has('nvim')
+  augroup MKDX
+    au!
+    au FileType markdown so $HOME/.vim/pack/plugins/start/mkdx/ftplugin/markdown.vim
+  augroup END
+endif
+```
+
+This is required only for regular Vim, since it does not seem to load the `ftplugin/markdown.vim`
+file when needed automatically.
+
+**neovim:**
+```sh
+mkdir -p ~/.local/config/nvim/site/pack/plugins/start
+cd ~/.local/config/nvim/site/pack/plugins/start
+git clone https://github.com/SidOfc/mkdx.git
 ```
 
 # Quick start
@@ -1624,3 +1658,28 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 - Add: ability to press <kbd>enter</kbd> in the middle of a list-item to split it into two ([#107](../../issues/107) by @samarulmeu)
 - Fix: wrapping last word shifting word to right in some cases ([#101](../../issues/101) by @samarulmeu)
+
+# FAQ
+
+This section aims to answer some frequently(-ish) asked questions about mkdx!
+
+## E121 Undefined variable: g:mkdx#settings
+
+This error comes up after you've added a setting such as: `let g:mkdx#settings.map.prefix = ' '`
+directly in your vimrc. This unfortunately is not possible, settings must be defined
+"long-form" like so:
+
+```viml
+let g:mkdx#settings = {
+\ 'map': { 'prefix': ' ' }
+\ }
+```
+
+The primary reason being that mkdx uses any `g:mkdx#settings` hash defined in your vimrc
+to override the defaults. These defaults are not defined straight from the start but merged
+after the vimrc has loaded.
+
+## There is no help for mkdx
+
+There could be various reasons why helptags don't exist, from what I understand using Vim's native "pack"
+feature does not seem to auto-generate helptags, to fix this you can always run `:helptags ALL`.

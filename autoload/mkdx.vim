@@ -732,13 +732,17 @@ fun! s:util.unwrap(type, start, end)
   endif
 endfun
 
+fun! s:util.char_at_idx(str, idx)
+  return matchstr(a:str, '\%'.a:idx.'c.')
+endfun
+
 fun! s:util.WrapSelectionOrWord(...)
   let mode    = get(a:000, 0, 'n')
   let start   = get(a:000, 1, '')
   let end     = get(a:000, 2, start)
   let l:count = max([get(a:000, 3, 1), 1])
   let type    = get(a:000, 4, '')
-  let vcol    = virtcol('.')
+  let vcol    = col('.')
   let line    = getline('.')
   let llen    = strlen(line)
   let _r      = @z
@@ -757,7 +761,7 @@ fun! s:util.WrapSelectionOrWord(...)
       call s:util.unwrap(type, start, end)
       return 'unwrap'
     else
-      let single_ch_w = (line[vcol - 2] == ' ' && line[vcol] == ' ')
+      let single_ch_w = (s:util.char_at_idx(line, vcol - 1) == ' ' && s:util.char_at_idx(line, vcol + 1) == ' ')
       let mvcol       = vcol - 2
       let go_bk       = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
       let motion      = single_ch_w ? 'l' : 'e'

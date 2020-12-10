@@ -726,9 +726,9 @@ fun! s:util.unwrap(type, start, end)
   call setline(elnum, ea . eb)
 
   if (is_link || slnum == line('.'))
-    call cursor(slnum, max([spos + soff + 1, 1]))
+    call cursor(slnum, max([spos + soff, 1]))
   elseif (elnum == line('.'))
-    call cursor(elnum, max([epos + 1, 1]))
+    call cursor(elnum, max([epos, 1]))
   endif
 endfun
 
@@ -761,9 +761,11 @@ fun! s:util.WrapSelectionOrWord(...)
       call s:util.unwrap(type, start, end)
       return 'unwrap'
     else
-      let single_ch_w = (s:util.char_at_idx(line, vcol - 1) == ' ' && s:util.char_at_idx(line, vcol + 1) == ' ')
-      let mvcol       = vcol - 2
-      let go_bk       = line[mvcol] == ' ' || mvcol < 0 ? '' : 'b'
+      let boundary_re = '[ \t\r\n.,;:"?!%*()' . "'" . ']'
+      let ch_before   = s:util.char_at_idx(line, vcol - 1)
+      let ch_after    = s:util.char_at_idx(line, vcol + 1)
+      let single_ch_w = (ch_before =~ boundary_re && ch_after =~ boundary_re)
+      let go_bk       = ch_before =~ boundary_re ? '' : 'b'
       let motion      = single_ch_w ? 'l' : 'e'
       let col_before  = col('.')
 

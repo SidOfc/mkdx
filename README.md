@@ -1293,7 +1293,7 @@ Otherwise, you will first have to generate the TOC once manually in the desired 
 
 ```viml
 " :h mkdx-setting-toc-update-on-write
-let g:mkdx#settings = { 'toc': { 'save_on_write': 0 } }
+let g:mkdx#settings = { 'toc': { 'update_on_write': 0 } }
 ```
 
 ## `g:mkdx#settings.toc.position`

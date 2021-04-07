@@ -611,6 +611,13 @@ fun! s:util.hlAtCursor()
       \ )
 endfun
 
+fun! s:util.hlAtCursorLine()
+  return map(
+      \ synstack(line('.'), 1),
+      \ 'synIDattr(v:val, "name")'
+      \ )
+endfun
+
 fun! s:util.isHlAtPos(hl, lnum, col)
   let pos_hl        = synIDattr(get(synstack(a:lnum, a:col), 0, ''), 'name')
   let possibilities = type(a:hl) == type([]) ? a:hl : [a:hl]
@@ -1883,6 +1890,13 @@ fun! mkdx#EnterHandler()
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
     let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))
     let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, inl_ind)) : inl_ind
+    let cursor_line_hl = get(s:util.hlAtCursorLine(), 0, '')
+
+    if (cursor_line_hl ==# 'markdownCodeBlock' || cursor_line_hl ==# 'markdownCode')
+      let remove = 0
+      setlocal noautoindent
+      return "\n" . repeat(' ', (indent / s:sw()) * s:sw())
+    endif
 
     if (match(line, '^>\? *[0-9.]\+ ') > -1)
       call s:util.UpdateListNumbers((after_inl ? tmp_lnum : lnum), incr, (remove ? -1 : 1))

@@ -1634,6 +1634,9 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 - Fix: relocate syntax file for better compatibility ([#127](../../issues/127))
 - Fix: CriticMarkup highlighting works properly now ([#128](../../issues/128))
 - Fix: Support chinese when generating table of contents link fragments ([#130](../../issues/130))
+- Fix: Support jumping to setex style headers from fragment links ([#140](../../issues/140))
+- Fix: converting from / to CSV with empty strings no longer shifts values ([#141](../../issues/141))
+- Fix: enter / o handlers no longer delete lines in indented code blocks ([#143](../../issues/143))
 
 ## 11-09-2020 VERSION 1.10.0
 

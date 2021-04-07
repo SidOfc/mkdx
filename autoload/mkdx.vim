@@ -1652,7 +1652,7 @@ fun! mkdx#Tableize() range
     endfor
 
     for linec in linecount
-      if !empty(filter(lines[linec], {idx, val -> !empty(val)}))
+      if !empty(filter(copy(lines[linec]), {idx, val -> !empty(val)}))
         let tmp = map(range(0, len(col_idx) - 1), {idx, val -> get(lines[linec], idx, '')})
         call setline(a:firstline + linec,
           \ ld[1:2] . join(map(tmp, {key, val -> s:util.AlignString(val, get(col_align, get(col_idx, key, ''), 'center'), col_maxlen[key])}), ld) . ld[0:1])

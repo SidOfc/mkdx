@@ -362,6 +362,8 @@ endfun
 fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
   if (s:util._header_found) | return | endif
   let stream = type(a:stream) == s:LIST ? a:stream : [a:stream]
+  call filter(stream, {idx, line -> !empty(line)})
+
   for line in stream
     let item = s:util.IdentifyGrepLink(line)
     let hash = item.type == 'anchor' ? item.content : s:util.transform(tolower(getline(item.lnum)), ['clean-header', 'header-to-hash'])
@@ -377,6 +379,23 @@ fun! s:util.JumpToHeader(link, hashes, jid, stream, ...)
       break
     endif
   endfor
+
+  if (!s:util._header_found)
+    for lnum in range(2, line('$'))
+      let line = getline(lnum)
+      if (match(line, '^\(===\|---\)') !=# -1)
+        let line_hash = s:util.transform(tolower(getline(lnum - 1)), ['clean-header', 'header-to-hash'])
+        if (a:link ==# line_hash)
+          if (g:mkdx#settings.links.fragment.jumplist)
+            normal! m'0
+          endif
+          call cursor(lnum - 1, 0)
+          redraw
+          break
+        endif
+      endif
+    endfor
+  endif
 endfun
 
 fun! s:util.EchoQuickfixCount(subject, ...)

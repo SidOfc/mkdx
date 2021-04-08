@@ -1909,9 +1909,9 @@ fun! mkdx#EnterHandler()
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
     let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))
     let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, inl_ind)) : inl_ind
-    let cursor_line_hl = get(s:util.hlAtCursorLine(), 0, '')
+    let cursor_line_hl = s:util.hlAtCursorLine()
 
-    if (cursor_line_hl ==# 'markdownCodeBlock' || cursor_line_hl ==# 'markdownCode')
+    if (index(cursor_line_hl, 'markdownCodeBlock' ) > -1 || index(cursor_line_hl, 'markdownCode') > -1)
       let remove = 0
       setlocal noautoindent
       return "\n" . repeat(' ', (indent / s:sw()) * s:sw())

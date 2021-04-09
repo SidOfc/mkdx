@@ -301,10 +301,11 @@ fun! s:util.UpdateHeaders(old, new)
 endfun
 
 let s:util.validations = {
-      \ 'g:mkdx#settings.checkbox.toggles':        { 'min-length': [2,                'value must be a list with at least 2 states'] },
-      \ 'g:mkdx#settings.checkbox.update_tree':    { 'between':    [[0, 2],           'value must be >= 0 and <= 2'] },
-      \ 'g:mkdx#settings.tokens.fence':            { 'only-valid': [['`', '~'],       "value can only be '`' or '~'"] },
-      \ 'g:mkdx#settings.fold.components':         { 'only-list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
+      \ 'g:mkdx#settings.checkbox.toggles':     { 'min-length': [2,                'value must be a list with at least 2 states'] },
+      \ 'g:mkdx#settings.checkbox.update_tree': { 'between':    [[0, 2],           'value must be >= 0 and <= 2'] },
+      \ 'g:mkdx#settings.links.conceal':        { 'only-valid': [[0, 1],           'value must 0 or 1'] },
+      \ 'g:mkdx#settings.tokens.fence':         { 'only-valid': [['`', '~'],       "value can only be '`' or '~'"] },
+      \ 'g:mkdx#settings.fold.components':      { 'only-list':  [['toc', 'fence'], 'list can only contain string entries "toc" and "fence"'] },
       \ }
 
 let s:util.updaters = {

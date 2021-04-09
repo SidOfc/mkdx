@@ -34,6 +34,7 @@ Settings `.......................................................` |mkdx-setting
     links.external.relative `..................` |mkdx-setting-links-external-rel|
     links.fragment.jumplist `.............` |mkdx-setting-links-fragment-jumplist|
     links.fragment.complete `.............` |mkdx-setting-links-fragment-complete|
+    links.conceal `.................................` |mkdx-setting-links-conceal|
     image_extension_pattern `..............` |mkdx-setting-links-fragment-pattern|
     restore_visual `...............................` |mkdx-setting-restore-visual|
     map.prefix `.......................................` |mkdx-setting-map-prefix|
@@ -319,7 +320,8 @@ at the bottom of every setting section. The default settings hash:
           `\                              'fragment': {`
           `\                                 'jumplist': 1,`
           `\                                 'complete': 1`
-          `\                              }`
+          `\                              },`
+          `\                              'conceal': 1`
           `\                            },`
           `\ 'highlight':               {`
           `\                              'enable': 0,`
@@ -366,6 +368,7 @@ s:defaults.links.external.relative    `=>`
 s:defaults.links.external.user_agent  `=>`
 s:defaults.links.fragment.jumplist    `=>`
 s:defaults.links.fragment.complete    `=>`
+s:defaults.links.conceal              `=>`
 s:defaults.image_extension_pattern    `=>` g:mkdx#link_as_img_pat
 s:defaults.restore_visual             `=>` g:mkdx#restore_visual
 s:defaults.map.prefix                 `=>` g:mkdx#map_prefix
@@ -499,6 +502,13 @@ The overrides include:
     `setlocal pumheight=15`
     `setlocal iskeyword+=\-`
     `setlocal completeopt=noinsert,menuone`
+
+==============================================================================
+`g:mkdx#settings.links.conceal = 1 `        *mkdx-setting-links-fragment-complete*
+
+By default, if |conceallevel| is set to `2`, mkdx will also conceal
+markdown link URLs. Setting the value of this setting to `0` will disable URL
+concealing.
 
 ==============================================================================
 `g:mkdx#settings.image_extension_pattern =` *mkdx-setting-image-extension-pattern*
@@ -964,6 +974,7 @@ Also, when |conceallevel| is set to `2`, mkdx will also fold some components:
 
 - `**_text_**`   => `text`
 - ``code``       => `code`
+- `[link](url)`  => `[link]`
 
 ==============================================================================
 mkdxYAMLHeader                                 *mkdx-highlight-yaml-frontmatter*

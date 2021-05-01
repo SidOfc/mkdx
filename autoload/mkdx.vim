@@ -851,6 +851,7 @@ fun! s:util.ListHeaders()
 
   for lnum in range(1, line('$'))
     let header         = getline(lnum)
+    let current_lnum   = lnum
     let skip           = match(header, '^\(\`\`\`\|\~\~\~\)') > -1 ? !skip : skip
     let is_frontmatter = match(
           \ get(map(synstack(lnum, 1), 'synIDattr(v:val, "name")'), 0, ''),
@@ -863,7 +864,8 @@ fun! s:util.ListHeaders()
       if (lvl == 0)
         let setext_ul = get(matchlist(header, '^\%(-\|=\)\+$'), 0, '')
         if !empty(setext_ul)
-          let header = getline(lnum - 1)
+          let current_lnum -= 1
+          let header        = getline(lnum - 1)
           if !empty(header)
             let lvl = setext_ul[0] == '=' ? 1 : 2
           endif
@@ -874,7 +876,7 @@ fun! s:util.ListHeaders()
         let hash         = s:util.transform(tolower(header), ['clean-header', 'header-to-hash'])
         let hashes[hash] = get(hashes, hash, -1) + 1
 
-        call add(headers, [lnum, lvl, header, hash, (hashes[hash] > 0 ? '-' . hashes[hash] : '')])
+        call add(headers, [current_lnum, lvl, header, hash, (hashes[hash] > 0 ? '-' . hashes[hash] : '')])
       endif
     endif
   endfor
@@ -2223,6 +2225,32 @@ fun! mkdx#gf(...)
   endtry
 endfun
 
-if $VIM_DEV
-  let g:mkdx#util = s:util
-endif
+fun! mkdx#JumpToSection(to) abort
+  let cursor_lnum = line('.')
+  let headers = s:util.ListHeaders()
+  let jumps = v:count1
+
+  if a:to ==# 'next'
+    for header in headers
+      let header_lnum = header[0]
+      let jumps -= header_lnum > cursor_lnum ? 1 : 0
+
+      if jumps <= 0
+        call cursor(header_lnum, 1)
+        break
+      endif
+    endfor
+  else
+    for header in reverse(headers)
+      let header_lnum = header[0]
+      let jumps -= header_lnum < cursor_lnum ? 1 : 0
+
+      if jumps <= 0
+        call cursor(header_lnum, 1)
+        break
+      endif
+    endfor
+  endif
+endfun
+
+let g:mkdx#util = s:util

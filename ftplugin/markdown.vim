@@ -57,6 +57,8 @@ inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPH
 inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
 noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#IndentHandler(1)<Cr>
 noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#IndentHandler(0)<Cr>
+noremap         <Plug>(mkdx-next-section)                :call mkdx#JumpToSection('next')<Cr>
+noremap         <Plug>(mkdx-prev-section)                :call mkdx#JumpToSection('prev')<Cr>
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
@@ -121,7 +123,9 @@ if g:mkdx#settings.map.enable == 1
         \ ['Jump to file / open URL',         0, 'n', 'gf',     '<Plug>(mkdx-gf)',                      ':<C-U>call mkdx#gf("f")<Cr>'],
         \ ['Jump to file / open URL',         0, 'n', 'gx',     '<Plug>(mkdx-gx)',                      ':<C-U>call mkdx#gf("x")<Cr>'],
         \ ['Jump to file / open URL',         0, 'v', 'gf',     '<Plug>(mkdx-gf-visual)',               ':<C-U>call mkdx#gf_visual("f")<Cr>'],
-        \ ['Jump to file / open URL',         0, 'v', 'gx',     '<Plug>(mkdx-gx-visual)',               ':<C-U>call mkdx#gf_visual("x")<Cr>']
+        \ ['Jump to file / open URL',         0, 'v', 'gx',     '<Plug>(mkdx-gx-visual)',               ':<C-U>call mkdx#gf_visual("x")<Cr>'],
+        \ ['Jump to next section',            0, 'n', ']]',     '<Plug>(mkdx-next-section)',            ':call mkdx#JumpToSection("next")<Cr>'],
+        \ ['Jump to prev section',            0, 'n', '[[',     '<Plug>(mkdx-prev-section)',            ':call mkdx#JumpToSection("prev")<Cr>'],
         \ ]
 
   if (!hasmapto('<Plug>(mkdx-gf)', 'n'))

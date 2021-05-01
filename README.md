@@ -67,7 +67,7 @@ Thank you for making this plugin better!
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#examples">Examples</a><details><summary>show 23 items</summary><ul>
+    <li><a href="#examples">Examples</a><details><summary>show 24 items</summary><ul>
         <li><a href="#folds">Folds</a></li>
         <li><a href="#insert-mode-fragment-completion">Insert mode fragment completion</a></li>
         <li><a href="#dead-link-detection">Dead link detection</a></li>
@@ -86,6 +86,7 @@ Thank you for making this plugin better!
         <li><a href="#toggle-as-bold--italic--inline-code--strikethrough">Toggle as bold / italic / inline-code / strikethrough</a></li>
         <li><a href="#convert-csv-to-table-and-back">Convert CSV to table (and back)</a></li>
         <li><a href="#jump-to-header">Jump to header</a></li>
+        <li><a href="#jump-to-next--previous-header">Jump to next / previous header</a></li>
         <li><a href="#generate-or-update-toc">Generate or update TOC</a></li>
         <li><a href="#generate-or-update-toc-as-details">Generate or update TOC as <code>&lt;details&gt;</code></a></li>
         <li><a href="#open-toc-in-quickfix-window">Open TOC in quickfix window</a></li>
@@ -637,6 +638,7 @@ and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider).
 
 ## Jump to header
 
+
 ![mkdx jump to header](doc/gifs/vim-mkdx-jump-to-header.gif)
 
 Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd> to jump to a fragment identifier within the document.
@@ -651,6 +653,11 @@ This behaviour can be disabled by overriding [`g:mkdx#settings.links.fragment.ju
 " :h mkdx-function-jump-to-header
 " :h mkdx-mapping-jump-to-header
 ```
+
+## Jump to next / previous header
+
+Use <kbd>]</kbd><kbd>]</kbd> to jump to the next header and <kbd>[</kbd><kbd>[</kbd> to
+jump to the previous header. Both mappings support counts and do not wrap around.
 
 ## Generate or update TOC
 
@@ -1499,7 +1506,8 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 
 Mappings can be turned off all together with [`g:mkdx#settings.map.enable`](#gmkdxsettingsmapenable).
 The plugin checks if a mapping exists before creating it. If it exists, it will not create the mapping.
-In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_.
+In case a mapping that this plugin provides doesn't work, please check if you have it in your _.vimrc_ and also try `:verbose map [mapping]`
+where `[mapping]` is the mapping that doesn't work e.g. `<Cr>` or `gf`.
 
 The below list contains all mappings that mkdx creates by default. To remap functionality: [remapping functionality](#remapping-functionality).
 To prevent mapping of a key from happening, see: [unmapping functionality](#unmapping-functionality-using-nop).
@@ -1543,6 +1551,8 @@ To prevent mapping of a key from happening, see: [unmapping functionality](#unma
 |Open external file|visual|<kbd>g</kbd><kbd>x</kbd>|`<Plug>(mkdx-gx-visual)`|
 |Indent numbered list item|<kbd>tab</kbd>|`<Plug>(mkdx-indent)`|
 |Unindent numbered list item|<kbd>shift</kbd>+<kbd>tab</kbd>|`<Plug>(mkdx-unindent)`|
+|Jump to next header|<kbd>]</kbd><kbd>]</kbd>|`<Plug>(mkdx-jump-to-next-section)`|
+|Jump to prev header|<kbd>[</kbd><kbd>[</kbd>|`<Plug>(mkdx-jump-to-prev-section)`|
 
 ## Remapping functionality
 
@@ -1642,6 +1652,7 @@ See [CHANGELOG.md](CHANGELOG.md) for older changes.
 
 ## Edge (not yet on vim.org)
 
+- Add: ability to jump to next / previous header with <kbd>]</kbd><kbd>]</kbd> and <kbd>[</kbd><kbd>[</kbd> ([#146](../../issues/146))
 - Fix: relocate syntax file for better compatibility ([#127](../../issues/127))
 - Fix: CriticMarkup highlighting works properly now ([#128](../../issues/128))
 - Fix: Support chinese when generating table of contents link fragments ([#130](../../issues/130))

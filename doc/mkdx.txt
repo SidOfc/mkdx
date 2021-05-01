@@ -164,6 +164,8 @@ Plugs `.............................................................` |mkdx-plug
     <Plug>(mkdx-gx-visual) `...............................` |mkdx-plug-gx-visual|
     <Plug>(mkdx-indent) `.....................................` |mkdx-plug-indent|
     <Plug>(mkdx-unindent) `.................................` |mkdx-plug-unindent|
+    <Plug>(mkdx-next-section) `.........................` |mkdx-plug-next-section|
+    <Plug>(mkdx-prev-section) `.........................` |mkdx-plug-prev-section|
 
                                                              *mkdx-toc-mappings*
 Mappings `.......................................................` |mkdx-mappings|
@@ -192,6 +194,8 @@ Mappings `.......................................................` |mkdx-mapping
     Toggle kbd shortcut `.....................` |mkdx-mapping-toggle-kbd-shortcut|
     Jump to file `...................................` |mkdx-mapping-jump-to-file|
     Open external file `.......................` |mkdx-mapping-open-external-file|
+    Jump to next section `...................` |mkdx-mapping-jump-to-next-section|
+    Jump to prev section `...................` |mkdx-mapping-jump-to-prev-section|
 
                                                             *mkdx-toc-functions*
 Functions `.....................................................` |mkdx-functions|
@@ -226,6 +230,7 @@ Functions `.....................................................` |mkdx-function
     mkdx#gf_visual() `.................................` |mkdx-function-gf-visual|
     mkdx#MaybeRestoreVisual() `.............` |mkdx-function-maybe-restore-visual|
     mkdx#IndentHandler() `........................` |mkdx-function-indent-handler|
+    mkdx#JumpToSection() `.......................` |mkdx-function-jump-to-section|
 
                                                                *mkdx-toc-errors*
 Errors `...........................................................` |mkdx-errors|
@@ -1357,6 +1362,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
     `:call mkdx#IndentHandler(0)<Cr>`
 
 ==============================================================================
+<Plug>(mkdx-next-section)                               *mkdx-plug-next-section*
+
+    `:call mkdx#JumpToSection('next')<Cr>`
+
+==============================================================================
+<Plug>(mkdx-prev-section)                               *mkdx-plug-prev-section*
+
+    `:call mkdx#JumpToSection('prev')<Cr>`
+
+==============================================================================
 MAPPINGS                                                         *mkdx-mappings*
 
 These are the default mappings set by this plugin. Both
@@ -1726,6 +1741,20 @@ selection is used as the destination.
 
 When |mkdx-setting-gf-on-steroids| is enabled, this mapping will also read
 local files just like |mkdx-mapping-jump-to-file| otherwise would.
+
+==============================================================================
+Jump to next section                         *mkdx-mapping-jump-to-next-section*
+                                                                            ]]
+
+Jumps to the next header in the document. A count can be given to jump down
+multiple headers.
+
+==============================================================================
+Jump to prev section                         *mkdx-mapping-jump-to-prev-section*
+                                                                            ]]
+
+Jumps to the previous header in the document. A count can be given to jump up
+multiple headers.
 
 ==============================================================================
 FUNCTIONS                                                       *mkdx-functions*
@@ -2459,11 +2488,19 @@ mkdx#MaybeRestoreVisual()                   *mkdx-function-maybe-restore-visual*
 When |mkdx-setting-restore-visual| is enabled, this function restores the last
 visual selection.
 
+==============================================================================
 mkdx#IndentHandler({indent})                      *mkdx-function-indent-handler*
 
 When {indent} is nonzero, indents as usual, otherwise unindents as usual.
 Additionally, when indenting / unindenting within a numbered list, the
 list will be renumbered accordingly.
+
+==============================================================================
+mkdx#JumpToSection({to})                         *mkdx-function-jump-to-section*
+
+The {to} argument is required and must be one of `'next'` or `'prev'`. When
+`'next'` jumps to the next section and when `'prev'` jumps to the previous
+section.
 
 ==============================================================================
 |ERRORS|                                                             *mkdx-errors*

@@ -1030,7 +1030,7 @@ fun! s:util.NextListNumber(current, depth, ...)
   let curr  = substitute(a:current, '^ \+\| \+$', '', 'g')
   let parts = split(curr, '\.')
   let incr  = get(a:000, 0, 0)
-  let incr  = incr < 0 ? incr : 1
+  let incr  = incr < 0 ? incr : g:mkdx#settings.enter.increment
 
   if (len(parts) > a:depth) | let parts[a:depth] = str2nr(parts[a:depth]) + incr | endif
   return join(parts, '.') . ((match(curr, '\.$') > -1) ? '.' : '')

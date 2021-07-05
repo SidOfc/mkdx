@@ -691,6 +691,14 @@ When enabled, pressing <Tab> and <S-Tab> will indent / unindent lines and
 additionally renumber numbered list items.
 
 ==============================================================================
+`g:mkdx#settings.enter.increment = 1`               *mkdx-setting-enter-increment*
+
+This setting defines increment done for each new item in numbered list,
+Default value is `1` setting `0` will keep current index on new item.
+
+    `let g:mkdx#settings = { 'enter': { 'increment': 0 } }`
+
+==============================================================================
 `g:mkdx#settings.enter.shift = 0`                       *mkdx-setting-enter-shift*
 
 Disabled by default, set to `1` to enable.

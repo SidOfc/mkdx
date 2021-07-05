@@ -1192,6 +1192,15 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 let g:mkdx#settings = { 'enter': { 'enable': 1 } }
 ```
 
+## `g:mkdx#settings.enter.increment`
+
+This setting defines increment done for each new item in numbered list, Default value is `1` setting `0` will keep current index on new item.
+
+```viml
+" :h mkdx-setting-enter-increment
+let g:mkdx#settings = { 'enter': { 'increment': 0 } }
+```
+
 ## `g:mkdx#settings.enter.shift`
 
 When enabled, pressing <kbd>shift</kbd>+<kbd>enter</kbd> will indent the next line upto the level of the text on the current line.

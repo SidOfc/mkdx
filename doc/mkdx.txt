@@ -52,6 +52,7 @@ Settings `.......................................................` |mkdx-setting
     table.header_divider `...................` |mkdx-setting-table-header-divider|
     table.divider `.................................` |mkdx-setting-table-divider|
     tab.enable `.......................................` |mkdx-setting-tab-enable|
+    enter.increment `.............................` |mkdx-setting-enter-increment|
     enter.enable `...................................` |mkdx-setting-enter-enable|
     enter.shift `.....................................` |mkdx-setting-enter-shift|
     enter.o `.............................................` |mkdx-setting-enter-o|

@@ -93,7 +93,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 48 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 49 items</summary><ul>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -122,6 +122,7 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingstablealign"><code>g:mkdx#settings.table.align</code></a></li>
         <li><a href="#gmkdxsettingstabenable"><code>g:mkdx#settings.tab.enable</code></a></li>
         <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
+        <li><a href="#gmkdxsettingsenterincrement"><code>g:mkdx#settings.enter.increment</code></a></li>
         <li><a href="#gmkdxsettingsentershift"><code>g:mkdx#settings.enter.shift</code></a></li>
         <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
         <li><a href="#gmkdxsettingsentershifto"><code>g:mkdx#settings.enter.shifto</code></a></li>

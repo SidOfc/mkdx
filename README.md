@@ -202,6 +202,11 @@ cd ~/.vim/bundle
 git clone https://github.com/SidOfc/mkdx
 ```
 
+[packer.nvim](https://github.com/wbthomason/packer.nvim)
+```sh
+use 'SidOfc/mkdx'
+```
+
 Pack (Vim's native plugin system).
 
 **vim:**

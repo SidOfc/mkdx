@@ -49,6 +49,6 @@ if (!exists('g:mkdx#settings_initialized'))
   call mkdx#guard_settings()
 endif
 
-function mkdx#configure(...)
+function! mkdx#configure(...)
   let g:mkdx#settings = mkdx#MergeSettings(s:defaults, get(a:000, 0, {}))
 endfunction

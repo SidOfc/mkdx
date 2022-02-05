@@ -997,7 +997,7 @@ fun! s:util.TasksToCheck(linenum)
 
   while (nextnonblank(startc) == startc)
     let [token, indent, line] = s:util.TaskItem(startc)
-    if ((startc < lnum) || (indent != 0))
+    if ((startc < lnum) || (indent != 0) || (startc == lnum && indent == 0))
       call add(items, [startc, token, indent, line])
       let startc += 1
     else
@@ -1046,7 +1046,7 @@ fun! s:util.UpdateTaskList(...)
   let empty                 = g:mkdx#settings.checkbox.toggles[0]
   let tasks_lnums           = map(deepcopy(tasks), {idx, val -> get(val, 0, -1)})
 
-  if (tdpt > 0)
+  if (tdpt >= 0)
     let nextupd = tdpt - 1
 
     for [lnum, token, depth, line] in reverse(deepcopy(tasks))

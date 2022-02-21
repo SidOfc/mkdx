@@ -62,9 +62,15 @@ noremap         <Plug>(mkdx-prev-section)                :call mkdx#JumpToSectio
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete
-  setlocal pumheight=15
   setlocal iskeyword+=\-
-  setlocal completeopt=noinsert,menuone
+
+  if (g:mkdx#settings.links.fragment.pumheight)
+    exe 'setlocal pumheight=' . g:mkdx#settings.links.fragment.pumheight
+  endif
+
+  if (g:mkdx#settings.links.fragment.completeopt)
+    exe 'setlocal completeopt=' . g:mkdx#settings.links.fragment.completeopt
+  endif
 endif
 
 if (get(g:, 'markdown_folding', 0))

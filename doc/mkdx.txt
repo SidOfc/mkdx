@@ -34,6 +34,8 @@ Settings `.......................................................` |mkdx-setting
     links.external.relative `..................` |mkdx-setting-links-external-rel|
     links.fragment.jumplist `.............` |mkdx-setting-links-fragment-jumplist|
     links.fragment.complete `.............` |mkdx-setting-links-fragment-complete|
+    links.fragment.pumheight `...........` |mkdx-setting-links-fragment-pumheight|
+    links.fragment.completeopt `.......` |mkdx-setting-links-fragment-completeopt|
     links.conceal `.................................` |mkdx-setting-links-conceal|
     image_extension_pattern `..............` |mkdx-setting-links-fragment-pattern|
     restore_visual `...............................` |mkdx-setting-restore-visual|
@@ -505,9 +507,23 @@ This setting modifies some functionality using `setlocal`.
 The overrides include:
 
     `setlocal completefunc=mkdx#Complete`
-    `setlocal pumheight=15`
     `setlocal iskeyword+=\-`
-    `setlocal completeopt=noinsert,menuone`
+    `setlocal pumheight=`|mkdx-settings-links-fragment-pumheight|
+    `setlocal completeopt=`|mkdx-settings-links-fragment-completeopt|
+
+==============================================================================
+`g:mkdx#settings.links.fragment`           *mkdx-setting-links-fragment-pumheight*
+  `.pumheight = 1`
+
+Configure the `pumheight` used in markdown files.
+Set to `0` to prevent `pumheight` from being modified.
+
+==============================================================================
+`g:mkdx#settings.links.fragment`           *mkdx-setting-links-fragment-pumheight*
+  `.completeopt = 'noinsert,menuone'`
+
+Configure the `completeopt` used for fragment completion.
+Set to `0` to prevent `completeopt` from being modified.
 
 ==============================================================================
 `g:mkdx#settings.links.conceal = 1 `        *mkdx-setting-links-fragment-complete*

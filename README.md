@@ -93,7 +93,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 49 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 51 items</summary><ul>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -103,6 +103,8 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingslinksconceal"><code>g:mkdx#settings.links.conceal</code></a></li>
         <li><a href="#gmkdxsettingslinksfragmentjumplist"><code>g:mkdx#settings.links.fragment.jumplist</code></a></li>
         <li><a href="#gmkdxsettingslinksfragmentcomplete"><code>g:mkdx#settings.links.fragment.complete</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentpumheight"><code>g:mkdx#settings.links.fragment.pumheight</code></a></li>
+        <li><a href="#gmkdxsettingslinksfragmentcompleteopt"><code>g:mkdx#settings.links.fragment.completeopt</code></a></li>
         <li><a href="#gmkdxsettingsimage_extension_pattern"><code>g:mkdx#settings.image_extension_pattern</code></a></li>
         <li><a href="#gmkdxsettingsrestore_visual"><code>g:mkdx#settings.restore_visual</code></a></li>
         <li><a href="#gmkdxsettingsmapprefix"><code>g:mkdx#settings.map.prefix</code></a></li>
@@ -972,6 +974,28 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 ```viml
 " :h mkdx-setting-links-fragment-complete
 let g:mkdx#settings = { 'links': { 'fragment': { 'complete': 1 } } }
+```
+
+## `g:mkdx#settings.links.fragment.pumheight`
+
+Configure the `pumheight`. Default `15`. Set to `0` to prevent `pumheight` from being modified.
+
+```viml
+" :h mkdx-setting-links-fragment-pumheight
+let g:mkdx#settings = { 'links': { 'fragment': { 'pumheight': 15 } } }
+```
+
+## `g:mkdx#settings.links.fragment.completeopt`
+
+Configure the `completeopt` used for fragment completion. Default `noinsert,menuone`.
+Set to `0` to prevent `completeopt` from being modified.
+
+If you have set `completeopt` in your vimrc you may want to set this to `0` to
+persist your own preferences while editing markdown files.
+
+```viml
+" :h mkdx-setting-links-fragment-completeopt
+let g:mkdx#settings = { 'links': { 'fragment': { 'completeopt': 'noinsert,menuone' } } }
 ```
 
 ## `g:mkdx#settings.image_extension_pattern`

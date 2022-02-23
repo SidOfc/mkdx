@@ -1244,19 +1244,17 @@ fun! s:util.ContextualComplete()
     let start -= 1
   endwhile
 
-  if (line[start] != '#') | return [start, []] | endif
-
   if (!s:_testing && s:_can_vimgrep_fmt)
     let hashes = {}
     let opts = extend(get(s:util.grepopts, s:util.grepcmd, {}), {'pattern': '^(#{1,6} .*|(\-|=)+)$|(name|id)="[^"]+"', 'sync': 1})
     let opts['each'] = function(s:util.HeadersAndAnchorsToHashCompletions, [hashes])
     call s:util.Grep(opts)
 
-    return [start, []]
+    return []
   else
-    return [start, extend(
+    return extend(
           \ map(s:util.ListHeaders(), {idx, val -> {'word': ('#' . val[3] . val[4]), 'menu': ("\t| header | " . s:util.TruncateString(repeat(g:mkdx#settings.tokens.header, val[1]) . ' ' . s:util.transform(val[2], ['clean-header']), 40))}}),
-          \ map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}}))]
+          \ map(s:util.ListIDAnchorLinks(), {idx, val -> {'word': ('#' . val[2]), 'menu': ("\t| anchor | " . val[2])}}))
   endif
 endfun
 
@@ -1367,10 +1365,22 @@ endfun
 
 fun! mkdx#Complete(findstart, base)
   if (a:findstart)
-    let s:util._user_compl = s:util.ContextualComplete()
-    return s:util._user_compl[0]
+    return s:util.CompleteStart()
   else
-    return s:util._user_compl[1]
+    return s:util.ContextualComplete()
+  endif
+endfun
+
+fun! s:util.CompleteStart()
+  let col   = col('.') - 2
+  let start = col
+  let line  = getline('.')
+
+  while (start > 0 && line[start] != '#')
+    let start -= 1
+  endwhile
+
+  return start
 endfun
 
 fun! mkdx#JumpToHeader()

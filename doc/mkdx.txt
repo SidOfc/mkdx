@@ -56,6 +56,7 @@ Settings `.......................................................` |mkdx-setting
     tab.enable `.......................................` |mkdx-setting-tab-enable|
     enter.increment `.............................` |mkdx-setting-enter-increment|
     enter.enable `...................................` |mkdx-setting-enter-enable|
+    enter.close_pum `.............................` |mkdx-setting-enter-close-pum|
     enter.shift `.....................................` |mkdx-setting-enter-shift|
     enter.o `.............................................` |mkdx-setting-enter-o|
     enter.shifto `...................................` |mkdx-setting-enter-shifto|
@@ -702,6 +703,13 @@ The overrides include:
     `setlocal autoindent`
 
 ==============================================================================
+`g:mkdx#settings.enter.close_pum = 0`               *mkdx-setting-enter-close-pum*
+
+By default |mkdx-plug-enter| does not handle closing popup menus. Setting this
+to `1` will cause |mkdx-plug-enter| to first close any popup menu if
+|pumvisible| returns a non-zero value.
+
+==============================================================================
 `g:mkdx#settings.tab.enable = 1`                         *mkdx-setting-tab-enable*
 
 When enabled, pressing <Tab> and <S-Tab> will indent / unindent lines and
@@ -1334,7 +1342,13 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 ==============================================================================
 <Plug>(mkdx-enter)                                             *mkdx-plug-enter*
 
-    `<C-R>=mkdx#EnterHandler()<Cr>`
+    `<C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>`
+
+    When |mkdx-setting-enter-close-pum| is enabled, this plug is instead
+    defined like this:
+
+    `<C-R>=<SID>cr_close_pop()<Cr><C-R>=mkdx#EnterHandler()<Cr>\`
+        `:setlocal autoindent<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-shift-enter)                                 *mkdx-plug-shift-enter*

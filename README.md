@@ -93,7 +93,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 51 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 52 items</summary><ul>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -124,6 +124,7 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingstablealign"><code>g:mkdx#settings.table.align</code></a></li>
         <li><a href="#gmkdxsettingstabenable"><code>g:mkdx#settings.tab.enable</code></a></li>
         <li><a href="#gmkdxsettingsenterenable"><code>g:mkdx#settings.enter.enable</code></a></li>
+        <li><a href="#gmkdxsettingsenterclose_pum"><code>g:mkdx#settings.enter.close_pum</code></a></li>
         <li><a href="#gmkdxsettingsenterincrement"><code>g:mkdx#settings.enter.increment</code></a></li>
         <li><a href="#gmkdxsettingsentershift"><code>g:mkdx#settings.enter.shift</code></a></li>
         <li><a href="#gmkdxsettingsentero"><code>g:mkdx#settings.enter.o</code></a></li>
@@ -1220,6 +1221,16 @@ This setting is [auto updated](#gmkdxsettingsauto_updateenable) when available.
 ```viml
 " :h mkdx-setting-enter-enable
 let g:mkdx#settings = { 'enter': { 'enable': 1 } }
+```
+
+## `g:mkdx#settings.enter.close_pum`
+
+Disabled by default, when enabled pressing <kbd>enter</kbd> will first close any visible
+popup menu before executing mkdx's enter handler.
+
+```viml
+" :h mkdx-setting-enter-close-pum
+let g:mkdx#settings = { 'enter': { 'close_pum': 0 } }
 ```
 
 ## `g:mkdx#settings.enter.increment`

@@ -47,7 +47,6 @@ noremap         <silent> <Plug>(mkdx-gf)                 :<C-U>call mkdx#gf('f')
 noremap         <silent> <Plug>(mkdx-gx)                 :<C-U>call mkdx#gf('x')<Cr>
 noremap         <silent> <Plug>(mkdx-gf-visual)          :<C-U>call mkdx#gf_visual('f')<Cr>
 noremap         <silent> <Plug>(mkdx-gx-visual)          :<C-U>call mkdx#gf_visual('x')<Cr>
-inoremap        <silent> <Plug>(mkdx-enter)              <C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
 inoremap        <silent> <Plug>(mkdx-shift-enter)        <C-R>=mkdx#ShiftEnterHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-insert-kbd)         <kbd></kbd>F<
 inoremap        <silent> <Plug>(mkdx-fence-tilde)        <C-R>=mkdx#InsertFencedCodeBlock('~')<Cr>kA
@@ -59,6 +58,16 @@ noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#IndentHandle
 noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#IndentHandler(0)<Cr>
 noremap         <Plug>(mkdx-next-section)                :call mkdx#JumpToSection('next')<Cr>
 noremap         <Plug>(mkdx-prev-section)                :call mkdx#JumpToSection('prev')<Cr>
+
+if (g:mkdx#settings.enter.close_pum)
+  function! s:cr_close_pop()
+    return pumvisible() ? "\<C-y>" : ""
+  endfunction
+
+  inoremap <silent> <Plug>(mkdx-enter) <C-R>=<SID>cr_close_pop()<CR><C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
+else
+  inoremap <silent> <Plug>(mkdx-enter) <C-R>=mkdx#EnterHandler()<Cr>:setlocal autoindent<Cr>
+endif
 
 if (g:mkdx#settings.links.fragment.complete)
   setlocal completefunc=mkdx#Complete

@@ -1392,7 +1392,7 @@ fun! mkdx#JumpToHeader()
   let link = ''
 
   while (col < len)
-    let rgx        = '\[[^\]]\+\](\([^)]\+\))\|<a .*\(name\|id\|href\)="\([^"]\+\)".*>.*</a>'
+    let rgx        = '\[\[\([^\]|]\+\)\|\[[^\]]\+\](\([^)]\+\))\|<a .*\(name\|id\|href\)="\([^"]\+\)".*>.*</a>'
     let tcol       = match(line[col:], rgx)
     let matches    = matchlist(line[col:], rgx)
     let matchtext  = get(matches, 0, '')

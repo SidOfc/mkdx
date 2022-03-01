@@ -651,7 +651,7 @@ and [`g:mkdx#settings.table.header_divider`](#gmkdxsettingstableheader_divider).
 ![mkdx jump to header](doc/gifs/vim-mkdx-jump-to-header.gif)
 
 Press <kbd>[\<PREFIX\>](#gmkdxsettingsmapprefix)</kbd><kbd>j</kbd> to jump to a fragment identifier within the document.
-Every link starting with a `#` symbol is considered a fragment identifier. both **markdown** and **HTML** are supported.
+Every link starting with a `#` symbol is considered a fragment identifier. **Markdown**, **wiki links**, and **HTML** formats are supported.
 Before performing a jump, the current cursor position will be added to the jumplist (`:h jumplist`).
 This allows you to jump back and forth between that header and the selected link using <kbd>\`</kbd><kbd>\`</kbd>.
 This behaviour can be disabled by overriding [`g:mkdx#settings.links.fragment.jumplist`](#gmkdxsettingslinksfragmentjumplist).

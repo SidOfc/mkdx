@@ -1893,7 +1893,7 @@ fun! mkdx#EnterHandler()
     let lnum      = line('.')
     let cnum      = virtcol('.')
     let indent    = indent(lnum)
-    let sp_pat    = '^>\? *\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+    let sp_pat    = '^>\?\s*\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
     let after_inl = 0
     let inl_ind   = 0
     let tmp_lnum  = lnum - 1
@@ -1914,10 +1914,10 @@ fun! mkdx#EnterHandler()
     let results = matchlist(line, sp_pat)
     let t       = get(results, 2, '')
     let t       = t == '>' ? '' : t
-    let tcb     = match(get(results, 1, ''), '^>\? *\[.\] *') > -1
-    let cb      = match(get(results, 3, ''), ' *\[.\] *') > -1
-    let remove  = empty(substitute(line, sp_pat . ' *', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0)
-    let incr    = len(split(get(matchlist(line, '^>\? *\([0-9.]\+\) '), 1, ''), '\.')) - 1
+    let tcb     = match(get(results, 1, ''), '^>\?\s*\[.\] *') > -1
+    let cb      = match(get(results, 3, ''), '\s*\[.\] *') > -1
+    let remove  = empty(substitute(line, sp_pat . '\s*', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0)
+    let incr    = len(split(get(matchlist(line, '^>\?\s*\([0-9.]\+\) '), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
     let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))

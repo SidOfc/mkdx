@@ -1,5 +1,6 @@
 let s:defaults = {
       \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
+      \ 'insert_indent_mappings':  0,
       \ 'restore_visual':          1,
       \ 'gf_on_steroids':          0,
       \ 'enter':                   { 'enable': 1, 'shift': 0, 'malformed': 1, 'o': 1, 'shifto': 1, 'increment': 1, 'close_pum': 0 },

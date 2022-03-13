@@ -26,6 +26,7 @@ To jump to this table of contents, use |go| or |gg|.
 - |mkdx-development|
                                                              *mkdx-toc-settings*
 Settings `.......................................................` |mkdx-settings|
+    insert_indent_mappings `...............` |mkdx-setting-insert-indent-mappings|
     gf_on_steroids `...............................` |mkdx-setting-gf-on-steroids|
     links.external.enable `.................` |mkdx-setting-links-external-enable|
     links.external.timeout `...............` |mkdx-setting-links-external-timeout|
@@ -168,6 +169,8 @@ Plugs `.............................................................` |mkdx-plug
     <Plug>(mkdx-gx-visual) `...............................` |mkdx-plug-gx-visual|
     <Plug>(mkdx-indent) `.....................................` |mkdx-plug-indent|
     <Plug>(mkdx-unindent) `.................................` |mkdx-plug-unindent|
+    <Plug>(mkdx-indent-insert) `.......................` |mkdx-plug-indent-insert|
+    <Plug>(mkdx-unindent-insert) `...................` |mkdx-plug-unindent-insert|
     <Plug>(mkdx-next-section) `.........................` |mkdx-plug-next-section|
     <Plug>(mkdx-prev-section) `.........................` |mkdx-plug-prev-section|
 
@@ -234,6 +237,7 @@ Functions `.....................................................` |mkdx-function
     mkdx#gf_visual() `.................................` |mkdx-function-gf-visual|
     mkdx#MaybeRestoreVisual() `.............` |mkdx-function-maybe-restore-visual|
     mkdx#IndentHandler() `........................` |mkdx-function-indent-handler|
+    mkdx#InsertIndentHandler() `...........` |mkdx-function-insert-indent-handler|
     mkdx#JumpToSection() `.......................` |mkdx-function-jump-to-section|
 
                                                                *mkdx-toc-errors*
@@ -285,6 +289,7 @@ at the bottom of every setting section. The default settings hash:
 
     `let g:mkdx#settings = {`
     `      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',`
+     `     \ 'insert_indent_mappings':  0,`
      `     \ 'gf_on_steroids':          0,`
     `      \ 'restore_visual':          1,`
     `      \ 'enter':                   { 'enable': 1, 'shift': 0, 'o': 1,`
@@ -369,6 +374,7 @@ value defined in the settings hash will end up being used, e.g. the
 
 Below a mapping of settings to global variables:
 
+s:defaults.insert_indent_mappings     `=>`
 s:defaults.gf_on_steroids             `=>`
 s:defaults.links.external.enable      `=>`
 s:defaults.links.external.host        `=>`
@@ -412,6 +418,16 @@ s:defaults.highlight.enable           `=>`
 s:defaults.highlight.frontmatter.yaml `=>`
 s:defaults.highlight.frontmatter.toml `=>`
 s:defaults.highlight.frontmatter.json `=>`
+
+==============================================================================
+`g:mkdx#settings.insert_indent_mappings = 0` *mkdx-setting-insert-indent-mappings*
+
+When set to `1`, mkdx overwrites |i_CTRL-T| and |i_CTRL-D| to enable support
+for |insertmode| indentation in lists.
+
+This is done by exiting insert mode, calling
+|mkdx-function-insert-indent-handler|, moving the cursor depending on
+indent/deindent and reentering insert mode.
 
 ==============================================================================
 `g:mkdx#settings.gf_on_steroids = 0`                 *mkdx-setting-gf-on-steroids*
@@ -1399,6 +1415,16 @@ using {repeat.vim} by Tim Pope (https://github.com/tpope/vim-repeat).
 <Plug>(mkdx-unindent)                                       *mkdx-plug-unindent*
 
     `:call mkdx#IndentHandler(0)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-indent-insert)                             *mkdx-plug-indent-insert*
+
+    `:call mkdx#InsertIndentHandler(1)<Cr>`
+
+==============================================================================
+<Plug>(mkdx-unindent-insert)                         *mkdx-plug-unindent-insert*
+
+    `:call mkdx#InsertIndentHandler(0)<Cr>`
 
 ==============================================================================
 <Plug>(mkdx-next-section)                               *mkdx-plug-next-section*
@@ -2533,6 +2559,13 @@ mkdx#IndentHandler({indent})                      *mkdx-function-indent-handler*
 When {indent} is nonzero, indents as usual, otherwise unindents as usual.
 Additionally, when indenting / unindenting within a numbered list, the
 list will be renumbered accordingly.
+
+==============================================================================
+mkdx#InsertIndentHandler({indent})         *mkdx-function-insert-indent-handler*
+
+Store the cursor position and call |mkdx-function-indent-handler| with {indent}
+as argument. After indenting or unindenting the cursor position will be
+updated to mimic the behaviour of |i_CTRL-T| and |i_CTRL-T|.
 
 ==============================================================================
 mkdx#JumpToSection({to})                         *mkdx-function-jump-to-section*

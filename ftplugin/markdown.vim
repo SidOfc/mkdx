@@ -54,6 +54,8 @@ inoremap        <silent> <Plug>(mkdx-fence-backtick)     <C-R>=mkdx#InsertFenced
 inoremap        <silent> <Plug>(mkdx-ctrl-n-compl)       <C-R>=mkdx#InsertCtrlNHandler()<Cr>
 inoremap        <silent> <Plug>(mkdx-ctrl-p-compl)       <C-R>=mkdx#InsertCtrlPHandler()<Cr>
 inoremap <expr> <silent> <Plug>(mkdx-link-compl)         mkdx#CompleteLink()
+inoremap        <silent> <Plug>(mkdx-indent-insert)      <C-R>=mkdx#InsertIndentHandler(1)<Cr>
+inoremap        <silent> <Plug>(mkdx-unindent-insert)    <C-R>=mkdx#InsertIndentHandler(0)<Cr>
 noremap         <silent> <Plug>(mkdx-indent)             :call mkdx#IndentHandler(1)<Cr>
 noremap         <silent> <Plug>(mkdx-unindent)           :call mkdx#IndentHandler(0)<Cr>
 noremap         <Plug>(mkdx-next-section)                :call mkdx#JumpToSection('next')<Cr>
@@ -142,6 +144,16 @@ if g:mkdx#settings.map.enable == 1
         \ ['Jump to next section',            0, 'n', ']]',     '<Plug>(mkdx-next-section)',            ':call mkdx#JumpToSection("next")<Cr>'],
         \ ['Jump to prev section',            0, 'n', '[[',     '<Plug>(mkdx-prev-section)',            ':call mkdx#JumpToSection("prev")<Cr>'],
         \ ]
+
+  if (g:mkdx#settings.insert_indent_mappings)
+    if (!hasmapto('<Plug>(mkdx-indent-insert)', 'i'))
+      imap <buffer> <C-t> <Plug>(mkdx-indent-insert)
+    endif
+
+    if (!hasmapto('<Plug>(mkdx-unindent-insert)', 'i'))
+      imap <buffer> <C-d> <Plug>(mkdx-unindent-insert)
+    endif
+  endif
 
   if (!hasmapto('<Plug>(mkdx-gf)', 'n'))
     nmap <buffer><silent> gf <Plug>(mkdx-gf)

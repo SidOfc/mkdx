@@ -1859,7 +1859,7 @@ endfun
 
 fun! mkdx#IndentHandler(nested)
   let line  = getline('.')
-  let quote = get(matchlist(line, '^ *>'), 0, '')
+  let quote = get(matchlist(line, '^\s*>'), 0, '')
 
   if (!empty(quote))
     let line = substitute(line, quote, '', '')
@@ -1879,6 +1879,22 @@ fun! mkdx#IndentHandler(nested)
 
   call s:util.UpdateNumberedList()
 endfun
+
+function! mkdx#InsertIndentHandler(nested)
+  let curpos = getcurpos()
+  call mkdx#IndentHandler(a:nested)
+
+  if (a:nested)
+    let curpos[2] += s:sw()
+  else
+    let curpos[2] -= s:sw()
+  endif
+
+  call setpos('.', curpos)
+  startinsert
+
+  return ''
+endfunction
 
 fun! mkdx#ShiftEnterHandler()
   if (!g:mkdx#settings.enter.shift) | return "\n" | endif

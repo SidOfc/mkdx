@@ -93,7 +93,8 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 52 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 53 items</summary><ul>
+        <li><a href="#gmkdxsettingsinsert_indent_mappings"><code>g:mkdx#settings.insert_indent_mappings</code></a></li>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
         <li><a href="#gmkdxsettingslinksexternaltimeout"><code>g:mkdx#settings.links.external.timeout</code></a></li>
@@ -400,9 +401,14 @@ Numbered list items will be renumbered upon indenting / unindenting. The algorit
 but attempts to ensure correct nesting. This feature uses <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>
 to indent and unindent respectively.
 
+When [`g:mkdx#settings.insert_indent_mappings`](#gmkdxsettingsinsert_indent_mappings) is enabled insert mode
+indent and unindent using <kbd>ctrl</kbd>+<kbd>t</kbd> and <kbd>ctrl</kbd>+<kbd>d</kbd> will
+also renumber numbered markdown lists.
+
 ```viml
 " :h mkdx-mapping-list-items
 " :h mkdx-function-indent-handler
+" :h mkdx-function-insert-indent-handler
 ```
 
 ## Toggling lines from / to task items
@@ -817,6 +823,16 @@ To overwrite a setting while editing:
 ```viml
 " :h mkdx-settings
 :let g:mkdx#settings.enter.enable = 0
+```
+
+## `g:mkdx#settings.insert_indent_mappings`
+
+This setting is off by default. When enabled, this will allow <kbd>ctrl</kbd>+<kbd>t</kbd> and <kbd>ctrl</kbd>+<kbd>d</kbd>
+to renumber numbered markdown lists.
+
+```viml
+" :h mkdx-setting-insert-indent-mappings
+:let g:mkdx#settings.insert_indent_mappings = 0
 ```
 
 ## `g:mkdx#settings.gf_on_steroids`

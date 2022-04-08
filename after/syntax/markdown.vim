@@ -20,7 +20,7 @@ syn match   mkdxTildeFence '^[ \t]*\~\~\~\w*'
 syn region  mkdxBoldItalic matchgroup=mkdxBoldItalicDelimiter start="[\*_]\{3}" end="[\*_]\{3}" keepend concealends
 syn region  mkdxInlineCode matchgroup=mkdxInlineCodeDelimiter start="``\@!" end="``\@!" keepend concealends
 
-syn match   mkdxLink '\(https\?:\)\?\/\/[^ ]\{-}\(\.[^ ]\+\)\{0,}\(\.\w\+\)\(\/[^ ]\+\)\?'
+syn match   mkdxLink '\(\(https\?:\)\?\/\/\|ww\w\.\)[^ ]\{-}\(\.[^ ]\+\)\{0,}\(\.\S\+\)\(\/[^ ]\+\)\?'
 syn match   mkdxKbdText '\%(kbd>\)\@<=[^ >]\+\%(<\/\?kbd\)\@='
 syn match   mkdxKbdOpening '<kbd>'
 syn match   mkdxKbdEnding '<\/kbd>'

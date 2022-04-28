@@ -537,7 +537,7 @@ Configure the `pumheight` used in markdown files.
 Set to `0` to prevent `pumheight` from being modified.
 
 ==============================================================================
-`g:mkdx#settings.links.fragment`           *mkdx-setting-links-fragment-pumheight*
+`g:mkdx#settings.links.fragment`           *mkdx-setting-links-fragment-completeopt*
   `.completeopt = 'noinsert,menuone'`
 
 Configure the `completeopt` used for fragment completion.

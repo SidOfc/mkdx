@@ -81,6 +81,7 @@ Settings `.......................................................` |mkdx-setting
 
                                                          *mkdx-toc-highlighting*
 Highlighting `...............................................` |mkdx-highlighting|
+    mkdxTag `...............................................` |mkdx-highlight-tag|
     mkdxYAMLHeader `...........................` |mkdx-highlight-yaml-frontmatter|
     mkdxTOMLHeader `...........................` |mkdx-highlight-TOML-frontmatter|
     mkdxJSONHeader `...........................` |mkdx-highlight-JSON-frontmatter|
@@ -1029,6 +1030,11 @@ Also, when |conceallevel| is set to `2`, mkdx will also fold some components:
 - `**_text_**`   => `text`
 - ``code``       => `code`
 - `[link](url)`  => `[link]`
+
+==============================================================================
+mkdxTag                                                     *mkdx-highlight-tag*
+
+    `highlight default link mkdxTag markdownUrl`
 
 ==============================================================================
 mkdxYAMLHeader                                 *mkdx-highlight-yaml-frontmatter*

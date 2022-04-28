@@ -12,6 +12,7 @@ syn region  mkdxTableHeader start="^\zs.*\ze\n[-|\:\. ]\+$" end="$" nextgroup=mk
 syn match   mkdxTableHeadDelimiter "^[-|\:\.\ ]\+$" contained contains=mkdxTableDelimiter,mkdxTableAlign
 syn region  mkdxTableCaption matchgroup=mkdxTableCaptionDelimiter start="^\[" end="\]$" keepend contained
 
+syn match   mkdxTag '#\S\+'
 syn match   mkdxListItem '^[ \t]*\([0-9.]\+\|[-*]\) '
 syn match   mkdxCheckboxEmpty '\[ \]'
 syn match   mkdxCheckboxPending '\[-\]'
@@ -47,6 +48,7 @@ syn region mkdxCriticHighlight matchgroup=mkdxCriticExtra start=/{==/ end=/==}/ 
 
 if hlexists('markdownUrl')
   highlight default link mkdxLink markdownUrl
+  highlight default link mkdxTag  markdownUrl
 endif
 
 if hlexists('Constant')

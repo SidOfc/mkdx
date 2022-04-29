@@ -12,7 +12,7 @@ syn region  mkdxTableHeader start="^\zs.*\ze\n[-|\:\. ]\+$" end="$" nextgroup=mk
 syn match   mkdxTableHeadDelimiter "^[-|\:\.\ ]\+$" contained contains=mkdxTableDelimiter,mkdxTableAlign
 syn region  mkdxTableCaption matchgroup=mkdxTableCaptionDelimiter start="^\[" end="\]$" keepend contained
 
-syn match   mkdxTag '#\S\+'
+syn match   mkdxTag '#[^ \#]\+'
 syn match   mkdxListItem '^[ \t]*\([0-9.]\+\|[-*]\) '
 syn match   mkdxCheckboxEmpty '\[ \]'
 syn match   mkdxCheckboxPending '\[-\]'

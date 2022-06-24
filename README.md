@@ -93,7 +93,7 @@ Thank you for making this plugin better!
         <li><a href="#open-toc-using-fzf-instead-of-quickfix-window">Open TOC using fzf instead of quickfix window</a></li>
         <li><a href="#using-the-menu">Using the menu</a></li>
     </ul></details></li>
-    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 53 items</summary><ul>
+    <li><a href="#gmkdxsettings"><code>g:mkdx#settings</code></a><details><summary>show 54 items</summary><ul>
         <li><a href="#gmkdxsettingsinsert_indent_mappings"><code>g:mkdx#settings.insert_indent_mappings</code></a></li>
         <li><a href="#gmkdxsettingsgf_on_steroids"><code>g:mkdx#settings.gf_on_steroids</code></a></li>
         <li><a href="#gmkdxsettingslinksexternalenable"><code>g:mkdx#settings.links.external.enable</code></a></li>
@@ -113,6 +113,7 @@ Thank you for making this plugin better!
         <li><a href="#gmkdxsettingscheckboxtoggles"><code>g:mkdx#settings.checkbox.toggles</code></a></li>
         <li><a href="#gmkdxsettingscheckboxupdate_tree"><code>g:mkdx#settings.checkbox.update_tree</code></a></li>
         <li><a href="#gmkdxsettingscheckboxinitial_state"><code>g:mkdx#settings.checkbox.initial_state</code></a></li>
+        <li><a href="#gmkdxsettingscheckboxmatch_attrs"><code>g:mkdx#settings.checkbox.match_attrs</code></a></li>
         <li><a href="#gmkdxsettingstokensheader"><code>g:mkdx#settings.tokens.header</code></a></li>
         <li><a href="#gmkdxsettingstokensenter"><code>g:mkdx#settings.tokens.enter</code></a></li>
         <li><a href="#gmkdxsettingstokensfence"><code>g:mkdx#settings.tokens.fence</code></a></li>
@@ -1090,6 +1091,25 @@ what the default value of each inserted checkbox should be.
 ```viml
 " :h mkdx-setting-checkbox-initial-state
 let g:mkdx#settings = { 'checkbox': { 'initial_state': ' ' } }
+```
+
+## `g:mkdx#settings.checkbox.match_attrs`
+
+Add custom attributes to the `syn match` statements of the following highlight groups:
+
+- `mkdxCheckboxEmpty`
+- `mkdxCheckboxPending`
+- `mkdxCheckboxComplete`
+
+```viml
+" :h mkdx-setting-checkbox-match-attrs
+let g:mkdx#settings = { 'checkbox': {
+  \ 'match_attrs': {
+  \   'mkdxCheckboxEmpty': '',
+  \   'mkdxCheckboxPending': '',
+  \   'mkdxCheckboxComplete': '',
+  \ }
+  \ } }
 ```
 
 ## `g:mkdx#settings.tokens.header`

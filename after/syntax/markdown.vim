@@ -14,9 +14,25 @@ syn region  mkdxTableCaption matchgroup=mkdxTableCaptionDelimiter start="^\[" en
 
 syn match   mkdxTag '#[^ \#]\+'
 syn match   mkdxListItem '^[ \t]*\([0-9.]\+\|[-*]\) '
-syn match   mkdxCheckboxEmpty '\[ \]'
-syn match   mkdxCheckboxPending '\[-\]'
-syn match   mkdxCheckboxComplete '\[x\]'
+
+if empty(g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxEmpty)
+  syn match mkdxCheckboxEmpty '\[ \]'
+else
+  exe 'syn match mkdxCheckboxEmpty "\[ \]" ' . g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxEmpty
+endif
+
+if empty(g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxPending)
+  syn match mkdxCheckboxPending '\[-\]'
+else
+  exe 'syn match mkdxCheckboxPending "\[-\]" ' . g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxPending
+endif
+
+if empty(g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxComplete)
+  syn match mkdxCheckboxComplete '\[x\]'
+else
+  exe 'syn match mkdxCheckboxComplete "\[x\]" ' . g:mkdx#settings.checkbox.match_attrs.mkdxCheckboxComplete
+endif
+
 syn match   mkdxTildeFence '^[ \t]*\~\~\~\w*'
 syn region  mkdxBoldItalic matchgroup=mkdxBoldItalicDelimiter start="[\*_]\{3}" end="[\*_]\{3}" keepend concealends
 syn region  mkdxInlineCode matchgroup=mkdxInlineCodeDelimiter start="``\@!" end="``\@!" keepend concealends

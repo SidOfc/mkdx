@@ -303,7 +303,12 @@ at the bottom of every setting section. The default settings hash:
         `  \                              'header': '#' },`
     `      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],`
         `  \                              'update_tree': 2,`
-        `  \                              'initial_state': ' ' },`
+        `  \                              'initial_state': ' ',`
+        `  \                              'match_attrs': {`
+          `\                                 'mkdxCheckboxEmpty': '',`
+          `\                                 'mkdxCheckboxPending': '',`
+          `\                                 'mkdxCheckboxComplete': '',`
+          `\                               }, },`
     `      \ 'toc':                     { 'text':       "TOC",`
     `      \                              'list_token': '-',`
     `      \                              'position':   0,`
@@ -626,6 +631,30 @@ children to be updated, set this value to 1 instead.
 When toggling between checkbox/checklist lines, using
 |mkdx-mapping-toggle-checkbox| or |mkdx-mapping-toggle-checklist| this defines
 what the default value of each inserted checkbox should be.
+
+==============================================================================
+`g:mkdx#settings.checkbox.match_attrs = {`     *mkdx-setting-checkbox-match-attrs*
+  `\ 'mkdxCheckboxEmpty': 'conceal cchar=1',`
+  `\ 'mkdxCheckboxPending': 'conceal cchar=2',`
+  `\ 'mkdxCheckboxComplete': 'conceal cchar=3',`
+  `\ }`
+
+To allow concealing of checkbox markers some properties can be set on the
+"syn match" part of the highlight groups. This is a bit tricky however since
+mkdx's syntax file loads when editing a markdown file which is after your
+local "after" overwrites have been processed.
+
+To remedy this, you can set the values you need here:
+
+    `let g:mkdx#settings = { 'checkbox': {`
+        `\ 'match_attrs': {`
+        `\   'mkdxCheckboxEmpty': 'conceal cchar=1',`
+        `\   'mkdxCheckboxPending': 'conceal cchar=2',`
+        `\   'mkdxCheckboxComplete': 'conceal cchar=3',`
+        `\  } } }`
+
+Then, when |conceallevel| is set to `2` you should see `1` for an empty
+checkbox, `2` for a pending one, and `3` for a completed one.
 
 ==============================================================================
 `g:mkdx#settings.tokens.header = '#'`                 *mkdx-setting-tokens-header*

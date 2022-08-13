@@ -1,4 +1,4 @@
-Hello there, thanks for reporting an issue or requesting a feature!
+Hello there, thanks for reporting an issue or discussion!
 If you want to add a feature, you won't need this template. Just provide a clear
 description of what you want and include an example of how this works in practice.
 

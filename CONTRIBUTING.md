@@ -33,14 +33,9 @@ e.g. for the _OS type_, if you are using a _Unix_ based system, mark the _Unix_ 
 
 # Requesting a feature
 
-Think you've got a good idea for mkdx? Visit the [issues](https://github.com/SidOfc/mkdx/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Afeature-request) page
-and check to see if someone didn't already beat you to it :)
-If your feature isn't requested yet, open a new [issue](issues/new).
-
-The template is mostly useful for bugs since it requires some information about the issuer's computer and a reproducible example.
-Therefore, you are free to clear out the template and just start describing your feature.
-It is very helpful to include a graphical example, with that I mean that you can include a "before" snippet
-and an "after" snippet of what you wish to accomplish.
+mkdx.vim is already a rather large plugin which I'm sure has already aborbed some very
+user specific needs. To make sure I remain motivated and can continue to fix bugs or
+improve existing features with mkdx, new feature requests are frozen.
 
 # Sending pull requests
 

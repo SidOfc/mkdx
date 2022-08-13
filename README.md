@@ -1727,8 +1727,7 @@ Found a bug or want to report an issue? Take a look at the [CONTRIBUTING](CONTRI
 
 # Roadmap
 
-- Process feature requests
-- Process bug reports
+- Process bug reports and discussions
 - Otherwise, maintainance mode
 
 # Changelog

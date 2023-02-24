@@ -812,6 +812,14 @@ To overwrite a setting, write it as seen in `:h mkdx-settings` in your _.vimrc_:
 let g:mkdx#settings = { 'enter': { 'enable': 0 } }
 ```
 
+**NOTE:** The method used above somewhat relies on `exists('*dictwatcheradd')` which is Neovim only.
+If you intend to `:so %` your `.vimrc` file, please use the following instead:
+
+```viml
+" :h mkdx-settings
+call mkdx#configure({ 'enter': { 'enable': 0 } })
+```
+
 The above will disable the [`g:mkdx#settings.enter.enable`](#gmkdxsettingsenterenable) setting.
 For backwards compatibility, `g:mkdx#` variables are merged into the defaults.
 This happens before any `g:mkdx#settings` hash defined in _.vimrc_ is merged with the defaults.

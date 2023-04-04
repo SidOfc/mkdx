@@ -1908,7 +1908,9 @@ fun! mkdx#IndentHandler(nested)
     let line = quote . getline('.')
     call setline('.', line)
   endif
+endfun
 
+fun! mkdx#OnChange()
   call s:util.UpdateNumberedList()
 endfun
 

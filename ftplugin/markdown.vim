@@ -97,6 +97,7 @@ if (has('autocmd'))
   augroup MkdxAutocommands
     au!
     au BufWritePre *.md silent! call mkdx#BeforeWrite()
+    au TextChanged *.md silent! call mkdx#OnChange()
   augroup END
 endif
 

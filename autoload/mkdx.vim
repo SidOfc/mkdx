@@ -823,7 +823,7 @@ fun! s:util.WrapSelectionOrWord(...)
       let motion      = single_ch_w ? 'l' : 'e'
       let col_before  = col('.')
 
-      if !empty(go_bk)
+      if !empty(go_bk) && col_before > 1
         exe 'normal! ' . go_bk
         let col_before = col('.')
       endif

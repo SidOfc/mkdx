@@ -1940,15 +1940,18 @@ fun! mkdx#EnterHandler()
   let line = getline('.')
 
   if (g:mkdx#settings.enter.enable && !empty(line))
-    let lnum      = line('.')
-    let cnum      = virtcol('.')
-    let indent    = indent(lnum)
-    let sp_pat    = '^>\?\s*\(\(\d[0-9.]*\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
-    let after_inl = 0
-    let inl_ind   = 0
-    let tmp_lnum  = lnum - 1
+    let lnum         = line('.')
+    let cnum         = virtcol('.')
+    let indent       = indent(lnum)
+    let sp_pat       = '^>\?\s*\(\(\d[0-9.]*\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+    let after_inl    = 0
+    let inl_ind      = 0
+    let tmp_lnum     = lnum - 1
+    let match_sp_pat = match(line, sp_pat) > -1
 
-    if (!(match(line, sp_pat) > -1) && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
+    " echom string(match(line, sp_pat))
+
+    if (!match_sp_pat && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
       while (indent(tmp_lnum) >= indent)
         if (tmp_lnum < 0) | break | else | let tmp_lnum -= 1 | endif
       endwhile
@@ -1966,13 +1969,17 @@ fun! mkdx#EnterHandler()
     let t       = t == '>' ? '' : t
     let tcb     = match(get(results, 1, ''), '^>\?\s*\[.\] *') > -1
     let cb      = match(get(results, 3, ''), '\s*\[.\] *') > -1
-    let remove  = empty(substitute(line, sp_pat . '\s*', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0)
+    let remove  = match_sp_pat && (empty(substitute(line, sp_pat . '\s*', '', '')) || (strlen(substitute(getline(lnum), '\s', '', 'g')) == 0))
     let incr    = len(split(get(matchlist(line, '^>\?\s*\([0-9.]\+\) '), 1, ''), '\.')) - 1
     let upd_tl  = (cb || tcb) && g:mkdx#settings.checkbox.update_tree != 0
     let tl_prms = remove ? [line('.') - 1, -1] : ['.', 1]
     let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))
     let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, inl_ind)) : inl_ind
     let cursor_line_hl = s:util.hlAtCursorLine()
+
+    echom string('"' . line . '"')
+    echom string(empty(substitute(line, sp_pat . '\s*', '', '')))
+    echom string((strlen(substitute(getline(lnum), '\s', '', 'g')) == 0))
 
     if (index(cursor_line_hl, 'markdownCodeBlock' ) > -1 || index(cursor_line_hl, 'markdownCode') > -1)
       let remove = 0

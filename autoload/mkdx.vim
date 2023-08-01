@@ -668,7 +668,7 @@ endfun
 fun! s:util.isHlAtPos(hl, lnum, col)
   let pos_hl        = synIDattr(get(synstack(a:lnum, a:col), 0, ''), 'name')
   let possibilities = type(a:hl) == type([]) ? a:hl : [a:hl]
-  " echom 'pos_hl('.string(possibilities).', '.a:lnum.', '.a:col.') "' . pos_hl . '"'
+
   for possibility in possibilities
     if pos_hl =~? '^' . possibility
       return 1
@@ -1806,11 +1806,12 @@ fun! mkdx#ShiftOHandler()
 endfun
 
 fun! s:util.UpdateNumberedList()
-  let lnum    = line('.')
-  let num_pat = '^>\? *\d\.[0-9.]*'
-  let result  = []
+  let lnum       = line('.')
+  let num_pat    = '^>\? *\d\.[0-9.]*'
+  let result     = []
+  let init_depth = -1
 
-  while (indent(lnum) > 0)
+  while (indent(lnum) > 0 && prevnonblank(lnum - 1) == lnum - 1)
     let lnum -= 1
   endwhile
 
@@ -1836,18 +1837,25 @@ fun! s:util.UpdateNumberedList()
       let has_prev = type(prev) == type({})
       let nums     = []
 
+      if init_depth == -1
+        let init_depth = depth
+      endif
+
+      let idx_depth = depth - init_depth
+
       if (match(line, num_pat) > -1)
         if (has_prev)
+          let idx_depth = min([idx_depth, prev.idx_depth + 1])
           let depth = min([depth, prev.depth + 1])
           let nums  = copy(prev.nums)
 
-          if depth > prev.depth
+          if idx_depth > prev.idx_depth
             call add(nums, 1)
-          elseif depth < prev.depth
-            let nums = nums[0:depth]
-            let nums[depth] += 1
-          elseif depth == prev.depth
-            let nums[depth] += 1
+          elseif idx_depth < prev.idx_depth
+            let nums = nums[0:idx_depth]
+            let nums[idx_depth] += 1
+          elseif idx_depth == prev.idx_depth
+            let nums[idx_depth] += 1
           endif
         else
           call add(nums, 1)
@@ -1857,6 +1865,7 @@ fun! s:util.UpdateNumberedList()
               \ 'quoted': match(raw_line, '^ *>') > -1,
               \ 'lnum': lnum,
               \ 'depth': depth,
+              \ 'idx_depth': idx_depth,
               \ 'lines': [line],
               \ 'nums': nums
               \ })
@@ -1949,8 +1958,6 @@ fun! mkdx#EnterHandler()
     let tmp_lnum     = lnum - 1
     let match_sp_pat = match(line, sp_pat) > -1
 
-    " echom string(match(line, sp_pat))
-
     if (!match_sp_pat && ((strlen(line) > 0 ? line[0] : '') == '>' || indent > 0))
       while (indent(tmp_lnum) >= indent)
         if (tmp_lnum < 0) | break | else | let tmp_lnum -= 1 | endif
@@ -1976,10 +1983,6 @@ fun! mkdx#EnterHandler()
     let inl_ind = repeat(' ', (after_inl > 0 ? inl_ind : 0))
     let qu_str  = (len > 0 ? line[0] == '>' : 0) ? ('>' . get(matchlist(line, '^>\?\( *\)'), 1, inl_ind)) : inl_ind
     let cursor_line_hl = s:util.hlAtCursorLine()
-
-    echom string('"' . line . '"')
-    echom string(empty(substitute(line, sp_pat . '\s*', '', '')))
-    echom string((strlen(substitute(getline(lnum), '\s', '', 'g')) == 0))
 
     if (index(cursor_line_hl, 'markdownCodeBlock' ) > -1 || index(cursor_line_hl, 'markdownCode') > -1)
       let remove = 0

@@ -165,6 +165,7 @@ Thank you for making this plugin better!
     </ul></li>
     <li><a href="#faq">FAQ</a><ul>
         <li><a href="#e121-undefined-variable-gmkdxsettings">E121 Undefined variable: g:mkdx#settings</a></li>
+        <li><a href="#e716-errors-if-vimrc-has-been-reloaded">E716 errors if vimrc has been reloaded</a></li>
         <li><a href="#there-is-no-help-for-mkdx">There is no help for mkdx</a></li>
     </ul></li>
 </ul>
@@ -1796,6 +1797,10 @@ let g:mkdx#settings = {
 The primary reason being that mkdx uses any `g:mkdx#settings` hash defined in your vimrc
 to override the defaults. These defaults are not defined straight from the start but merged
 after the vimrc has loaded.
+
+## E716 errors if vimrc has been reloaded
+
+A couple of solutions can be found in <a href="https://github.com/SidOfc/mkdx/issues/151">Issue 151 - Reloading vimrc within Vim breaks</a>.
 
 ## There is no help for mkdx
 

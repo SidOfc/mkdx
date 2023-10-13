@@ -1941,7 +1941,7 @@ endfunction
 
 fun! mkdx#ShiftEnterHandler()
   if (!g:mkdx#settings.enter.shift) | return "\n" | endif
-  let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%(\d\.[0-9.]*\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')
+  let rem = matchlist(getline('.'), '^\(> *\)\? *\(\%([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\%( \+\[.\]\)\? *\|\[.\] *\)')
   return "\n" . get(rem, 1, '') . repeat(' ', strlen(get(rem, 2, '')))
 endfun
 
@@ -1952,7 +1952,7 @@ fun! mkdx#EnterHandler()
     let lnum         = line('.')
     let cnum         = virtcol('.')
     let indent       = indent(lnum)
-    let sp_pat       = '^>\?\s*\(\(\d\.[0-9.]*\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
+    let sp_pat       = '^>\?\s*\(\([0-9.]\+\|[' . join(g:mkdx#settings.tokens.enter, '') . ']\)\( \[.\]\)\? \|\[.\]\)'
     let after_inl    = 0
     let inl_ind      = 0
     let tmp_lnum     = lnum - 1

@@ -1807,7 +1807,7 @@ endfun
 
 fun! s:util.UpdateNumberedList()
   let lnum       = line('.')
-  let num_pat    = '^>\? *\d\.[0-9.]*'
+  let num_pat    = '^>\? [0-9.]\+'
   let result     = []
   let init_depth = -1
 

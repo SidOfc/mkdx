@@ -550,7 +550,10 @@ fun! s:util.AsyncDeadExternalToQF(...)
       let url = substitute(remote, '/\+$', '', '') . '/' . tail
     endif
 
-    let cmd = 'curl -L -I -s --no-keepalive -o /dev/null -A "' . g:mkdx#settings.links.external.user_agent . '" -m ' . g:mkdx#settings.links.external.timeout . ' -w "%{http_code}" "' . url . '"'
+    let cmd = ['curl', '-L', '-I', '-s', '--no-keepalive', '-o', '/dev/null',
+          \    '-A', g:mkdx#settings.links.external.user_agent,
+          \    '-m', string(g:mkdx#settings.links.external.timeout),
+          \    '-w', '%{http_code}', '--', url]
 
     if (!skip_rel)
       if (s:_is_nvim)

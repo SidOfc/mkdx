@@ -11,6 +11,9 @@
         888       888 888    Y88b 8888888P" d88P   Y88b Y8P    Y8P     8888888 888       888
 ```
 
+> [!WARNING]
+> **Security issue:** A shell injection vulnerability found in the dead link checker #197 and fixed in #198 by @animaartificialis. Please update to latest master as soon as possible. Thank you!
+
 mkdx.vim is a `markdown` plugin that aims to reduce the time you spend formatting your
 markdown documents. It does this by adding some configurable mappings for files with a
 markdown **filetype**. Functions are included to handle lists, checkboxes (even lists of checkboxes!), fenced code blocks,
